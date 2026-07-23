@@ -265,6 +265,7 @@ section+section{border-top:1px solid var(--line)}
 
 /* --- misc ---------------------------------------------------------------- */
 
+address{font-style:normal;line-height:1.75}
 .hinweis{padding:16px 18px;border:1px solid var(--line2);border-radius:var(--rad);
   background:var(--panel2);color:var(--tx2);font-size:14.5px}
 .hinweis b{color:var(--tx)}
