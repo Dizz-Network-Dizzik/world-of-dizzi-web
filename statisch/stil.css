@@ -90,9 +90,12 @@ hr{border:0;border-top:1px solid var(--line);margin:var(--spur) 0}
 section,.band{padding-block:var(--spur)}
 section+section,section+.band,.band+section,.band+.band{border-top:1px solid var(--line)}
 /* WCAG 2.2 target-size: a stand-alone source link is not "inline in a
-   sentence", so it needs a real 24px hit area rather than the 19px the
-   glyphs happen to occupy. */
-.quellen a{display:inline-block;min-height:24px;padding-block:2px}
+   sentence", so it needs a real 24px hit area rather than the 19px the glyphs
+   happen to occupy. max-width keeps the inline-block from ever pushing past
+   its container - without it a long label could not wrap and would force a
+   sideways scroll, which would trade one finding for a worse one. */
+.quellen a,.fuss-status a,a.zielgross{display:inline-block;max-width:100%;
+  min-height:24px;padding-block:2px}
 .eng{max-width:72ch}
 .lang{font-size:17px;line-height:1.68}
 .lang p{margin-bottom:1.15em}
