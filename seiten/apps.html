@@ -13,7 +13,7 @@
   </div>
 </section>
 
-<section>
+<div class="band">
   <div class="wrap">
     <ul class="bento">
       <li><a class="a-vio kachel" href="#core"><span class="kn">Dizzi-Core <span class="chip">:8200</span></span><span class="kt">Orchestrator, registry, MCP hub, health watch.</span><span class="kf">300 tests</span></a></li>
@@ -28,7 +28,7 @@
       <li><a class="a-coral kachel" href="#trading"><span class="kn">Dizz Trading <span class="chip">:8137</span></span><span class="kt">Autonomous bot fleet, hard human gate.</span><span class="kf">471 tests</span></a></li>
     </ul>
   </div>
-</section>
+</div>
 
 <div class="wrap">
 
@@ -55,7 +55,7 @@
         <li>Health watch over ten targets, plus the master instance of single sign-on
           and the layered memory.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/core" rel="noopener">apps/core &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/core" rel="noopener">apps/core &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>The core never acts outward.</b> It routes, relays and
@@ -88,7 +88,7 @@
         <li>Bank sync over FinTS — <b>read-only</b>, specified as such in its own
           contract document.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/money" rel="noopener">apps/money &#8599;</a><span class="trenn">·</span><a href="{{REPO}}/blob/main/docs/64_BANK_SYNC_VERTRAG.md" rel="noopener">docs/64 — bank sync contract &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/money" rel="noopener">apps/money &#8599;</a><span class="trenn">·</span><a href="{{REPO}}/blob/main/docs/64_BANK_SYNC_VERTRAG.md" rel="noopener">docs/64 — bank sync contract &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>Why read-only is a feature.</b> A finance app that cannot
@@ -118,7 +118,7 @@
         <li>Classified at the highest sensitivity level — which means AI routing is
           local only, by default and by contract.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/communication" rel="noopener">apps/communication &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/communication" rel="noopener">apps/communication &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>Sensitivity is a field, not an intention.</b> Each app
@@ -147,7 +147,7 @@
         <li>A workflow graph library covering image, video and audio pipelines — that
           part <em>is</em> in the snapshot.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/creating" rel="noopener">apps/creating &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/creating" rel="noopener">apps/creating &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>Said plainly:</b> the architecture, the contracts and the
@@ -179,7 +179,7 @@
         <li>An MCP namespace of its own, so the assistant can search the vault without
           a second connection.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/memory" rel="noopener">apps/memory &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/memory" rel="noopener">apps/memory &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>Files first.</b> The index is a cache. If it burns down,
@@ -209,7 +209,7 @@
         <li>Editorial planning per area, channels, drafts and schedules — publishing
           itself stays gated.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/management" rel="noopener">apps/management &#8599;</a><span class="trenn">·</span><a href="{{REPO}}/blob/main/docs/63_AGENTEN_REGIE_VERTRAG.md" rel="noopener">docs/63 — agent direction contract &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/management" rel="noopener">apps/management &#8599;</a><span class="trenn">·</span><a href="{{REPO}}/blob/main/docs/63_AGENTEN_REGIE_VERTRAG.md" rel="noopener">docs/63 — agent direction contract &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>An autonomy level is a promise you can check.</b> It is
@@ -237,7 +237,7 @@
         <li>Cross-source deduplication — one event, one entry.</li>
         <li>Living watchlists that carry topics forward across editions.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/news" rel="noopener">apps/news &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/news" rel="noopener">apps/news &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>No ranking model.</b> The sources are chosen once, by a
@@ -268,7 +268,7 @@
         <li>Wearable and mobile connection points are prepared and documented, not
           claimed as built.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/healthy" rel="noopener">apps/healthy &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/healthy" rel="noopener">apps/healthy &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>Prepared is not built.</b> The written laws require that
@@ -298,7 +298,7 @@
           contract.</li>
         <li>Feeds the area cockpit that Money, Management and Memory report into.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/admin" rel="noopener">apps/admin &#8599;</a><span class="trenn">·</span><a href="{{REPO}}/blob/main/docs/49_BEREICH_TYP_MODELL.md" rel="noopener">docs/49 — area-type model &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/admin" rel="noopener">apps/admin &#8599;</a><span class="trenn">·</span><a href="{{REPO}}/blob/main/docs/49_BEREICH_TYP_MODELL.md" rel="noopener">docs/49 — area-type model &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis"><b>One naming note, in the open:</b> this application was
@@ -331,7 +331,7 @@
           separate, highest-tier act.</li>
         <li>Defence in depth: exchange keys never carry withdrawal rights.</li>
       </ul>
-      <p><a href="{{REPO}}/tree/main/apps/trading" rel="noopener">apps/trading &#8599;</a></p>
+      <p class="quellen"><a href="{{REPO}}/tree/main/apps/trading" rel="noopener">apps/trading &#8599;</a></p>
     </div>
     <div>
       <div class="hinweis warn"><b>The build chronicle.</b>
@@ -345,7 +345,7 @@
 
 </div>
 
-<section>
+<div class="band">
   <div class="wrap">
     <div class="hinweis balken">
       <p><b>Ten applications, one written contract.</b>
@@ -354,4 +354,4 @@
       <a class="knopf prim" href="/vision/">Why that matters <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
   </div>
-</section>
+</div>

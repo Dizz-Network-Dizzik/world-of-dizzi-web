@@ -87,8 +87,12 @@ hr{border:0;border-top:1px solid var(--line);margin:var(--spur) 0}
 /* --- layout -------------------------------------------------------------- */
 
 .wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(16px,4vw,32px)}
-section{padding-block:var(--spur)}
-section+section{border-top:1px solid var(--line)}
+section,.band{padding-block:var(--spur)}
+section+section,section+.band,.band+section,.band+.band{border-top:1px solid var(--line)}
+/* WCAG 2.2 target-size: a stand-alone source link is not "inline in a
+   sentence", so it needs a real 24px hit area rather than the 19px the
+   glyphs happen to occupy. */
+.quellen a{display:inline-block;min-height:24px;padding-block:2px}
 .eng{max-width:72ch}
 .lang{font-size:17px;line-height:1.68}
 .lang p{margin-bottom:1.15em}
