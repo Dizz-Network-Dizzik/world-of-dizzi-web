@@ -116,6 +116,15 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
   background-clip:text;color:transparent;padding:6px 2px;white-space:nowrap}
 .marke:hover{filter:brightness(1.18)}
 @supports not (background-clip:text){.marke{color:var(--tx);background:none}}
+/* The wordmark paints its glyphs with the house gradient, so its `color` is
+   transparent. Rendered it measures 5.11:1 to 12.05:1 against the header - but
+   a contrast checker sees only the transparent value, and forced-colors mode
+   would drop the painted gradient and leave nothing behind. Both cases get a
+   real colour back. */
+@media (forced-colors:active){
+  .marke{color:CanvasText;background:none;-webkit-text-fill-color:CanvasText}
+  .led{forced-color-adjust:none}
+}
 
 .nav{margin-left:auto}
 .nav ul{display:flex;flex-wrap:wrap;gap:2px 4px;list-style:none;margin:0;padding:0}
