@@ -1,0 +1,241 @@
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">The method</p>
+    <h1>How one person builds ten applications</h1>
+    <p class="lede">Not by typing faster. By writing the rules down first, and then
+      refusing to break them when it would be convenient.</p>
+    <p class="dach mt-m">Everything on this page exists as a file in
+      the public repository. The documents are in German — they were written to be
+      used, not to be shown — and the quotes below are translated, with the source
+      named each time.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Chapter one</p>
+    <h2>Written law before code</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Before there was an architecture there was a file of binding
+          working rules, and every session since has had to honour it without being
+          reminded. It is a short document. It is also the reason the system did not
+          drift apart while a single person built ten services.</p>
+        <p class="lang">The most useful of those rules is the one about honesty,
+          because it constrains the software and not just the author. A value that was
+          never measured is reported as unmeasured. It never becomes a zero, and a zero
+          never becomes a claim.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Law 02 · honesty</span>
+          <p>“Honest assessments. Motto: we find the best way together. Where there is
+            doubt, say so openly — do not talk it up.”</p>
+          <footer>docs/01_GRUNDGESETZE.md, Law 2 — translated from the German
+            original<a class="beleg" href="{{REPO}}/blob/main/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+        <blockquote class="gesetz">
+          <span class="lk">Law 04 · quality</span>
+          <p>“Code quality is the highest law: structural, professional, functional,
+            efficient, absolutely clean and comprehensible.”</p>
+          <footer>docs/01_GRUNDGESETZE.md, Law 4 — translated<a class="beleg" href="{{REPO}}/blob/main/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+    <p class="hinweis mt-s">The English sentence the repository README
+      uses for the same rule: <b>“If a value was never measured, the system says so
+      instead of showing a zero.”</b> That rule governs this website too — which is why
+      every number here carries a link to the file it came from.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Chapter two</p>
+    <h2>Contracts before features</h2>
+    <p class="dach">A feature is a thing you build once. A contract is a thing that
+      builds the next nine.</p>
+    <div class="raster mt-m">
+      <div>
+        <p class="lang">The app contract fixes what every application must answer:
+          health, manifest, summary, settings, account, vault, audit, actions, and an
+          MCP tool server. Meet it and the dashboard picks you up automatically; the
+          assistant can reach you without a new integration.</p>
+        <p class="lang">What makes it a contract rather than a wish is that it is
+          checked by machine. A conformance module runs inside every application's own
+          test suite, so an app that drifts fails its own build. The specification is
+          blunt about the hierarchy: where the prose and the code disagree, the code
+          wins.</p>
+      </div>
+      <div>
+        <figure class="code">
+          <pre><span class="co"># the scaling mechanic, in one line</span>
+write the contract
+  <b>&#8594;</b> the app appears in the dashboard
+  <b>&#8594;</b> the assistant can reach it
+  <b>&#8594;</b> its tests enforce the contract
+  <b>&#8594;</b> appkit upgrades reach it for free</pre>
+          <figcaption>Specified in <code>docs/16</code>, enforced by
+            <code>appkit/conformance.py</code>.<a class="beleg" href="{{REPO}}/blob/main/docs/16_APP_VERTRAG_SPEC.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/16_APP_VERTRAG_SPEC.md</span></a></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Chapter three</p>
+    <h2>Research before decisions</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Independent research is not an optional flourish here, it is
+          Law 3 — deliberately at critical points, and regularly in between. The
+          protocols are written down and kept: research waves for the network,
+          fundamental research and metric studies for the trading side, a strategy
+          catalogue that records what was rejected as well as what was adopted.</p>
+        <p class="lang">Keeping the rejected options is the part that pays off later.
+          Six months on, the question is never “what did we choose?” — it is “did we
+          already look at this, and why did we say no?”</p>
+        <p><a href="{{REPO}}/tree/main/docs/recherche" rel="noopener">docs/recherche — the research protocols &#8599;</a></p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Law 03 · research</span>
+          <p>“Regular independent research — targeted at critical points and generally
+            interleaved, so that a maximally optimised product emerges.”</p>
+          <footer>docs/01_GRUNDGESETZE.md, Law 3 — translated<a class="beleg" href="{{REPO}}/blob/main/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+        <blockquote class="gesetz">
+          <span class="lk">Law 09 · no drift</span>
+          <p>“There must never arise a state in which code, plan and documentation
+            diverge; outdated references are actively removed on update.”</p>
+          <footer>docs/01_GRUNDGESETZE.md, Law 9 — translated<a class="beleg" href="{{REPO}}/blob/main/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Chapter four</p>
+    <h2>An orchestra of AI build chats</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">This is the part that is hard to see from outside, so here it
+          is plainly. One human directs. An administrating chat holds the overall
+          state and decides what happens next; separate build chats do the actual work,
+          one work package at a time. They do not talk to each other. They talk through
+          <b>written hand-over documents</b> — the same artefact type as the contracts
+          and the laws.</p>
+        <p class="lang">That hand-over document is the real invention. It carries the
+          brief, the constraints, the forbidden moves and the acceptance gate, so a
+          fresh chat with no memory of yesterday can pick up a package and finish it to
+          the same standard. Work packages that are independent run in parallel, each
+          in its own working tree, so two builds never fight over one checkout.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Law 10 · three tiers</span>
+          <p>“Model vigilance — three tiers: assistant tier, builder tier, architect
+            tier. Work packages are graded in advance. Stay honest: no needless
+            promotion, but no risky demotion either — when in doubt, one tier up.”</p>
+          <footer>docs/01_GRUNDGESETZE.md, Law 10 — translated and condensed<a class="beleg" href="{{REPO}}/blob/main/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+        <ul class="liste">
+          <li><b>Assistant tier</b> — only for packages where a clean reference
+            pattern already exists, green tests cover it, no architectural decision is
+            needed and nothing security- or money-critical is touched.</li>
+          <li><b>Builder tier</b> — the default for ordinary construction work.</li>
+          <li><b>Architect tier</b> — subtle architecture and schema logic, the AI
+            core, large autonomous overnight runs, deep security reviews, hard bugs.</li>
+        </ul>
+        <p class="dach klein">The first execution of any new pattern
+          is never given to the assistant tier. That rule is written down, not
+          improvised.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Chapter five</p>
+    <h2>Human gates on everything irreversible</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">The network's assistants observe and propose. Effect requires a
+          human, at the security tier that matches the act. Money, publishing and
+          deletion are the three places where that rule is not negotiable — and they
+          are exactly the three places where an autonomous system is most tempting and
+          most dangerous.</p>
+        <p class="lang">It is enforced structurally rather than by discipline: the
+          proposal endpoint and the approval endpoint are different endpoints, the
+          approval demands a fresh authentication, and both sides land in an audit log
+          that the proposing side cannot edit.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Law · human gates</span>
+          <p>“Nothing irreversible without a human. Money, publishing and deletion sit
+            behind explicit gates. The trading fleet proposes; a person decides.”</p>
+          <footer>Repository README, <em>Principles</em><a class="beleg" href="{{REPO}}#principles" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: the Principles section of the repository README</span></a></footer>
+        </blockquote>
+        <blockquote class="gesetz">
+          <span class="lk">Law 11 · calm before haste</span>
+          <p>“When in doubt, check a second longer or think it over once more before
+            acting. ‘Quickly, please’ never suspends care. The structure carries —
+            not the hurry.”</p>
+          <footer>docs/01_GRUNDGESETZE.md, Law 11 — translated<a class="beleg" href="{{REPO}}/blob/main/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Chapter six</p>
+    <h2>Why it goes fast</h2>
+    <p class="dach">The speed is not the point, but it is the question everyone asks, so
+      here is the honest answer — five parts, none of them magic.</p>
+    <div class="karten reveal mt-l">
+      <article class="karte">
+        <h3>Contracts make apps composable</h3>
+        <p>The tenth application costs less than the second, because the interface was
+          decided once and is enforced by test.</p>
+      </article>
+      <article class="karte">
+        <h3>appkit prevents drift</h3>
+        <p>One shared library instead of ten divergent copies. A security improvement
+          lands in ten places in one commit.</p>
+      </article>
+      <article class="karte">
+        <h3>Laws prevent rework</h3>
+        <p>Most lost time in a project is spent undoing something that should not have
+          been started. Written rules are cheaper than reversals.</p>
+      </article>
+      <article class="karte">
+        <h3>AI delivers volume</h3>
+        <p>Build chats produce code and documentation at a rate a single person cannot.
+          That is the part everyone already knows.</p>
+      </article>
+      <article class="karte">
+        <h3>The human delivers judgement</h3>
+        <p>What to build, what to refuse, when a thing is good enough, and when to stop.
+          No model has been given that decision here.</p>
+      </article>
+      <article class="karte">
+        <h3>And it is checkable</h3>
+        <p>The pace is not a claim on a website. It is dated documents in a repository —
+          night runs, system checks, audits, from 8 June 2026 onward.</p>
+      </article>
+    </div>
+    <div class="knoepfe">
+      <a class="knopf prim" href="/journey/">See the dated timeline <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+      <a class="knopf" href="{{REPO}}/tree/main/docs" rel="noopener">Read the documents <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>

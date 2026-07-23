@@ -1,0 +1,201 @@
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">The system</p>
+    <h1>Ten applications that behave like one</h1>
+    <p class="lede">A headless core on <code>:8200</code>, nine services around it, and
+      one written contract that every one of them has to pass — in its own test suite,
+      on every run.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The layers</h2>
+    <p class="dach">Thin shells render the same core, so the whole network can move
+      from a PC to a server unchanged — Windows or Linux.</p>
+
+    <div class="schichten reveal mt-l">
+      <div class="a-steel sch">
+        <p class="sch-t">Shells</p>
+        <p class="sch-b">Desktop · Mobile · Browser — no business logic in the shell.</p>
+      </div>
+      <div class="a-vio sch">
+        <p class="sch-t">Dizzi-Core <span class="chip">:8200</span></p>
+        <p class="sch-b">AI orchestrator · panel registry · MCP hub · health watch ·
+          Dizzi-ID single sign-on. Headless: it orchestrates, it never acts outward
+          on its own.</p>
+      </div>
+      <div class="a-cy sch">
+        <p class="sch-t">Nine applications</p>
+        <ul class="sch-g">
+          <li>Money <span class="chip">:8210</span></li>
+          <li>Communication <span class="chip">:8218</span></li>
+          <li>Creating <span class="chip">:8214</span></li>
+          <li>Memory <span class="chip">:8212</span></li>
+          <li>Management <span class="chip">:8213</span></li>
+          <li>News <span class="chip">:8216</span></li>
+          <li>Healthy <span class="chip">:8217</span></li>
+          <li>Admin <span class="chip">:8222</span></li>
+          <li>Trading <span class="chip">:8137</span></li>
+        </ul>
+        <p class="sch-b">Each a service with its own SQLite database and its own web
+          interface. Each independently runnable, each independently sellable.</p>
+      </div>
+      <div class="a-mag sch">
+        <p class="sch-t">packages/appkit · packages/ui-kit</p>
+        <p class="sch-b">Shared beneath everything: the contract, authentication,
+          security, deletion proofs — and the design system.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">The mechanism</p>
+    <h2>The App Contract</h2>
+    <div class="raster mt-m">
+      <div>
+        <p class="lang">Write the contract, and the app appears. A service that answers
+          the mandatory endpoints registers itself in the dashboard and becomes
+          reachable for the assistant — nobody wires it up by hand.</p>
+        <p class="lang">The contract is not a document that hopes to be followed. It is
+          <b>machine-enforced</b>: <code>appkit/conformance.py</code> runs inside every
+          app's test suite. The specification says so itself — where the prose and the
+          code disagree, the code wins.</p>
+        <ul class="liste">
+          <li><code>/api/summary</code> always answers <b>HTTP 200</b>; the state lives
+            in a <code>status</code> field (<code>ok</code> · <code>leer</code> ·
+            <code>fehler</code>), never in an error code and never in a fake zero.</li>
+          <li><code>/api/actions</code> carries the human-in-the-loop flow:
+            propose → approve or reject. The AI never approves its own action.</li>
+          <li><code>/api/account/export</code> and <code>/api/account/loeschen</code>
+            implement the data rights — both demand fresh re-authentication, both
+            fail closed.</li>
+          <li><code>/api/audit</code> records every action that has an effect.</li>
+        </ul>
+      </div>
+      <figure class="code oben">
+        <pre><span class="co"># every application, without exception</span>
+<b>GET  /api/health</b>            <span class="co">heartbeat + contract version</span>
+<b>GET  /api/manifest</b>          <span class="co">machine-readable identity</span>
+<b>GET  /api/summary</b>           <span class="co">always 200, state in `status`</span>
+<b>GET  /api/settings</b>          <span class="co">typed, strict, audited</span>
+<b>GET  /api/account</b>           <span class="co">profile · tier · SSO state</span>
+<b>GET  /api/vault</b>             <span class="co">names only, never values</span>
+<b>GET  /api/audit</b>             <span class="co">every effect, logged</span>
+<b>POST /api/actions</b>           <span class="co">propose → human approves</span>
+<b>     /mcp</b>                   <span class="co">tool server for the assistant</span></pre>
+        <figcaption>The mandatory surface, as specified in
+          <code>docs/16_APP_VERTRAG_SPEC.md</code>.<a class="beleg" href="{{REPO}}/blob/main/docs/16_APP_VERTRAG_SPEC.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/16_APP_VERTRAG_SPEC.md</span></a></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">The shared floor</p>
+    <h2>appkit — changed once, effective everywhere</h2>
+    <p class="dach">One shared library instead of ten copies of the same idea.
+      Authentication, CSP hardening, deletion proofs, security posture, the area
+      canon. When the security model improves, it improves in ten places at once.</p>
+    <div class="karten reveal mt-l">
+      <article class="karte">
+        <h3>Identity in three tiers</h3>
+        <p><code>lokal</code> → <code>verifiziert</code> → <code>hochsicher</code>.
+          Routes that require a tier refuse without one — <b>403, fail-closed</b>.
+          Nothing is accidentally open.</p>
+      </article>
+      <article class="karte">
+        <h3>Tokens, done properly</h3>
+        <p>Ed25519 with the algorithm pinned in the verifier, PKCE mandatory,
+          single-use codes with a 60-second life, refresh rotation with family
+          revocation on reuse, secrets stored hashed only.</p>
+      </article>
+      <article class="karte">
+        <h3>A vault that keeps quiet</h3>
+        <p>Service secrets sit encrypted beside the app database. The HTTP surface
+          returns <b>names, never values</b> — a backup leak does not become a
+          credential leak.</p>
+      </article>
+    </div>
+    <div class="knoepfe">
+      <a class="knopf" href="{{REPO}}/tree/main/packages/appkit" rel="noopener">Read appkit <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Between the apps</p>
+    <h2>Cross-connections, deliberately narrow</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">There is no central data lake. Every application keeps its own
+          data, and hands over only through a written contract — nineteen of them,
+          numbered and specified. The Core relays; it listens and it logs.</p>
+        <p class="lang">The constraint is real and we accept it: local-first makes
+          synchronisation harder, and a read-only relay is less convenient than a
+          shared database would be. We took that trade on purpose. Data that never
+          leaves its source cannot leak from somewhere it never was.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Cross-connection rule</span>
+          <p>“Data stays at its source; the Core only relays read-only; anything with
+            outside effect needs an explicit human approval step.”</p>
+          <footer>docs/26 — the hand-over contracts V2–V19<a class="beleg" href="{{REPO}}/blob/main/docs/26_QUERVERBINDUNGEN.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/26_QUERVERBINDUNGEN.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Security posture</p>
+    <h2>Bound to localhost, gated at every irreversible step</h2>
+    <ul class="liste lang">
+      <li><b>Every service binds to 127.0.0.1.</b> Sensitive applications route AI
+        requests <code>lokal_only</code> by default — those contents never leave the
+        machine.</li>
+      <li><b>The browser is outside the trust boundary.</b> A local guard checks the
+        Host header against an allowlist and validates the Origin on every writing
+        method, which is what stops DNS rebinding and blind cross-site posts.</li>
+      <li><b>Defence in depth against the network.</b> Sensor middleware sits at the
+        outermost layer and sees even rejected requests; a rule engine and a load
+        baseline feed an escalation ladder. Autonomous throttling is allowed;
+        lockdown and emergency stop are human actions.</li>
+      <li><b>Real money is a separate class.</b> Paper trading is free; a real
+        transfer requires the highest tier. The trading fleet in the public snapshot
+        runs <b>dry-run</b>.</li>
+      <li><b>Honest residual risk.</b> The security concept names what is <em>not</em>
+        solved and keeps a prioritised hardening backlog. A threat model that only
+        lists wins is a marketing document.</li>
+    </ul>
+    <div class="knoepfe">
+      <a class="knopf" href="{{REPO}}/blob/main/docs/18_SICHERHEITSKONZEPT.md" rel="noopener">The security concept <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+      <a class="knopf" href="{{REPO}}/blob/main/docs/37_CSP_STRIKT_RECIPE.md" rel="noopener">The strict-CSP recipe <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="hinweis balken">
+      <p><b>The interactive map shows all of it at
+        once</b> — layers, hand-over contracts, security posture. Self-contained,
+        no external calls.</p>
+      <a class="knopf prim" href="/karte/">Open the system map <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+    <p class="dach mt-m">Go deeper in the repository:
+      <a href="{{REPO}}/blob/main/docs/16_APP_VERTRAG_SPEC.md" rel="noopener">docs/16 — the app contract</a><span class="trenn">·</span>
+      <a href="{{REPO}}/blob/main/docs/26_QUERVERBINDUNGEN.md" rel="noopener">docs/26 — cross-connections</a><span class="trenn">·</span>
+      <a href="{{REPO}}/blob/main/docs/18_SICHERHEITSKONZEPT.md" rel="noopener">docs/18 — security concept</a><span class="trenn">·</span>
+      <a href="{{REPO}}/tree/main/packages/appkit" rel="noopener">packages/appkit</a><span class="trenn">·</span>
+      <a href="{{REPO}}/blob/main/docs/12_GESAMTVERSTAENDNIS.md" rel="noopener">docs/12 — the whole thing, no prior knowledge</a>
+    </p>
+  </div>
+</section>
