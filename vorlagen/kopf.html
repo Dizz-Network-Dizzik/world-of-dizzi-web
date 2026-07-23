@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESC}}">
+  <link rel="canonical" href="{{HOST}}{{PATH}}">
+  {{ROBOTS}}{{HREFLANG}}<meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="the world of dizzi">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESC}}">
+  <meta property="og:url" content="{{HOST}}{{PATH}}">
+  <meta property="og:locale" content="{{OGLOCALE}}">
+  <meta property="og:image" content="{{HOST}}/bilder/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{OGALT}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/bilder/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/schrift/chakra-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/schrift/orbitron-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/stil.css">
+  {{JSONLD}}</head>
+<body>
+<a class="skip" href="#inhalt">{{SKIP}}</a>
+
+<header class="kopf">
+  <div class="wrap">
+    <a class="marke" href="/">the world of dizzi</a>
+    <nav class="nav" aria-label="{{NAVLABEL}}">
+      <ul>
+        {{NAV}}
+        <li>{{LANGLINK}}</li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
