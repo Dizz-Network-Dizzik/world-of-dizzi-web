@@ -1,0 +1,22 @@
+# the world of dizzi
+
+> One person, ten local-first applications, one shared architecture - a
+> source-visible personal AI network. Curated public snapshot; not open source.
+
+## Start here
+- [The system](https://worldofdizzi.netlify.app/system/): architecture, the app contract, shared core library
+- [The ten applications](https://worldofdizzi.netlify.app/apps/): what each app does, with source links
+- [The method](https://worldofdizzi.netlify.app/method/): written laws, contracts, AI build-chat orchestration
+- [Journey](https://worldofdizzi.netlify.app/journey/): dated milestones since June 2026
+- [From project to company](https://worldofdizzi.netlify.app/vision/): status, why it scales, what we're opening
+- [About & contact](https://worldofdizzi.netlify.app/about/): who builds this, and how to reach him
+
+## Source
+- [Public repository](https://github.com/Dizz-Network-Dizzik/dizz-network): 966 files, one curated commit
+- [Interactive system map](https://worldofdizzi.netlify.app/karte/): self-contained, no external calls
+
+## Notes
+- Status: independent project, pre-incorporation. No revenue yet; the trading
+  fleet runs dry-run only. Snapshot public since 23 July 2026.
+- Every number on this site links to the file in the repository that proves it.
+- German entry page: https://worldofdizzi.netlify.app/de/

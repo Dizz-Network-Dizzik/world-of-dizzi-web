@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The ten applications | the world of dizzi</title>
+  <meta name="description" content="Core, money, communication, creating, memory, management, news, health, admin and a trading fleet — each on its own port, each with a source link.">
+  <link rel="canonical" href="https://worldofdizzi.netlify.app/apps/">
+  <meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="the world of dizzi">
+  <meta property="og:title" content="The ten applications | the world of dizzi">
+  <meta property="og:description" content="Core, money, communication, creating, memory, management, news, health, admin and a trading fleet — each on its own port, each with a source link.">
+  <meta property="og:url" content="https://worldofdizzi.netlify.app/apps/">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://worldofdizzi.netlify.app/bilder/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="the world of dizzi — dark title card with the numbers 10 applications, 2,600+ commits, ~100,000 lines of Python, 2,623 tests">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/bilder/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/schrift/chakra-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/schrift/orbitron-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/stil.css">
+  </head>
+<body>
+<a class="skip" href="#inhalt">Skip to content</a>
+
+<header class="kopf">
+  <div class="wrap">
+    <a class="marke" href="/">the world of dizzi</a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        <li><a href="/system/">System</a></li>
+        <li><a href="/apps/" aria-current="page">Apps</a></li>
+        <li><a href="/method/">Method</a></li>
+        <li><a href="/journey/">Journey</a></li>
+        <li><a href="/vision/">Vision</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a class="nav-karte" href="/karte/">System map</a></li>
+        <li><a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">The ten</p>
+    <h1>Ten applications, one contract</h1>
+    <p class="lede">Every one of them runs on its own port, owns its own database and
+      could be sold on its own. Every one of them answers the same mandatory
+      endpoints.</p>
+    <p class="dach mt-m">The test counts below are <b>measured</b>
+      in the public snapshot — counted the same way the repository README counts them,
+      and each one links to the code it came from. Where an application is thinner than
+      its description, the number says so.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <ul class="bento">
+      <li><a class="a-vio kachel" href="#core"><span class="kn">Dizzi-Core <span class="chip">:8200</span></span><span class="kt">Orchestrator, registry, MCP hub, health watch.</span><span class="kf">300 tests</span></a></li>
+      <li><a class="a-amber kachel" href="#money"><span class="kn">Dizz Money <span class="chip">:8210</span></span><span class="kt">Finance, ledger care-core, German tax filing.</span><span class="kf">462 tests</span></a></li>
+      <li><a class="a-blue kachel" href="#communication"><span class="kn">Dizz Communication <span class="chip">:8218</span></span><span class="kt">Unified inbox, contacts, appointments.</span><span class="kf">191 tests</span></a></li>
+      <li><a class="a-mag kachel" href="#creating"><span class="kn">Dizz Creating <span class="chip">:8214</span></span><span class="kt">Media workbench over one GPU job queue.</span><span class="kf">core excluded</span></a></li>
+      <li><a class="a-cy kachel" href="#memory"><span class="kn">Dizz Memory <span class="chip">:8212</span></span><span class="kt">Markdown vault, full-text search, retrieval.</span><span class="kf">118 tests</span></a></li>
+      <li><a class="a-vio kachel" href="#management"><span class="kn">Dizz Management <span class="chip">:8213</span></span><span class="kt">Agent administration, autonomy ladder.</span><span class="kf">132 tests</span></a></li>
+      <li><a class="a-orange kachel" href="#news"><span class="kn">Dizz News <span class="chip">:8216</span></span><span class="kt">Sector digest, dedup, watchlists.</span><span class="kf">77 tests</span></a></li>
+      <li><a class="a-green kachel" href="#healthy"><span class="kn">Dizz Healthy <span class="chip">:8217</span></span><span class="kt">Metrics, training, wearables.</span><span class="kf">54 tests</span></a></li>
+      <li><a class="a-steel kachel" href="#admin"><span class="kn">Dizz Admin <span class="chip">:8222</span></span><span class="kt">Vault, projects, business, studies, deadlines.</span><span class="kf">190 tests</span></a></li>
+      <li><a class="a-coral kachel" href="#trading"><span class="kn">Dizz Trading <span class="chip">:8137</span></span><span class="kt">Autonomous bot fleet, hard human gate.</span><span class="kf">471 tests</span></a></li>
+    </ul>
+  </div>
+</section>
+
+<div class="wrap">
+
+<section class="a-vio app-abschnitt" id="core">
+  <div class="app-kopf">
+    <h2>Dizzi-Core</h2>
+    <span class="chip">:8200</span>
+    <span class="chip">300 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/core" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/core in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Ten services that each know how to talk to an assistant means ten
+        connections to manage, ten places to authenticate, ten places for drift to
+        creep in. The decision was to make the core headless and put everything shared
+        in it: one orchestrator, one registry, one tool bus, one identity. The result
+        is that adding an application costs a contract, not an integration.</p>
+      <ul class="liste">
+        <li>AI orchestrator over local models, driven by JSON schema grammar rather
+          than hopeful prompting — temperature 0, fail-safe throughout.</li>
+        <li>Panel registry at <code>/api/panels</code>: every app announces its panels,
+          so the core knows the whole interface without being told twice.</li>
+        <li>MCP hub — all app tool gateways pulled to one point, read-only and
+          bearer-gated; writing and high-security tools stay closed to the outside.</li>
+        <li>Health watch over ten targets, plus the master instance of single sign-on
+          and the layered memory.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/core" rel="noopener">apps/core &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>The core never acts outward.</b> It routes, relays and
+        logs. Every effect on the outside world belongs to an application, and every
+        one of those sits behind a human approval step.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-amber app-abschnitt" id="money">
+  <div class="app-kopf">
+    <h2>Dizz Money</h2>
+    <span class="chip">:8210</span>
+    <span class="chip">462 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/money" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/money in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Personal finance software either sees your bank or it sees
+        nothing. The decision here was read-only by construction: the bank connection
+        over FinTS can import and reconcile, and it cannot move a cent. Everything that
+        does have an effect — a tax submission, a transfer — is a separate, gated act
+        by a human. The result is the largest test suite in the network, because money
+        is where being wrong costs the most.</p>
+      <ul class="liste">
+        <li>Import, categorisation, budgets, cash flow, foreign exchange.</li>
+        <li>A ledger care-core that keeps the books consistent rather than merely
+          pretty.</li>
+        <li>German tax filing over the official transport path, with its own written
+          contract for the submission format.</li>
+        <li>Bank sync over FinTS — <b>read-only</b>, specified as such in its own
+          contract document.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/money" rel="noopener">apps/money &#8599;</a><span class="trenn">·</span><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/blob/main/docs/64_BANK_SYNC_VERTRAG.md" rel="noopener">docs/64 — bank sync contract &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>Why read-only is a feature.</b> A finance app that cannot
+        initiate a payment cannot be tricked into initiating one. The convenience we
+        gave up is real; so is the class of attack we gave up with it.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-blue app-abschnitt" id="communication">
+  <div class="app-kopf">
+    <h2>Dizz Communication</h2>
+    <span class="chip">:8218</span>
+    <span class="chip">191 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/communication" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/communication in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Messages arrive in six places and a person has to be the router.
+        The decision was one inbox across e-mail and messengers, with contacts as the
+        organising unit rather than threads — so a conversation follows a person, not a
+        protocol. The result is that scheduling, follow-ups and history stop being a
+        function of which app someone happened to use.</p>
+      <ul class="liste">
+        <li>Unified inbox across e-mail providers and messenger bridges.</li>
+        <li>Smart contacts, per-contact chat history, appointment detection out of
+          message text.</li>
+        <li>Classified at the highest sensitivity level — which means AI routing is
+          local only, by default and by contract.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/communication" rel="noopener">apps/communication &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>Sensitivity is a field, not an intention.</b> Each app
+        declares its class in its manifest, and the class decides where the AI may
+        run. High and highest never leave the machine.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-mag app-abschnitt" id="creating">
+  <div class="app-kopf">
+    <h2>Dizz Creating</h2>
+    <span class="chip">:8214</span>
+    <span class="chip">core not in this snapshot</span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Image, video and music generation each want the whole GPU. The
+        decision was a single job queue in front of one external generation service, so
+        the network schedules the card instead of fighting over it, and every generated
+        asset is labelled as generated at the moment it is written. The result is a
+        media workbench that behaves like a service rather than a pile of scripts.</p>
+      <ul class="liste">
+        <li>One shared GPU job queue for image, video and audio work.</li>
+        <li>Asset management with AI labelling of generated content.</li>
+        <li>A workflow graph library covering image, video and audio pipelines — that
+          part <em>is</em> in the snapshot.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/creating" rel="noopener">apps/creating &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>Said plainly:</b> the architecture, the contracts and the
+        workflow library are public here — <b>the core implementation of this app is
+        deliberately not included</b> in the curated snapshot. The repository README
+        says the same thing. A gap you can see is worth more than a gap you find
+        later.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-cy app-abschnitt" id="memory">
+  <div class="app-kopf">
+    <h2>Dizz Memory</h2>
+    <span class="chip">:8212</span>
+    <span class="chip">118 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/memory" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/memory in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">A knowledge store that lives in a proprietary database is a
+        knowledge store you can lose. The decision was a markdown vault on disk as the
+        truth, with a full-text index beside it for speed — so the files stay readable
+        with any editor, and the index is always rebuildable. The result is a long-term
+        memory across every area of life that outlives the software that made it.</p>
+      <ul class="liste">
+        <li>Markdown vault plus SQLite full-text search and retrieval.</li>
+        <li>Folders and labels, area-level categorisation, import from existing
+          material.</li>
+        <li>An MCP namespace of its own, so the assistant can search the vault without
+          a second connection.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/memory" rel="noopener">apps/memory &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>Files first.</b> The index is a cache. If it burns down,
+        nothing is lost — that is the whole point of choosing plain text.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-vio app-abschnitt" id="management">
+  <div class="app-kopf">
+    <h2>Dizz Management</h2>
+    <span class="chip">:8213</span>
+    <span class="chip">132 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/management" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/management in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Once assistants start doing work unattended, the question stops
+        being “can it?” and becomes “how far may it go, and who says stop?”. The
+        decision was a written autonomy ladder from T0 to T3 with an emergency stop, so
+        every agent has a declared ceiling instead of an implied one. The result is
+        agent administration that can be audited: what ran, at which level, approved by
+        whom.</p>
+      <ul class="liste">
+        <li>Autonomy ladder T0–T3 with a hard human-in-the-loop step and an emergency
+          stop, specified in its own contract.</li>
+        <li>A network inbox for what the agents want to tell the human.</li>
+        <li>Editorial planning per area, channels, drafts and schedules — publishing
+          itself stays gated.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/management" rel="noopener">apps/management &#8599;</a><span class="trenn">·</span><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/blob/main/docs/63_AGENTEN_REGIE_VERTRAG.md" rel="noopener">docs/63 — agent direction contract &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>An autonomy level is a promise you can check.</b> It is
+        written in a contract, enforced in code, and recorded in the audit log —
+        three places that have to agree.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-orange app-abschnitt" id="news">
+  <div class="app-kopf">
+    <h2>Dizz News</h2>
+    <span class="chip">:8216</span>
+    <span class="chip">77 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/news" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/news in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">A news feed optimised for engagement is optimised against you.
+        The decision was a fixed set of vetted sources and a digest structured by
+        sector rather than by recency, with cross-source deduplication so one event
+        does not read as eight. The result is a briefing you finish, instead of a
+        stream you escape.</p>
+      <ul class="liste">
+        <li>Sector-structured digest from a vetted source list.</li>
+        <li>Cross-source deduplication — one event, one entry.</li>
+        <li>Living watchlists that carry topics forward across editions.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/news" rel="noopener">apps/news &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>No ranking model.</b> The sources are chosen once, by a
+        human, and written down. That is a weaker system than a recommender and a much
+        more predictable one.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-green app-abschnitt" id="healthy">
+  <div class="app-kopf">
+    <h2>Dizz Healthy</h2>
+    <span class="chip">:8217</span>
+    <span class="chip">54 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/healthy" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/healthy in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Health data is the most sensitive class in the network, and the
+        temptation to send it to a large cloud model for a clever summary is exactly
+        where these systems go wrong. The decision was strict: this app's AI routing is
+        local only, and the trends it shows are deterministic calculations, not model
+        output. The result is a health overview that gives hints and never a diagnosis.</p>
+      <ul class="liste">
+        <li>Measurements, supplements, injuries, training, appointments.</li>
+        <li>Deterministic trends, with local AI hints clearly separated from them.</li>
+        <li>Standard health data vocabularies, so the data can leave in a form other
+          software understands.</li>
+        <li>Wearable and mobile connection points are prepared and documented, not
+          claimed as built.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/healthy" rel="noopener">apps/healthy &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>Prepared is not built.</b> The written laws require that
+        dormant connection points are documented as dormant — so nobody, including the
+        author six months later, mistakes a socket for a feature.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-steel app-abschnitt" id="admin">
+  <div class="app-kopf">
+    <h2>Dizz Admin</h2>
+    <span class="chip">:8222</span>
+    <span class="chip">190 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/admin" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/admin in the repository</span></a></span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">Personal bureaucracy does not fit into projects or into folders;
+        it fits into areas of life that persist for years. The decision was to make the
+        area a first-class type with its own canon, shared across the network, so
+        finance, knowledge and social activity can all report into the same structure.
+        The result is the home of the area-type model — and the reason cross-app views
+        line up at all.</p>
+      <ul class="liste">
+        <li>Vault, projects, business paperwork, studies, deadlines.</li>
+        <li>Area-first: the canonical area-type model lives here and is shared by
+          contract.</li>
+        <li>Feeds the area cockpit that Money, Management and Memory report into.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/admin" rel="noopener">apps/admin &#8599;</a><span class="trenn">·</span><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/blob/main/docs/49_BEREICH_TYP_MODELL.md" rel="noopener">docs/49 — area-type model &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis"><b>One naming note, in the open:</b> this application was
+        called <em>leading</em> until 20 June 2026. Some documents inside its folder
+        still carry the old name and the old port. The canonical answer is the
+        repository README and the system map: <code>admin</code>, port 8222.</div>
+    </div>
+  </div>
+</section>
+
+<section class="a-coral app-abschnitt" id="trading">
+  <div class="app-kopf">
+    <h2>Dizz Trading</h2>
+    <span class="chip">:8137</span>
+    <span class="chip">471 test functions<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/trading" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: apps/trading in the repository</span></a></span>
+    <span class="chip">dry-run</span>
+  </div>
+  <div class="raster">
+    <div>
+      <p class="lang">An autonomous trading fleet is the sharpest possible test of the
+        network's central rule, because here the machine is fast and the human is slow.
+        The decision was that the fleet may propose without limit and may not move real
+        money at all: a real transfer requires the highest security tier, and the
+        public snapshot runs <b>dry-run</b>. The result is a system whose learning
+        layer can be aggressive precisely because its hands are tied.</p>
+      <ul class="liste">
+        <li>A bot fleet with a learning layer and a strategy research catalogue.</li>
+        <li>Kelly sizing with its own written specification.</li>
+        <li>A hard human-in-the-loop gate; paper trading is free, real money is a
+          separate, highest-tier act.</li>
+        <li>Defence in depth: exchange keys never carry withdrawal rights.</li>
+      </ul>
+      <p><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/trading" rel="noopener">apps/trading &#8599;</a></p>
+    </div>
+    <div>
+      <div class="hinweis warn"><b>The build chronicle.</b>
+        Thirty-odd dated documents sit next to this app: night runs, system checks,
+        deep audits, research protocols and honest post-mortems — from 8 June 2026
+        onwards. The process is part of the product.
+        <br><br><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps/trading/programm/docs" rel="noopener">Read the chronicle &#8599;</a></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="hinweis balken">
+      <p><b>Ten applications, one written contract.</b>
+        The contract is what makes each of them separable — and separable is what makes
+        them sellable.</p>
+      <a class="knopf prim" href="/vision/">Why that matters <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap">
+    <div class="fuss-oben">
+      <a class="marke" href="/">the world of dizzi</a>
+      <nav aria-label="Legal">
+        <ul>
+          <li><a href="https://github.com/Dizz-Network-Dizzik/dizz-network" rel="noopener">Source &#8599;</a></li>
+          <li><a href="/karte/">System map</a></li>
+          <li><a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a></li>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Privacy</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="fuss-status"><a href="/vision/">Independent project — incorporation ahead.</a></p>
+    <div class="fuss-fein">
+      <p>Source-visible showcase, not open source. All rights reserved.</p>
+      <p>Built with a 100-line Python baker. No cookies, no trackers, no external requests.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

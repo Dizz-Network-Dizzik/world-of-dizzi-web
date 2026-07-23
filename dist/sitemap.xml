@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://worldofdizzi.netlify.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/"/>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/system/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/apps/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/method/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/journey/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/vision/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/about/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/de/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/karte/</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>
