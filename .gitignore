@@ -1,0 +1,5 @@
+# local tooling and scratch - never published
+.claude/
+_vorschau/
+__pycache__/
+*.pyc

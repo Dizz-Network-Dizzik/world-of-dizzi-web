@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How the numbers were counted | the world of dizzi</title>
+  <meta name="description" content="The six figures this site leads with — how each was counted, when it was measured, and which one cannot be checked from outside.">
+  <link rel="canonical" href="https://worldofdizzi.netlify.app/numbers/">
+  <meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="the world of dizzi">
+  <meta property="og:title" content="How the numbers were counted | the world of dizzi">
+  <meta property="og:description" content="The six figures this site leads with — how each was counted, when it was measured, and which one cannot be checked from outside.">
+  <meta property="og:url" content="https://worldofdizzi.netlify.app/numbers/">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://worldofdizzi.netlify.app/bilder/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="the world of dizzi — dark title card with the numbers 10 applications, 2,600+ commits, ~100,000 lines of Python, 2,667 tests">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/bilder/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/schrift/chakra-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/schrift/orbitron-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/stil.css">
+  </head>
+<body>
+<a class="skip" href="#inhalt">Skip to content</a>
+<div class="fortschritt" aria-hidden="true"></div>
+
+<header class="kopf">
+  <div class="wrap">
+    <a class="marke" href="/">the world of dizzi</a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        <li><a href="/system/">System</a></li>
+        <li><a href="/apps/">Apps</a></li>
+        <li><a href="/method/">Method</a></li>
+        <li><a href="/numbers/" aria-current="page">Numbers</a></li>
+        <li><a href="/journey/">Journey</a></li>
+        <li><a href="/vision/">Vision</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a class="nav-karte" href="/karte/">System map</a></li>
+        <li><a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">The numbers</p>
+    <h1>Six figures, and how each was counted</h1>
+    <p class="lede">A number without a method is a claim. This page carries the method
+      next to each figure, so you can reproduce it instead of believing it — and where
+      you cannot, it says so.</p>
+    <p class="dach mt-m">Four of the six were measured on 26 July
+      2026 against the public snapshot of 23 July 2026, and measured again on 27 July
+      2026 — the two readings agree. The fifth is measured
+      in this website's own repository, the sixth in the private working repository
+      behind the snapshot. Each of those two names its repository in its own entry
+      below.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Measured, not claimed</p>
+    <h2>The six figures this site leads with</h2>
+    <p class="dach">Each one opens to show how it was produced. The last of the six is
+      the only figure here that cannot be checked from outside, and it says so itself.</p>
+
+    <ol class="messung reveal mt-l">
+
+      <li class="mess" id="apps">
+        <p class="mess-kopf"><b class="mess-wert">10</b>
+          <span class="mess-was">applications — the Core and nine around it</span></p>
+        <details class="methode">
+          <summary>How it was counted</summary>
+          <div class="methode-inhalt">
+            <p>Directories under <code>apps/</code> in the snapshot: admin,
+              communication, core, creating, healthy, management, memory, money, news,
+              trading. Counting the Core as one of the ten is a choice, not a
+              measurement — the same set is described as nine applications around a
+              headless core wherever that relation is the point.</p>
+            <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/tree/main/apps" rel="noopener">apps/ in the repository &#8599;</a></p>
+          </div>
+        </details>
+      </li>
+
+      <li class="mess" id="dateien">
+        <p class="mess-kopf"><b class="mess-wert">966</b>
+          <span class="mess-was">tracked files, published as one curated commit</span></p>
+        <details class="methode">
+          <summary>How it was counted</summary>
+          <div class="methode-inhalt">
+            <p><code>git ls-files</code> in the snapshot. One commit, because the
+              snapshot is curated: it was assembled deliberately rather than pushed as a
+              working history. Some modules are left out on purpose, and the largest of
+              those gaps is named on the page that would otherwise overstate itself.</p>
+            <p class="quellen"><a href="/apps/#creating">The largest gap, named &#8594;</a></p>
+          </div>
+        </details>
+      </li>
+
+      <li class="mess" id="python">
+        <p class="mess-kopf"><b class="mess-wert">~100,000</b>
+          <span class="mess-was">lines of Python, across 632 files</span></p>
+        <details class="methode">
+          <summary>How it was counted</summary>
+          <div class="methode-inhalt">
+            <p>File count: <code>git ls-files "*.py"</code> — 632 files. The rounded
+              figure stands for an exact one: <b>100,234 lines carry a
+              non-whitespace character</b>, and 119,249 lines exist in total. The
+              rounded number is the one used on the other pages, because the working
+              repository moves every day and the next snapshot will carry a different
+              exact figure; both describe the same measurement.</p>
+            <p>One detail worth naming, because it is the sort of thing that makes two
+              honest counts disagree: two files end without a final line break —
+              <code>apps/core/tests/test_voice.py</code> and
+              <code>apps/news/tests/test_report.py</code>. A count that works by counting
+              line breaks misses the last line of each and lands two short. The figure
+              above counts lines, not line breaks.</p>
+          </div>
+        </details>
+      </li>
+
+      <li class="mess" id="tests">
+        <p class="mess-kopf"><b class="mess-wert">2,667</b>
+          <span class="mess-was">test functions, in 309 files</span></p>
+        <details class="methode">
+          <summary>How it was counted</summary>
+          <div class="methode-inhalt">
+            <p>Every tracked <code>.py</code> file is parsed for functions whose names
+              begin with <code>test_</code>. The suite is <b>not</b> run to produce this
+              figure, which means it counts tests <em>written</em>, not tests
+              <em>passing</em>. That distinction is the whole reason the number is
+              described this way rather than as a pass rate.</p>
+            <p>Forty-four of them are asynchronous, so a count that looks only for
+              <code>def test_</code> and not for <code>async def test_</code> lands at
+              2,623 instead. The per-application figures on the applications page were
+              produced by the same parse, in the same run.</p>
+            <p class="quellen"><a href="/numbers/#verteilung">Where they sit &#8594;</a><span class="trenn">·</span><a href="/apps/">The per-application figures &#8594;</a></p>
+          </div>
+        </details>
+      </li>
+
+      <li class="mess" id="baecker">
+        <p class="mess-kopf"><b class="mess-wert">591</b>
+          <span class="mess-was">lines in the script that builds this website</span></p>
+        <details class="methode">
+          <summary>How it was counted, and why it counts itself</summary>
+          <div class="methode-inhalt">
+            <p>The physical line count of <code>bake.py</code>, in this website's own
+              repository. Of those lines, 521 carry a non-whitespace
+              character. The footer of every page names this figure, so it belongs here
+              with its method like the rest.</p>
+            <p>It is in this list for a second reason. Until 26 July the same footer
+              said <em>100-line</em> while the file held more than five times as many,
+              and no reader could have caught it from the page: the only source link in
+              that footer pointed to the network repository, which does not contain this
+              file. Then it went wrong again — the figure was corrected to the right
+              number, and the very work that added this page grew the file past it.</p>
+            <p>Both holes are closed here. The figure is <b>no longer typed anywhere</b>:
+              the build script counts its own lines and writes the result into every
+              footer, into this entry and into the German summary at the foot of this
+              page. An edit that changes its length changes all of them, and
+              <code>bake.py --check</code> fails until they are built again — so the
+              figure can no longer go stale without the check saying so. And the footer
+              figure is now a link to this entry, which carries the source link that was
+              missing.</p>
+            <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/bake.py" rel="noopener"><code>bake.py</code> in this website's own repository &#8599;</a></p>
+          </div>
+        </details>
+      </li>
+
+      <li class="mess" id="commits">
+        <p class="mess-kopf"><b class="mess-wert">2,600+</b>
+          <span class="mess-was">commits in the private working repository behind the snapshot</span></p>
+        <details class="methode">
+          <summary>How it was counted, and why it is stated as a floor</summary>
+          <div class="methode-inhalt">
+            <p><code>git rev-list --count</code> in the working repository, which is
+              private. <b>Of the six, this is the one you cannot check.</b> The public
+              snapshot is a single commit, so counting commits there proves nothing
+              about the work behind it.</p>
+            <p>It is written as a floor rather than an exact number for that reason: an
+              exact figure would look precise while resting on nothing you can inspect,
+              and it would be stale within a day. A floor is the most a private number
+              is entitled to claim.</p>
+          </div>
+        </details>
+      </li>
+
+    </ol>
+  </div>
+</section>
+
+<section id="verteilung">
+  <div class="wrap">
+    <p class="kicker">The sum a reader will try</p>
+    <h2>Where the other 628 tests live</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Add up the nine test figures on the applications page — Dizz
+          Creating carries none, because its core is not in the snapshot — and you get
+          2,039, not 2,667. The difference is real, and it is not hiding anywhere
+          clever: the shared work does not sit inside the applications.</p>
+        <p class="lang">This is the part of the architecture that is easiest to state
+          and hardest to show. Shared libraries that carry authentication, contract
+          checking, security posture and deletion proofs for ten applications are where
+          a mistake is a mistake everywhere — and that is where 579 of the tests sit,
+          more than any single application has.</p>
+      </div>
+      <div>
+        <ul class="liste lang">
+          <li><b>579</b> in <code>packages/</code> — the shared libraries, appkit and
+            the design system.</li>
+          <li><b>46</b> in <code>ops/</code> — the operating scripts and the
+            documentation check.</li>
+          <li><b>3</b> in <code>templates/</code> — the scaffold a new application
+            starts from.</li>
+          <li><b>2,039</b> across the ten application folders — Dizz Creating
+            contributes none.</li>
+        </ul>
+        <p class="dach klein">579 + 46 + 3 + 2,039 = 2,667. The sum is
+          here because a reader who adds these four up deserves the answer on the page
+          rather than a discrepancy to wonder about.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">A word that has to be exact</p>
+    <h2>What <em>separable</em> means here, and what it does not</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Separable means each application already runs on its own: its
+          own port, its own database, its own interface. That part is built, and it is
+          visible in the snapshot.</p>
+        <p class="lang">Independently <em>sellable</em> is a different claim, and it is
+          <b>a design goal, not a finished feature</b>. There is a written export
+          contract that specifies how one application, plus the Core and the parts of
+          the shared libraries it actually uses, becomes a self-contained bundle. That
+          contract has design, stubs and contract tests. <b>The packaging tooling itself
+          is not built.</b></p>
+        <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/dizz-network/blob/main/docs/66_APP_EXPORT_VERTRAG.md" rel="noopener">docs/66 — the app export contract &#8599;</a></p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Principle · honesty</span>
+          <p>“If a value was never measured, the system says so instead of showing a
+            zero.”</p>
+          <footer>Repository README, <em>Principles</em> — the rule the software obeys.
+            A page of figures is where it either holds or does not.<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/dizz-network#principles" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: the Principles section of the repository README</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Limits</p>
+    <h2>What these figures do not say</h2>
+    <ul class="liste lang">
+      <li><b>They are a count, not a verdict.</b> A count of 2,667 tests written says
+        nothing about how many pass, and nothing about what they cover. A number that
+        could be raised by writing worse tests is not a quality measure.</li>
+      <li><b>They describe the snapshot, not the system.</b> The working repository is
+        larger; the snapshot is a curated part of it, and some modules were left out
+        deliberately.</li>
+      <li><b>They are dated.</b> The four snapshot figures were read on 26 July 2026
+        against the snapshot of 23 July 2026, and read again on 27 July. The build
+        figure is produced at build time, so it is as current as the page you are
+        reading. The commit count was taken in the private repository on 26 July.</li>
+      <li><b>They are the six the site leads with, not every number in the text.</b>
+        A figure that appears inside a sentence — the nineteen hand-over contracts,
+        V1 to V19 — carries its source link where it stands, on the page that states
+        it.</li>
+      <li><b>One of them rests on my word.</b> The commit count is private and cannot be
+        checked from outside, which is why it is a floor and why it is named here rather
+        than left standing among figures that can be verified.</li>
+    </ul>
+    <div class="knoepfe">
+      <a class="knopf prim" href="https://github.com/Dizz-Network-Dizzik/dizz-network" rel="noopener">Check it in the source <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+      <a class="knopf" href="/apps/">The per-application figures <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap" lang="de">
+    <p class="kicker">Auf Deutsch</p>
+    <h2>Die Zahlen in einem Absatz</h2>
+    <p class="dach">Vier der sechs Zahlen wurden am 26. Juli 2026 anhand des
+      öffentlichen Auszugs vom 23. Juli 2026 gemessen: <b>10 Anwendungen</b> (Core + 9) ·
+      <b>966</b> versionierte Dateien in einem einzigen kuratierten Commit ·
+      <b>~100.000 Zeilen Python</b> in <b>632</b> Dateien, genau: 100.234 Zeilen mit
+      sichtbarem Inhalt · <b>2.667 Test-Funktionen</b> in <b>309</b> Dateien — gezählt,
+      nicht ausgeführt, also geschriebene Tests, keine bestandenen. Dazu zwei Zahlen aus
+      anderen Quellen: <b>591 Zeilen</b> im Skript, das diese Website baut —
+      beim Bauen selbst gezählt, im
+      <a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/bake.py" rel="noopener">Repository dieser Website</a> ·
+      und <b>2.600+ Commits</b>
+      im privaten Arbeits-Repository hinter diesem Auszug: die einzige Zahl hier, die Sie
+      nicht nachprüfen können — Sie haben dafür nur mein Wort, und deshalb steht sie als
+      Untergrenze da. Die Zählweise steht oben bei jeder Zahl einzeln, auf Englisch.</p>
+    <p class="quellen"><a href="/de/">Zur deutschen Einstiegsseite &#8594;</a></p>
+  </div>
+</div>
+</main>
+
+<footer class="fuss">
+  <div class="wrap">
+    <div class="fuss-oben">
+      <a class="marke" href="/">the world of dizzi</a>
+      <nav aria-label="Legal">
+        <ul>
+          <li><a href="https://github.com/Dizz-Network-Dizzik/dizz-network" rel="noopener">Source &#8599;</a></li>
+          <li><a href="/karte/">System map</a></li>
+          <li><a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a></li>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Privacy</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="fuss-status"><a href="/vision/">Independent project — incorporation ahead.</a></p>
+    <div class="fuss-fein">
+      <p>Source-visible showcase, not open source. All rights reserved.</p>
+      <p>Built with a <a href="/numbers/#baecker">591-line Python baker</a>. No cookies, no trackers, no external requests.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

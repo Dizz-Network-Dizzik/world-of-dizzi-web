@@ -1,0 +1,13 @@
+# the world of dizzi - deploy configuration
+#
+# There is no cloud build. dist/ is baked locally by `python bake.py`, committed,
+# and published as-is. Netlify runs no command, installs nothing and therefore
+# cannot break on a dependency update.
+
+[build]
+  publish = "dist"
+  command = ""
+
+[build.environment]
+  # nothing to install; kept explicit so a future contributor sees the intent
+  NETLIFY_USE_YARN = "false"
