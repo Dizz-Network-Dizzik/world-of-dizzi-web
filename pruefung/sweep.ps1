@@ -69,14 +69,21 @@ if (-not $patterns.Count) {
 }
 
 # One exception is safe to name here, because it names nothing: the copied
-# system map is public in the other repository already, and editing it is
-# forbidden. Every other exception quotes a term and therefore lives with the
-# terms, in the private list.
+# system map is public in the other repository already. Every other exception
+# quotes a term and therefore lives with the terms, in the private list.
+#
+# Until 27.07.2026 this exception said the copy was byte-identical to
+# _netzwerk/SYSTEM_KARTE.html and that editing it was forbidden. The map had to
+# be rebuilt for phones on that day, so neither sentence is true any more, and a
+# reason that has stopped being true is worse than no reason: it is the sentence
+# nobody re-reads. What holds now is narrower and machine-checkable - the copy
+# differs from its source at exactly one known set of lines and nowhere else,
+# proved on every mirror run. See "The system map" in README.md.
 $exceptions += @{
   pattern = '*'
   path    = '*\karte\*'
   match   = '*'
-  why     = 'byte-identical copy of _netzwerk/SYSTEM_KARTE.html from the public repository; editing it is forbidden by handover section 5.9. The vendor names it contains are not a leak this gate can close: the same names stand in the public showcase repository the map is copied from - measured 26.07.2026, whole-word, across its whole history: 22 files carry one, 15 another, in engine code, research notes and the MCP gateway. Scrubbing the copy here would hide nothing and would only make the two versions differ'
+  why     = 'mirrored from _netzwerk/SYSTEM_KARTE.html in dizz-network; never edited here, and the difference to its source is proved line for line on every mirror run. The vendor names it contains are not a leak this gate can close: the same names stand in the public showcase repository the map is copied from - measured 26.07.2026, whole-word, across its whole history: 22 files carry one, 15 another, in engine code, research notes and the MCP gateway. Scrubbing the copy here would hide nothing and would only make the two versions differ'
 }
 
 # This list is an allowlist, and an allowlist is a promise that nothing lands
@@ -166,14 +173,30 @@ foreach ($f in $files) {
   }
 }
 
-# commit messages count as published text too
+# commit messages count as published text too.
+#
+# This loop used to ask Contains() for every term regardless of its mode, while the
+# file scan above honours word/sub. The two therefore disagreed, and only on commit
+# messages: one of the shorter names on the list is a letter sequence that also sits
+# in the middle of an everyday German verb, so the gate refused a clean commit over a
+# word that is not a name at all. Measured 27.07.2026. Neither the name nor the verb
+# is quoted here - writing the example down would publish the entry, which is the one
+# thing this file must not do, and the first attempt at this comment did exactly that
+# and was caught by this very gate. A gate that cries wolf on prose is a gate people
+# learn to override, so it now applies the same rule the file scan does.
 $msgs = @()
 if (Test-Path "$root\.git") {
   $log = @()
   try { $log = @(git -C $root log --pretty=format:"%H|%s|%b") } catch { $log = @() }
   foreach ($l in $log) {
+    if (-not $l) { continue }
     foreach ($entry in $patterns) {
-      if ($l -and $l.ToLower().Contains($entry.p.ToLower())) { $msgs += "commit: $l" }
+      $trifft = if ($entry.mode -eq 'word') {
+        $l -match ('\b' + [regex]::Escape($entry.p) + '\b')      # -match ignoriert Gross/Klein
+      } else {
+        $l.ToLower().Contains($entry.p.ToLower())
+      }
+      if ($trifft) { $msgs += "commit: $l" }
     }
   }
 }

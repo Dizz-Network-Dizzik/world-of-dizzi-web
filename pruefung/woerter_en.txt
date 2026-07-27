@@ -10,7 +10,10 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 27.07.2026, 1496 Woerter.
+# Stand: 27.07.2026, 1550 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
+# trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
+# zaehlt bitte nach.
 
 about
 above
@@ -78,6 +81,7 @@ appear
 appears
 appkit
 application
+applies
 appointment
 appointments
 approval
@@ -115,6 +119,7 @@ audits
 authenticate
 authentication
 author
+authored
 automatically
 autonomous
 autonomy
@@ -146,6 +151,7 @@ behind
 being
 believed
 believing
+belong
 belongs
 below
 beneath
@@ -192,6 +198,7 @@ burns
 bus
 business
 but
+button
 buys
 by
 byte
@@ -229,6 +236,7 @@ character
 cheaper
 check
 checkable
+checkbox
 checked
 checking
 checkout
@@ -255,10 +263,12 @@ cockpit
 codes
 coding
 collaboration
+collapses
 collects
 come
 comm
 command
+comment
 committed
 company
 compliance
@@ -346,6 +356,7 @@ deeper
 default
 defence
 deletion
+deliberate
 deliberately
 delivers
 demand
@@ -357,6 +368,7 @@ depend
 dependency
 deploy
 depth
+derives
 describe
 described
 describes
@@ -372,6 +384,7 @@ diagnosis
 did
 difference
 different
+differs
 digest
 directing
 direction
@@ -421,6 +434,7 @@ effective
 efficient
 eight
 either
+element
 eleven
 eleventh
 else
@@ -438,11 +452,13 @@ engine
 english
 enough
 entitled
+entries
 entry
 error
 escalation
 escape
 essence
+eür
 europe
 evaluate
 evaluating
@@ -468,6 +484,7 @@ exit
 exits
 explain
 explained
+explaining
 explains
 explicit
 explicitly
@@ -475,7 +492,6 @@ export
 exports
 exposes
 external
-eür
 faces
 fail
 fails
@@ -589,6 +605,8 @@ grew
 guard
 habit
 had
+half
+handful
 hands
 happened
 happens
@@ -636,6 +654,7 @@ https
 human
 hurry
 idea
+identical
 identity
 if
 image
@@ -704,7 +723,9 @@ keys
 kind
 know
 knowledge
+known
 knows
+label
 labelled
 labelling
 labels
@@ -809,6 +830,7 @@ mechanism
 media
 meet
 memo
+menu
 merely
 message
 messages
@@ -821,9 +843,12 @@ metrics
 mgmt
 middle
 middleware
+might
 migration
 milestones
 minutes
+mirror
+mirrored
 misses
 missing
 mistake
@@ -854,6 +879,7 @@ namespace
 naming
 narrated
 narrow
+narrower
 navigation
 need
 needed
@@ -881,6 +907,7 @@ notes
 nothing
 noticed
 now
+nowhere
 npm
 number
 numbered
@@ -899,6 +926,7 @@ on
 once
 one
 only
+onto
 onward
 onwards
 opening
@@ -964,6 +992,7 @@ payment
 pays
 persist
 personal
+phone
 physical
 physics
 pick
@@ -973,6 +1002,7 @@ pilots
 pinned
 pipelines
 pixel
+pixels
 pkce
 place
 placeholder
@@ -1053,6 +1083,7 @@ purpose
 pushed
 put
 quality
+quarter
 quarters
 question
 questions
@@ -1107,6 +1138,7 @@ regularly
 reject
 rejected
 relation
+relaxation
 relay
 relying
 reminded
@@ -1136,6 +1168,7 @@ rest
 resting
 rests
 result
+resulting
 returns
 reuse
 reveal
@@ -1145,6 +1178,8 @@ review
 reviews
 revocation
 rework
+rewrite
+rewritten
 right
 rights
 risk
@@ -1176,6 +1211,8 @@ scales
 schedules
 scheduling
 schema
+scoped
+screen
 script
 scripts
 scroll
@@ -1239,6 +1276,7 @@ skip
 skips
 slow
 small
+smaller
 smart
 so
 social
@@ -1284,6 +1322,7 @@ stays
 step
 steps
 still
+stood
 stop
 stopped
 stops
@@ -1301,6 +1340,7 @@ structured
 stubs
 studies
 study
+style
 styles
 stylesheet
 submission
@@ -1325,7 +1365,9 @@ sync
 systems
 tab
 table
+take
 taken
+takes
 talk
 talks
 targeted
@@ -1490,6 +1532,7 @@ whole
 whom
 whose
 why
+width
 will
 wins
 wire
@@ -1509,6 +1552,7 @@ worldofdizzi
 worse
 worth
 would
+wrapped
 write
 writes
 writing

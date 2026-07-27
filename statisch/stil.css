@@ -462,12 +462,49 @@ address{font-style:normal;line-height:1.75}
 .code.hell{background:var(--panel)}
 .dach.klein{font-size:14px}
 
+/* --- Aufklapp-Menue (schmale Bildschirme) --------------------------------- *
+ * Gemessen vor dem Umbau: die Kopfzeile brauchte 171 px bei 390 px Breite und
+ * 220 px bei 360 px - ein Viertel des Bildschirms, bevor ein Wort Inhalt kommt
+ * (der Befund aus worktree 59, hier unabhaengig nachgemessen).
+ * Traeger des Zustands ist ein Kontrollkaestchen, kein Skript: die Seiten dieser
+ * Website versprechen in datenschutz.html "Kein JavaScript", und das ist ein
+ * Rechtstext. Ausserhalb der Media Query steht hier nichts, was den grossen
+ * Bildschirm beruehrt - der Knopf ist dort schlicht nicht vorhanden.
+ * Bewusst kein <details>/<summary>: das laesst sich auf dem grossen Bildschirm nur
+ * dann als normale Navigation zeigen, wenn man den zugeklappten Zustand per CSS
+ * ueberschreibt, und ob das gelingt, haengt am Browser. Gemessen hat es in Chromium
+ * funktioniert - fuer Firefox und Safari konnte ich es hier nicht belegen, und ein
+ * Fehlschlag haette die Navigation auf dem Schreibtisch verschwinden lassen. Beim
+ * Kontrollkaestchen ist der schlimmste Fall ein dauerhaft offenes Menue.          */
+
+.menu-schalter{position:absolute;width:1px;height:1px;margin:0;opacity:0}
+.menu-knopf{display:none}
+
+@media (max-width:768px){
+  .menu-knopf{display:inline-flex;align-items:center;gap:9px;margin-left:auto;
+    padding:9px 13px;min-height:44px;border:1px solid var(--line2);border-radius:9px;
+    font-size:14px;color:var(--tx2);cursor:pointer;user-select:none}
+  /* drei Striche, rein aus Rahmen gebaut - kein Bild, kein Zeichensatz */
+  .menu-knopf::before{content:"";width:16px;height:2px;background:currentColor;
+    box-shadow:0 5px 0 currentColor,0 -5px 0 currentColor}
+  .menu-schalter:checked ~ .menu-knopf{color:var(--tx);border-color:var(--tx3)}
+  /* Das Kaestchen ist unsichtbar, seine Tastatur-Markierung darf es nicht sein. */
+  .menu-schalter:focus-visible ~ .menu-knopf{outline:2px solid var(--cy);outline-offset:2px}
+
+  .nav{margin-left:0;width:100%;display:none}
+  .menu-schalter:checked ~ .nav{display:block}
+  .nav ul{flex-direction:column;flex-wrap:nowrap;gap:0}
+  .nav li{border-top:1px solid var(--line)}
+  .nav a{padding:12px 6px;min-height:44px;display:flex;align-items:center;font-size:15px}
+  /* Der Unterstrich sass auf 11 px Einzug und passt nicht zur vollen Zeilenbreite. */
+  .nav a[aria-current]::after,.nav a:hover::after{left:6px;right:auto;width:22px;bottom:6px}
+}
+
 /* --- narrow viewports ---------------------------------------------------- */
 
 @media (max-width:560px){
   .kopf .wrap{padding-block:12px}
-  .nav{margin-left:0;width:100%}
-  .nav a{padding:8px 9px}
+  .nav a{padding:12px 6px}
   .leiste{font-size:12px}
   .knoepfe .knopf{width:100%;justify-content:center}
 }
