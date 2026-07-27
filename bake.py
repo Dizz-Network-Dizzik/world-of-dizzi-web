@@ -47,10 +47,10 @@ SELBST = "https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web"
 # two. Every source link is built from the two values below and nothing else,
 # so moving or renaming the folder is one line here plus a rebake, never a hunt
 # through the pages. Two counts, because they measure different things and the
-# difference is not a discrepancy: 63 link sites in seiten/ and vorlagen/ - what
-# an author edits - render as 76 links in dist/, since the footer link repeats
+# difference is not a discrepancy: 70 link sites in seiten/ and vorlagen/ - what
+# an author edits - render as 83 links in dist/, since the footer link repeats
 # on all twelve pages and llms.txt and the JSON-LD block carry one each.
-# check_snapshot_links() resolves all 76 against the folder on every bake.
+# check_snapshot_links() resolves all 83 against the folder on every bake.
 AUSZUG = "snapshot"
 DATEI = f"{SELBST}/blob/main/{AUSZUG}"   # a file inside the extract
 ORDNER = f"{SELBST}/tree/main/{AUSZUG}"  # a directory inside the extract

@@ -21,7 +21,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **77,779 bytes** uncompressed — 20.9 KB markup, 26.3 KB stylesheet,
+page: **80,738 bytes** uncompressed — 20.9 KB markup, 29.1 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. It was 69,773 bytes before the reveal animations and the
 numbers page, which added 5,263 bytes of stylesheet and 55 bytes of markup;
@@ -31,7 +31,7 @@ when the snapshot moved in those six stopped naming a short repository and
 started naming a longer one — five of them also gaining the path to the
 snapshot's front page. Five links at 25 bytes, one at 15.
 
-The last 2,548 bytes are the phone. On a 360-pixel screen the header used to
+Another 2,548 bytes are the phone. On a 360-pixel screen the header used to
 take 220 pixels — a quarter of the display before a word of content — because
 nine navigation entries wrapped onto three lines. It now collapses behind one
 button and takes 69 pixels, on every page and at every width below 769. That
@@ -40,6 +40,20 @@ The other 2,381 bytes are stylesheet, and about half of them are the comment
 explaining why it is a checkbox and not a `<details>` element. A menu that a
 browser might refuse to open is a menu; a navigation that a browser might
 refuse to *show* is a dead site, and that is the direction the risk runs.
+
+The last 2,959 bytes are the track on `/method/`, and every one of them is
+stylesheet — the markup did not grow by a byte. The page that describes how a
+work package travels now shows it as a rail with stations beside it: the
+stations are an ordered list, the rail is two pseudo-elements on that list, and
+the bright half of it is drawn by the reading position rather than by a clock.
+No script, which is the constraint that shaped the whole thing — the privacy
+statement promises no JavaScript, and that is a legal text, not a preference.
+The drawing is a scroll-driven animation over the `contain` range, so the
+leading edge stays level with the station being read instead of racing ahead of
+it. A browser without scroll timelines shows no rail at all rather than one
+frozen at zero; reduced motion and print remove it outright, each in the rule
+that already removes the other animations. About half of those bytes are the
+comments saying why.
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being
@@ -115,9 +129,10 @@ cannot find it — a clone can run every other check, but not that one.
 
 Seven checks need a browser and are therefore manual: Lighthouse on mobile, axe
 or pa11y, a keyboard-only walk-through, the 320-pixel reflow, the airplane-mode
-probe, a scroll through the start page with reduced motion switched on and off,
-and a print preview of `/numbers/`. The last two are there because the reveal
-animations depend on a scroll position and on a motion preference, and neither
+probe, a scroll through the start page and `/method/` with reduced motion
+switched on and off, and a print preview of `/numbers/`. The last two are there
+because the reveal animations and the track depend on a scroll position and on
+a motion preference, and neither
 a sheet of paper nor a reader who has switched motion off ever supplies one —
 both cases have their own rules at the foot of `stil.css`, and rules nobody has
 looked at are not rules yet. The airplane-mode probe is the demonstration this
@@ -127,7 +142,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **76 source links** against
+be resolved, and `check_snapshot_links` resolves all **83 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -137,7 +152,7 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 76 links break at once — and the claim on `/numbers/` that exactly one figure
+all 83 links break at once — and the claim on `/numbers/` that exactly one figure
 cannot be checked from outside quietly stops being true. That risk now has one
 source instead of two, but it is not gone. It lives in `bake.py` as `SELBST`.
 
