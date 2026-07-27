@@ -103,7 +103,7 @@ section{padding:50px 0;border-top:1px solid var(--line)}
 .chip:hover{color:var(--tx)}
 .chip.on{background:var(--grad);color:#08101a;border-color:transparent;font-weight:700}
 [data-theme="light"] .chip.on{color:#fff}
-.apps{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.apps{grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr))}   /* wie .secgrid: greift erst unter 324 px Bildschirmbreite */
 .app{cursor:pointer;position:relative;overflow:hidden}
 .app:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cy)}
 .app[data-sens="hoch"]:before,.app[data-sens="höchst"]:before{background:var(--coral)}
@@ -226,7 +226,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 .cstage.focus .edge{opacity:.05}
 .cstage.focus .edge.hot{opacity:1;stroke-width:2.4}
 /* Datenfluss-Animation auf den gerichteten Kanten (nur wenn Motion ok) */
-@media (prefers-reduced-motion: no-preference){
+@media (prefers-reduced-motion: no-preference) and (min-width:769px){
   .edge.archiv,.edge.integ,.edge.geld{stroke-dasharray:5 7;animation:flow 1.6s linear infinite}
   .cstage.focus .edge.hot{animation-duration:.9s}
 }
@@ -241,7 +241,9 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 .cnode:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
 .tgl:focus-visible,.chip:focus-visible,.bar a.lnk:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 /* Reduced-Motion: laufende Deko-Animationen ruhigstellen (Einblend-Anims bleiben, lösen zu sichtbar auf) */
-@media (prefers-reduced-motion: reduce){
+/* Das Komma ist ein ODER: dieselbe Ruhigstellung gilt auf dem Telefon, auch wenn dort
+   Bewegung erlaubt ist — ein Handy trägt die Dauer-Animationen nicht (§ Mobil-Block unten). */
+@media (prefers-reduced-motion: reduce),(max-width:768px){
   .blob{animation:none}
   .cnode.core:after{animation:none;opacity:.22}
 }
@@ -298,7 +300,11 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 .vsens{color:var(--coral);font-weight:700}
 
 /* ---- Sicherheit & Recht — Tiefen-Ansicht ---- */
-.secgrid{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+/* min(340px,100%): eine 340-px-Spalte passt auf einem 360-px-Telefon nicht in die 316 px
+   zwischen den Seitenpolstern — die Kacheln ragten 2 px über den Bildschirm hinaus und die
+   ganze Seite ließ sich seitwärts schieben (bei 320 px waren es 42 px). Oberhalb von 340 px
+   ist min() wirkungslos, der Schreibtisch sieht davon nichts. */
+.secgrid{grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))}
 .scard{position:relative;overflow:hidden}
 .scard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sa,var(--cy))}
 .scard.s-def{--sa:var(--vio)} .scard.s-id{--sa:var(--blue)} .scard.s-vault{--sa:var(--amber)}
@@ -384,14 +390,14 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   animation:auraBreath 9s ease-in-out infinite}
 @keyframes auraBreath{0%,100%{opacity:.65;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}}
 .cnode{animation:nodein .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--idelay,0s)}
-@media (prefers-reduced-motion: no-preference){
+@media (prefers-reduced-motion: no-preference) and (min-width:769px){
   .cnode{animation:nodein .5s cubic-bezier(.2,.8,.2,1) both, drift var(--ddur,8s) ease-in-out infinite;animation-delay:var(--idelay,0s),var(--ddelay,0s)}
 }
 @keyframes drift{0%,100%{translate:0 0}50%{translate:0 -7px}}
 .cnode:hover{box-shadow:0 10px 30px -6px rgba(0,0,0,.42),0 0 24px -4px var(--glow,rgba(46,230,214,.5))}
 .cnode[data-acc="vio"]{--glow:rgba(139,108,255,.55)}.cnode[data-acc="coral"]{--glow:rgba(242,100,90,.5)}.cnode[data-acc="amber"]{--glow:rgba(245,185,66,.5)}
 .cstage.focus .edge.hot{filter:drop-shadow(0 0 4px currentColor)}
-@media (prefers-reduced-motion: reduce){.cstage:before{animation:none}}
+@media (prefers-reduced-motion: reduce),(max-width:768px){.cstage:before{animation:none}}
 
 /* ============ Tiefenanalyse im App-Fenster + Glas/Neon-Politur ============ */
 .amdeep{margin-top:18px;border-top:1px dashed var(--line2);padding-top:16px}
@@ -415,7 +421,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 
 /* Neon-Glow entlang der Kanten (Farbstimmung) */
 .edge.archiv{color:var(--cy)}.edge.integ{color:var(--vio)}.edge.geld{color:var(--amber)}
-@media (prefers-reduced-motion: no-preference){.edge.archiv,.edge.integ,.edge.geld{filter:drop-shadow(0 0 2.5px currentColor)}}
+@media (prefers-reduced-motion: no-preference) and (min-width:769px){.edge.archiv,.edge.integ,.edge.geld{filter:drop-shadow(0 0 2.5px currentColor)}}
 .cstage.focus .edge.hot{filter:drop-shadow(0 0 6px currentColor)}
 
 /* mehr Magenta→Cyan übers Dokument: Sektions-Verlaufsstrich + Glas-Kachel-Hover */
@@ -451,13 +457,16 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 .comet{pointer-events:none}
 .comet.archiv{fill:var(--cy);color:var(--cy)}.comet.integ{fill:var(--vio);color:var(--vio)}.comet.geld{fill:var(--amber);color:var(--amber)}
 /* hellerer Kern + farbiger Doppel-Glow ⇒ mehr Charakter aus dem Farbschema; sanftes Pulsieren */
-@media (prefers-reduced-motion: no-preference){
+@media (prefers-reduced-motion: no-preference) and (min-width:769px){
   .comet{filter:drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor);animation:cometpulse 1.6s ease-in-out infinite}
 }
 @keyframes cometpulse{0%,100%{opacity:.78}50%{opacity:1}}
 
 /* ============ ★ Interaktiv-Effekte (Cursor-Aura · Klick-Welle · Scroll-Reveal · Node-Magnetismus) ============ */
-@media (prefers-reduced-motion: no-preference){
+/* Ab hier läuft nichts mehr unter 769 px: Cursor-Aura und Klick-Welle setzen eine Maus
+   voraus (ihr JS steigt bei pointerType 'touch' ohnehin aus), Scroll-Reveal und die
+   Scroll-Aurora kosten pro Frame Neuzeichnung einer bildschirmgroßen Fläche. */
+@media (prefers-reduced-motion: no-preference) and (min-width:769px){
   /* Cursor-Aura — dezente „Taschenlampe", folgt der Maus (gedämpft, screen-blend, blendet schnell aus) */
   .cursorglow{position:fixed;left:0;top:0;width:440px;height:440px;margin:-220px 0 0 -220px;border-radius:50%;
     z-index:54;pointer-events:none;opacity:0;mix-blend-mode:screen;will-change:transform,opacity;transition:opacity .3s ease;
@@ -503,6 +512,79 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 .cnodetip .ct-pt{font-family:ui-monospace,monospace;font-size:10px;color:var(--tx3);font-weight:600;margin-left:auto}
 .cnodetip b{color:var(--tx);font-weight:600;display:block;margin-bottom:5px;line-height:1.32}
 .cnodetip ul{margin:0;padding-left:15px} .cnodetip li{margin:3px 0;line-height:1.32}
+
+/* ============ 📱 MOBIL-FASSUNG (≤ 768 px) — ruhig, statisch, nichts überlappt ============
+   Anlass: Davids Befund am Google Pixel 10 (27.07.2026) — „zerreißt komplett, ruckelt ewig".
+   Im Ist-Zustand gemessen (390×844, 4×-CPU-Drosselung, echtes Chromium):
+     · 81,8 % Hauptthread-Auslastung im LEERLAUF — 577 Layout-Läufe und 581 Stil-Neu-
+       berechnungen in 4 Sekunden, ohne dass irgendetwas bedient wurde.
+     · 39 endlos laufende Animationen (12 × stroke-dashoffset auf den Kanten, 12 SMIL-
+       Kometen, 10 driftende Knoten, Core-Puls, Aura-Atem, 3 Farbblasen) + 12 SMIL-Elemente.
+     · „Dizz Communication" lag 43 × 31 px über „Dizz Management".
+   Die Ursache der Überlappung ist waagerecht: beide Knoten stehen auf y = 656, ihre Mitten
+   sind nur 24,8 % der Bühnenbreite auseinander (≈ 86 px), ihre Namen aber stehen in einer
+   einzigen unumbrechbaren Zeile.
+   Die Desktop-Fassung bleibt unberührt: alles hier hängt an (max-width:768px), die
+   Dauer-Animationen weiter oben zusätzlich an (min-width:769px). */
+@media (max-width:768px){
+
+  /* 1 · Ruhender Hintergrund. Drei Flächen à 480–560 px mit filter:blur(90px) sind die
+         teuerste Ebene der Seite und tragen keine Information. */
+  .bgfx{display:none}
+  .scrollaura,.cursorglow{display:none}
+
+  /* 2 · Kein backdrop-filter. Er erzwingt bei jedem Scroll-Frame die Neuberechnung der
+         Fläche HINTER dem Element — auf dem Telefon der teuerste Einzeleffekt. */
+  nav.bar{backdrop-filter:none;background:var(--bg)}
+  .ambackdrop{backdrop-filter:none;background:rgba(4,6,12,.88)}
+  .amdialog{backdrop-filter:none;background:var(--panel)}
+  .amhead{backdrop-filter:none;background:var(--panel)}
+
+  /* 3 · Der Fortschrittsbalken zeigt etwas an und bleibt — aber ohne Nachlauf. */
+  .scrollprog{transition:none}
+
+  /* 4 · Die Konstellation als ruhige Übersicht: Kern, Apps und Kanten stehen still.
+         Die Bühne wird höher, damit die nun zweizeiligen Namen Luft haben; der Kanten-SVG
+         streckt sich per preserveAspectRatio="none" exakt wie die Knoten-Prozente mit,
+         deshalb treffen die Linien weiterhin ihre Kästen. */
+  .cstage{aspect-ratio:1000/1400}
+  .cstage:before{display:none}                      /* geblurrte Aura */
+  .cstage .edges{animation:none;opacity:1}          /* Einblend-Animation entfällt */
+  /* ACHTUNG, Falle: .cnode startet mit opacity:0 und wird ERST durch die nodein-Animation
+     sichtbar (forwards/both). Wer hier nur animation:none schreibt, schaltet die Knoten
+     unsichtbar — im ersten Anlauf genau so passiert und im Bild aufgefallen. */
+  .cnode{animation:none;opacity:1}                  /* nodein + drift aus, Knoten bleiben sichtbar */
+  .cnode.core:after{animation:none;opacity:.22}
+  .comet{display:none}                              /* 12 SMIL-Kometen */
+  .vlabel{display:none}                             /* würde mit der Bühne verzerrt */
+  .edge{vector-effect:non-scaling-stroke}           /* Strichstärke trotz Streckung konstant */
+
+  /* Der Fix gegen das Zerreißen, zwei Hebel:
+     (a) die Bühne nutzt die volle Bildschirmbreite (die Seitenpolster von 22 px kosteten
+         12 % des waagerechten Abstands zwischen genau den zwei Knoten, die kollidieren),
+     (b) die Namen dürfen umbrechen — white-space:nowrap war die eigentliche Ursache. */
+  .cstage{width:calc(100% + 44px);margin-left:-22px;margin-right:-22px;max-width:none}
+  /* max-width ist hier kein Schoenheitsmass, sondern der Umbruch-Ausloeser: ohne sie
+     bliebe der Kasten einzeilig und so breit wie der ganze Name. Sie muss unter die
+     Breite dieser einen Zeile fallen - und moeglichst ueber die Breite des laengsten
+     Wortes, sonst bricht das Wort selbst um.
+     Beides zugleich geht hier nicht: bei 24 % passte "Communication" in eine Zeile,
+     dafuer stiessen Memory/Trading und Memory/News wieder aneinander (gemessen).
+     22 % ist der groesste Wert, der bei 390, 360 und 320 px UND bei 130 % und 150 %
+     Android-Textskalierung ueberlappungsfrei bleibt. Bei 390 px stehen dann alle
+     Namen ganz; ab 360 px abwaerts bricht der laengste ("Communication") in sich
+     selbst um. Das ist der bewusste Preis: ein umbrochenes Wort ist Typografie,
+     uebereinanderliegende Kaesten sind ein Fehler. */
+  .cnode{min-width:0;max-width:22%;padding:4px 5px 4px 7px}
+  /* break-word, NICHT anywhere: „anywhere" senkt die Mindestbreite des Kastens auf ein
+     einzelnes Zeichen, dadurch schrumpfte der Kasten unter die Wortbreite und es stand
+     „Creatin/g" und „Communicati/on" da. Mit break-word bleibt die Mindestbreite das
+     längste Wort — der Kasten ist so breit wie nötig und nur so breit. */
+  .cnode .cnm{white-space:normal;font-size:9px;line-height:1.18;overflow-wrap:break-word}
+  .cnode .cpt{font-size:8px}
+  .cnode.core{max-width:32%}
+  .cnode.core .cnm{font-size:10.5px}
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -543,7 +625,12 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   <p class="sub">Im Zentrum der <b>Dizzi-Core</b>, drumherum die acht Apps und der Trading-Bot — verbunden über ihre <b>echten Vernetzungen</b> (V2–V19). <b>Fahre über einen Knoten</b>, um seine Datenflüsse zu sehen; <b>klick ihn</b> für die Tiefe (Module, Verkettung, Sorgfaltskern). <span id="livehw" class="livehw off" title="optionaler Live-Check des Core-Health-Watch auf :8200 — Default offline-fähig">○ Health-Watch</span></p>
   <div class="cwrap">
     <div class="cstage" id="cstage">
-      <svg class="edges" id="cedges" viewBox="0 0 1000 780" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+      <!-- preserveAspectRatio="none": bildet exakt dieselbe Prozent-Abbildung ab, die die
+           Knoten benutzen (x/1000 der Breite, y/780 der Höhe). Solange die Bühne im
+           Seitenverhältnis 1000:780 steht — Desktop —, ist das rechnerisch identisch zu
+           "xMidYMid meet"; auf dem Telefon darf die Bühne dadurch höher werden, ohne dass
+           die Kanten ihre Kästen verlieren. -->
+      <svg class="edges" id="cedges" viewBox="0 0 1000 780" preserveAspectRatio="none" aria-hidden="true"></svg>
       <div class="cnodes" id="cnodes"></div>
     </div>
     <div class="clegend">
@@ -1365,9 +1452,14 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   // Scroll-Fortschrittsbalken (oben)
   var sp=document.getElementById('scrollprog');
   if(sp){
-    var upd=function(){ var h=document.documentElement, max=h.scrollHeight-h.clientHeight, r=max>0?h.scrollTop/max:0;
+    var spRaf=0;
+    var upd=function(){ spRaf=0; var h=document.documentElement, max=h.scrollHeight-h.clientHeight, r=max>0?h.scrollTop/max:0;
       sp.style.width=(r*100).toFixed(2)+'%'; sp.style.setProperty('--p', r.toFixed(3)); };
-    window.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); upd();
+    // Höchstens einmal je Bild messen und schreiben. Das scroll-Ereignis feuert öfter, als
+    // gezeichnet wird, und jedes Schreiben von width kostet einen Layout-Lauf; öfter als
+    // einmal pro Bild kann das Ergebnis ohnehin nicht sichtbar werden.
+    var anstossen=function(){ if(!spRaf) spRaf=requestAnimationFrame(upd); };
+    window.addEventListener('scroll',anstossen,{passive:true}); window.addEventListener('resize',anstossen); upd();
   }
 })();
 </script>
@@ -1427,6 +1519,10 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   });
   // Cross-Kanten als sanft gebogene Pfade + Hover-Tooltip (<title>) + V-Nummern-Label + Daten-Komet
   var REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // RUHIG = „hier wird nichts dauerhaft bewegt": entweder der Nutzer hat Bewegung abbestellt,
+  // oder wir sind auf einem Telefon. Beide Fälle bekommen dieselbe Behandlung; das CSS oben
+  // ist an denselben zwei Bedingungen aufgehängt, damit Stil und Verhalten nicht auseinanderlaufen.
+  var RUHIG = REDUCE || (window.matchMedia && window.matchMedia('(max-width:768px)').matches);
   EDGES.forEach(function(e,ei){
     var a=byId[e.a], b=byId[e.b];
     adj[e.a][e.b]=true; adj[e.b][e.a]=true;
@@ -1440,7 +1536,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
     p.setAttribute('id','edge-'+ei);
     var ti=document.createElementNS(NS,'title'); ti.textContent=e.d; p.appendChild(ti);
     svg.appendChild(p);
-    if(!REDUCE){   // Daten-Komet wandert Quelle → Hub entlang der Kante
+    if(!RUHIG){   // Daten-Komet wandert Quelle → Hub entlang der Kante (SMIL, läuft endlos ⇒ auf dem Telefon aus)
       var cm=document.createElementNS(NS,'circle'); cm.setAttribute('r','3.2'); cm.setAttribute('class','comet '+e.t);
       var am=document.createElementNS(NS,'animateMotion');
       am.setAttribute('dur',(2.2+len/240).toFixed(1)+'s'); am.setAttribute('repeatCount','indefinite');
@@ -1484,7 +1580,10 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   var selected=null;
 
   // ---- Node-Magnetismus: Knoten lehnen sich zur Maus + glühen nach Nähe (deine Maus „zieht" am System) ----
-  if(!REDUCE){
+  // Auf dem Telefon gibt es keine Maus, die ziehen könnte — und der Block hängt einen
+  // ungedrosselten scroll-Horcher ein, der bei JEDEM Scroll-Ereignis getBoundingClientRect()
+  // liest (erzwungenes Layout). Beides entfällt unter 769 px.
+  if(!RUHIG){
     var ncenters=[], mraf=0, mmx=0, mmy=0;
     function measureNodes(){ var sr=stage.getBoundingClientRect();   // Basis-Zentren aus Prozent-Koords ⇒ unabhängig von Drift/Pull
       ncenters=NODES.map(function(n){ return {el:nodeEls[n.id], cx:sr.left+n.x/1000*sr.width, cy:sr.top+n.y/780*sr.height}; }); }
@@ -1865,7 +1964,12 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 <script>
 /* ---- ★ Globale Interaktiv-Effekte: Cursor-Aura · Klick-Welle · Scroll-Reveal ---- */
 (function(){
-  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(!window.matchMedia) return;
+  // Dieselbe Bedingung wie im CSS-Mobil-Block: abbestellte Bewegung ODER Telefon.
+  // Der Block hängt sonst pro Scroll-Frame eine bildschirmgroße Aurora neu (Neuzeichnung
+  // der ganzen Fläche) und schiebt drei geblurrte Blasen im Parallax mit.
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(matchMedia('(max-width:768px)').matches) return;
 
   // Cursor-Aura — folgt der Maus, leicht nachziehend, blendet bei Stillstand aus
   var glow=document.createElement('div'); glow.className='cursorglow'; glow.setAttribute('aria-hidden','true');

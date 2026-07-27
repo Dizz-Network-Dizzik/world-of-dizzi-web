@@ -21,15 +21,25 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **75,231 bytes** uncompressed — 20.8 KB markup, 23.9 KB stylesheet,
+page: **77,779 bytes** uncompressed — 20.9 KB markup, 26.3 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. It was 69,773 bytes before the reveal animations and the
 numbers page, which added 5,263 bytes of stylesheet and 55 bytes of markup;
-those bytes bought motion that needs no script. The 140 bytes since are markup
-as well, and all of it address: the start page carries six source links, and
+those bytes bought motion that needs no script. Another 140 bytes of markup
+followed, and all of it address: the start page carries six source links, and
 when the snapshot moved in those six stopped naming a short repository and
 started naming a longer one — five of them also gaining the path to the
 snapshot's front page. Five links at 25 bytes, one at 15.
+
+The last 2,548 bytes are the phone. On a 360-pixel screen the header used to
+take 220 pixels — a quarter of the display before a word of content — because
+nine navigation entries wrapped onto three lines. It now collapses behind one
+button and takes 69 pixels, on every page and at every width below 769. That
+cost 167 bytes of markup, which is the whole mechanism: a checkbox and a label.
+The other 2,381 bytes are stylesheet, and about half of them are the comment
+explaining why it is a checkbox and not a `<details>` element. A menu that a
+browser might refuse to open is a menu; a navigation that a browser might
+refuse to *show* is a dead site, and that is the direction the risk runs.
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being
@@ -144,7 +154,8 @@ statisch/             copied 1:1 into dist/
   stil.css            one stylesheet, tokens at the top
   schrift/            three WOFF2 subsets + both OFL licence texts
   bilder/             og.png, favicon.svg
-  karte/index.html    byte-identical copy of the system map — never edit
+  karte/index.html    the system map; edited only in dizz-network and mirrored
+                      here — see "The system map" below
   _headers            CSP and security headers for Netlify
 pruefung/             the quality gate
 werkzeug/             one-off build tools (fonts, OG image) — not site dependencies
@@ -163,6 +174,28 @@ layout shift.
 
 Rebuilding the fonts or the share image needs `pip install fonttools brotli`;
 neither is a dependency of the site.
+
+### The system map
+
+`statisch/karte/index.html` is the one page here that is not written here. It is
+authored in the `dizz-network` repository as `_netzwerk/SYSTEM_KARTE.html` and
+mirrored into this one, and it is the only page carrying inline script and style
+— the CSP relaxation for that is scoped to `/karte/*` in `statisch/_headers` and
+to nowhere else.
+
+The two files are **not** byte-identical, and the difference is deliberate: a
+handful of lines name internal working files and one term that does not belong
+on a public page, and the mirrored copy carries those lines rewritten. Until
+27 July 2026 the README claimed byte-identity and told the reader never to edit
+the copy; both were true only because nobody had needed to change the map yet.
+
+What actually has to hold is narrower and checkable: *the copy differs from the
+source at exactly the known set of lines, and nowhere else.* The mirror is
+therefore never made by hand — a tool reads both files as they stood at the last
+commit, derives the rewrite map from that difference, applies it to the new
+source, and then proves the resulting difference is the same set as before,
+neither larger nor smaller. Editing this copy directly still gets you nothing but
+drift; edit the source and re-run the mirror.
 
 ### No inline styles, on purpose
 

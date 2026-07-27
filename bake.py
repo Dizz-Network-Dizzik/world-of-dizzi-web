@@ -183,6 +183,7 @@ T = {
     "en": dict(
         SKIP="Skip to content",
         NAVLABEL="Main",
+        MENU="Menu",
         MAP="System map",
         LANGLINK='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a>',
         SOURCE="Source",
@@ -197,6 +198,7 @@ T = {
     "de": dict(
         SKIP="Zum Inhalt springen",
         NAVLABEL="Haupt",
+        MENU="Menü",
         MAP="System-Karte",
         LANGLINK='<a class="nav-lang" href="/" lang="en" hreflang="en">English</a>',
         SOURCE="Quellcode",

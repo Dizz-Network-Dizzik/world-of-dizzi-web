@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 27.07.2026, 714 Woerter.
+# Stand: 27.07.2026, 715 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 
 ab
 aber
@@ -444,6 +444,7 @@ meiste
 mensch
 menschen
 menschlichen
+menü
 messwerte
 methode
 mich
