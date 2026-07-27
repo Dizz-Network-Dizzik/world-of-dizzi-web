@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.freqtrade.io/schema.json",
+    "_comment": "Bot 1 — Paper-Trading (Dry-Run) auf Bitget Spot. KEIN echtes Geld. Echtgeld erst nach bestandener Paper-Phase via eigener Config.",
+    "max_open_trades": 3,
+    "stake_currency": "USDT",
+    "stake_amount": 100,
+    "tradable_balance_ratio": 0.99,
+    "fiat_display_currency": "EUR",
+    "dry_run": true,
+    "dry_run_wallet": 1000,
+    "initial_state": "running",
+    "cancel_open_orders_on_exit": false,
+    "trading_mode": "spot",
+    "margin_mode": "",
+    "timeframe": "1h",
+    "unfilledtimeout": {
+        "entry": 10,
+        "exit": 10,
+        "exit_timeout_count": 0,
+        "unit": "minutes"
+    },
+    "entry_pricing": {
+        "price_side": "same",
+        "use_order_book": true,
+        "order_book_top": 1,
+        "price_last_balance": 0.0,
+        "check_depth_of_market": {
+            "enabled": false,
+            "bids_to_ask_delta": 1
+        }
+    },
+    "exit_pricing": {
+        "price_side": "same",
+        "use_order_book": true,
+        "order_book_top": 1
+    },
+    "exchange": {
+        "name": "bitget",
+        "_comment": "Fuer Dry-Run/Backtest werden keine echten Keys benoetigt. Spaeter ueber .env / Subaccount-Key befuellen.",
+        "key": "",
+        "secret": "",
+        "password": "",
+        "ccxt_config": {},
+        "ccxt_async_config": {},
+        "pair_whitelist": [
+            "BTC/USDT",
+            "ETH/USDT",
+            "SOL/USDT"
+        ],
+        "pair_blacklist": []
+    },
+    "pairlists": [
+        {
+            "method": "StaticPairList"
+        }
+    ],
+    "dataformat_ohlcv": "feather",
+    "internals": {
+        "process_throttle_secs": 5
+    }
+}

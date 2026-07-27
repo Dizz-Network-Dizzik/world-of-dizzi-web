@@ -1,0 +1,1904 @@
+<!doctype html>
+<html lang="de" data-design="metall" data-farbe="cyan-magenta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Marken-Lockup auch im Tab-Titel (docs/06 §5.4.2): Marke — Funktion -->
+<title>Dizz Memory — Wissensspeicher</title>
+<!-- Token-MASTER (Single Source, docs/06 §6 / shared/dizz-tokens.css). Das
+     gesamte Frontend ist tokenbasiert — KEINE hartkodierten Farben/Materialien. -->
+<link rel="stylesheet" href="/ui-kit/tokens.css?v=20260619a">
+<!-- K2.4-Control-Familie (app-neutral, Kopie aus ui-kit): Checkbox/Radio/Select/
+     Stepper/Toggle + einklappbare Panels. Verhalten: collapse.js (unten). -->
+<link rel="stylesheet" href="/ui-kit/controls.css?v=20260618c">
+<!-- UX-5a · AI-Act Art. 50(1): KI-Offenlegungs-Chip (DzUx.agentchip{ki:true}) an der Vault-Chat-Fläche (docs/70). -->
+<link rel="stylesheet" href="/ui-kit/ux-kit.css">
+<script defer src="/ui-kit/ux-kit.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var slot = document.getElementById("dizziKiChip");
+    if (slot && window.DzUx && DzUx.agentchip) slot.innerHTML = DzUx.agentchip({ ki: true });
+  });
+</script>
+<!-- Klick-Wellen-Effekt (DzWave, netzweit · token-/design-abhängig) -->
+<link rel="stylesheet" href="/ui-kit/clickwave.css">
+<script defer src="/ui-kit/clickwave.js"></script>
+<!-- DzHalter — Float-Andock-Schale + Frei/Fix-Schalter (Spin-Physik v4.4, netzweit · tokenbasiert); Engine lädt unten SYNC vor floats.js -->
+<link rel="stylesheet" href="/ui-kit/float_dock.css">
+<!-- Design-Hintergründe (D4/D5): je Design-Theme ein stimmiger, dezenter Hintergrund (tokenbasiert). -->
+<link rel="stylesheet" href="/ui-kit/background.css?v=20260618c">
+<link rel="stylesheet" href="/ui-kit/dzmenu.css?v=20260626a">
+<!-- Geteilte Bereichs-Filter-Leiste (DzBereichBar, netzweite Single-Source, W4) -->
+<link rel="stylesheet" href="/ui-kit/bereichbar.css?v=20260626w4">
+<script defer src="/ui-kit/background.js?v=20260618c"></script>
+<script>
+  // Anti-FOUC: zuletzt gewählte Achsen sofort setzen (vor dem Body); der
+  // Theme-/Farb-Umschalter im Einstellungs-Fenster (K2.4-Selects) schreibt sie
+  // hierher + in die typisierten Settings. themeBoot() gleicht beim Start mit
+  // dem Server ab.
+  try {
+    var d = localStorage.getItem('mem_design'), f = localStorage.getItem('mem_farbe');
+    if (d) document.documentElement.setAttribute('data-design', d);
+    if (f) document.documentElement.setAttribute('data-farbe', f);
+  } catch (e) {}
+</script>
+<style>
+  /* ============ Grundgerüst (rein tokenbasiert) ============ */
+  * { box-sizing: border-box; }
+  /* hidden hart durchsetzen: eigene display-Regeln (.editor/.neu-zeile/.kmwrap)
+     übersteuern sonst die nicht-!important-UA-Regel des hidden-Attributs
+     (Fenster-Norm Gotcha 1, docs/19 §2b). */
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.45;
+    display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+  }
+  h1, h2, h3 { font-family: "Orbitron", "Chakra Petch", sans-serif; margin: 0; }
+  button { font-family: inherit; }
+  a { color: var(--cy); }
+
+  /* ============ Kopf — kanonische Kopf-Norm aus dem Kit (.dz-appkopf, docs/39 §1b + Glow docs/41) ============ */
+  /* Marke (cyan) + Tagline (magenta) + Akzentstreifen + Glows kommen token-getrieben aus
+     shared/controls.css. Hier nur das App-Layout: horizontaler Rand = .main (16px). */
+  header.dz-appkopf { flex: 0 0 auto; padding: 22px 16px 10px; }
+  /* B-Schritt (docs/39): zentriert statt vollgepfropft — Kopf + Arbeitsbereich auf max-width zentriert. */
+  header.dz-appkopf, .main { width: 100%; max-width: 1500px; margin-left: auto; margin-right: auto; }
+
+  /* ============ KI-Panel (oben) ============ */
+  /* Vault-Chat (P3.1; lebt jetzt in der schwebenden Sprechblase): mehrstufiger Verlauf */
+  .ki-verlauf { margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;
+    max-height: 46vh; overflow-y: auto; padding: 2px 4px 0 0; }
+  .ki-verlauf[hidden] { display: none; }
+  .chat-turn { display: flex; }
+  .chat-turn.user { justify-content: flex-end; }
+  .chat-turn .bubble { max-width: 84%; padding: 9px 12px; border-radius: var(--r);
+    border: 1px solid var(--line); white-space: pre-wrap; line-height: 1.5; }
+  .chat-turn.user .bubble { background: rgba(var(--control-akzent-rgb), .14);
+    border-color: rgba(var(--control-akzent-rgb), .42); }
+  .chat-turn.ki .bubble { background: var(--panel-solid); }
+  .chat-turn.ki .bubble.denkt { color: var(--mut); font-style: italic; }
+  .ki-quellen { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip.quelle { cursor: pointer; }
+  .chip.quelle:hover { border-color: var(--control-akzent); }
+
+  /* Bereichs-Leiste (Über-Kategorisierung) — die frei gewordene obere Fläche */
+  /* Bereichs-Filter-Leiste = geteilte Komponente DzBereichBar (.dz-berbar/.dz-berchip in
+     /ui-kit/bereichbar.css). Hier nur die App-Positionierung + die Inline-Anlege-Zeile. */
+  .bereich-leiste { margin: 12px 16px 0; display: flex; flex-direction: column; gap: 8px; }
+  .bereich-leiste .neu-zeile { display: flex; align-items: center; gap: 8px; }
+
+  /* DzMenu-Styles → /ui-kit/dzmenu.css (netzweite Single-Source, promotet 26.06.) */
+
+  /* ============ Drei Spalten: Ordner | Liste | Editor ============ */
+  .main { flex: 1 1 auto; display: grid; grid-template-columns: 250px 320px 1fr;
+          grid-template-rows: minmax(0, 1fr);   /* definite Zeile: erlaubt %-Höhe der Editor-Spalte */
+          gap: 12px; padding: 12px 16px 16px; min-height: 0; }
+  .pane { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-win);
+          box-shadow: var(--sh); border-top: 1px solid var(--edge-t);
+          display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  /* (Spaltenkopf/-körper kommen aus .dz-panel-kopf/.dz-panel-koerper — alle drei Spalten
+     sind einklappbare dz-panel; die alten .pane>.kopf/.koerper-Regeln entfielen 14.06.) */
+
+  /* ---- K2.4 einklappbare Panes: die dz-panel-Struktur in eine Grid-Spalte gießen.
+         Klapp-Kopf = Spaltenkopf; eingeklappt schrumpft die Spalte auf die Kopfhöhe. */
+  .pane.dz-panel { display: flex; flex-direction: column; min-height: 0; overflow: hidden; position: relative; }
+  /* LINKER AKZENT-STREIFEN (TB-Muster) auch an den Memory-Spalten (Pane = Panel). */
+  .pane.dz-panel::before { content: ""; position: absolute; left: 0; top: 13px; bottom: 13px; width: 3px;
+    border-radius: 0 3px 3px 0; background: linear-gradient(180deg, var(--mg), var(--cy));
+    box-shadow: 0 0 12px rgba(var(--mg-rgb),.55); opacity: .9; z-index: 2; pointer-events: none; }
+  .pane.dz-panel > .dz-panel-kopf {
+    flex: 0 0 auto; border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+    background: var(--panel-kopf-bg); padding: 9px 12px;
+  }
+  /* KOPF-BOX als Auflage: solider Spalten-Kopf BLEIBT (kein Durchscheinen); offen kommt der
+     magenta Ring/Glow dazu. Hohe Spezifität (0,4,0) schlägt die controls.css-Box. */
+  .pane.dz-panel:not([data-dz-collapsed]) > .dz-panel-kopf {
+    background: var(--panel-kopf-bg);
+    box-shadow: inset 0 0 0 1px rgba(var(--mg-rgb),.16), 0 0 14px rgba(var(--mg-rgb),.08);
+  }
+  .pane.dz-panel > .dz-panel-kopf:focus-visible { outline: 2px solid var(--control-ring); outline-offset: -2px; }
+  .pane.dz-panel .dz-panel-titel { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--panel-kopf-mut); font-weight: 700; }
+  .pane.dz-panel > .dz-panel-koerper { flex: 1 1 auto; overflow-y: auto; padding: 8px; min-height: 0; }
+  .pane.dz-panel[data-dz-collapsed] { align-self: start; }   /* eingeklappte Spalte: nur Kopf */
+  /* Editor-Spalte (Notiz): nur 2/3 Höhe, oben angedockt — unten rechts bleibt Platz für die
+     schwebenden Knöpfe (Nutzer-Wunsch 14.06.). Eingeklappt greift wieder die Kopf-Höhe oben. */
+  .pane.dz-panel[data-pkey="editor"] { align-self: start; }
+  .pane.dz-panel[data-pkey="editor"]:not([data-dz-collapsed]) { height: 66%; }
+  .pane-toolbar { display: flex; gap: 6px; justify-content: flex-end; margin: 2px 4px 8px; }
+
+  /* Notiz-Vorlagen-Modal (docs/33, grobe Anbindung) */
+  .tpl-row { display: flex; align-items: center; gap: 8px; padding: 6px 9px; margin-bottom: 6px;
+    border: 1px solid var(--line); border-radius: var(--r-chip); background: var(--panel-solid); }
+  .tpl-row .tpl-name { font-weight: 600; }
+  .tpl-row .tpl-ord { color: var(--mut); font-size: 12px; }
+  .tpl-neu { margin-top: 12px; }
+  .tpl-neu textarea { width: 100%; box-sizing: border-box; min-height: 120px; }
+
+  /* ============ Eingaben (text/textarea — KEINE nativen Auswahl-Controls) ============ */
+  input[type=text], textarea {
+    width: 100%; background: var(--control-bg); color: var(--control-fg);
+    border: 1px solid var(--control-rand); border-radius: var(--control-r);
+    padding: 8px 10px; font-family: inherit; font-size: 14px; outline: none;
+  }
+  input[type=text]:focus, textarea:focus {
+    border-color: var(--control-akzent);
+    box-shadow: 0 0 0 3px var(--control-ring);
+  }
+  textarea { resize: none; line-height: 1.55; }
+
+  /* ============ Knöpfe (tokenbasiert) ============ */
+  .btn {
+    background: var(--control-bg); color: var(--control-fg);
+    border: 1px solid var(--control-rand); border-radius: var(--control-r);
+    padding: 7px 12px; cursor: pointer; font-size: 13px; white-space: nowrap;
+    transition: border-color var(--t), background var(--t);
+  }
+  .btn:hover { border-color: var(--control-akzent); background: var(--control-hover); }
+  .btn.primaer { border-color: var(--control-akzent);
+    background: linear-gradient(180deg, rgba(var(--control-akzent-rgb), .22), transparent); }
+  .btn.mini { padding: 3px 8px; font-size: 12px; }
+  .btn:disabled { opacity: .5; cursor: progress; }
+
+  /* ============ Ordnerbaum + Labels ============ */
+  .baum, .baum ul { list-style: none; margin: 0; padding: 0; }
+  .baum ul { margin-left: 14px; border-left: 1px solid var(--line); padding-left: 6px; }
+  .knoten { display: flex; align-items: center; gap: 4px; padding: 4px 6px; border-radius: var(--r-chip);
+            cursor: pointer; color: var(--fg); }
+  .knoten:hover { background: var(--control-hover); }
+  .knoten.aktiv { background: rgba(var(--control-akzent-rgb), .16);
+                  box-shadow: inset 2px 0 0 var(--control-akzent); }
+  .knoten .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .knoten .zahl { color: var(--mut); font-size: 11px; }
+  .ausklapp { width: 16px; text-align: center; color: var(--mut); cursor: pointer;
+              user-select: none; font-size: 11px; }
+  .ausklapp.leer { visibility: hidden; }
+
+  .chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+    border-radius: 999px; border: 1px solid var(--control-rand); background: var(--panel-solid);
+    font-size: 12px; cursor: pointer; color: var(--fg); }
+  .chip:hover { border-color: var(--control-akzent); }
+  .chip.aktiv { border-color: var(--control-akzent); background: rgba(var(--control-akzent-rgb), .16); }
+  .chip .punkt { width: 8px; height: 8px; border-radius: 50%; background: var(--mg); }
+  .chip .x { color: var(--mut); font-weight: 700; margin-left: 1px; }
+  .chip .x:hover { color: var(--bad); }
+  /* Herkunfts-Labels (docs/26 §9.1): reservierte Optik „aus anderer App" —
+     Magenta-Kontur + ⇲-Marke statt Punkt; klar abgesetzt vom normalen Label-Pool. */
+  .chip.herkunft { border-color: rgba(var(--mg-rgb), .6); background: rgba(var(--mg-rgb), .12);
+    color: var(--mg); }
+  .chip.herkunft:hover { border-color: var(--mg); }
+  .chip.herkunft.aktiv { background: rgba(var(--mg-rgb), .26); border-color: var(--mg); }
+  .chip.herkunft .hmark { font-weight: 800; filter: drop-shadow(0 0 3px rgba(var(--mg-rgb), .6)); }
+  .herk-reihe { display: flex; flex-wrap: wrap; gap: 6px; width: 100%;
+    margin-bottom: 4px; padding-bottom: 5px; border-bottom: 1px dashed var(--line); }
+  /* Herkunfts-Marke in der Notiz-Karte (Meta-Zeile): kleines Magenta-Badge. */
+  .karte .meta .hbadge { display: inline-flex; align-items: center; gap: 3px;
+    color: var(--mg); border: 1px solid rgba(var(--mg-rgb), .5); border-radius: 999px;
+    padding: 0 6px; font-weight: 600; }
+
+  .gruppe-titel { font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--mut); margin: 12px 6px 4px; }
+  .neu-zeile { display: flex; gap: 6px; margin: 6px 4px 2px; }
+  .neu-zeile input { flex: 1; }
+
+  /* ============ Notiz-Liste ============ */
+  .karte { padding: 9px 11px; border-radius: var(--r); border: 1px solid var(--line);
+    background: var(--panel-solid); margin-bottom: 7px; cursor: pointer;
+    transition: border-color var(--t); }
+  .karte:hover { border-color: var(--control-akzent); }
+  .karte.aktiv { border-color: var(--control-akzent); box-shadow: 0 0 0 1px var(--control-akzent); }
+  .karte .titel { font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .karte .titel .schloss { font-size: 11px; color: var(--warn); }
+  .karte .auszug { color: var(--mut); font-size: 12px; margin-top: 3px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .karte .meta { color: var(--mut); font-size: 11px; margin-top: 4px; }
+  .karte mark { background: rgba(var(--control-akzent-rgb), .3); color: var(--fg); border-radius: 3px; }
+  .karte .titel .tbadge { margin-left: auto; font-size: 10px; padding: 1px 7px; border-radius: 999px;
+    border: 1px solid var(--line); font-weight: 600; letter-spacing: .04em; }
+  .karte .titel .tbadge + .tbadge { margin-left: 4px; }
+  .tbadge.wort { color: var(--cy); border-color: rgba(var(--cy-rgb), .55); }
+  .tbadge.sinn { color: var(--mg); border-color: rgba(var(--mg-rgb), .55); }
+  /* Relevanz-Meter (P1b): drei Segmente, gefüllt nach Treffer-Güte */
+  .karte .relevanz { display: inline-flex; gap: 2px; margin-left: 6px; vertical-align: middle; }
+  .karte .relevanz i { width: 4px; height: 9px; border-radius: 1px; background: var(--line); }
+  .karte .relevanz i.an { background: var(--control-akzent); box-shadow: 0 0 4px rgba(var(--control-akzent-rgb), .6); }
+  /* Tastatur-Fokus in der Trefferliste (P1b) */
+  .karte.fokus { border-color: var(--control-akzent); box-shadow: 0 0 0 2px var(--control-akzent); }
+
+  /* Herkunfts-Facetten-Leiste (P1c, Readwise-Stil) */
+  .facetten { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+  .facetten .facette { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
+    border-radius: 999px; border: 1px solid var(--control-rand); background: var(--panel-solid);
+    font-size: 12px; cursor: pointer; color: var(--fg); }
+  .facetten .facette:hover { border-color: var(--control-akzent); }
+  .facetten .facette.aktiv { border-color: var(--mg); background: rgba(var(--mg-rgb), .2); }
+  .facetten .facette.alle.aktiv { border-color: var(--control-akzent); background: rgba(var(--control-akzent-rgb), .2); }
+  .facetten .facette .zahl { color: var(--mut); font-size: 11px; }
+
+  /* Herkunfts-Rück-Referenz im Editor (P1c) */
+  .herkunft-ref { margin: 2px 0 8px; padding: 6px 10px; border-radius: var(--r);
+    border: 1px solid rgba(var(--mg-rgb), .4); background: rgba(var(--mg-rgb), .1);
+    font-size: 12px; color: var(--fg); }
+  .herkunft-ref a { color: var(--mg); }
+
+  /* Verknüpfungen / Backlinks (P1a) */
+  .verkn { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .verkn-block { margin-bottom: 6px; }
+  .chip.link { cursor: pointer; }
+  .chip.link.fehlt { border-style: dashed; color: var(--mut); }
+  .chip.link.fehlt:hover { color: var(--cy); border-color: var(--control-akzent); }
+
+  /* P2.1: Editor-Fläche (Bearbeiten / Split / Vorschau) + Markdown-Vorschau */
+  .ed-flaeche { position: relative; flex: 1 1 auto; min-height: 0; display: flex; gap: 8px; }
+  .ed-flaeche > textarea { flex: 1 1 auto; min-height: 0; }
+  .ed-preview { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 8px 12px;
+    border: 1px solid var(--control-rand); border-radius: var(--control-r);
+    background: var(--control-bg); color: var(--fg); font-size: 14px; line-height: 1.5; }
+  .ed-preview h1, .ed-preview h2, .ed-preview h3 { font-family: "Orbitron", sans-serif; margin: .5em 0 .3em; }
+  .ed-preview h1 { font-size: 1.3em; } .ed-preview h2 { font-size: 1.15em; } .ed-preview h3 { font-size: 1.03em; }
+  .ed-preview p { margin: .4em 0; } .ed-preview ul { margin: .3em 0; padding-left: 1.3em; }
+  .ed-preview code { background: var(--panel-solid); padding: 1px 4px; border-radius: 4px;
+    font-family: "Chakra Petch", monospace; font-size: .9em; }
+  .ed-preview pre { background: var(--panel-solid); padding: 8px 10px; border-radius: var(--r);
+    overflow-x: auto; border: 1px solid var(--line); }
+  .ed-preview pre code { background: none; padding: 0; }
+  .ed-preview a { color: var(--cy); }
+  .ed-preview a.wikilink { color: var(--mg); text-decoration: none; border-bottom: 1px dashed rgba(var(--mg-rgb), .6); cursor: pointer; }
+  .ed-preview a.wikilink.fehlt { color: var(--mut); border-bottom-style: dotted; }
+  .ed-preview blockquote { border-left: 3px solid var(--control-akzent); margin: .4em 0; padding: 0 .8em; color: var(--mut); }
+  @media (max-width: 1100px) { .ed-flaeche[data-modus="split"] { flex-direction: column; } }
+
+  /* [[…]]-Autocomplete-Popup */
+  .ed-auto { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 30;
+    max-height: 190px; overflow-y: auto; background: var(--panel-solid);
+    border: 1px solid var(--control-akzent); border-radius: var(--control-r); box-shadow: var(--sh); }
+  .ed-auto .opt { padding: 6px 10px; cursor: pointer; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+  .ed-auto .opt.an, .ed-auto .opt:hover { background: rgba(var(--control-akzent-rgb), .18); }
+  .ed-auto .opt.neu { color: var(--mut); font-style: italic; }
+
+  /* P2.3: Wissens-Graph */
+  .graph-km { width: min(1100px, 96vw); height: min(86vh, 820px); }
+  .graph-buehne { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 40%, rgba(var(--cy-rgb), .05), transparent 70%); }
+  #graphSvg { width: 100%; height: 100%; display: block; cursor: grab; }
+  #graphSvg .kante { stroke: var(--line); stroke-width: 1.2; }
+  #graphSvg .knoten { cursor: pointer; transition: r .1s; }
+  #graphSvg .knoten.eigen { fill: var(--cy); }
+  #graphSvg .knoten.herk { fill: var(--mg); }
+  #graphSvg .klabel { fill: var(--mut); font-size: 11px; font-family: "Chakra Petch", sans-serif;
+    pointer-events: none; }
+  #graphSvg .knoten:hover { filter: url(#gl); }
+  .graph-leer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--mut); font-size: 14px; text-align: center; padding: 20px; }
+  .leer-hinweis { color: var(--mut); text-align: center; padding: 24px 12px; font-size: 13px; }
+
+  /* ============ Editor ============ */
+  .editor { display: flex; flex-direction: column; height: 100%; }
+  .editor .titel-in { font-size: 17px; font-weight: 600; border: none; border-bottom: 1px solid var(--line);
+    border-radius: 0; padding: 6px 2px; margin-bottom: 8px; background: transparent; }
+  .editor .titel-in:focus { box-shadow: none; border-bottom-color: var(--control-akzent); }
+  .editor textarea { flex: 1 1 auto; min-height: 0; }
+  .editor .leiste { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .editor .leiste .raum { flex: 1; }
+  .feld-titel { font-size: 11px; color: var(--mut); margin: 8px 0 4px; }
+  .chip-reihe { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  .speicher-status { font-size: 12px; color: var(--ok); }
+
+  /* ============ Schwebende Knöpfe + Spin-Physik v4.3 (docs/14, Floats) ============ */
+  html { overflow-x: clip; }   /* Float-Drift/Screen-Wrap erzeugt keinen H-Scrollbar */
+  /* Basis-Icon (Geometrie aus dem Sprite, Look via CSS) — einheitliches Linien-Icon. */
+  .ic{width:1.4em;height:1.4em;display:inline-block;vertical-align:-0.25em;flex:none;color:var(--cy);
+      fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+      filter:drop-shadow(0 0 3px currentColor)}
+  /* Schwebende Knöpfe = EINHEITLICHES Netzwerk-Kit (1:1 News/Admin): SVG-Doppelicon,
+     Charge-Glow (--charge via ui-kit/floats.js), lgshoot-Flash. Memory startet sie UNTEN
+     RECHTS, wo der auf 2/3 begrenzte Editor Platz lässt. */
+  .floatacct{--charge:0;position:fixed;bottom:26px;right:26px;z-index:41;width:96px;height:96px;
+    border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;
+    background:var(--panel);background-image:var(--brush),var(--panel);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    border:1px solid var(--line);color:var(--cy);
+    box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),
+      0 0 calc(var(--charge)*110px) calc(var(--charge)*17px) rgba(var(--cy-rgb),calc(var(--charge)*.82)),
+      0 0 calc(var(--charge)*165px) calc(var(--charge)*13px) rgba(var(--mg-rgb),calc(var(--charge)*.72));
+    transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatacct:hover{border-color:rgba(var(--cy-rgb),.45)}
+  .floatacct .duo{position:relative;width:58px;height:52px;pointer-events:none}
+  .floatacct .duo .ic{position:absolute;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.7))}
+  .floatacct .duo .ic.fg{width:44px;height:44px;left:0;top:0}
+  .floatacct .duo .ic.fa{width:28px;height:28px;right:-2px;bottom:-2px;color:var(--mg);
+    filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.65))}
+  .floatdizzi{--charge:0;position:fixed;bottom:140px;right:34px;z-index:41;width:80px;height:80px;
+    border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;
+    background:var(--panel);background-image:var(--brush),var(--panel);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    border:1px solid var(--line);color:var(--mg);
+    box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),
+      0 0 calc(var(--charge)*110px) calc(var(--charge)*15px) rgba(var(--mg-rgb),calc(var(--charge)*.8));
+    transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatdizzi:hover{border-color:rgba(var(--mg-rgb),.45)}
+  .floatdizzi .ic{width:40px;height:40px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.6))}
+  .floatdizzi .spark{position:absolute;top:9px;right:11px;width:16px;height:16px;color:var(--cy);
+    filter:drop-shadow(0 0 5px rgba(var(--cy-rgb),.8))}
+  .floatacct.lgshoot,.floatdizzi.lgshoot{animation:lgshoot .36s ease-out}
+  @keyframes lgshoot{0%{box-shadow:var(--sh),0 0 120px 26px rgba(var(--cy-rgb),.9),0 0 180px 18px rgba(var(--mg-rgb),.8);transform:scale(1.16)}100%{transform:scale(1)}}
+  @media (prefers-reduced-motion: reduce){.floatacct,.floatdizzi{position:fixed!important}}
+  /* Greif-/Schleuder-Glow der Spalten-Panels (.pane.dz-panel) jetzt kanonisch in
+     /ui-kit/controls.css (.card.spinlift/.dz-panel.spinlift, De-Fork). Die Kit-Regel
+     steht NACH der charge-kalibrierten Float-Regel ⇒ schlägt sie für Panels. */
+
+  /* Schwebende Chat-Sprechblase (Vault-Chat, mit Mini-Dizzi vereint, ruft /api/frage).
+     Schmal/organisch statt voller Breite. */
+  .dizzibubble[hidden] { display: none !important; }
+  .dizzibubble { position: fixed; right: 22px; bottom: 150px; z-index: 55;
+    width: min(384px, 92vw); display: flex; flex-direction: column;
+    background: var(--panel-solid); color: var(--fg);
+    border: 1px solid var(--line); border-top: 1px solid var(--edge-t);
+    border-radius: var(--r-win); box-shadow: var(--sh); padding: 11px 12px; }
+  .dizzibubble .db-kopf { display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--mut); }
+  .dizzibubble .db-kopf .raum { flex: 1; }
+  .dizzibubble .db-kopf .punkt { width: 8px; height: 8px; border-radius: 50%;
+    background: var(--cy); box-shadow: 0 0 8px var(--cy); text-transform: none; }
+  .dizzibubble .db-zeile { display: flex; gap: 6px; }
+  .dizzibubble .db-zeile input { flex: 1; }
+
+  /* ============ Einstellungs-Fenster (Fenster-Norm docs/19 §2b) ============ */
+  .kmwrap[hidden] { display: none !important; }   /* Gotcha 1: hidden hart durchsetzen */
+  .kmwrap { position: fixed; inset: 0; z-index: 60;
+    background: rgba(0,0,0,.55); display: flex; }  /* abdunkelnder Backdrop */
+  .km {                                            /* Gotcha 2/4/5: explizite Maße, harte Mitte, SOLID */
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(900px, 94vw); max-height: min(82vh, 760px);   /* kanonische Breite (roter Faden); imWrap überschreibt inline */
+    background: var(--panel-solid); color: var(--fg);
+    border: 1px solid var(--line); border-top: 1px solid var(--edge-t);
+    border-radius: var(--r-win); box-shadow: var(--sh); display: flex; flex-direction: column;
+  }
+  .km .km-kopf { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .km .km-kopf h2 { font-size: 15px; letter-spacing: .06em; text-transform: uppercase; background: var(--satin); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .km .km-koerper { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; }
+  .km .zeile { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0;
+    border-bottom: 1px dashed var(--line); }
+  .km .zeile:last-child { border-bottom: 0; }
+  .km .zeile .k { color: var(--mut); }
+  .km-status { font-size: 12px; color: var(--ok); margin-left: auto; margin-right: 10px; min-height: 1em; }
+  .hinweis { margin-top: 14px; padding: 12px; border-radius: var(--r);
+    border: 1px dashed var(--control-akzent); background: rgba(var(--control-akzent-rgb), .08);
+    color: var(--fg); font-size: 13px; }
+  /* ---- generisches Settings-Formular (K2.4-Controls) ---- */
+  .km .dz-panel { margin-bottom: 10px; }
+  .km .dz-panel-koerper { padding: 6px 4px 2px; }
+  .set-zeile { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 8px 4px; border-bottom: 1px dashed var(--line); }
+  .set-zeile:last-child { border-bottom: 0; }
+  .set-info { min-width: 0; }
+  .set-label { font-size: 13px; }
+  .set-desc { font-size: 11px; color: var(--mut); margin-top: 2px; line-height: 1.4; }
+  .set-ctrl { flex: none; }
+  .set-ctrl input[type=text] { width: 190px; }
+  .set-preview { display: flex; gap: 8px; margin: 4px 0 2px; }
+  .set-preview .feld { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--mut); }
+  /* ---- Konto-Fenster: kanonische Sektionen (roter Faden, docs/19 §2b) ---- */
+  .km .kmsec { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px;
+    margin-bottom: 11px; background: var(--bg-deep, rgba(0,0,0,.18)); }
+  .km .kmsech { font-weight: 700; color: var(--cy); font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: .16em; margin-bottom: 8px; }
+  .km .kmsec .kmrow { display: flex; align-items: center; gap: 10px; justify-content: space-between; padding: 4px 0; }
+  .km .kmsec .kmrow > label { font-size: 12.5px; color: var(--fg); }
+  .km .kmdienst { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line);
+    border-radius: 10px; padding: 6px 10px; margin: 5px 0; font-size: 12.5px; }
+  .km .kmsec .spacer { flex: 1; }
+  .km .km-aktion { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .km .kmsec .mut { color: var(--mut); }
+  .km .kmsec .small { font-size: 11.5px; }
+  .km .kmsec .kmcat { margin: 10px 0 2px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .km .kmsec .kmcat .kmcath { font-weight: 700; color: var(--cy); font-size: 11px;
+    margin-bottom: 5px; text-transform: uppercase; letter-spacing: .08em; }
+  .km .btn { text-decoration: none; }
+
+  /* ============ Responsiv ============ */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; grid-auto-rows: minmax(180px, auto); }
+    body { overflow: auto; height: auto; min-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+  <div id="bg-stage" aria-hidden="true"></div>
+  <div class="bgfx" aria-hidden="true"></div>
+  <div class="bgbrush" aria-hidden="true"></div>
+  <header class="dz-appkopf">
+    <span class="dz-kopf-brand">Dizz Memory</span>
+    <span class="dz-kopf-sub">Wissensspeicher · Vault · KI nur lokal</span>
+  </header>
+
+  <!-- ===== Bereichs-Filter-Leiste (geteilte ui-kit-Komponente DzBereichBar, W4) ===== -->
+  <div class="bereich-leiste" id="bereichLeiste">
+    <nav id="bereichBar" aria-label="Bereiche"></nav>
+    <div class="neu-zeile" id="bereichNeuZeile" hidden>
+      <input type="text" id="bereichNeuName" placeholder="Bereichs-Name …">
+      <span class="dz-field"><select id="bereichNeuArt" class="dz-select" title="Typ (bestimmt die Chip-Farbe)"></select></span>
+      <button class="btn mini primaer" id="bereichNeuOk">OK</button>
+    </div>
+  </div>
+
+  <!-- ===== Drei Spalten ===== -->
+  <div class="main">
+    <!-- LINKS: Ordnerbaum + Labels (K2.4 einklappbar mit Kurzanzeige) -->
+    <section class="pane dz-panel" data-dz-collapsible data-pkey="ablage">
+      <button class="dz-panel-kopf" type="button">
+        <span class="dz-panel-titel">Ablage</span>
+        <span class="dz-panel-kurz" id="ablageKurz"></span>
+        <span class="dz-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="dz-panel-koerper">
+        <div class="pane-toolbar">
+          <button class="btn mini" id="importBtn">⇪ Import</button>
+          <button class="btn mini" id="ordnerNeuBtn">+ Ordner</button>
+        </div>
+        <ul class="baum" id="schnellzugriff"></ul>
+        <div class="neu-zeile" id="ordnerNeuZeile" hidden>
+          <input type="text" id="ordnerNeuName" placeholder="Ordnername …">
+          <button class="btn mini primaer" id="ordnerNeuOk">OK</button>
+        </div>
+        <ul class="baum" id="ordnerBaum"></ul>
+        <div class="gruppe-titel">Labels</div>
+        <div id="labelListe" class="chip-reihe" style="margin:4px 6px;"></div>
+        <div class="neu-zeile" id="labelNeuZeile" hidden>
+          <input type="text" id="labelNeuName" placeholder="Label …">
+          <button class="btn mini primaer" id="labelNeuOk">OK</button>
+        </div>
+        <button class="btn mini" id="labelNeuBtn" style="margin:4px 6px;">+ Label</button>
+      </div>
+    </section>
+
+    <!-- MITTE: Notiz-Liste + Suche (K2.4 einklappbar mit Kurzanzeige) -->
+    <section class="pane dz-panel" data-dz-collapsible data-pkey="notizen">
+      <button class="dz-panel-kopf" type="button">
+        <span class="dz-panel-titel" id="listeTitel">Alle Notizen</span>
+        <span class="dz-panel-kurz" id="notizenKurz"></span>
+        <span class="dz-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="dz-panel-koerper">
+        <div class="pane-toolbar">
+          <button class="btn mini primaer" id="notizNeuBtn">+ Notiz</button>
+          <button class="btn mini" id="tplBtn" title="Notiz aus Vorlage anlegen / Vorlagen verwalten">📋 Vorlage</button>
+          <button class="btn mini" id="graphBtn" title="Wissens-Graph: Notizen + [[Verknüpfungen]]">🕸 Graph</button>
+        </div>
+        <div class="neu-zeile" style="margin-bottom:8px;">
+          <input type="text" id="sucheFeld" placeholder="Suche (Wort + Bedeutung) …">
+        </div>
+        <!-- Herkunfts-Facetten (P1c, Netzwerk-Kit): nach Quell-App filtern -->
+        <div class="facetten" id="facetten" hidden></div>
+        <div id="notizListe"></div>
+      </div>
+    </section>
+
+    <!-- RECHTS: Editor (Notiz) — einklappbares Panel, auf 2/3 Höhe begrenzt (oben angedockt),
+         damit unten rechts immer Platz für die schwebenden Knöpfe bleibt. -->
+    <section class="pane dz-panel" data-dz-collapsible data-pkey="editor">
+      <button class="dz-panel-kopf" type="button">
+        <span class="dz-panel-titel">Notiz</span>
+        <span class="dz-panel-kurz" id="editorKurz"></span>
+        <span class="dz-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="dz-panel-koerper">
+        <div class="pane-toolbar">
+          <span class="speicher-status" id="speicherStatus"></span>
+          <div class="raum" style="flex:1"></div>
+          <button class="btn mini" id="notizLoeschBtn" hidden>Löschen</button>
+        </div>
+        <div id="editorLeer" class="leer-hinweis">Wähle links eine Notiz oder lege eine neue an.</div>
+        <div class="editor" id="editor" hidden>
+          <input type="text" class="titel-in" id="edTitel" placeholder="Titel">
+          <!-- Herkunfts-Rück-Referenz (P1c): „stammt aus <App> → Quelle" -->
+          <div class="herkunft-ref" id="edHerkunft" hidden></div>
+          <div class="feld-titel">Ordner</div>
+          <div class="chip-reihe" id="edOrdner"></div>
+          <div class="feld-titel">Labels</div>
+          <div class="chip-reihe" id="edLabels"></div>
+          <div class="leiste">
+            <button class="btn mini" id="edSensibel">🔓 normal</button>
+            <button class="btn mini" id="edModus" title="Bearbeiten / Split / Vorschau (Strg+Shift+V)">👁 Vorschau</button>
+            <div class="raum"></div>
+            <button class="btn primaer" id="edSpeichern">Speichern</button>
+          </div>
+          <div class="ed-flaeche" id="edFlaeche" data-modus="bearbeiten">
+            <textarea id="edInhalt" placeholder="Markdown … [[Verknüpfungen]] erlaubt"></textarea>
+            <div class="ed-preview" id="edPreview" hidden></div>
+            <!-- [[…]]-Autocomplete (P2.1): erscheint beim Tippen von [[ -->
+            <div class="ed-auto" id="edAuto" hidden></div>
+          </div>
+          <!-- Bidirektionale Verknüpfungen (P1a): ausgehende [[Links]] + Backlinks -->
+          <div class="verkn" id="edVerkn" hidden>
+            <div class="verkn-block" id="edAusgehend" hidden>
+              <div class="feld-titel">↗ Verknüpfungen</div>
+              <div class="chip-reihe" id="edAusChips"></div>
+            </div>
+            <div class="verkn-block" id="edBacklinks" hidden>
+              <div class="feld-titel">↘ Erwähnt in</div>
+              <div class="chip-reihe" id="edBackChips"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Minimal-Icon-Sprite (Geometrie; Look/Glow via .ic-CSS) — einheitliches Float-Kit -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
+    <symbol id="ic-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.4v2.3M12 18.3v2.3M5.4 5.4 7 7M17 17l1.6 1.6M3.4 12h2.3M18.3 12h2.3M5.4 18.6 7 17M17 7l1.6-1.6"/></symbol>
+    <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3.5 5.5 6v5c0 4.2 2.7 7.4 6.5 9 3.8-1.6 6.5-4.8 6.5-9V6Z"/></symbol>
+    <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-8.6 8 8.2 8.2 0 0 1-3.7-.85L3.5 20l1.4-4.5A8 8 0 0 1 12 3.5a8 8 0 0 1 8.5 8Z"/></symbol>
+    <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.6 9 19 10.6 13.6 12.2 12 17.6 10.4 12.2 5 10.6 10.4 9Z"/></symbol>
+  </defs></svg>
+
+  <!-- Schwebende Knöpfe (einheitliches Kit: SVG-Doppelicon, Charge/Spinlift via ui-kit/floats.js) —
+       auf BODY-Ebene, kein Vorfahr mit transform/backdrop-filter (Containing-Block-Falle). -->
+  <button class="floatacct" id="floatAcct" title="Konto & Einstellungen — greifen & schleudern, Tipp = öffnen" aria-label="Konto & Einstellungen"><span class="duo"><svg class="ic fg" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic fa" aria-hidden="true"><use href="#ic-shield"/></svg></span></button>
+  <button class="floatdizzi" id="floatDizzi" title="Mini-Dizzi fragen — greifen & schleudern, Tipp = Sprechblase" aria-label="Mini-Dizzi fragen"><svg class="ic" aria-hidden="true"><use href="#ic-chat"/></svg><svg class="spark ic" aria-hidden="true"><use href="#ic-sparkle"/></svg></button>
+
+  <!-- Chat mit dem Vault — schwebende Sprechblase (Mini-Dizzi vereint, ruft /api/frage) -->
+  <div class="dizzibubble" id="dizziBubble" hidden>
+    <div class="db-kopf"><span class="punkt"></span><span>Chat mit deinem Speicher</span><span id="dizziKiChip"></span><span class="raum"></span>
+      <button class="btn mini" id="kiReset" title="Gespräch neu starten" hidden>↺</button>
+      <button class="btn mini" id="dizziZu">✕</button></div>
+    <div class="ki-verlauf" id="kiVerlauf" hidden></div>
+    <div class="db-zeile">
+      <input type="text" id="kiFrage" placeholder="Frag deinen Speicher … (Folgefragen möglich)">
+      <button class="btn mini primaer" id="kiBtn" title="Fragen">→</button>
+    </div>
+  </div>
+
+  <!-- Einstellungs-Fenster (Fenster-Norm docs/19 §2b — auf BODY-Ebene) -->
+  <div class="kmwrap" id="kmWrap" hidden>
+    <div class="km" role="dialog" aria-modal="true" aria-label="Konto & Einstellungen">
+      <div class="km-kopf">
+        <span class="duo" style="width:30px;height:28px;position:relative;display:inline-block;flex:none"><svg class="ic" style="width:24px;height:24px;position:absolute;left:0;top:0" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic" style="width:16px;height:16px;position:absolute;right:-2px;bottom:-2px;color:var(--mg)" aria-hidden="true"><use href="#ic-shield"/></svg></span>
+        <h2>Konto &amp; Einstellungen</h2>
+        <span class="pill">Dizzi-ID</span>
+        <span class="km-status" id="kmStatus"></span>
+        <button class="btn mini" id="kmZu" aria-label="Schließen">✕</button></div>
+      <div class="km-koerper" id="kmKoerper"></div>
+    </div>
+  </div>
+
+  <!-- Import-Fenster (lokaler Ordner / Mem.ai-Export) — K2.4-Controls -->
+  <div class="kmwrap" id="imWrap" hidden>
+    <div class="km" style="width:min(520px,94vw); max-height:min(72vh,580px)"
+         role="dialog" aria-modal="true" aria-label="Ordner importieren">
+      <div class="km-kopf"><h2>Ordner importieren</h2>
+        <button class="btn mini" id="imZu">✕</button></div>
+      <div class="km-koerper">
+        <div class="set-info"><div class="set-label">Lokaler Ordner</div>
+          <div class="set-desc">Pfad eines Ordners mit <code>.md</code>-Dateien (Mem.ai-Export
+            oder Markdown-Vault), innerhalb der Freigabe. Unterordner werden zu Ordnern,
+            Duplikate übersprungen.</div></div>
+        <input type="text" id="imPfad" placeholder="C:\Dizzik\data\… oder freigegebener Ordner"
+               style="margin:8px 0;">
+        <label class="dz-check"><input type="checkbox" id="imRekursiv" checked> Unterordner einschließen</label>
+        <div class="db-zeile" style="margin-top:12px;">
+          <button class="btn primaer" id="imGo">Ordner importieren</button>
+        </div>
+        <div class="ki-antwort" id="imErgebnis"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notiz-Vorlagen (docs/33) — grobe Anbindung (Feinschliff §5d). Auf BODY-Ebene. -->
+  <div class="kmwrap" id="tplWrap" hidden>
+    <div class="km" style="width:min(600px,94vw); max-height:min(80vh,640px)"
+         role="dialog" aria-modal="true" aria-label="Notiz-Vorlagen">
+      <div class="km-kopf"><h2>📋 Notiz-Vorlagen</h2>
+        <button class="btn mini" id="tplZu">✕</button></div>
+      <div class="km-koerper">
+        <div class="set-info"><div class="set-desc">Wiederverwendbare Gerüste.
+          <code>{{titel}}</code>, <code>{{datum}}</code> und <code>{{zeit}}</code> werden beim
+          Anlegen gefüllt; unbekannte Platzhalter bleiben stehen. (Feinschliff folgt §5d.)</div></div>
+        <input type="text" id="tplTitel" placeholder="Titel der neuen Notiz (optional) …" style="margin:8px 0;">
+        <div id="tplListe"></div>
+        <details class="tpl-neu">
+          <summary class="dz-sub">+ Neue Vorlage anlegen</summary>
+          <input type="text" id="tplName" placeholder="Name (z. B. Meeting)" style="margin:8px 0;">
+          <input type="text" id="tplOrdner" placeholder="Standard-Ordner-Pfad (optional, z. B. Tagebuch)" style="margin:0 0 8px;">
+          <textarea id="tplInhalt" rows="6" placeholder="# {{titel}}&#10;{{datum}} — …"></textarea>
+          <div class="db-zeile" style="margin-top:10px;">
+            <button class="btn primaer" id="tplSpeichern">Vorlage speichern</button>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wissens-Graph (P2.3): Knoten=Notiz, Kanten=[[Wikilinks]] — auf BODY-Ebene -->
+  <div class="kmwrap" id="graphWrap" hidden>
+    <div class="km graph-km" role="dialog" aria-modal="true" aria-label="Wissens-Graph">
+      <div class="km-kopf"><h2>🕸 Wissens-Graph</h2>
+        <span class="mut small" id="graphInfo" style="margin-left:10px"></span>
+        <span class="raum" style="flex:1"></span>
+        <button class="btn mini" id="graphZu">✕</button></div>
+      <div class="graph-buehne">
+        <svg id="graphSvg" xmlns="http://www.w3.org/2000/svg"><defs>
+          <filter id="gl" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs></svg>
+        <div class="graph-leer" id="graphLeer" hidden>Noch keine [[Verknüpfungen]] — verlinke Notizen mit [[Titel]].</div>
+      </div>
+    </div>
+  </div>
+
+<!-- K2.4-Verhalten: Collapse + Stepper (DzControls). Spin-Physik v4.3 (DizzSpin) +
+     schwebende Knöpfe (DizzFloats). Alle vor dem Inline-Skript ⇒ APIs sind dort da. -->
+<script src="/ui-kit/collapse.js?v=20260618c"></script>
+<script src="/ui-kit/spinfling.js?v=20260618c"></script>
+<script src="/ui-kit/float_dock.js"></script><!-- DzHalter (v4.4) — SYNC + VOR floats.js, damit initFloat unten andocken kann -->
+<script src="/ui-kit/floats.js?v=20260618c"></script>
+<script src="/ui-kit/dzmenu.js?v=20260626a"></script>
+<script src="/ui-kit/bereichbar.js?v=20260626w4"></script>
+<script>
+// ====================== Zustand + API ======================
+const S = { ordner: [], labels: [], bereiche: [], bereich: '', sel: { typ: 'alle', id: null, q: '' }, notiz: null };
+
+async function api(pfad, opts) {
+  const r = await fetch(pfad, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts));
+  if (!r.ok) { let e = {}; try { e = await r.json(); } catch (_) {} throw new Error(e.error || ('HTTP ' + r.status)); }
+  return r.status === 204 ? null : r.json();
+}
+const esc = s => (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+// ====================== Bereiche (Über-Kategorisierung) ======================
+// Bereichs-Filter-Leiste = geteilte ui-kit-Komponente DzBereichBar (W4): „Alle Bereiche" +
+// je Bereich ein TYP-gefärbter Chip; aktiv = gefiltert. `_bf(prefix)` hängt den Query an.
+function _bf(prefix) { return S.bereich ? prefix + 'bereich=' + encodeURIComponent(S.bereich) : ''; }
+// Memory-eigener art-Katalog (Nutzer-Wahl: app-spezifisch) → Typ-Icon + Typ-Farbe für die Leiste.
+const BEREICH_TYP_META = {
+  projekt:       { label: 'Projekt',       icon: '🚀', farbe: 'cyan' },
+  lebensbereich: { label: 'Lebensbereich', icon: '🌱', farbe: 'gruen' },
+  wissen:        { label: 'Wissensgebiet', icon: '📘', farbe: 'violett' },
+  referenz:      { label: 'Referenz',      icon: '🔖', farbe: 'amber' },
+  sonstiges:     { label: 'Sonstiges',     icon: '📁', farbe: 'magenta' },
+};
+let _berBar = null;
+async function ladeBereiche() {
+  try { S.bereiche = await api('/api/bereiche?status=aktiv'); } catch (e) { S.bereiche = []; }
+  renderBereiche();
+}
+function renderBereiche() {
+  if (_berBar) { _berBar.set(S.bereiche, S.bereich); return; }
+  _berBar = DzBereichBar.mount(document.getElementById('bereichBar'), {
+    bereiche: S.bereiche, aktiv: S.bereich, typMeta: BEREICH_TYP_META,
+    titel: 'Bereich', alleLabel: 'Alle Bereiche',
+    neu: { label: '+ Neuer Bereich', run: () => zeigeZeile('bereichNeuZeile', 'bereichNeuName') },
+    onWaehl: id => setBereich(id, true),   // true = aus der Leiste (Chip ist schon aktiv markiert)
+  });
+}
+function setBereich(id, vonLeiste) {
+  S.bereich = id || '';
+  S.sel = { typ: 'alle', id: null, q: '' };            // gefilterte Ablage konsistent halten
+  const sf = document.getElementById('sucheFeld'); if (sf) sf.value = '';
+  if (!vonLeiste && _berBar) _berBar.set(S.bereiche, S.bereich);   // Sync, wenn von anderswo (DzMenu) gesetzt
+  ladeAblage(); ladeNotizen();
+}
+async function bereichAnlegen() {
+  const n = document.getElementById('bereichNeuName').value.trim(); if (!n) return;
+  const art = document.getElementById('bereichNeuArt').value || 'sonstiges';
+  try { await api('/api/bereiche', { method: 'POST', body: JSON.stringify({ name: n, art }) }); }
+  catch (e) { return; }
+  document.getElementById('bereichNeuName').value = '';
+  document.getElementById('bereichNeuZeile').hidden = true;
+  ladeBereiche();
+}
+
+// ====================== Ordner + Labels laden/rendern ======================
+async function ladeAblage() {
+  const of = S.bereich ? '?bereich=' + encodeURIComponent(S.bereich) : '';
+  [S.ordner, S.labels, S.titel] = await Promise.all([
+    api('/api/ordner' + of), api('/api/labels'), api('/api/titel').catch(() => [])]);
+  renderSchnellzugriff(); renderBaum(); renderLabels(); renderFacetten();
+  // Kurzanzeige für den eingeklappten Zustand (K2.4 Progressive Disclosure)
+  document.getElementById('ablageKurz').textContent =
+    `${S.ordner.length} Ordner · ${S.labels.length} Labels`;
+}
+
+function renderSchnellzugriff() {
+  const el = document.getElementById('schnellzugriff');
+  // „Heute" ist eine Aktion (Tagesnotiz öffnen/anlegen), kein Filter — eigenes Icon.
+  const eintraege = [['heute', 'Heute', '📅'], ['alle', 'Alle Notizen', '🗂'], ['lose', 'Lose Notizen', '📄']];
+  el.innerHTML = eintraege.map(([typ, name, icon]) =>
+    `<li><div class="knoten ${S.sel.typ === typ ? 'aktiv' : ''}" data-typ="${typ}">
+      <span class="ausklapp leer"></span><span>${icon}</span><span class="name">${name}</span></div></li>`).join('');
+  el.querySelectorAll('.knoten').forEach(k => k.onclick = () =>
+    k.dataset.typ === 'heute' ? tagesNotizOeffnen() : waehle(k.dataset.typ, null));
+}
+
+// P2.2: Tagesnotiz-Landing — öffnet/legt die Notiz des Tages an (Ordner „Tagebuch").
+async function tagesNotizOeffnen() {
+  let r; try { r = await api('/api/tagesnotiz', { method: 'POST', body: JSON.stringify({}) }); }
+  catch (e) { return; }
+  await ladeAblage();
+  S.sel = { typ: 'ordner', id: r.ordner_id, q: '' };
+  document.getElementById('sucheFeld').value = '';
+  await ladeNotizen();
+  oeffneNotiz(r.id);
+}
+
+function renderBaum() {
+  const kinder = {};
+  S.ordner.forEach(o => (kinder[o.parent_id || ''] = kinder[o.parent_id || ''] || []).push(o));
+  const offen = JSON.parse(localStorage.getItem('mem_offen') || '{}');
+  function zweig(parent) {
+    const liste = kinder[parent || ''] || [];
+    if (!liste.length) return '';
+    return '<ul>' + liste.map(o => {
+      const hatKinder = (kinder[o.id] || []).length;
+      const auf = offen[o.id] !== false;
+      return `<li><div class="knoten ${S.sel.typ === 'ordner' && S.sel.id === o.id ? 'aktiv' : ''}" data-id="${o.id}">
+        <span class="ausklapp ${hatKinder ? '' : 'leer'}" data-auf="${o.id}">${hatKinder ? (auf ? '▾' : '▸') : ''}</span>
+        <span>📁</span><span class="name">${esc(o.name)}</span><span class="zahl">${o.anzahl || ''}</span></div>
+        ${hatKinder && auf ? zweig(o.id) : ''}</li>`;
+    }).join('') + '</ul>';
+  }
+  const el = document.getElementById('ordnerBaum');
+  el.innerHTML = zweig(null) || '<div class="leer-hinweis" style="padding:10px;">Noch keine Ordner.</div>';
+  el.querySelectorAll('.knoten').forEach(k => k.onclick = e => {
+    if (e.target.classList.contains('ausklapp')) return;
+    waehle('ordner', k.dataset.id);
+  });
+  el.querySelectorAll('.ausklapp[data-auf]').forEach(a => a.onclick = () => {
+    offen[a.dataset.auf] = offen[a.dataset.auf] === false; localStorage.setItem('mem_offen', JSON.stringify(offen)); renderBaum();
+  });
+}
+
+function labelChip(l) {
+  const herk = l.art === 'herkunft';
+  const aktiv = S.sel.typ === 'label' && S.sel.id === l.id ? 'aktiv' : '';
+  const marke = herk
+    ? `<span class="hmark" title="Herkunft: archiviert aus App „${esc(l.name)}“ (System-Label)">⇲</span>`
+    : '<span class="punkt"></span>';
+  // Herkunfts-Labels sind system-verwaltet ⇒ KEIN Lösch-✕ (docs/26 §9.5).
+  const del = herk ? '' : `<span class="x" data-del="${l.id}" title="Label löschen">✕</span>`;
+  return `<span class="chip ${aktiv} ${herk ? 'herkunft' : ''}" data-id="${l.id}">
+    ${marke}${esc(l.name)} <span class="zahl">${l.anzahl || 0}</span>${del}</span>`;
+}
+function renderLabels() {
+  const el = document.getElementById('labelListe');
+  const herk = S.labels.filter(l => l.art === 'herkunft');
+  const norm = S.labels.filter(l => l.art !== 'herkunft');
+  let html = herk.length ? '<div class="herk-reihe">' + herk.map(labelChip).join('') + '</div>' : '';
+  html += norm.map(labelChip).join('');
+  el.innerHTML = html || '<span class="zahl" style="color:var(--mut)">keine</span>';
+  el.querySelectorAll('.chip').forEach(c => c.onclick = e => {
+    if (e.target.classList.contains('x')) return;   // X übernimmt loescheLabel
+    waehle('label', c.dataset.id);
+  });
+  el.querySelectorAll('.x[data-del]').forEach(x => x.onclick = e => {
+    e.stopPropagation(); loescheLabel(x.dataset.del);
+  });
+}
+async function loescheLabel(lid) {
+  const l = S.labels.find(x => x.id === lid) || {};
+  if (!confirm('Label „' + (l.name || '') + '“ löschen? Es wird aus allen Notizen entfernt.')) return;
+  try { await api('/api/labels/' + lid, { method: 'DELETE' }); }
+  catch (e) { alert('Löschen fehlgeschlagen: ' + e.message); return; }
+  if (S.sel.typ === 'label' && S.sel.id === lid) S.sel = { typ: 'alle', id: null, q: '' };
+  // Offenen Editor mit-aktualisieren, falls die Notiz das gelöschte Label trug.
+  if (S.notiz) { try { S.notiz = await api('/api/notizen/' + S.notiz.id); renderEdLabels(); } catch (e) {} }
+  ladeAblage(); ladeNotizen();
+}
+
+// ====================== Auswahl + Notiz-Liste ======================
+function waehle(typ, id) { S.sel = { typ, id, q: '' }; document.getElementById('sucheFeld').value = ''; ladeAblage(); ladeNotizen(); }
+
+async function ladeNotizen() {
+  let titel = 'Alle Notizen', notizen;
+  if (S.sel.q) { notizen = await sucheKombiniert(S.sel.q);
+    const w = notizen.filter(n => n.treffer.includes('wort')).length;
+    const s = notizen.filter(n => n.treffer.includes('sinn')).length;
+    titel = `Suche: „${S.sel.q}“ · ${w} Wort · ${s} Sinn`; }
+  // Bereichs-Filter (Über-Kategorisierung) auf die Listen-Sichten anhängen; die globale
+  // Suche bleibt bewusst bereichs-übergreifend (FTS/RAG kennen die Achse nicht).
+  else if (S.sel.typ === 'lose') { titel = 'Lose Notizen'; notizen = await api('/api/notizen?ordner=lose' + _bf('&')); }
+  else if (S.sel.typ === 'ordner') { titel = (S.ordner.find(o => o.id === S.sel.id) || {}).name || 'Ordner'; notizen = await api('/api/notizen?ordner=' + S.sel.id + _bf('&')); }
+  else if (S.sel.typ === 'label') { titel = '# ' + ((S.labels.find(l => l.id === S.sel.id) || {}).name || ''); notizen = await api('/api/notizen?label=' + S.sel.id + _bf('&')); }
+  else { notizen = await api('/api/notizen' + _bf('?')); }
+  if (S.bereich) titel += ' · ' + ((S.bereiche.find(b => b.id === S.bereich) || {}).name || 'Bereich');
+  document.getElementById('listeTitel').textContent = titel;
+  renderNotizen(notizen);
+}
+
+// Kombinierte Suche: FTS5-WORTsuche (exakt, «»-Snippet) + RAG-Bedeutungssuche
+// (semantisch). Zusammengeführt, dedupliziert über die Notiz-ID; je Treffer ein
+// `treffer`-Tag (wort/sinn). Beide degradieren leer ⇒ kein Crash ohne Ollama.
+async function sucheKombiniert(q) {
+  const [fts, sem] = await Promise.all([
+    api('/api/suche?q=' + encodeURIComponent(q)).catch(() => []),
+    api('/api/suche/semantisch?q=' + encodeURIComponent(q)).catch(() => []),
+  ]);
+  const byId = new Map();
+  fts.forEach(n => byId.set(n.id, Object.assign({}, n, { treffer: ['wort'] })));
+  sem.forEach(n => {
+    if (byId.has(n.id)) { const e = byId.get(n.id); if (!e.treffer.includes('sinn')) e.treffer.push('sinn'); if (n.score != null) e.score = n.score; }
+    else byId.set(n.id, Object.assign({}, n, { treffer: ['sinn'] }));
+  });
+  // Wort-Treffer zuerst (exakt), dann reine Sinn-Treffer
+  return [...byId.values()].sort((a, b) => b.treffer.length - a.treffer.length
+    || (b.treffer.includes('wort') ? 1 : 0) - (a.treffer.includes('wort') ? 1 : 0));
+}
+
+// Snippet-Hervorhebung: FTS liefert «…» (→ <mark>); semantische Snippets sind roh
+// (→ Suchwörter markieren). Immer escapen (kein HTML-Durchgriff aus Notiz-Inhalt).
+function snippetHTML(n, q) {
+  const a = n.auszug || '';
+  if (a.indexOf('«') >= 0) return esc(a).replace(/«/g, '<mark>').replace(/»/g, '</mark>');
+  return markiere(esc(a), q || '');
+}
+function markiere(escaped, q) {
+  const toks = (q.match(/\w+/g) || []).filter(t => t.length > 1)
+    .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (!toks.length) return escaped;
+  return escaped.replace(new RegExp('(' + toks.join('|') + ')', 'gi'), '<mark>$1</mark>');
+}
+function trefferBadges(t) {
+  return (t || []).map(x => `<span class="tbadge ${x}">${x === 'wort' ? 'Wort' : 'Sinn'}</span>`).join('');
+}
+
+// P1b: Relevanz-Meter (3 Segmente) — Wort+Sinn=3, Wort=2, Sinn nach score 1–2.
+function relevanzWert(n) {
+  if (!n.treffer) return null;
+  const wort = n.treffer.includes('wort'), sinn = n.treffer.includes('sinn');
+  if (wort && sinn) return 3;
+  if (wort) return 2;
+  return (n.score != null && n.score >= 0.55) ? 2 : 1;
+}
+function relevanzMeter(n) {
+  const v = relevanzWert(n);
+  if (v == null) return '';
+  let s = '<span class="relevanz" title="Relevanz">';
+  for (let i = 1; i <= 3; i++) s += `<i class="${i <= v ? 'an' : ''}"></i>`;
+  return s + '</span>';
+}
+
+function renderNotizen(notizen) {
+  const el = document.getElementById('notizListe');
+  S.treffer = notizen; S.fokusIdx = null;   // P1b: Tastatur-Navigation zurücksetzen
+  // Kurzanzeige für den eingeklappten Zustand: Anzahl + zuletzt bearbeitete Notiz
+  const letzte = notizen[0] ? ' · zuletzt: ' + notizen[0].titel : '';
+  document.getElementById('notizenKurz').textContent = `${notizen.length} Notizen${letzte}`;
+  if (!notizen.length) { el.innerHTML = '<div class="leer-hinweis">Keine Notizen hier.</div>'; return; }
+  el.innerHTML = notizen.map(n => {
+    const aus = snippetHTML(n, S.sel.q);
+    const labs = (n.labels || []).map(l => l.art === 'herkunft'
+      ? `<span class="hbadge" title="archiviert aus App „${esc(l.name)}“">⇲ ${esc(l.name)}</span>`
+      : '#' + esc(l.name)).join(' ');
+    return `<div class="karte ${S.notiz && S.notiz.id === n.id ? 'aktiv' : ''}" data-id="${n.id}">
+      <div class="titel">${n.sensibel ? '<span class="schloss">🔒</span>' : ''}${esc(n.titel)}${trefferBadges(n.treffer)}</div>
+      <div class="auszug">${aus || '<i>leer</i>'}</div>
+      <div class="meta">${labs} · ${(n.updated_at || '').slice(0, 16).replace('T', ' ')}${relevanzMeter(n)}</div></div>`;
+  }).join('');
+  el.querySelectorAll('.karte').forEach(k => k.onclick = () => oeffneNotiz(k.dataset.id));
+}
+
+// P1c: Herkunfts-Facetten-Leiste (Readwise-Stil) — nach Quell-App filtern.
+function renderFacetten() {
+  const el = document.getElementById('facetten');
+  const herk = (S.labels || []).filter(l => l.art === 'herkunft');
+  if (!herk.length) { el.hidden = true; el.innerHTML = ''; return; }
+  const alleAktiv = S.sel.typ !== 'label' || !herk.some(l => l.id === S.sel.id);
+  el.innerHTML = `<span class="facette alle ${alleAktiv ? 'aktiv' : ''}" data-alle="1">Alle</span>`
+    + herk.map(l => `<span class="facette ${S.sel.typ === 'label' && S.sel.id === l.id ? 'aktiv' : ''}" data-id="${l.id}" title="Querverbindungen aus Dizz ${esc(l.name)}">⇲ ${esc(l.name)} <span class="zahl">${l.anzahl || 0}</span></span>`).join('');
+  el.hidden = false;
+  el.querySelector('[data-alle]').onclick = () => waehle('alle', null);
+  el.querySelectorAll('.facette[data-id]').forEach(f => f.onclick = () => waehle('label', f.dataset.id));
+}
+
+// P1b: Tastatur-Navigation durch die Trefferliste (Readwise/Obsidian).
+function setFokus(idx) {
+  const karten = [...document.querySelectorAll('#notizListe .karte')];
+  if (!karten.length) return;
+  S.fokusIdx = Math.max(0, Math.min(idx, karten.length - 1));
+  karten.forEach((k, i) => k.classList.toggle('fokus', i === S.fokusIdx));
+  karten[S.fokusIdx].scrollIntoView({ block: 'nearest' });
+}
+function navTreffer(delta) { setFokus((S.fokusIdx == null ? -1 : S.fokusIdx) + delta); }
+function oeffneFokus() {
+  const karten = [...document.querySelectorAll('#notizListe .karte')];
+  if (S.fokusIdx != null && karten[S.fokusIdx]) oeffneNotiz(karten[S.fokusIdx].dataset.id);
+}
+
+// ====================== Editor ======================
+async function oeffneNotiz(id) {
+  // DS-R4-M1 (Vertrauens-Fix): Vor jedem Notiz-/Karten-Wechsel ungespeicherte
+  // Änderungen der AKTUELLEN Notiz automatisch sichern (2026-Norm Obsidian/Notion:
+  // Auto-Save statt Dialog). Schlägt das Speichern fehl, bleibt S.dirty true ⇒ wir
+  // wechseln NICHT (kein Datenverlust; der Fehler steht sichtbar im Status).
+  if (S.dirty && S.notiz) { await speichereNotiz(); if (S.dirty) return; }
+  S.notiz = await api('/api/notizen/' + id);
+  document.getElementById('editorLeer').hidden = true;
+  document.getElementById('editor').hidden = false;
+  document.getElementById('notizLoeschBtn').hidden = false;
+  document.getElementById('edTitel').value = S.notiz.titel;
+  document.getElementById('editorKurz').textContent = S.notiz.titel || '(ohne Titel)';  // Kurzanzeige bei eingeklapptem Editor
+  document.getElementById('edInhalt').value = S.notiz.inhalt || '';
+  setSensibelBtn();
+  renderEdOrdner(); renderEdLabels(); renderHerkunftRef();
+  S.dirty = false;
+  const s = document.getElementById('speicherStatus'); s.textContent = ''; s.style.color = 'var(--ok)';
+  document.querySelectorAll('.karte').forEach(k => k.classList.toggle('aktiv', k.dataset.id === id));
+  setEdModus('bearbeiten');          // P2.1: Editor immer im Bearbeiten-Modus öffnen
+  renderVerknuepfungen(id);          // P1a: ausgehende [[Links]] + Backlinks (async)
+}
+
+// P1c: Herkunfts-Rück-Referenz „stammt aus <App> → Quelle" (nur archivierte Notizen).
+function renderHerkunftRef() {
+  const el = document.getElementById('edHerkunft');
+  const app = S.notiz && S.notiz.import_quelle;
+  if (!app) { el.hidden = true; el.innerHTML = ''; return; }
+  const anz = esc(S.notiz.import_quelle_anzeige || app);
+  const q = (S.notiz.quelle || '').trim();
+  let ref = '';
+  if (q) ref = /^https?:\/\//i.test(q)
+    ? ` → <a href="${esc(q)}" target="_blank" rel="noopener">Quelle ↗</a>`
+    : ` → <span title="Quelle/Referenz">${esc(q)}</span>`;
+  el.innerHTML = `⇲ stammt aus <b>Dizz ${anz}</b>${ref}`;
+  el.hidden = false;
+}
+
+// P1a: bidirektionale Verknüpfungen — Chip-Reihe „Verknüpfungen" (ausgehend) +
+// „Erwähnt in" (Backlinks). Unaufgelöste [[Links]] sind anlegbar (Obsidian-Stil).
+async function renderVerknuepfungen(id) {
+  const wrap = document.getElementById('edVerkn');
+  const ausB = document.getElementById('edAusgehend'), backB = document.getElementById('edBacklinks');
+  let v; try { v = await api('/api/notizen/' + id + '/verknuepfungen'); } catch (e) { wrap.hidden = true; return; }
+  if (!S.notiz || S.notiz.id !== id) return;   // Notiz inzwischen gewechselt
+  const aus = v.ausgehend || [], back = v.erwaehnt_in || [];
+  const ausEl = document.getElementById('edAusChips');
+  ausEl.innerHTML = aus.map(a => a.id
+    ? `<span class="chip link" data-open="${a.id}">🔗 ${esc(a.titel)}</span>`
+    : `<span class="chip link fehlt" data-neu="${esc(a.titel)}" title="Notiz „${esc(a.titel)}“ existiert noch nicht — klicken legt sie an.">＋ ${esc(a.titel)}</span>`).join('');
+  document.getElementById('edBackChips').innerHTML =
+    back.map(b => `<span class="chip link" data-open="${b.id}">🔗 ${esc(b.titel)}</span>`).join('');
+  ausB.hidden = !aus.length; backB.hidden = !back.length;
+  wrap.hidden = !aus.length && !back.length;
+  wrap.querySelectorAll('[data-open]').forEach(c => c.onclick = () => oeffneNotiz(c.dataset.open));
+  wrap.querySelectorAll('[data-neu]').forEach(c => c.onclick = async () => {
+    const r = await api('/api/notizen', { method: 'POST', body: JSON.stringify({ titel: c.dataset.neu }) });
+    ladeAblage(); ladeNotizen(); oeffneNotiz(r.id);
+  });
+}
+
+// ====================== P2.1: Vorschau + [[…]]-Autocomplete ================
+async function ladeTitel() { try { S.titel = await api('/api/titel'); } catch (e) {} }
+function titelId(t) {
+  const k = (t || '').trim().toLowerCase();
+  const m = (S.titel || []).find(x => (x.titel || '').trim().toLowerCase() === k);
+  return m ? m.id : null;
+}
+
+// Minimaler, SICHERER Markdown→HTML-Renderer (escape-first) inkl. [[Wikilinks]].
+function mdToHtml(src) {
+  const lines = (src || '').replace(/\r/g, '').split('\n');
+  let html = '', inUl = false, inCode = false, code = '';
+  const closeUl = () => { if (inUl) { html += '</ul>'; inUl = false; } };
+  const inline = (t) => {
+    t = esc(t)
+      .replace(/`([^`]+)`/g, (_, c) => '<code>' + c + '</code>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>')
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, txt, url) =>
+        /^https?:\/\//i.test(url) ? `<a href="${url}" target="_blank" rel="noopener">${txt}</a>` : txt)
+      .replace(/\[\[([^\]|]+)(?:\|([^\]]*))?\]\]/g, (_, ziel, alias) => {
+        const z = ziel.trim(), id = titelId(z), label = esc((alias || z).trim());
+        return id ? `<a class="wikilink" data-open="${id}">${label}</a>`
+                  : `<a class="wikilink fehlt" data-neu="${esc(z)}" title="noch nicht angelegt — klicken legt an">${label}</a>`;
+      });
+    return t;
+  };
+  for (let ln of lines) {
+    if (/^```/.test(ln)) { if (inCode) { html += '<pre><code>' + esc(code) + '</code></pre>'; code = ''; inCode = false; } else { closeUl(); inCode = true; } continue; }
+    if (inCode) { code += ln + '\n'; continue; }
+    let m;
+    if ((m = ln.match(/^(#{1,3})\s+(.*)$/))) { closeUl(); html += `<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`; }
+    else if ((m = ln.match(/^\s*[-*]\s+(.*)$/))) { if (!inUl) { html += '<ul>'; inUl = true; } html += '<li>' + inline(m[1]) + '</li>'; }
+    else if ((m = ln.match(/^>\s?(.*)$/))) { closeUl(); html += '<blockquote>' + inline(m[1]) + '</blockquote>'; }
+    else if (ln.trim() === '') { closeUl(); }
+    else { closeUl(); html += '<p>' + inline(ln) + '</p>'; }
+  }
+  closeUl(); if (inCode) html += '<pre><code>' + esc(code) + '</code></pre>';
+  return html || '<p class="mut small">(leer)</p>';
+}
+
+function renderPreview() {
+  const pv = document.getElementById('edPreview');
+  pv.innerHTML = mdToHtml(document.getElementById('edInhalt').value);
+  pv.querySelectorAll('a.wikilink[data-open]').forEach(a => a.onclick = () => oeffneNotiz(a.dataset.open));
+  pv.querySelectorAll('a.wikilink[data-neu]').forEach(a => a.onclick = async () => {
+    const r = await api('/api/notizen', { method: 'POST', body: JSON.stringify({ titel: a.dataset.neu }) });
+    ladeAblage(); ladeNotizen(); oeffneNotiz(r.id);
+  });
+}
+
+const MODI = ['bearbeiten', 'vorschau', 'split'];
+const MODUS_NEXT_LABEL = { bearbeiten: '👁 Vorschau', vorschau: '⤢ Split', split: '✎ Bearbeiten' };
+function setEdModus(m) {
+  S.edModus = m;
+  document.getElementById('edFlaeche').dataset.modus = m;
+  document.getElementById('edInhalt').hidden = (m === 'vorschau');
+  document.getElementById('edPreview').hidden = (m === 'bearbeiten');
+  if (m !== 'bearbeiten') renderPreview();
+  document.getElementById('edModus').textContent = MODUS_NEXT_LABEL[m];  // zeigt nächsten Modus
+}
+function zykleModus() { setEdModus(MODI[(MODI.indexOf(S.edModus || 'bearbeiten') + 1) % MODI.length]); }
+
+// [[…]]-Autocomplete: erkennt offenes [[ vor dem Cursor, bietet Titel-Treffer.
+let AUTO = { offen: false, von: 0, opts: [], idx: 0, query: '' };
+function autoSchliessen() { document.getElementById('edAuto').hidden = true; AUTO.offen = false; }
+function autoRender() {
+  const pop = document.getElementById('edAuto');
+  const q = AUTO.query.trim();
+  let h = AUTO.opts.map((t, i) => `<div class="opt ${i === AUTO.idx ? 'an' : ''}" data-i="${i}">🔗 ${esc(t.titel)}</div>`).join('');
+  if (q && !AUTO.opts.some(t => t.titel.toLowerCase() === q.toLowerCase()))
+    h += `<div class="opt neu ${AUTO.idx === AUTO.opts.length ? 'an' : ''}" data-neu="1">＋ „${esc(q)}" verlinken/anlegen</div>`;
+  pop.innerHTML = h; pop.hidden = !h;
+  pop.querySelectorAll('.opt[data-i]').forEach(o => o.onmousedown = e => { e.preventDefault(); autoUebernehmen(+o.dataset.i); });
+  const neu = pop.querySelector('.opt[data-neu]');
+  if (neu) neu.onmousedown = e => { e.preventDefault(); autoUebernehmen(AUTO.opts.length); };
+}
+function autoPruefen() {
+  const ta = document.getElementById('edInhalt'), pos = ta.selectionStart;
+  const m = ta.value.slice(0, pos).match(/\[\[([^\]\n]*)$/);
+  if (!m) { autoSchliessen(); return; }
+  const q = m[1].toLowerCase();
+  AUTO = { offen: true, von: pos - m[1].length, query: m[1], idx: 0,
+    opts: (S.titel || []).filter(t => t.titel.toLowerCase().includes(q)).slice(0, 8) };
+  if (!AUTO.opts.length && !m[1].trim()) { autoSchliessen(); return; }
+  autoRender();
+}
+function autoUebernehmen(i) {
+  const ta = document.getElementById('edInhalt'), pos = ta.selectionStart;
+  const titel = (i < AUTO.opts.length) ? AUTO.opts[i].titel : AUTO.query.trim();
+  if (!titel) return;
+  const before = ta.value.slice(0, AUTO.von), rest = ta.value.slice(pos);
+  const after = /^\]\]/.test(rest) ? rest.replace(/^\]\]/, '') : rest;   // doppelte ]] vermeiden
+  ta.value = before + titel + ']]' + after;
+  const caret = (before + titel + ']]').length;
+  ta.setSelectionRange(caret, caret); ta.focus();
+  autoSchliessen(); markiereDirty();
+  if (S.edModus && S.edModus !== 'bearbeiten') renderPreview();
+}
+
+function setSensibelBtn() {
+  const b = document.getElementById('edSensibel');
+  b.textContent = S.notiz.sensibel ? '🔒 sensibel' : '🔓 normal';
+}
+
+function renderEdOrdner() {
+  const el = document.getElementById('edOrdner');
+  const aktiv = S.notiz.ordner_id;
+  const chips = [`<span class="chip ${!aktiv ? 'aktiv' : ''}" data-id="">lose</span>`]
+    .concat(S.ordner.map(o => `<span class="chip ${aktiv === o.id ? 'aktiv' : ''}" data-id="${o.id}">📁 ${esc(o.name)}</span>`));
+  el.innerHTML = chips.join('');
+  el.querySelectorAll('.chip').forEach(c => c.onclick = async () => {
+    await api('/api/notizen/' + S.notiz.id + '/verschieben', { method: 'POST', body: JSON.stringify({ ordner_id: c.dataset.id || null }) });
+    S.notiz.ordner_id = c.dataset.id || null; renderEdOrdner(); ladeAblage(); ladeNotizen();
+  });
+}
+
+function renderEdLabels() {
+  const el = document.getElementById('edLabels');
+  const drauf = new Set((S.notiz.labels || []).map(l => l.id));
+  const chips = (S.notiz.labels || []).map(l =>
+    `<span class="chip aktiv ${l.art === 'herkunft' ? 'herkunft' : ''}" data-weg="${l.id}">${l.art === 'herkunft' ? '<span class="hmark">⇲</span>' : '<span class="punkt"></span>'}${esc(l.name)} <span class="x">✕</span></span>`)
+    .concat(S.labels.filter(l => !drauf.has(l.id)).map(l =>
+      `<span class="chip ${l.art === 'herkunft' ? 'herkunft' : ''}" data-zu="${l.id}">+ ${esc(l.name)}</span>`));
+  el.innerHTML = chips.join('') || '<span class="zahl" style="color:var(--mut)">keine Labels</span>';
+  el.querySelectorAll('[data-zu]').forEach(c => c.onclick = async () => {
+    await api('/api/notizen/' + S.notiz.id + '/labels', { method: 'POST', body: JSON.stringify({ label_id: c.dataset.zu }) });
+    S.notiz = await api('/api/notizen/' + S.notiz.id); renderEdLabels(); ladeAblage();
+  });
+  el.querySelectorAll('[data-weg]').forEach(c => c.querySelector('.x').onclick = async () => {
+    await api('/api/notizen/' + S.notiz.id + '/labels/' + c.dataset.weg, { method: 'DELETE' });
+    S.notiz = await api('/api/notizen/' + S.notiz.id); renderEdLabels(); ladeAblage();
+  });
+}
+
+async function speichereNotiz() {
+  if (!S.notiz) return;
+  const body = { titel: document.getElementById('edTitel').value, inhalt: document.getElementById('edInhalt').value };
+  const s = document.getElementById('speicherStatus');
+  try {
+    await api('/api/notizen/' + S.notiz.id, { method: 'PUT', body: JSON.stringify(body) });
+  } catch (e) { s.style.color = 'var(--bad)'; s.textContent = '✗ ' + e.message; return; }
+  S.dirty = false;
+  s.style.color = 'var(--ok)'; s.textContent = '✓ gespeichert';
+  document.getElementById('editorKurz').textContent = body.titel || '(ohne Titel)';  // Kurzanzeige bei evtl. geändertem Titel
+  setTimeout(() => { if (!S.dirty) s.textContent = ''; }, 1800);
+  ladeNotizen(); ladeTitel();        // Titel-Cache fürs [[…]]-Autocomplete frisch halten
+}
+
+// ====================== Anlegen / Löschen ======================
+async function neueNotiz() {
+  const ordner_id = S.sel.typ === 'ordner' ? S.sel.id : null;
+  const r = await api('/api/notizen', { method: 'POST', body: JSON.stringify({ titel: 'Neue Notiz', ordner_id }) });
+  await ladeNotizen(); oeffneNotiz(r.id); document.getElementById('edTitel').focus();
+}
+async function loescheNotiz() {
+  if (!S.notiz || !confirm('Notiz „' + S.notiz.titel + '“ löschen?')) return;
+  await api('/api/notizen/' + S.notiz.id, { method: 'DELETE' });
+  S.notiz = null; S.dirty = false; document.getElementById('editor').hidden = true;
+  document.getElementById('editorLeer').hidden = false; document.getElementById('notizLoeschBtn').hidden = true;
+  document.getElementById('editorKurz').textContent = '';  // leerer Editor → keine Kurzanzeige
+  ladeAblage(); ladeNotizen();
+}
+
+// ====================== Vault-Chat (P3.1) ======================
+// Mehrstufiger Chat auf /api/frage (RAG-Retrieval je Turn). Verlauf clientseitig
+// (schlanker Weg), je KI-Antwort klickbare Quellen-Chips (Titel→ID via titelId).
+let CHAT = [];   // [{rolle:'user'|'ki', text, quellen?, denkt?}]
+
+function renderChat() {
+  const v = document.getElementById('kiVerlauf');
+  v.hidden = CHAT.length === 0;
+  document.getElementById('kiReset').hidden = CHAT.length === 0;
+  v.innerHTML = CHAT.map(t => {
+    if (t.rolle === 'user')
+      return `<div class="chat-turn user"><div class="bubble">${esc(t.text)}</div></div>`;
+    const q = (t.quellen || []).map(name => {
+      const id = titelId(name);
+      return id ? `<span class="chip quelle" data-open="${id}" title="Notiz öffnen">📄 ${esc(name)}</span>`
+                : `<span class="chip">📄 ${esc(name)}</span>`;
+    }).join('');
+    return `<div class="chat-turn ki"><div class="bubble${t.denkt ? ' denkt' : ''}">${esc(t.text)}` +
+      `${q ? `<div class="ki-quellen">${q}</div>` : ''}</div></div>`;
+  }).join('');
+  v.querySelectorAll('.chip.quelle[data-open]').forEach(c => c.onclick = () => oeffneNotiz(c.dataset.open));
+  v.scrollTop = v.scrollHeight;
+}
+
+async function frageStellen() {
+  const inp = document.getElementById('kiFrage');
+  const f = inp.value.trim(); if (!f) return;
+  inp.value = '';
+  // Verlauf = die Konversation VOR dieser Frage (ohne Platzhalter).
+  const verlauf = CHAT.filter(t => !t.denkt).slice(-8).map(t => ({ rolle: t.rolle, text: t.text }));
+  CHAT.push({ rolle: 'user', text: f });
+  const denk = { rolle: 'ki', text: '… denke nach', denkt: true };
+  CHAT.push(denk); renderChat();
+  try {
+    const out = await api('/api/frage', { method: 'POST', body: JSON.stringify({ frage: f, verlauf }) });
+    Object.assign(denk, { text: out.antwort || '(keine Antwort)', quellen: out.quellen || [], denkt: false });
+  } catch (e) { Object.assign(denk, { text: 'Fehler: ' + e.message, denkt: false }); }
+  renderChat();
+}
+
+function chatZuruecksetzen() { CHAT = []; renderChat(); document.getElementById('kiFrage').focus(); }
+
+// ====================== Einstellungs-Fenster (K2.4-Controls) ======================
+const KAT_LABEL = { konto: 'Konto', sicherheit: 'Sicherheit', ki: 'KI',
+  vernetzung: 'Vernetzung', darstellung: 'Darstellung', daten: 'Daten' };
+const KAT_ORDER = ['konto', 'sicherheit', 'ki', 'vernetzung', 'darstellung', 'daten'];
+const MASK = '•••';
+
+// Ein SettingDef → das passende K2.4-Control (Markup-Muster aus controls.css):
+//   bool→.dz-check · choice→.dz-field+.dz-select · int/float→.dz-stepper · str→Textfeld.
+function ctrlHTML(def, val) {
+  const key = def.key;
+  if (def.type === 'bool')
+    return `<label class="dz-check"><input type="checkbox" data-key="${key}" ${val ? 'checked' : ''}></label>`;
+  if (def.type === 'choice') {
+    const opts = (def.choices || []).map(c =>
+      `<option value="${esc(c)}" ${String(val) === c ? 'selected' : ''}>${esc(c)}</option>`).join('');
+    return `<span class="dz-field"><select class="dz-select" data-key="${key}">${opts}</select></span>`;
+  }
+  if (def.type === 'int' || def.type === 'float') {
+    const mn = def.min != null ? `min="${def.min}"` : '', mx = def.max != null ? `max="${def.max}"` : '';
+    const step = def.type === 'float' ? '0.1' : '1';
+    const v = (val != null ? val : (def.default != null ? def.default : 0));
+    return `<span class="dz-stepper">
+      <button type="button" data-dz-step="-1" aria-label="weniger">&#9662;</button>
+      <input type="number" data-key="${key}" data-type="${def.type}" value="${v}" ${mn} ${mx} step="${step}">
+      <button type="button" data-dz-step="1" aria-label="mehr">&#9652;</button></span>`;
+  }
+  const sens = def.sensitive, v = (sens && val === MASK) ? '' : esc(val != null ? String(val) : '');
+  return `<input type="text" data-key="${key}" data-type="str" data-sens="${sens ? 1 : 0}" value="${v}" ${sens ? 'placeholder="••• gesetzt — neu eingeben"' : ''}>`;
+}
+
+// FLACHE Kategorien (kanonisch wie News/Core: .kmcat > .kmcath + .kmrow*) — KEINE
+// aufklappbaren Panels mehr (Nutzer 15.06.: „Einstellungen wie bei den anderen").
+// design_vorlage/farb_schema haben ihre eigene Live-Vorschau-Sektion oben (nicht doppeln).
+function renderSettings(schema, werte) {
+  const kat = schema.kategorien || {};
+  let h = '';
+  for (const c of KAT_ORDER) {
+    const defs = (kat[c] || []).filter(d => d.key !== 'design_vorlage' && d.key !== 'farb_schema');
+    if (!defs.length) continue;
+    h += '<div class="kmcat"><div class="kmcath">' + esc(KAT_LABEL[c] || c) + '</div>';
+    for (const d of defs) {
+      const val = (d.key in werte) ? werte[d.key] : d.default;
+      const desc = (d.description || '').replace(/"/g, '&quot;');
+      h += '<div class="kmrow"><label title="' + desc + '">' + esc(d.label || d.key) + '</label>' + ctrlHTML(d, val) + '</div>';
+    }
+    h += '</div>';
+  }
+  return h;
+}
+
+// Voll-Labels für den Design-Switcher (Katalog v1.1; Werte = die data-design|farbe-Attribute).
+const DESIGN_OPT = [['metall', 'Mattglanz-Metall (Standard)'], ['neon', 'Neon / Retro-Chrome'],
+  ['flach', 'Flach (minimal-dunkel)'], ['tag', 'Tag / Hell'], ['carbon', 'Carbon (OLED-Schwarz)'],
+  ['pergament', 'Pergament (hell-warm)'], ['synthwave', 'Synthwave (Neon-Sunset)'],
+  ['lagune', 'Lagune (Tropical-Aqua)'], ['inferno', 'Inferno (Magma-Rot)'], ['kobalt', 'Kobalt (Royalblau)']];
+const FARBE_OPT = [['cyan-magenta', 'Cyan–Magenta (Standard)'], ['smaragd-gold', 'Smaragd–Gold'],
+  ['violett-eis', 'Violett–Eis'], ['bernstein', 'Bernstein'], ['arktis', 'Arktis'], ['koralle', 'Koralle'],
+  ['limette', 'Limette'], ['feuer', 'Feuer'], ['toxic', 'Toxic (Neon-Acid)'], ['voltage', 'Voltage (Elektro)']];
+
+// ---- Kanonische Konto-Sektionen (roter Faden docs/19 §2b; Referenz News) -------------
+function secIdentitaet(acc, me) {
+  const lvl = esc(me.level || 'lokal'), via = esc(me.via || 'lokal');
+  const hoch = me.level === 'hochsicher';
+  const angem = me.angemeldet !== false && me.level && me.level !== 'lokal';
+  const amr = (me.amr && me.amr.length) ? ' (' + esc(me.amr.join(', ')) + ')' : '';
+  const sub = esc(me.sub || 'dizzi');
+  const profil = (acc.profil && acc.profil.anzeigename) || '—';
+  return `<div class="kmsec"><div class="kmsech">Identität &amp; Sicherheit</div>
+    <div class="kmrow">
+      <span>${angem ? '<b style="color:var(--ok)">✓ Angemeldet</b>' : 'Anmeldung'} · Stufe <b>${lvl}</b> · via <b>${via}</b>${amr}</span>
+      <span class="spacer"></span>
+      ${hoch ? '<span class="mut small">✓ Echtgeld-Stufe</span>'
+             : '<a class="btn mini" href="/auth/login?level=hochsicher" target="_blank" rel="noopener" title="Per MFA/Passkey auf die Stufe hochsicher hochstufen.">Hochstufen (MFA)</a>'}
+      ${angem ? '<button class="btn mini" data-dz-act="logoutDizzi" title="Aus der Dizzi-ID abmelden (SSO).">Abmelden</button>'
+              : '<a class="btn mini" href="/auth/login" title="Mit Dizzi-ID anmelden (SSO).">Anmelden</a>'}
+    </div>
+    <div id="konto-acc" class="mut small" style="margin-top:6px">Profil <b>${esc(profil)}</b> · Identität ${sub} · Stufe <b>${lvl}</b> · Token-Tresor: ${acc.tresor_eintraege || 0} Eintrag(e).</div>
+    <div class="km-aktion">
+      <a class="btn mini" href="http://localhost:8200/id/geraete" target="_blank" rel="noopener" title="Aktive Sitzungen sehen, einzeln widerrufen oder überall abmelden.">Sitzungen &amp; Geräte</a>
+      <button class="btn mini" data-dz-act="kontoExport" title="DSGVO-Export aller App-Daten als JSON. Verlangt eine frische Anmeldung.">Daten-Export (JSON)</button>
+      <button class="btn mini" style="color:var(--mg);border-color:var(--mg)" data-dz-act="kontoLoeschen" title="Soft-Delete aller App-Daten + Tresor leeren. Verlangt eine frische Anmeldung.">Daten löschen</button>
+    </div>
+    <div class="mut small" style="margin-top:4px">Export/Löschen verlangen eine frische Anmeldung (Re-Auth, Vertrag 1.3).</div>
+  </div>`;
+}
+function secDesign(werte) {
+  const d = werte.design_vorlage || 'metall', f = werte.farb_schema || 'cyan-magenta';
+  const opt = (arr, cur) => arr.map(([v, l]) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`).join('');
+  return `<div class="kmsec"><div class="kmsech">Design</div>
+    <div class="mut small" style="margin-bottom:6px">Design-Theme und Farbschema sind getrennt wählbar — die Vorschau ist sofort live.</div>
+    <div class="kmrow"><label>Design-Theme</label>
+      <span class="dz-field"><select class="dz-select" data-key="design_vorlage">${opt(DESIGN_OPT, d)}</select></span></div>
+    <div class="kmrow"><label>Farbschema</label>
+      <span class="dz-field"><select class="dz-select" data-key="farb_schema">${opt(FARBE_OPT, f)}</select></span></div>
+  </div>`;
+}
+function secDienste(dienste) {
+  const inner = (dienste && dienste.length)
+    ? dienste.map(n => `<div class="kmdienst"><b>${esc(n)}</b><span class="mut small">im Tresor (verschlüsselt, Wert nie sichtbar)</span><span class="spacer"></span><button class="btn mini" data-dz-act="dienstTrennen" data-dz-arg="${esc(n).replace(/'/g, '')}">Trennen</button></div>`).join('')
+    : '<span class="mut small">Keine verbundenen Dienste — Tokens/Keys landen hier, sobald ein Dienst verknüpft wird (verschlüsselter Tresor).</span>';
+  return `<div class="kmsec"><div class="kmsech">Verbundene Dienste</div>${inner}</div>`;
+}
+function secKiAktivitaet(actions, st) {
+  let h = '';
+  if (actions && actions.katalog && actions.katalog.length)
+    h += `<div class="mut small" style="margin-bottom:4px">Registrierte Aktionen: ${actions.katalog.map(k => '<b>' + esc(k.name) + '</b> (Stufe ' + esc(k.level) + ')').join(' · ')}</div>`;
+  else h += '<div class="mut small">Diese App hat (noch) keine ausführbaren KI-Aktionen registriert — reine Lese-/Vorschlags-KI.</div>';
+  if (actions && actions.liste && actions.liste.length)
+    h += actions.liste.slice(0, 8).map(x => `<div class="kmdienst"><b>${esc(x.name)}</b><span class="mut small">${esc(x.status || '')} · ${esc(x.created_at || '')} · Quelle: ${esc(x.source || '?')}</span></div>`).join('');
+  else h += '<div class="mut small" style="margin-top:4px">Keine offenen KI-Vorschläge.</div>';
+  const appki = st && st.app_ki_registriert ? 'registriert' : '–';
+  return `<div class="kmsec"><div class="kmsech">Vernetzung &amp; KI-Aktivität</div>
+    <div class="mut small" style="margin-bottom:6px">Was die KI im Hintergrund vorschlägt — Wirkung gibt es NUR nach deiner Freigabe (HITL, App-Vertrag K4).</div>
+    ${h}
+    <div class="mut small" style="margin-top:6px">App-KI: <b>${appki}</b>.</div>
+  </div>`;
+}
+async function logoutDizzi() { try { await fetch('/auth/logout', { method: 'POST', headers: { 'Accept': 'application/json' } }); } catch (e) {} oeffneKm(); }
+async function kontoExport() {
+  let r; try { r = await fetch('/api/account/export', { method: 'POST' }); } catch (e) { kmFlash('✗ Export: ' + e.message, false); return; }
+  if (r.status === 403) { kmFlash('Frische Anmeldung nötig', false); location.href = '/auth/login'; return; }
+  if (!r.ok) { kmFlash('✗ Export HTTP ' + r.status, false); return; }
+  const blob = await r.blob(), a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'dizz-memory-export.json';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+  kmFlash('✓ Export geladen');
+}
+async function kontoLoeschen() {
+  if (!confirm('ALLE App-Daten dieser App löschen (Notizen / Ordner / Labels)?')) return;
+  if (!confirm('Sicher? Soft-Delete, auditiert.')) return;
+  let r; try { r = await fetch('/api/account/loeschen', { method: 'POST' }); } catch (e) { kmFlash('✗ ' + e.message, false); return; }
+  if (r.status === 403) { kmFlash('Frische Anmeldung nötig', false); location.href = '/auth/login'; return; }
+  kmFlash('✓ gelöscht'); ladeAblage(); ladeNotizen(); oeffneKm();
+}
+async function dienstTrennen(name) {
+  if (!confirm('Dienst „' + name + '" trennen? Das Geheimnis wird unwiderruflich aus dem Tresor gelöscht.')) return;
+  try { await api('/api/vault/' + encodeURIComponent(name), { method: 'DELETE' }); kmFlash('✓ getrennt'); } catch (e) { kmFlash('✗ ' + e.message, false); }
+  oeffneKm();
+}
+
+let kmStatusTimer;
+function kmFlash(text, ok = true) {
+  const s = document.getElementById('kmStatus');
+  s.textContent = text; s.style.color = ok ? 'var(--ok)' : 'var(--bad)';
+  clearTimeout(kmStatusTimer); kmStatusTimer = setTimeout(() => { s.textContent = ''; }, 2200);
+}
+
+async function setze(key, value, label) {
+  try {
+    await api('/api/settings', { method: 'PUT', body: JSON.stringify({ key, value }) });
+    kmFlash('✓ ' + (label || key));
+    // Theme-/Farb-Achsen sofort live anwenden + lokal merken (Live-Vorschau)
+    if (key === 'design_vorlage') { document.documentElement.dataset.design = value; localStorage.setItem('mem_design', value); }
+    if (key === 'farb_schema') { document.documentElement.dataset.farbe = value; localStorage.setItem('mem_farbe', value); }
+  } catch (e) { kmFlash('✗ ' + e.message, false); }
+}
+
+function verdrahteSettings(root) {
+  root.querySelectorAll('input[type=checkbox][data-key]').forEach(el =>
+    el.addEventListener('change', () => setze(el.dataset.key, el.checked, el.dataset.key)));
+  root.querySelectorAll('select[data-key]').forEach(el =>
+    el.addEventListener('change', () => setze(el.dataset.key, el.value, el.dataset.key)));
+  root.querySelectorAll('input[type=number][data-key]').forEach(el =>
+    el.addEventListener('change', () => {
+      const v = el.dataset.type === 'float' ? parseFloat(el.value) : parseInt(el.value, 10);
+      if (!Number.isNaN(v)) setze(el.dataset.key, v, el.dataset.key);
+    }));
+  root.querySelectorAll('input[type=text][data-key]').forEach(el =>
+    el.addEventListener('change', () => {
+      if (el.dataset.sens === '1' && !el.value) return;   // leeres Sensibel-Feld nicht überschreiben
+      setze(el.dataset.key, el.value, el.dataset.key);
+    }));
+}
+
+// ---- Archiv-Regeln (Steuerung: was automatisch ins Archiv wandert, docs/26 §8) -------
+const REGEL_MODI = [['manuell', 'nur auf Zuruf'], ['auto', 'automatisch'],
+  ['auto_gefiltert', 'auto + Filter'], ['aus', 'aus']];
+function _regelFilterText(flt) {
+  const tags = ((flt || {}).tags || []).join(', ');
+  const s = (flt || {}).schluessel || '';
+  return tags + (s ? ' | ' + s : '');
+}
+function _parseFilter(str) {
+  if (!str || !str.trim()) return {};
+  const [links, rechts] = str.split('|');
+  const tags = (links || '').split(',').map(s => s.trim()).filter(Boolean);
+  const schluessel = (rechts || '').trim();
+  const f = {}; if (tags.length) f.tags = tags; if (schluessel) f.schluessel = schluessel;
+  return f;
+}
+function secArchivRegeln(regeln) {
+  const opt = (cur) => REGEL_MODI.map(([v, l]) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`).join('');
+  const rs = 'style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0"';
+  let rows;
+  if (regeln && regeln.length) {
+    rows = regeln.map(g => {
+      const gef = g.modus === 'auto_gefiltert';
+      return `<div class="regelrow" data-app="${esc(g.app)}" data-strom="${esc(g.strom)}" ${rs}>
+        <span style="min-width:130px"><b>${esc(g.app)}</b> <span class="mut small">${esc(g.strom || '·')}</span></span>
+        <span class="dz-field"><select class="dz-select" data-feld="modus">${opt(g.modus)}</select></span>
+        <input type="text" data-feld="ziel_ordner" placeholder="Ziel-Ordner" value="${esc(g.ziel_ordner || '')}" style="max-width:130px" title="Ziel-Ordner im Archiv (leer = App-Name)">
+        <label class="dz-check" title="sensibel ⇒ KI nur lokal"><input type="checkbox" data-feld="sensibel" ${g.sensibel ? 'checked' : ''}></label>
+        <input type="text" data-feld="filter" placeholder="tag1, tag2 | wort" value="${esc(_regelFilterText(g.filter))}" style="max-width:150px" ${gef ? '' : 'hidden'} title="Bei auto + Filter: Tags (Komma) und/oder ein Schluesselwort nach |">
+        <button class="btn mini" data-feld="del" title="Regel entfernen">✕</button>
+      </div>`;
+    }).join('');
+  } else {
+    rows = '<div class="mut small">Noch keine Ströme — sie erscheinen automatisch als „nur auf Zuruf“, sobald eine App etwas schickt. Oder unten gezielt anlegen.</div>';
+  }
+  return `<div class="kmsec"><div class="kmsech">Archiv-Regeln</div>
+    <div class="mut small" style="margin-bottom:6px">Bestimme je Quelle &amp; Strom, was automatisch ins Archiv wandert. <b>Standard: nur auf Zuruf</b> — nichts wird ungefragt gespeichert.</div>
+    ${rows}
+    <div class="regelrow" style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <input type="text" id="regelApp" placeholder="App (z. B. news)" style="max-width:120px">
+      <input type="text" id="regelStrom" placeholder="Strom (z. B. wochenbericht)" style="max-width:170px">
+      <span class="dz-field"><select class="dz-select" id="regelModus">${opt('auto')}</select></span>
+      <input type="text" id="regelFilter" placeholder="tag1, tag2 | wort" style="max-width:150px" hidden title="Bei „auto + Filter“: Tags (Komma) und/oder ein Schlüsselwort nach |">
+      <button class="btn mini primaer" id="regelAddBtn">+ Regel</button>
+    </div>
+  </div>`;
+}
+function _regelAusZeile(row) {
+  return {
+    app: row.dataset.app, strom: row.dataset.strom,
+    modus: row.querySelector('[data-feld=modus]').value,
+    ziel_ordner: (row.querySelector('[data-feld=ziel_ordner]').value || '').trim(),
+    sensibel: row.querySelector('[data-feld=sensibel]').checked,
+    filter: _parseFilter(row.querySelector('[data-feld=filter]').value),
+  };
+}
+async function _regelSpeichern(row) {
+  try { await api('/api/archiv-regeln', { method: 'PUT', body: JSON.stringify(_regelAusZeile(row)) }); kmFlash('✓ Regel gespeichert'); }
+  catch (e) { kmFlash('✗ ' + e.message, false); }
+}
+function verdrahteRegeln(k) {
+  k.querySelectorAll('.regelrow[data-app]').forEach(row => {
+    const sel = row.querySelector('[data-feld=modus]');
+    sel.addEventListener('change', () => {
+      const flt = row.querySelector('[data-feld=filter]');
+      if (flt) flt.hidden = sel.value !== 'auto_gefiltert';
+      _regelSpeichern(row);
+    });
+    ['ziel_ordner', 'filter'].forEach(f => {
+      const el = row.querySelector('[data-feld=' + f + ']');
+      if (el) el.addEventListener('change', () => _regelSpeichern(row));
+    });
+    row.querySelector('[data-feld=sensibel]').addEventListener('change', () => _regelSpeichern(row));
+    row.querySelector('[data-feld=del]').addEventListener('click', async () => {
+      try {
+        await api('/api/archiv-regeln?app=' + encodeURIComponent(row.dataset.app) + '&strom=' + encodeURIComponent(row.dataset.strom), { method: 'DELETE' });
+        kmFlash('✓ entfernt'); oeffneKm();
+      } catch (e) { kmFlash('✗ ' + e.message, false); }
+    });
+  });
+  const add = k.querySelector('#regelAddBtn');
+  const addModus = k.querySelector('#regelModus');
+  const addFilter = k.querySelector('#regelFilter');
+  // Filter-Feld nur bei „auto + Filter" einblenden (gespiegelt von den Bestandszeilen).
+  if (addModus && addFilter) addModus.addEventListener('change',
+    () => { addFilter.hidden = addModus.value !== 'auto_gefiltert'; });
+  if (add) add.addEventListener('click', async () => {
+    const app = (k.querySelector('#regelApp').value || '').trim();
+    const strom = (k.querySelector('#regelStrom').value || '').trim();
+    const modus = addModus.value;
+    if (!app) { kmFlash('App fehlt', false); return; }
+    const body = { app, strom, modus };
+    if (modus === 'auto_gefiltert') body.filter = _parseFilter(addFilter.value);
+    try { await api('/api/archiv-regeln', { method: 'PUT', body: JSON.stringify(body) }); kmFlash('✓ angelegt'); oeffneKm(); }
+    catch (e) { kmFlash('✗ ' + e.message, false); }
+  });
+}
+
+async function oeffneKm() {
+  const k = document.getElementById('kmKoerper');
+  k.innerHTML = '<div class="zeile"><span class="k">lädt …</span></div>';
+  document.getElementById('kmWrap').hidden = false;
+  try {
+    // Robust gegen einzelne fehlende Endpunkte: nur Schema/Werte sind Pflicht.
+    const [schema, werte, acc, me, st, dienste, actions, regeln] = await Promise.all([
+      api('/api/settings/schema'), api('/api/settings'),
+      api('/api/account').catch(() => ({ profil: {}, tresor_eintraege: 0 })),
+      api('/auth/me').catch(() => ({ level: 'lokal' })),
+      api('/api/ki/status').catch(() => ({})),
+      api('/api/vault').catch(() => []),
+      api('/api/actions').catch(() => ({ katalog: [], liste: [] })),
+      api('/api/archiv-regeln').catch(() => [])]);
+    // Kanonische Sektionen (roter Faden) + Archiv-Regeln (Steuerung der Querverbindungen).
+    k.innerHTML =
+      secIdentitaet(acc, me) +
+      secDesign(werte) +
+      secDienste(dienste) +
+      secKiAktivitaet(actions, st) +
+      secArchivRegeln(regeln) +
+      '<div class="kmsec"><div class="kmsech">Einstellungen</div>' +
+      '<div class="mut small" style="margin:2px 0 6px">6 Kategorien — Änderungen werden sofort gespeichert.</div>' +
+      renderSettings(schema, werte) + '</div>';
+    DzControls.initControls(k);   // Collapse + Stepper fürs frische Markup verdrahten
+    verdrahteSettings(k);         // wiring inkl. der Design-Selects (data-key) → setze() = live
+    verdrahteRegeln(k);           // Archiv-Regeln: Modus/Filter/Ordner/Löschen/Anlegen → /api/archiv-regeln
+  } catch (e) { k.innerHTML = '<div class="hinweis">Einstellungen nicht erreichbar: ' + esc(e.message) + '</div>'; }
+}
+function schliesseKm() { document.getElementById('kmWrap').hidden = true; }
+
+// Beim Start die typisierten Design-Achsen vom Server anwenden (Quelle der
+// Wahrheit; Anti-FOUC oben hat bereits den localStorage-Stand gesetzt).
+async function themeBoot() {
+  try {
+    const w = await api('/api/settings');
+    if (w.design_vorlage) { document.documentElement.dataset.design = w.design_vorlage; localStorage.setItem('mem_design', w.design_vorlage); }
+    if (w.farb_schema) { document.documentElement.dataset.farbe = w.farb_schema; localStorage.setItem('mem_farbe', w.farb_schema); }
+  } catch (e) {}
+}
+
+// ====================== Verdrahtung ======================
+document.getElementById('kiBtn').onclick = frageStellen;
+document.getElementById('kiReset').onclick = chatZuruecksetzen;
+document.getElementById('kiFrage').addEventListener('keydown', e => { if (e.key === 'Enter') frageStellen(); });
+document.getElementById('notizNeuBtn').onclick = neueNotiz;
+document.getElementById('notizLoeschBtn').onclick = loescheNotiz;
+document.getElementById('edSpeichern').onclick = speichereNotiz;
+// Editor-Politur: „ungespeichert"-Indikator (bei Tippen) + Strg/Cmd+S zum Speichern.
+function markiereDirty() {
+  if (!S.notiz) return;
+  S.dirty = true;
+  const s = document.getElementById('speicherStatus');
+  s.style.color = 'var(--warn)'; s.textContent = '● ungespeichert';
+}
+document.getElementById('edTitel').addEventListener('input', markiereDirty);
+document.getElementById('edInhalt').addEventListener('input', () => {
+  markiereDirty(); autoPruefen();
+  if (S.edModus && S.edModus !== 'bearbeiten') renderPreview();   // Live-Vorschau
+});
+// [[…]]-Autocomplete: Tastatur-Navigation im Popup (sonst durchreichen).
+document.getElementById('edInhalt').addEventListener('keydown', e => {
+  if (!AUTO.offen) return;
+  const max = AUTO.opts.length + (AUTO.query.trim() ? 1 : 0) - 1;
+  if (e.key === 'ArrowDown') { e.preventDefault(); AUTO.idx = Math.min(AUTO.idx + 1, max); autoRender(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); AUTO.idx = Math.max(AUTO.idx - 1, 0); autoRender(); }
+  else if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); autoUebernehmen(AUTO.idx); }
+  else if (e.key === 'Escape') { e.preventDefault(); autoSchliessen(); }
+});
+document.getElementById('edInhalt').addEventListener('blur', () => setTimeout(autoSchliessen, 150));
+document.getElementById('edModus').onclick = zykleModus;
+document.addEventListener('keydown', e => {
+  const imEditor = S.notiz && !document.getElementById('editor').hidden;
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 's' || e.key === 'S') && imEditor) {
+    e.preventDefault(); speichereNotiz();
+  } else if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'v' || e.key === 'V') && imEditor) {
+    e.preventDefault(); zykleModus();   // Bearbeiten/Vorschau/Split zyklisch
+  }
+});
+// DS-R4-M1: Netz gegen HART-Verlassen (Reload/Tab schließen) — greift nur, wenn
+// nach einem gescheiterten Auto-Save noch ungespeicherte Änderungen offen sind.
+// Kein natives confirm im Wechsel-Fluss (dort speichert der Auto-Save); dies ist
+// die letzte Rückfallebene, damit Gedachtes nie unbemerkt verloren geht.
+window.addEventListener('beforeunload', e => {
+  if (S.dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+document.getElementById('edSensibel').onclick = async () => {
+  await api('/api/notizen/' + S.notiz.id, { method: 'PUT', body: JSON.stringify({ sensibel: !S.notiz.sensibel }) });
+  S.notiz.sensibel = !S.notiz.sensibel; setSensibelBtn(); ladeNotizen();
+};
+let sucheTimer;
+document.getElementById('sucheFeld').addEventListener('input', e => {
+  clearTimeout(sucheTimer); const q = e.target.value.trim();
+  sucheTimer = setTimeout(() => { S.sel = { typ: q ? 'suche' : 'alle', id: null, q }; ladeNotizen(); renderSchnellzugriff(); renderBaum(); renderLabels(); renderFacetten(); }, 220);
+});
+// P1b: aus dem Suchfeld per Tastatur in die Trefferliste (↓/↑) + öffnen (Enter).
+document.getElementById('sucheFeld').addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); navTreffer(1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); navTreffer(-1); }
+  else if (e.key === 'Enter') { e.preventDefault(); oeffneFokus(); }
+});
+// Inline-Anlegen Ordner/Label (Text-Eingaben — keine nativen Auswahl-Controls)
+const zeigeZeile = (zeile, feld) => { document.getElementById(zeile).hidden = false; document.getElementById(feld).focus(); };
+document.getElementById('ordnerNeuBtn').onclick = () => zeigeZeile('ordnerNeuZeile', 'ordnerNeuName');
+document.getElementById('labelNeuBtn').onclick = () => zeigeZeile('labelNeuZeile', 'labelNeuName');
+// „+ Neuer Bereich" wird vom DzBereichBar-Chip ausgelöst (kein eigener Button mehr).
+document.getElementById('bereichNeuArt').innerHTML =
+  Object.entries(BEREICH_TYP_META).map(([id, m]) => '<option value="' + id + '">' + m.icon + ' ' + m.label + '</option>').join('');
+document.getElementById('bereichNeuOk').onclick = bereichAnlegen;
+document.getElementById('bereichNeuName').addEventListener('keydown', e => { if (e.key === 'Enter') bereichAnlegen(); });
+async function ordnerAnlegen() {
+  const n = document.getElementById('ordnerNeuName').value.trim(); if (!n) return;
+  const parent_id = S.sel.typ === 'ordner' ? S.sel.id : null;
+  await api('/api/ordner', { method: 'POST', body: JSON.stringify({ name: n, parent_id }) });
+  document.getElementById('ordnerNeuName').value = ''; document.getElementById('ordnerNeuZeile').hidden = true; ladeAblage();
+}
+async function labelAnlegen() {
+  const n = document.getElementById('labelNeuName').value.trim(); if (!n) return;
+  await api('/api/labels', { method: 'POST', body: JSON.stringify({ name: n }) });
+  document.getElementById('labelNeuName').value = ''; document.getElementById('labelNeuZeile').hidden = true; ladeAblage();
+}
+document.getElementById('ordnerNeuOk').onclick = ordnerAnlegen;
+document.getElementById('labelNeuOk').onclick = labelAnlegen;
+document.getElementById('ordnerNeuName').addEventListener('keydown', e => { if (e.key === 'Enter') ordnerAnlegen(); });
+document.getElementById('labelNeuName').addEventListener('keydown', e => { if (e.key === 'Enter') labelAnlegen(); });
+document.getElementById('kmZu').onclick = schliesseKm;
+document.getElementById('kmWrap').addEventListener('click', e => { if (e.target.id === 'kmWrap') schliesseKm(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { schliesseKm(); schliesseDizzi(); schliesseImport(); schliesseTpl(); } });
+
+// ====================== Import-Fenster (lokaler Ordner / Mem.ai-Export) =======
+function oeffneImport() { document.getElementById('imWrap').hidden = false; document.getElementById('imPfad').focus(); }
+function schliesseImport() { document.getElementById('imWrap').hidden = true; }
+async function importGo() {
+  const pfad = document.getElementById('imPfad').value.trim(); if (!pfad) return;
+  const rekursiv = document.getElementById('imRekursiv').checked;
+  const e = document.getElementById('imErgebnis'), btn = document.getElementById('imGo');
+  e.classList.add('an'); e.style.color = 'var(--mut)'; e.textContent = '… importiere';
+  btn.disabled = true;                                   // Doppel-Start verhindern
+  try {
+    const out = await api('/api/import/ordner', { method: 'POST', body: JSON.stringify({ pfad, rekursiv }) });
+    const f = out.fehler || [];
+    e.style.color = f.length ? 'var(--warn)' : 'var(--ok)';
+    e.textContent = `✓ ${out.importiert} importiert · ${out.uebersprungen} übersprungen`
+      + (f.length ? ` · ${f.length} Fehler: ${f.slice(0, 3).map(x => x.datei).join(', ')}` : '');
+    ladeAblage(); ladeNotizen();
+  } catch (err) { e.style.color = 'var(--bad)'; e.textContent = '✗ ' + err.message; }
+  finally { btn.disabled = false; }
+}
+document.getElementById('importBtn').onclick = oeffneImport;
+document.getElementById('imZu').onclick = schliesseImport;
+document.getElementById('imGo').onclick = importGo;
+document.getElementById('imWrap').addEventListener('click', e => { if (e.target.id === 'imWrap') schliesseImport(); });
+document.getElementById('imPfad').addEventListener('keydown', e => { if (e.key === 'Enter') importGo(); });
+
+// ====================== Notiz-Vorlagen / Templates (docs/33) ==================
+// Grobe Anbindung (Feinschliff §5d): Vorlagen listen/anlegen/löschen + „Notiz aus
+// Vorlage" (POST /api/notizen/aus-template/{id} → Platzhalter gefüllt, normale Notiz).
+async function oeffneTpl() { document.getElementById('tplWrap').hidden = false; await ladeTemplates(); }
+function schliesseTpl() { document.getElementById('tplWrap').hidden = true; }
+async function ladeTemplates() {
+  const el = document.getElementById('tplListe');
+  let liste; try { liste = await api('/api/templates'); } catch (e) { el.innerHTML = ''; return; }
+  if (!liste.length) { el.innerHTML = '<div class="leer-hinweis" style="padding:8px;">Noch keine Vorlagen — lege unten eine an.</div>'; return; }
+  el.innerHTML = liste.map(t => `<div class="tpl-row">
+    <span class="tpl-name">${esc(t.name)}</span>
+    ${t.ordner_default ? `<span class="tpl-ord">📁 ${esc(t.ordner_default)}</span>` : ''}
+    <span class="raum" style="flex:1"></span>
+    <button class="btn mini primaer" data-anwenden="${t.id}">Anwenden</button>
+    <button class="btn mini" data-tpl-del="${t.id}" title="Vorlage löschen">🗑</button>
+  </div>`).join('');
+  el.querySelectorAll('[data-anwenden]').forEach(b => b.onclick = () => templateAnwenden(b.dataset.anwenden));
+  el.querySelectorAll('[data-tpl-del]').forEach(b => b.onclick = () => templateLoeschen(b.dataset.tplDel));
+}
+async function templateAnwenden(id) {
+  const titel = document.getElementById('tplTitel').value.trim();
+  let r; try { r = await api('/api/notizen/aus-template/' + id, { method: 'POST', body: JSON.stringify({ titel }) }); }
+  catch (e) { return; }
+  document.getElementById('tplTitel').value = '';
+  schliesseTpl();
+  await ladeAblage(); await ladeNotizen();
+  oeffneNotiz(r.id);
+}
+async function templateLoeschen(id) {
+  if (!confirm('Diese Vorlage löschen?')) return;
+  try { await api('/api/templates/' + id, { method: 'DELETE' }); } catch (e) {}
+  ladeTemplates();
+}
+async function templateSpeichern() {
+  const name = document.getElementById('tplName').value.trim();
+  const inhalt = document.getElementById('tplInhalt').value;
+  const ordner_default = document.getElementById('tplOrdner').value.trim();
+  if (!name) { document.getElementById('tplName').focus(); return; }
+  try { await api('/api/templates', { method: 'POST', body: JSON.stringify({ name, inhalt, ordner_default }) }); }
+  catch (e) { return; }
+  document.getElementById('tplName').value = ''; document.getElementById('tplInhalt').value = '';
+  document.getElementById('tplOrdner').value = '';
+  ladeTemplates();
+}
+document.getElementById('tplBtn').onclick = oeffneTpl;
+document.getElementById('tplZu').onclick = schliesseTpl;
+document.getElementById('tplSpeichern').onclick = templateSpeichern;
+document.getElementById('tplWrap').addEventListener('click', e => { if (e.target.id === 'tplWrap') schliesseTpl(); });
+
+// ====================== Schwebende Chat-Sprechblase (Vault-Chat, /api/frage) =====
+// Mit der früheren Mini-Dizzi vereint: der 💬-Float öffnet das volle Mehrturn-Chat-
+// Popover (renderChat/frageStellen, oben definiert; Elemente leben jetzt hier drin).
+let DIZZI_OFFEN = false;
+function toggleDizzi() {
+  const b = document.getElementById('dizziBubble');
+  b.hidden = !b.hidden; DIZZI_OFFEN = !b.hidden;
+  if (DIZZI_OFFEN) document.getElementById('kiFrage').focus();
+}
+function schliesseDizzi() { document.getElementById('dizziBubble').hidden = true; DIZZI_OFFEN = false; }
+// Chat-Popover programmatisch öffnen + optional eine Frage vorbefüllen (für KI-Aktionen
+// des Rechtsklick-Menüs). focusOnly=true ⇒ nur öffnen + Eingabe fokussieren.
+function oeffneChat(vorgabe) {
+  const b = document.getElementById('dizziBubble');
+  if (b.hidden) { b.hidden = false; DIZZI_OFFEN = true; }
+  const inp = document.getElementById('kiFrage');
+  if (vorgabe) inp.value = vorgabe;
+  inp.focus();
+}
+document.getElementById('dizziZu').onclick = schliesseDizzi;
+
+// ====================== Spin-Physik v4.3 + schwebende Knöpfe ==================
+// Panels (.main > .pane) greif-/schleuder-/tauschbar (Reihenfolge persistiert);
+// Floats driften, prallen an Panels ab und fangen den Schwung schwingender Panels
+// (dizzi:fling). DizzSpin/DizzFloats sind oben als <script> geladen.
+function initBewegung() {
+  if (window.DizzSpin) DizzSpin.initSpinFling({
+    gridSelector: '.main', panelSelector: '.pane',
+    floatSelector: '.floatacct,.floatdizzi',
+    storageKey: 'memPanelOrder', layoutKey: 'memLayoutVer', layoutVer: '2026-06-14-mem-a' });
+  if (window.DizzFloats) {
+    // Tipp öffnet (Gotcha 3: Öffnen Pflicht, Physik Kür); paused ruht die Physik bei offenem Fenster.
+    DizzFloats.initFloat('floatAcct', { regKey: 'floatAcct', onTap: oeffneKm,
+      paused: () => !document.getElementById('kmWrap').hidden, panelSelector: '.main > .pane' });
+    DizzFloats.initFloat('floatDizzi', { regKey: 'floatDizzi', onTap: toggleDizzi,
+      paused: () => DIZZI_OFFEN, panelSelector: '.main > .pane' });
+  }
+}
+
+// ====================== P2.3: Wissens-Graph ==============================
+const SVGNS = 'http://www.w3.org/2000/svg';
+let GRAPH = null;
+async function oeffneGraph() {
+  document.getElementById('graphWrap').hidden = false;
+  let g; try { g = await api('/api/graph'); }
+  catch (e) { document.getElementById('graphInfo').textContent = 'Fehler: ' + e.message; return; }
+  document.getElementById('graphInfo').textContent = `${g.nodes.length} Notizen · ${g.edges.length} Verknüpfungen`;
+  document.getElementById('graphLeer').hidden = g.nodes.length > 0;
+  graphSim(g);
+}
+function schliesseGraph() { document.getElementById('graphWrap').hidden = true; if (GRAPH) GRAPH.stop = true; }
+
+// Kompakte kräftebasierte Anordnung (kein Lib): Abstoßung aller Knoten + Federn
+// auf den Kanten + Zentrums-Gravitation. SVG-Elemente einmal bauen, pro Frame nur
+// Positionen aktualisieren. Knoten klick = öffnen, ziehen = verschieben.
+function graphSim(g) {
+  const svg = document.getElementById('graphSvg'), W = 1000, H = 680;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  [...svg.querySelectorAll('.kante,.knoten,.klabel')].forEach(el => el.remove());
+  if (GRAPH) GRAPH.stop = true;
+  const idIdx = {}; g.nodes.forEach((n, i) => idIdx[n.id] = i);
+  const R = Math.min(W, H) * 0.34, n = g.nodes.length || 1;
+  const N = g.nodes.map((nd, i) => ({ ...nd,
+    x: W / 2 + Math.cos(i / n * 6.283) * R + (Math.random() - .5) * 40,
+    y: H / 2 + Math.sin(i / n * 6.283) * R + (Math.random() - .5) * 40, vx: 0, vy: 0 }));
+  const E = g.edges.map(e => ({ a: idIdx[e.von], b: idIdx[e.nach] })).filter(e => e.a != null && e.b != null);
+  const rad = nd => 6 + Math.min(nd.grad, 8) * 1.6;
+  const lineEls = E.map(() => { const l = document.createElementNS(SVGNS, 'line'); l.setAttribute('class', 'kante'); svg.appendChild(l); return l; });
+  const circEls = [], labelEls = [];
+  N.forEach(nd => {
+    const c = document.createElementNS(SVGNS, 'circle');
+    c.setAttribute('class', 'knoten ' + (nd.herkunft ? 'herk' : 'eigen'));
+    c.setAttribute('r', String(rad(nd)));
+    const tt = document.createElementNS(SVGNS, 'title'); tt.textContent = nd.titel; c.appendChild(tt);
+    c.addEventListener('pointerdown', e => greif(e, nd));
+    svg.appendChild(c); circEls.push(c);
+    const t = document.createElementNS(SVGNS, 'text'); t.setAttribute('class', 'klabel');
+    t.textContent = nd.titel.length > 22 ? nd.titel.slice(0, 21) + '…' : nd.titel;
+    svg.appendChild(t); labelEls.push(t);
+  });
+  GRAPH = { stop: false, drag: null };
+  const vb = e => { const r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; };
+  function greif(e, nd) { e.preventDefault(); GRAPH.drag = { nd, moved: 0, sx: e.clientX, sy: e.clientY }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
+  svg.onpointermove = e => { if (!GRAPH.drag) return; const p = vb(e); GRAPH.drag.nd.x = p.x; GRAPH.drag.nd.y = p.y; GRAPH.drag.nd.vx = GRAPH.drag.nd.vy = 0; GRAPH.drag.moved = Math.max(GRAPH.drag.moved, Math.hypot(e.clientX - GRAPH.drag.sx, e.clientY - GRAPH.drag.sy)); };
+  svg.onpointerup = () => { const d = GRAPH.drag; GRAPH.drag = null; if (d && d.moved < 5) { schliesseGraph(); oeffneNotiz(d.nd.id); } };
+  function draw() {
+    E.forEach((e, i) => { const s = N[e.a], t = N[e.b]; lineEls[i].setAttribute('x1', s.x); lineEls[i].setAttribute('y1', s.y); lineEls[i].setAttribute('x2', t.x); lineEls[i].setAttribute('y2', t.y); });
+    N.forEach((nd, i) => { circEls[i].setAttribute('cx', nd.x); circEls[i].setAttribute('cy', nd.y); const r = rad(nd); labelEls[i].setAttribute('x', nd.x + r + 3); labelEls[i].setAttribute('y', nd.y + 4); });
+  }
+  let alpha = 1, frame = 0;
+  function step() {
+    if (GRAPH.stop) return;
+    for (let i = 0; i < N.length; i++) {
+      for (let j = i + 1; j < N.length; j++) {
+        let dx = N[i].x - N[j].x, dy = N[i].y - N[j].y, d2 = dx * dx + dy * dy || .01, d = Math.sqrt(d2), rep = 2200 / d2;
+        N[i].vx += dx / d * rep; N[i].vy += dy / d * rep; N[j].vx -= dx / d * rep; N[j].vy -= dy / d * rep;
+      }
+      N[i].vx += (W / 2 - N[i].x) * .003; N[i].vy += (H / 2 - N[i].y) * .003;
+    }
+    for (const e of E) { const s = N[e.a], t = N[e.b]; let dx = t.x - s.x, dy = t.y - s.y, d = Math.hypot(dx, dy) || .01, f = (d - 110) * .02; s.vx += dx / d * f; s.vy += dy / d * f; t.vx -= dx / d * f; t.vy -= dy / d * f; }
+    for (const nd of N) { if (GRAPH.drag && GRAPH.drag.nd === nd) continue; nd.x += nd.vx * alpha; nd.y += nd.vy * alpha; nd.vx *= .86; nd.vy *= .86; nd.x = Math.max(24, Math.min(W - 24, nd.x)); nd.y = Math.max(18, Math.min(H - 14, nd.y)); }
+    draw(); alpha *= .985; frame++;
+    if (frame < 700 && alpha > .015) requestAnimationFrame(step); else draw();
+  }
+  step();
+}
+document.getElementById('graphBtn').onclick = oeffneGraph;
+document.getElementById('graphZu').onclick = schliesseGraph;
+document.getElementById('graphWrap').addEventListener('click', e => { if (e.target.id === 'graphWrap') schliesseGraph(); });
+
+// ====================== DzMenu — Rechtsklick-„Dizzi"-Kontextmenü ======================
+// Engine = netzweit /ui-kit/dzmenu.js (window.DzMenu, promotet 26.06. aus memory).
+// Hier nur die memory-spezifischen Item-Fabriken + der delegierte contextmenu-Listener.
+//   DzMenu.open(x, y, items, kopf?)  ·  items=[{label,icon?,run,danger?}|{trenner:true}]
+
+// Chat-Popover öffnen + Frage stellen (KI-Aktion „Frag Dizzi dazu" / „Zusammenfassen").
+function chatFrage(text) { oeffneChat(text); frageStellen(); }
+// Bereich einer Entität (Ordner/Notiz) zuordnen, dann betroffene Sichten neu laden.
+async function bereichZuordnen(tabelle, id, bereich_id) {
+  try { await api('/api/bereiche/zuordnung', { method: 'PUT', body: JSON.stringify({ tabelle, id, bereich_id }) }); }
+  catch (e) { return; }
+  ladeAblage(); ladeNotizen();
+}
+function _bereichEintraege(tabelle, id) {   // „→ Bereich …"-Optionen für das Kontextmenü
+  const opts = (S.bereiche || []).map(b => ({ icon: '◆', label: '→ ' + b.name, run: () => bereichZuordnen(tabelle, id, b.id) }));
+  opts.push({ icon: '○', label: '→ Allgemein (lösen)', run: () => bereichZuordnen(tabelle, id, '') });
+  return opts;
+}
+
+// --- Item-Fabriken je Element-Typ ---
+function notizMenu(id, titel) {
+  return [
+    { icon: '📂', label: 'Öffnen', run: () => oeffneNotiz(id) },
+    ..._bereichEintraege('notizen', id),
+    { trenner: true },
+    { icon: '💬', label: 'Frag Dizzi dazu', run: () => oeffneChat(`Erzähl mir über die Notiz „${titel}“.`) },
+    { icon: '✦', label: 'Zusammenfassen', run: () => chatFrage(`Fasse die Notiz „${titel}“ kurz zusammen.`) },
+    { icon: '🔒', label: 'Sensibel umschalten', run: async () => {
+        const d = await api('/api/notizen/' + id).catch(() => null); if (!d) return;
+        await api('/api/notizen/' + id, { method: 'PUT', body: JSON.stringify({ sensibel: !d.sensibel }) }).catch(() => {});
+        ladeNotizen(); if (S.notiz && S.notiz.id === id) oeffneNotiz(id);
+      } },
+    { trenner: true },
+    { icon: '🗑', label: 'Löschen', danger: true, run: async () => {
+        if (!confirm('Diese Notiz löschen?')) return;
+        await api('/api/notizen/' + id, { method: 'DELETE' }).catch(() => {});
+        if (S.notiz && S.notiz.id === id) { S.notiz = null; S.dirty = false; document.getElementById('editor').hidden = true; }
+        ladeNotizen();
+      } },
+  ];
+}
+function ordnerMenu(id, name) {
+  return [
+    { icon: '📂', label: 'Öffnen', run: () => waehle('ordner', id) },
+    { icon: '＋', label: 'Neuer Unterordner', run: () => { waehle('ordner', id); zeigeZeile('ordnerNeuZeile', 'ordnerNeuName'); } },
+    { icon: '✎', label: 'Umbenennen', run: async () => {
+        const neu = prompt('Ordner umbenennen:', name); if (neu == null || !neu.trim()) return;
+        await api('/api/ordner/' + id, { method: 'PUT', body: JSON.stringify({ name: neu.trim() }) }).catch(() => {});
+        ladeAblage();
+      } },
+    ..._bereichEintraege('ordner', id),
+    { trenner: true },
+    { icon: '🗑', label: 'Löschen', danger: true, run: async () => {
+        if (!confirm('Ordner löschen? (Inhalt wandert an die Wurzel)')) return;
+        await api('/api/ordner/' + id, { method: 'DELETE' }).catch(() => {});
+        ladeAblage(); ladeNotizen();
+      } },
+  ];
+}
+function bereichMenu(id, name) {
+  if (!id) return [{ icon: '⊛', label: 'Filter: Alle Bereiche', run: () => setBereich('') }];
+  return [
+    { icon: '⊛', label: 'Nach diesem Bereich filtern', run: () => setBereich(id) },
+    { icon: '✎', label: 'Umbenennen', run: async () => {
+        const neu = prompt('Bereich umbenennen:', name); if (neu == null || !neu.trim()) return;
+        await api('/api/bereiche/' + id, { method: 'PUT', body: JSON.stringify({ name: neu.trim() }) }).catch(() => {});
+        if (S.bereich === id) S.bereich = id; ladeBereiche();
+      } },
+    { trenner: true },
+    { icon: '🗑', label: 'Bereich löschen', danger: true, run: async () => {
+        if (!confirm('Bereich löschen? (Zuordnungen fallen auf „Allgemein")')) return;
+        await api('/api/bereiche/' + id, { method: 'DELETE' }).catch(() => {});
+        if (S.bereich === id) setBereich(''); else { ladeBereiche(); ladeAblage(); ladeNotizen(); }
+      } },
+  ];
+}
+function labelMenu(id, name) {
+  return [
+    { icon: '#', label: 'Nach Label filtern', run: () => waehle('label', id) },
+    { trenner: true },
+    { icon: '🗑', label: 'Label löschen', danger: true, run: async () => {
+        if (!confirm('Label löschen?')) return;
+        await api('/api/labels/' + id, { method: 'DELETE' }).catch(() => {});
+        ladeAblage(); ladeNotizen();
+      } },
+  ];
+}
+function hintergrundMenu() {
+  return [
+    { icon: '📝', label: 'Neue Notiz', run: () => neueNotiz() },
+    { icon: '📁', label: 'Neuer Ordner', run: () => zeigeZeile('ordnerNeuZeile', 'ordnerNeuName') },
+    { icon: '◆', label: 'Neuer Bereich', run: () => zeigeZeile('bereichNeuZeile', 'bereichNeuName') },
+    { trenner: true },
+    { icon: '⇪', label: 'Importieren …', run: () => oeffneImport() },
+  ];
+}
+
+// EIN delegierter contextmenu-Listener: Element-Typ ermitteln, passendes Menü öffnen.
+// Eingabefelder/Editor/Overlays behalten das native Menü (Kopieren/Einfügen).
+document.addEventListener('contextmenu', e => {
+  if (e.target.closest('input, textarea, .dizzibubble, .kmwrap')) return;
+  const karte = e.target.closest('#notizListe .karte[data-id]');
+  const ordnerK = e.target.closest('#ordnerBaum .knoten[data-id]');
+  const berChip = e.target.closest('.dz-berchip[data-bid]:not(.alle)');
+  const labChip = e.target.closest('#labelListe .chip[data-id]');
+  let items = null, kopf = null;
+  if (karte) { items = notizMenu(karte.dataset.id, karte.querySelector('.titel')?.textContent.replace('🔒', '').trim() || 'Notiz'); kopf = '📄 Notiz'; }
+  else if (ordnerK) { items = ordnerMenu(ordnerK.dataset.id, ordnerK.querySelector('.name')?.textContent || 'Ordner'); kopf = '📁 Ordner'; }
+  else if (berChip) { items = bereichMenu(berChip.dataset.bid, berChip.textContent.trim()); kopf = '◆ Bereich'; }
+  else if (labChip) { items = labelMenu(labChip.dataset.id, labChip.textContent.trim()); kopf = '# Label'; }
+  else if (e.target.closest('.main, .bereich-leiste')) { items = hintergrundMenu(); kopf = 'Dizz Memory'; }
+  if (!items) return;
+  e.preventDefault();
+  DzMenu.open(e.clientX, e.clientY, items, kopf);
+});
+
+// ====================== Start ======================
+themeBoot(); ladeBereiche(); ladeAblage(); ladeNotizen(); initBewegung();
+</script>
+</body>
+</html>

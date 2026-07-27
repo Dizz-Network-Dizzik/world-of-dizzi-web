@@ -1,0 +1,37 @@
+/* DzBereichBar — geteilte Bereichs-Filter-Leiste (Chip-Leiste). Begleitet bereichbar.js.
+   App-neutral: nutzt die geteilten Kit-Tokens aus tokens.css. Vereinheitlicht W4 die
+   vorher je App divergenten Klassen (.berchip/.bereich-chip/.ber-chip) + Begriffe + Typ-Farben. */
+
+.dz-berbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  padding: 8px 11px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--panel-kopf-bg, var(--panel-solid, rgba(0, 0, 0, .2))); }
+
+.dz-berbar-titel { font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--mut); margin-right: 3px; flex: none; }
+
+/* Ein Bereichs-Chip — Typ-gefärbt (--acc/--acc-rgb je Bereich via inline style gesetzt). */
+.dz-berchip { --acc: var(--cy); --acc-rgb: var(--cy-rgb);
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 12.5px; line-height: 1; white-space: nowrap;
+  border: 1px solid var(--line); background: var(--panel-solid, rgba(0, 0, 0, .2));
+  color: var(--fg);
+  transition: border-color var(--t), box-shadow var(--t), background var(--t); }
+.dz-berchip:hover { border-color: rgba(var(--acc-rgb), .6); }
+.dz-berchip.on { border-color: var(--acc); background: rgba(var(--acc-rgb), .13);
+  box-shadow: 0 0 0 1px rgba(var(--acc-rgb), .35), 0 0 12px rgba(var(--acc-rgb), .18); }
+.dz-berchip:focus-visible { outline: 2px solid rgba(var(--acc-rgb), .7); outline-offset: 2px; }
+
+.dz-berchip .bc-dot { width: 9px; height: 9px; border-radius: 50%; flex: none;
+  background: var(--acc); box-shadow: 0 0 7px rgba(var(--acc-rgb), .7); }
+.dz-berchip .bc-ic { font-size: 13px; line-height: 1; flex: none; filter: saturate(1.1); }
+.dz-berchip .bc-lab { overflow: hidden; text-overflow: ellipsis; }
+
+/* Reset-Chip „Alle Bereiche" — neutral (kein Typ), Akzent erst im aktiven Zustand. */
+.dz-berchip.alle { --acc: var(--mut); --acc-rgb: 150, 160, 175; }
+.dz-berchip.alle.on { --acc: var(--cy); --acc-rgb: var(--cy-rgb); }
+.dz-berchip.alle .bc-ic { color: var(--mut); }
+
+/* „+ Neuer Bereich" — gestrichelt, gedämpft bis Hover. */
+.dz-berchip.neu { color: var(--mut); border-style: dashed; }
+.dz-berchip.neu:hover { color: var(--cy); border-color: rgba(var(--cy-rgb), .6); }

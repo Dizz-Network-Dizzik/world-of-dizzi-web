@@ -13,7 +13,7 @@
 - [About & contact](https://worldofdizzi.netlify.app/about/): who builds this, and how to reach me
 
 ## Source
-- [Public repository](https://github.com/Dizz-Network-Dizzik/dizz-network): 966 files, one curated commit
+- [The code snapshot](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 966 files, the ten applications and the documents behind them
 - [This site's own source](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web): the build script behind the figure in every footer
 - [Interactive system map](https://worldofdizzi.netlify.app/karte/): self-contained, no external calls
 

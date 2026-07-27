@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>the world of dizzi — Gesamtsystem-Karte</title>
+<style>
+:root{
+  --bg:#080b12; --bg2:#0d1119; --panel:#111726; --panel2:#151c2d; --panelh:#1a2440;
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --tx:#e8ebf2; --tx2:#9aa4b6; --tx3:#6a7488;
+  --mag:#ff3ea5; --cy:#2ee6d6; --vio:#8b6cff; --amber:#f5b942; --coral:#f2645a;
+  --green:#36d399; --orange:#fb923c; --blue:#38bdf8;
+  --grad:linear-gradient(90deg,#ff3ea5 0%,#8b6cff 50%,#2ee6d6 100%);
+  --rad:14px; --maxw:1220px;
+}
+[data-theme="light"]{
+  --bg:#f4f6fb; --bg2:#eaeef6; --panel:#ffffff; --panel2:#f5f7fc; --panelh:#eef2fb;
+  --line:rgba(15,23,42,.10); --line2:rgba(15,23,42,.18);
+  --tx:#0f172a; --tx2:#475569; --tx3:#8a95a8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+code,.mono{font-family:ui-monospace,"Cascadia Code",Consolas,"SF Mono",monospace}
+code{overflow-wrap:break-word}   /* lange Pfad-/Modul-Codes brechen statt zu überlaufen (mobil) */
+
+/* ---- ambient background ---- */
+.bgfx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.20}
+.blob.a{width:560px;height:560px;background:var(--mag);top:-160px;left:-120px;animation:f1 22s ease-in-out infinite}
+.blob.b{width:520px;height:520px;background:var(--cy);top:30%;right:-160px;animation:f2 26s ease-in-out infinite}
+.blob.c{width:480px;height:480px;background:var(--vio);bottom:-160px;left:30%;animation:f1 30s ease-in-out infinite}
+[data-theme="light"] .blob{opacity:.13}
+@keyframes f1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,40px)}}
+@keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,30px)}}
+
+/* ---- hero ---- */
+header.hero{padding:64px 0 30px;position:relative}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--tx2);border:1px solid var(--line2);border-radius:999px;
+  padding:6px 14px;background:var(--panel)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.05;margin:18px 0 10px;font-weight:800;letter-spacing:-.02em}
+h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(15px,2vw,18px);color:var(--tx2);max-width:760px}
+.statline{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:120px}
+.stat b{display:block;font-size:22px;font-weight:800}
+.stat span{font-size:11.5px;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em}
+.stat .accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---- sticky nav ---- */
+nav.bar{position:sticky;top:0;z-index:40;backdrop-filter:blur(12px);
+  background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:6px;height:56px;flex-wrap:wrap}
+.brand{font-weight:800;margin-right:auto;display:flex;align-items:center;gap:9px}
+.brand .mk{width:13px;height:13px;border-radius:4px;background:var(--grad);box-shadow:0 0 12px rgba(255,62,165,.5)}
+.bar a.lnk{font-size:13.5px;color:var(--tx2);text-decoration:none;padding:7px 11px;border-radius:8px}
+.bar a.lnk:hover{color:var(--tx);background:var(--panel)}
+.bar a.lnk.on{color:var(--tx);background:var(--panelh)}
+.tgl{cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--tx);
+  border-radius:9px;padding:7px 11px;font-size:13px}
+
+/* ---- Scroll-Fortschritt (oben, dünn) ---- */
+.scrollprog{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:var(--grad);
+  box-shadow:0 0 10px rgba(255,62,165,.45);transition:width .08s linear;pointer-events:none}
+
+/* ---- sections ---- */
+section{padding:50px 0;border-top:1px solid var(--line)}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.sh .num{font-family:ui-monospace,monospace;font-size:13px;color:var(--mag);font-weight:700}
+.sh h2{font-size:clamp(22px,3vw,30px);margin:0;font-weight:800;letter-spacing:-.01em}
+.sub{color:var(--tx2);max-width:820px;margin:0 0 24px}
+
+/* ---- generic cards ---- */
+.grid{display:grid;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--rad);padding:18px 18px}
+.card.lift{transition:transform .15s,border-color .15s,box-shadow .15s}
+.card.lift:hover{transform:translateY(-3px);border-color:var(--line2)}
+.k{color:var(--tx3);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ---- architecture stack ---- */
+.stack{display:flex;flex-direction:column;gap:12px}
+.layer{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;
+  background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--vio);border-radius:12px;padding:14px 16px}
+.layer .lbl{font-size:12px;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.layer .body{font-size:14px}
+.layer .body b{color:var(--tx)}
+.layer.l-core{border-left-color:var(--vio)} .layer.l-acc{border-left-color:#8a93a6}
+.layer.l-app{border-left-color:var(--cy)} .layer.l-share{border-left-color:var(--green)}
+.layer.l-data{border-left-color:var(--amber)}
+.flowdot{display:block;text-align:center;color:var(--tx3);font-size:16px;line-height:.4}
+
+/* ---- app filter + cards ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--tx2);
+  border-radius:999px;padding:7px 14px;font-size:13px;transition:.12s}
+.chip:hover{color:var(--tx)}
+.chip.on{background:var(--grad);color:#08101a;border-color:transparent;font-weight:700}
+[data-theme="light"] .chip.on{color:#fff}
+.apps{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.app{cursor:pointer;position:relative;overflow:hidden}
+.app:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cy)}
+.app[data-sens="hoch"]:before,.app[data-sens="höchst"]:before{background:var(--coral)}
+.app[data-mode="money"]:before{background:var(--amber)}
+.app[data-mode="core"]:before{background:var(--vio)}
+.app .ah{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.app h3{margin:0;font-size:17px;font-weight:800}
+.app .port{font-family:ui-monospace,monospace;color:var(--tx2);font-size:13px;font-weight:700}
+.app .one{color:var(--tx2);font-size:13px;margin:8px 0 12px}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.b{font-size:11px;border-radius:7px;padding:3px 9px;border:1px solid var(--line2);color:var(--tx2);white-space:nowrap}
+.b.ai{border-color:color-mix(in srgb,var(--green) 55%,var(--line2));color:var(--green)}
+.b.ext{border-color:color-mix(in srgb,var(--orange) 55%,var(--line2));color:var(--orange)}
+.b.sens{border-color:color-mix(in srgb,var(--coral) 55%,var(--line2));color:var(--coral)}
+.b.money{border-color:color-mix(in srgb,var(--amber) 55%,var(--line2));color:var(--amber)}
+.exp{margin-left:auto;border:1px solid var(--line2);background:var(--panel2);color:var(--tx2);
+  width:26px;height:26px;border-radius:8px;font-size:16px;cursor:pointer;flex:none;line-height:1}
+.det{margin-top:14px;border-top:1px dashed var(--line2);padding-top:12px;display:none;font-size:13px}
+.app.open .det{display:block}
+.app.open .exp{transform:rotate(45deg);color:var(--tx)}
+.det dl{display:grid;grid-template-columns:96px 1fr;gap:6px 12px;margin:0}
+.det dt{color:var(--tx3);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
+.det dd{margin:0;color:var(--tx)}
+.hidden{display:none!important}
+
+/* ---- AI split ---- */
+.two{grid-template-columns:1fr 1fr}
+.ai-col{border-top:3px solid var(--green)} .ext-col{border-top:3px solid var(--orange)}
+.ai-col .k{color:var(--green)} .ext-col .k{color:var(--orange)}
+.item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .ic{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:var(--panel2);border:1px solid var(--line2);font-size:16px}
+.item h4{margin:0 0 3px;font-size:14px}
+.item p{margin:0;font-size:12.5px;color:var(--tx2)}
+.item .who{font-size:11px;color:var(--tx3);margin-top:3px}
+
+/* ---- tree ---- */
+.tree{font-family:ui-monospace,monospace;font-size:13.5px;line-height:1.9;overflow-x:auto}  /* lange Pfade scrollen intern statt die Seite zu schieben */
+@media(max-width:680px){ #struktur .grid[style*="1.3fr"]{grid-template-columns:1fr!important} }  /* 2-Spalten-Struktur bricht mobil um */
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree>ul{padding-left:0;border:0}
+.tree li{position:relative}
+.tree .node{cursor:default;border-radius:6px;padding:1px 6px;display:inline-block}
+.tree .node.fold{cursor:pointer}
+.tree .node.fold:hover{background:var(--panel2)}
+.tree .tw{color:var(--mag);width:14px;display:inline-block}
+.tree .nm{color:var(--tx)} .tree .nm.dir{color:var(--cy)}
+.tree .cm{color:var(--tx3);font-size:12px}
+.tree li.collapsed>ul{display:none}
+.tree li.collapsed>.node .tw:after{content:"▸"}
+.tree li.open>.node .tw:after{content:"▾"}
+
+.note{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;color:var(--tx2);font-size:13px}
+.pill{display:inline-block;font-size:11px;border:1px solid var(--line2);border-radius:999px;padding:2px 9px;color:var(--tx2)}
+footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12px;color:var(--tx2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+@media(max-width:760px){.two,.layer{grid-template-columns:1fr}.layer .lbl{margin-bottom:-6px}}
+
+/* ---- TB sub-architecture (Trading-Knoten aufgeklappt) ---- */
+.tbarch{margin-top:14px;border-top:1px dashed var(--line2);padding-top:14px}
+.tbarch .tbhd{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:10px}
+.tbarch .tbhd .pill{text-transform:none;letter-spacing:0;color:var(--green);border-color:color-mix(in srgb,var(--green) 50%,var(--line2))}
+.tblayer{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;
+  background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--c-z);border-radius:10px;
+  padding:9px 12px;margin-bottom:7px}
+.tblayer .tbnum{font-size:18px;line-height:1.15;font-weight:800;color:var(--cz)}
+.tblayer b{font-size:13.5px;display:block}
+.tblayer .tbmods{display:block;font-size:12px;color:var(--tx2);margin-top:2px;line-height:1.5}
+.tblayer .tbmods code{color:var(--tx);font-size:11.5px}
+.tblayer.z-teal{--cz:#2dd4bf;border-left-color:#2dd4bf}
+.tblayer.z-blue{--cz:#60a5fa;border-left-color:#60a5fa}
+.tblayer.z-purple{--cz:#c084fc;border-left-color:#c084fc}
+.tblayer.z-amber{--cz:#fbbf24;border-left-color:#fbbf24}
+.tblayer.z-coral{--cz:#fb7185;border-left-color:#fb7185}
+.tblayer.z-green{--cz:#4ade80;border-left-color:#4ade80}
+.tbbridge{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--tx2);text-align:center;
+  border:1px dashed var(--line2);border-radius:8px;padding:6px 10px;margin:7px 0;background:var(--bg2)}
+.tbbridge code{color:var(--cy)}
+.tbquer{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin:12px 0 7px}
+.tbketten{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+.tbkette{flex:1 1 240px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:12px}
+.tbkette b{display:block;font-size:11.5px;margin-bottom:2px}
+.tbkette.k-reg b{color:#2dd4bf}.tbkette.k-loop b{color:#c084fc}.tbkette.k-ens b{color:#60a5fa}.tbkette.k-risk b{color:#fb7185}
+.tbkette span{color:var(--tx2);line-height:1.5}
+.tbprinzip{margin-top:11px;border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--tx);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--mag) 12%,var(--panel2)),color-mix(in srgb,var(--cy) 12%,var(--panel2)));
+  border:1px solid var(--line2)}
+.tbprinzip b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:760px){.tbkette{flex-basis:100%}}
+
+/* Lesart-Umschalter entfernt (25.06.): alle Inhalte sichtbar; die Tiefe kommt über das App-/Topic-Fenster (totes .lese-seg-CSS bereinigt 25.06.) */
+.kann{margin:8px 0 0;padding-left:0;list-style:none;font-size:12.5px}
+.kann li{position:relative;padding-left:18px;margin:4px 0;color:var(--tx2)}
+.kann li:before{content:"›";position:absolute;left:4px;color:var(--cy);font-weight:800}
+.mods{margin-top:12px;border-top:1px dashed var(--line2);padding-top:10px}
+.mods .mk{color:var(--tx3);font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.mods .mchips{display:flex;flex-wrap:wrap;gap:5px}
+.mods .mchip{font-size:11px;border:1px solid var(--line);border-radius:7px;padding:3px 8px;color:var(--tx2);background:var(--panel2)}
+.mods .mchip b{color:var(--tx);font-weight:700}
+
+/* ---- live health badge ---- */
+.livehw{display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line2);
+  border-radius:999px;padding:3px 11px;color:var(--tx2);background:var(--panel);white-space:nowrap;margin-left:4px;vertical-align:middle}
+.livehw.ok{color:var(--green);border-color:color-mix(in srgb,var(--green) 50%,var(--line2))}
+.livehw.off{color:var(--tx3)}
+
+/* ---- constellation ---- */
+.cwrap{position:relative;margin-top:4px}
+.cstage{position:relative;width:100%;max-width:960px;margin:8px auto 0;aspect-ratio:1000/780}
+.cstage .edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:0;animation:edgesin 1.1s ease .25s forwards}
+@keyframes edgesin{to{opacity:1}}
+.edge{fill:none;transition:opacity .22s,stroke-width .22s}
+.edge.backbone{stroke:var(--vio);stroke-width:1;opacity:.20;stroke-dasharray:2 4}
+.edge.archiv{stroke:var(--cy);stroke-width:1.4;opacity:.40}
+.edge.integ{stroke:var(--vio);stroke-width:1.5;opacity:.48}
+.edge.geld{stroke:var(--amber);stroke-width:1.6;opacity:.52}
+.cstage.focus .edge{opacity:.05}
+.cstage.focus .edge.hot{opacity:1;stroke-width:2.4}
+/* Datenfluss-Animation auf den gerichteten Kanten (nur wenn Motion ok) */
+@media (prefers-reduced-motion: no-preference){
+  .edge.archiv,.edge.integ,.edge.geld{stroke-dasharray:5 7;animation:flow 1.6s linear infinite}
+  .cstage.focus .edge.hot{animation-duration:.9s}
+}
+@keyframes flow{to{stroke-dashoffset:-12}}
+/* V-Nummern-Label je Kante — erscheint, wenn ihr Knoten fokussiert/gehovt wird */
+.vlabel{opacity:0;transition:opacity .2s ease;pointer-events:none}
+.vlabel rect{fill:var(--panelh);stroke:var(--line2);stroke-width:1}
+.vlabel text{fill:var(--tx);font-size:13px;font-weight:800;font-family:ui-monospace,monospace}
+.vlabel.show{opacity:1}
+.edge:hover{cursor:help}
+/* Tastatur-Fokus sichtbar (A11y) */
+.cnode:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+.tgl:focus-visible,.chip:focus-visible,.bar a.lnk:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+/* Reduced-Motion: laufende Deko-Animationen ruhigstellen (Einblend-Anims bleiben, lösen zu sichtbar auf) */
+@media (prefers-reduced-motion: reduce){
+  .blob{animation:none}
+  .cnode.core:after{animation:none;opacity:.22}
+}
+/* Mobile: sticky-Nav darf umbrechen statt zu überlaufen */
+@media (max-width:760px){
+  .bar .wrap{height:auto;min-height:52px;padding:7px 22px;row-gap:4px}
+}
+.cnode{position:absolute;transform:translate(-50%,-50%);background:var(--panel);border:1px solid var(--line2);
+  border-radius:11px;padding:7px 11px 7px 13px;min-width:90px;text-align:center;cursor:pointer;z-index:2;
+  transition:transform .15s,border-color .15s,box-shadow .15s,opacity .22s;
+  opacity:0;animation:nodein .5s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes nodein{from{opacity:0;transform:translate(-50%,-50%) scale(.7)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.cnode:hover{transform:translate(-50%,-50%) scale(1.07);border-color:var(--tx2);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.cnode .cnm{font-weight:800;font-size:13px;line-height:1.15;white-space:nowrap}
+.cnode .cpt{font-family:ui-monospace,monospace;font-size:10px;color:var(--tx2)}
+.cnode:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--cy)}
+.cnode[data-acc="vio"]:before{background:var(--vio)}.cnode[data-acc="coral"]:before{background:var(--coral)}
+.cnode[data-acc="amber"]:before{background:var(--amber)}.cnode[data-acc="green"]:before{background:var(--green)}
+.cnode.core{min-width:122px;border:1.5px solid transparent;z-index:3;padding:9px 14px;
+  background:linear-gradient(var(--panelh),var(--panelh)) padding-box,var(--grad) border-box;
+  box-shadow:0 0 34px rgba(139,108,255,.25)}
+.cnode.core:before{display:none}
+.cnode.core .cnm{font-size:15px}
+.cnode.core:after{content:"";position:absolute;inset:-7px;border-radius:16px;border:1.5px solid var(--vio);
+  opacity:.4;animation:corepulse 3.2s ease-in-out infinite;pointer-events:none}
+@keyframes corepulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.12);opacity:0}}
+.cstage.focus .cnode{opacity:.32}
+.cstage.focus .cnode.hot,.cstage.focus .cnode.active{opacity:1}
+.cnode.active{border-color:var(--tx);box-shadow:0 0 0 2px color-mix(in srgb,var(--cy) 45%,transparent),0 8px 24px rgba(0,0,0,.3)}
+.cnode.core.active{box-shadow:0 0 0 2px color-mix(in srgb,var(--vio) 55%,transparent),0 0 34px rgba(139,108,255,.3)}
+.clegend{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:14px;font-size:12px;color:var(--tx2)}
+.clegend span{display:inline-flex;align-items:center}
+.clegend i{display:inline-block;width:20px;border-top-width:2.4px;border-top-style:solid;margin-right:7px}
+.chint{text-align:center;color:var(--tx3);font-size:12.5px;margin-top:8px}
+.chint b{color:var(--amber)}
+@media(max-width:680px){
+  .cnode{min-width:0;padding:4px 6px 4px 8px;border-radius:8px}
+  .cnode .cnm{font-size:9.5px}.cnode .cpt{font-size:8px}
+  .cnode.core{min-width:0;padding:6px 9px}.cnode.core .cnm{font-size:11px}
+  .clegend{font-size:11px;gap:6px 12px}
+}
+
+/* ---- Vernetzungs-Registry-Tabelle (V2–V19) ---- */
+.vtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.vtable th,.vtable td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.vtable th{color:var(--tx3);font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.vtable td:first-child{font-family:ui-monospace,monospace;font-weight:700;color:var(--tx);white-space:nowrap}
+.vtable td:nth-child(2){white-space:nowrap;color:var(--tx)}
+.vtable td:last-child{color:var(--tx2)}
+.vtable tr:hover td{background:var(--panel2)}
+.vtag{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.vtag.archiv{background:var(--cy)}.vtag.integ{background:var(--vio)}.vtag.geld{background:var(--amber)}
+.vscroll{overflow-x:auto;margin-top:16px}
+.vsens{color:var(--coral);font-weight:700}
+
+/* ---- Sicherheit & Recht — Tiefen-Ansicht ---- */
+.secgrid{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.scard{position:relative;overflow:hidden}
+.scard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sa,var(--cy))}
+.scard.s-def{--sa:var(--vio)} .scard.s-id{--sa:var(--blue)} .scard.s-vault{--sa:var(--amber)}
+.scard.s-dsgvo{--sa:var(--green)} .scard.s-recht{--sa:var(--cy)} .scard.s-risk{--sa:var(--coral)}
+.scard .seyebrow{display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.scard .seyebrow b{color:var(--sa,var(--cy))}
+.scard h3{margin:6px 0 4px;font-size:16.5px;font-weight:800}
+.scard .one{color:var(--tx2);font-size:13px;margin:0 0 4px}
+.secfac{margin-top:11px;display:flex;flex-direction:column;gap:9px}
+.fac{font-size:12.5px;line-height:1.55;border-left:2px solid var(--line2);padding:2px 0 2px 12px;color:var(--tx2)}
+.fac b{color:var(--tx);font-weight:700}
+.fac code{font-size:11.5px;color:var(--tx)}
+.fac.warn{border-left-color:var(--coral)}
+.fac .ftag{display:inline-block;font-size:10px;font-weight:700;border-radius:6px;padding:1px 7px;margin-left:4px;
+  border:1px solid var(--line2);color:var(--tx3);vertical-align:1px;white-space:nowrap}
+.fac .ftag.ok{color:var(--green);border-color:color-mix(in srgb,var(--green) 50%,var(--line2))}
+.fac .ftag.hitl{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 50%,var(--line2))}
+/* Defense-Stufenleiter S0–S5 */
+.stufenleiter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 6px}
+.stufe{flex:1 1 88px;border:1px solid var(--line2);border-top-width:3px;border-radius:9px;padding:7px 9px;background:var(--panel2)}
+.stufe .s{font-family:ui-monospace,monospace;font-weight:800;font-size:12.5px}
+.stufe .n{display:block;font-size:11px;color:var(--tx);margin-top:1px}
+.stufe .m{display:block;font-size:9.5px;color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+.stufe.s0{border-top-color:var(--tx3)} .stufe.s1{border-top-color:var(--blue)}
+.stufe.s2{border-top-color:var(--amber)} .stufe.s3{border-top-color:var(--orange)}
+.stufe.s4{border-top-color:var(--coral)} .stufe.s5{border-top-color:var(--mag)}
+.stufe.s0 .s,.stufe.s1 .s{color:var(--blue)}.stufe.s2 .s{color:var(--amber)}
+.stufe.s3 .s{color:var(--orange)}.stufe.s4 .s{color:var(--coral)}.stufe.s5 .s{color:var(--mag)}
+.leiterhint{font-size:11.5px;color:var(--tx3);margin:2px 0 0}
+.leiterhint b{color:var(--tx2)}
+.riskcard{border-color:color-mix(in srgb,var(--coral) 35%,var(--line2))}
+.riskcard .seyebrow b{color:var(--coral)}
+@media(max-width:680px){.stufe{flex-basis:30%}}
+
+/* ============ App-Fenster (Modal) — Übersicht → Detail, geschichtet ============ */
+/* Tiles: keine dünnen Inline-Aufklapp-Panels mehr; Klick öffnet das App-Fenster */
+#appgrid .exp{display:none}
+#appgrid .kann,#appgrid .det,#appgrid .tbarch{display:none!important}
+.apps .app.card{cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1),border-color .18s,box-shadow .18s}
+.apps .app.card:hover{transform:translateY(-4px);border-color:var(--line2);box-shadow:0 16px 36px -14px rgba(0,0,0,.6)}
+.apps .app.card:after{content:"↗";position:absolute;top:12px;right:13px;color:var(--tx3);font-size:13px;transition:color .15s,transform .15s}
+.apps .app.card:hover:after{color:var(--cy);transform:translate(2px,-2px)}
+.apps .app.card:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+
+.appmodal{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:24px}
+.appmodal[hidden]{display:none}
+.ambackdrop{position:absolute;inset:0;background:rgba(4,6,12,.62);backdrop-filter:blur(7px);opacity:0;transition:opacity .26s ease}
+.appmodal.open .ambackdrop{opacity:1}
+.amdialog{position:relative;width:min(680px,100%);max-height:88vh;overflow:auto;background:var(--panel);
+  border:1px solid var(--line2);border-top:3px solid var(--am,var(--cy));border-radius:16px;
+  box-shadow:0 40px 90px -22px rgba(0,0,0,.72);
+  transform:translateY(18px) scale(.965);opacity:0;transition:transform .3s cubic-bezier(.2,.9,.25,1),opacity .26s ease}
+.appmodal.open .amdialog{transform:none;opacity:1}
+.amdialog{--am:var(--cy)}
+.amdialog[data-acc="vio"]{--am:var(--vio)}.amdialog[data-acc="coral"]{--am:var(--coral)}.amdialog[data-acc="amber"]{--am:var(--amber)}
+.amhead{position:sticky;top:0;z-index:3;background:color-mix(in srgb,var(--panel) 94%,transparent);
+  backdrop-filter:blur(6px);padding:20px 56px 14px 24px;border-bottom:1px solid var(--line)}
+.amclose{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:9px;border:1px solid var(--line2);
+  background:var(--panel2);color:var(--tx2);font-size:14px;cursor:pointer;line-height:1}
+.amclose:hover{color:var(--tx);border-color:var(--tx3);transform:rotate(90deg);transition:transform .2s}
+.amtitle-wrap{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.amhead h3{margin:0;font-size:23px;font-weight:800;letter-spacing:-.01em}
+.amport{font-family:ui-monospace,monospace;color:var(--am);font-size:14px;font-weight:700}
+.ambadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.ambody{padding:4px 24px 26px}
+.amsection{padding-top:18px}
+.amlabel{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.amlabel:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--am)}
+.amov{background:linear-gradient(180deg,color-mix(in srgb,var(--am) 7%,var(--panel2)),var(--panel2));
+  border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:14px}
+.amov .amone{font-size:15px;color:var(--tx);margin:0;line-height:1.55;font-weight:600}
+.amov .kann{margin-top:10px}.amov .kann li{font-size:13.5px;color:var(--tx2)}
+.amdet .mods{margin-top:0;border-top:0;padding-top:0}
+.amdet dl{display:grid;grid-template-columns:92px 1fr;gap:7px 12px;margin:14px 0 0;font-size:13px}
+.amdet dt{color:var(--tx3);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
+.amdet dd{margin:0;color:var(--tx)}
+.amdet .tbarch{margin-top:16px;border-top:1px dashed var(--line2);padding-top:14px}
+@media(max-width:680px){.appmodal{padding:0}.amdialog{max-height:100vh;border-radius:0;width:100%}.amhead h3{font-size:20px}}
+
+/* ============ Konstellation — organischer / smoother ============ */
+.cstage:before{content:"";position:absolute;left:50%;top:50%;width:64%;height:64%;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,rgba(139,108,255,.16),transparent 72%);filter:blur(20px);pointer-events:none;z-index:0;
+  animation:auraBreath 9s ease-in-out infinite}
+@keyframes auraBreath{0%,100%{opacity:.65;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}}
+.cnode{animation:nodein .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--idelay,0s)}
+@media (prefers-reduced-motion: no-preference){
+  .cnode{animation:nodein .5s cubic-bezier(.2,.8,.2,1) both, drift var(--ddur,8s) ease-in-out infinite;animation-delay:var(--idelay,0s),var(--ddelay,0s)}
+}
+@keyframes drift{0%,100%{translate:0 0}50%{translate:0 -7px}}
+.cnode:hover{box-shadow:0 10px 30px -6px rgba(0,0,0,.42),0 0 24px -4px var(--glow,rgba(46,230,214,.5))}
+.cnode[data-acc="vio"]{--glow:rgba(139,108,255,.55)}.cnode[data-acc="coral"]{--glow:rgba(242,100,90,.5)}.cnode[data-acc="amber"]{--glow:rgba(245,185,66,.5)}
+.cstage.focus .edge.hot{filter:drop-shadow(0 0 4px currentColor)}
+@media (prefers-reduced-motion: reduce){.cstage:before{animation:none}}
+
+/* ============ Tiefenanalyse im App-Fenster + Glas/Neon-Politur ============ */
+.amdeep{margin-top:18px;border-top:1px dashed var(--line2);padding-top:16px}
+.amdeep[hidden]{display:none}
+.amdeep .amlabel:before{background:var(--mag)}
+.deepkern{font-size:12px;color:var(--tx2);margin:-2px 0 12px}
+.deepkern code{color:var(--mag);font-size:11.5px}
+.deeplist{display:flex;flex-direction:column;gap:9px;margin:0;padding:0;list-style:none}
+.deeplist li{position:relative;padding:1px 0 1px 12px;font-size:12.5px;line-height:1.55;color:var(--tx2);border-left:2px solid color-mix(in srgb,var(--mag) 35%,var(--line2))}
+.deeplist li b{color:var(--tx)}.deeplist li code{color:var(--cy);font-size:11.5px}
+.deepaudit{margin-top:13px;font-size:12px;border-radius:10px;padding:10px 13px;color:var(--tx2);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--green) 13%,var(--panel2)),var(--panel2));
+  border:1px solid color-mix(in srgb,var(--green) 30%,var(--line2))}
+.deepaudit b{color:var(--green)}
+.deepaudit.warnaudit{background:linear-gradient(90deg,color-mix(in srgb,var(--amber) 13%,var(--panel2)),var(--panel2));border-color:color-mix(in srgb,var(--amber) 30%,var(--line2))}
+.deepaudit.warnaudit b{color:var(--amber)}
+
+/* Glas-Modal (frosted) + „aus dem Knoten wachsen"-Origin (JS) */
+.amdialog{background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(16px) saturate(1.15);transform-origin:50% 50%}
+.amhead{background:color-mix(in srgb,var(--panel) 80%,transparent)}
+
+/* Neon-Glow entlang der Kanten (Farbstimmung) */
+.edge.archiv{color:var(--cy)}.edge.integ{color:var(--vio)}.edge.geld{color:var(--amber)}
+@media (prefers-reduced-motion: no-preference){.edge.archiv,.edge.integ,.edge.geld{filter:drop-shadow(0 0 2.5px currentColor)}}
+.cstage.focus .edge.hot{filter:drop-shadow(0 0 6px currentColor)}
+
+/* mehr Magenta→Cyan übers Dokument: Sektions-Verlaufsstrich + Glas-Kachel-Hover */
+.sh{position:relative}
+.sh:after{content:"";position:absolute;left:0;bottom:-7px;width:52px;height:3px;border-radius:3px;background:var(--grad);opacity:.9}
+.apps .app.card:hover{border:1px solid transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,var(--grad) border-box}
+
+/* ============ Sicherheit als Übersicht-Kacheln → Topic-Fenster ============ */
+.secgrid .secfac,.secgrid .stufenleiter,.secgrid .leiterhint{display:none}  /* Tiefe wandert ins Fenster */
+.secgrid .scard{cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1),border-color .18s,box-shadow .18s}
+.secgrid .scard:hover{transform:translateY(-4px);box-shadow:0 16px 36px -14px rgba(0,0,0,.6)}
+.secgrid .scard:after{content:"↗";position:absolute;top:13px;right:14px;color:var(--tx3);font-size:13px;transition:color .15s,transform .15s}
+.secgrid .scard:hover:after{color:var(--sa,var(--cy));transform:translate(2px,-2px)}
+.secgrid .scard:focus-visible{outline:2px solid var(--sa,var(--cy));outline-offset:3px}
+.amdialog[data-acc="green"]{--am:var(--green)}
+.amdialog[data-acc="blue"]{--am:var(--blue)}.amdialog[data-acc="orange"]{--am:var(--orange)}
+
+/* ============ Generische Topic-Kacheln (Architektur · KI · Vernetzung) ============ */
+/* gleiche Mechanik wie Sicherheit: Übersicht bleibt in der Seite, Tiefe wandert ins Fenster */
+.topicwin,.moddetail,.topicsrc{display:none}            /* nur im Topic-Fenster sichtbar */
+.topic-tile{cursor:pointer;position:relative;transition:transform .18s cubic-bezier(.2,.8,.2,1),border-color .18s,box-shadow .18s}
+.topic-tile:hover{transform:translateY(-4px);box-shadow:0 16px 36px -14px rgba(0,0,0,.6)}
+.topic-tile:after{content:"↗";position:absolute;top:13px;right:14px;color:var(--tx3);font-size:13px;transition:color .15s,transform .15s;z-index:2}
+.topic-tile:hover:after{color:var(--cy);transform:translate(2px,-2px)}
+.topic-tile:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+/* ↗ nicht in den Text laufen lassen (lange Einzeiler) */
+.stack .layer.topic-tile{padding-right:36px}
+#ki .two .topic-tile .k{padding-right:22px}
+#vnetgrid .topic-tile .k{padding-right:18px}
+#prinzipgrid .topic-tile .k{padding-right:18px}
+
+/* ============ Daten-Komet entlang der Kanten ============ */
+.comet{pointer-events:none}
+.comet.archiv{fill:var(--cy);color:var(--cy)}.comet.integ{fill:var(--vio);color:var(--vio)}.comet.geld{fill:var(--amber);color:var(--amber)}
+/* hellerer Kern + farbiger Doppel-Glow ⇒ mehr Charakter aus dem Farbschema; sanftes Pulsieren */
+@media (prefers-reduced-motion: no-preference){
+  .comet{filter:drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor);animation:cometpulse 1.6s ease-in-out infinite}
+}
+@keyframes cometpulse{0%,100%{opacity:.78}50%{opacity:1}}
+
+/* ============ ★ Interaktiv-Effekte (Cursor-Aura · Klick-Welle · Scroll-Reveal · Node-Magnetismus) ============ */
+@media (prefers-reduced-motion: no-preference){
+  /* Cursor-Aura — dezente „Taschenlampe", folgt der Maus (gedämpft, screen-blend, blendet schnell aus) */
+  .cursorglow{position:fixed;left:0;top:0;width:440px;height:440px;margin:-220px 0 0 -220px;border-radius:50%;
+    z-index:54;pointer-events:none;opacity:0;mix-blend-mode:screen;will-change:transform,opacity;transition:opacity .3s ease;
+    background:radial-gradient(circle closest-side, rgba(120,205,255,.06), rgba(255,62,165,.03) 44%, transparent 70%)}
+  /* Klick-Welle — verstärkter Doppel-Energie-Ring, positioniert via left/top (Animation macht NUR scale) */
+  .clickwave{position:fixed;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;z-index:56;pointer-events:none;
+    border:2.5px solid var(--cy);box-shadow:0 0 24px var(--cy),inset 0 0 12px var(--cy);animation:cwave .7s cubic-bezier(.2,.7,.3,1) forwards}
+  .clickwave:after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--mag);
+    box-shadow:0 0 14px var(--mag);opacity:.75;animation:cwave2 .7s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes cwave{0%{opacity:1;transform:scale(.22)}100%{opacity:0;transform:scale(9)}}
+  @keyframes cwave2{0%{opacity:.8;transform:scale(.3)}60%{opacity:.5}100%{opacity:0;transform:scale(5.5)}}
+  /* Scroll-Reveal — Inhalte gleiten beim Reinscrollen sanft ein (Klasse + Stagger via JS) */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  /* Node-Magnetismus — Knoten glühen nach Maus-Nähe (Stärke via --near 0..1; Pull via inline transform) */
+  .cnode{transition:filter .18s ease}
+  .cnode[style*="--near"]{filter:drop-shadow(0 0 calc(var(--near,0)*16px) rgba(150,220,255,calc(.18 + var(--near,0)*.62)))}
+  /* Scroll-Balken — glühender Kometen-Kopf + Glow-Intensität mit Fortschritt (--p 0..1) */
+  .scrollprog{box-shadow:0 0 calc(7px + var(--p,0)*16px) rgba(255,62,165,calc(.38 + var(--p,0)*.42))}
+  .scrollprog:after{content:"";position:absolute;right:-1px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;
+    background:#fff;box-shadow:0 0 9px 2px var(--mag),0 0 20px var(--cy);opacity:calc(.25 + var(--p,0)*.75)}
+  /* Scroll-Hintergrund-Aurora — Farb-Energie (Violett→Cyan) schwillt zur Scroll-Mitte, Mittelpunkt wandert mit --sy */
+  .scrollaura{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;will-change:opacity,background;
+    background:radial-gradient(140% 55% at 50% var(--sy,10%), rgba(139,108,255,.12), rgba(46,230,214,.06) 38%, transparent 66%)}
+}
+
+/* ============ ★ Icons (Knoten · App-Kacheln · Sektions-Köpfe) + Node-Mini-Tooltip ============ */
+.cnode .cic{margin-right:5px;font-size:13px;line-height:1;filter:drop-shadow(0 0 4px rgba(46,230,214,.45))}
+.cnode.core .cic{font-size:15px}
+.ah-ic{margin-right:8px;font-size:16px;line-height:1;vertical-align:-1px}
+.sh{position:relative;padding-bottom:10px}
+.sh:after{content:"";position:absolute;left:0;bottom:0;width:50px;height:3px;border-radius:3px;
+  background:var(--sacc,var(--mag));box-shadow:0 0 12px var(--sacc,var(--mag))}
+.sh .sec-ic{font-size:18px;line-height:1;margin-right:4px;filter:drop-shadow(0 0 7px var(--sacc,rgba(255,62,165,.45)))}
+.cnodetip{position:absolute;z-index:6;max-width:236px;min-width:152px;padding:9px 12px;border-radius:12px;
+  background:var(--panelh);border:1px solid var(--line2);box-shadow:0 14px 34px rgba(0,0,0,.5),0 0 0 1px rgba(46,230,214,.08);
+  font-size:11.5px;color:var(--tx2);pointer-events:none;opacity:0;transform:translate(-50%,-118%) scale(.95);
+  transition:opacity .16s ease,transform .16s ease}
+.cnodetip.below{transform:translate(-50%,22px) scale(.95)}
+.cnodetip.show{opacity:1;transform:translate(-50%,-118%) scale(1)}
+.cnodetip.show.below{transform:translate(-50%,22px) scale(1)}
+.cnodetip .ct-h{font-weight:800;font-size:12.5px;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.cnodetip .ct-pt{font-family:ui-monospace,monospace;font-size:10px;color:var(--tx3);font-weight:600;margin-left:auto}
+.cnodetip b{color:var(--tx);font-weight:600;display:block;margin-bottom:5px;line-height:1.32}
+.cnodetip ul{margin:0;padding-left:15px} .cnodetip li{margin:3px 0;line-height:1.32}
+</style>
+</head>
+<body data-theme="dark">
+<div class="scrollprog" id="scrollprog" aria-hidden="true"></div>
+<div class="bgfx"><span class="blob a"></span><span class="blob b"></span><span class="blob c"></span></div>
+
+<header class="hero"><div class="wrap">
+  <span class="eyebrow"><span class="dot"></span> lokale KI-Kommandozentrale · 100 % auf C:\Dizzik</span>
+  <h1>the world of <span class="g">dizzi</span> — Gesamtsystem-Karte</h1>
+  <p class="lede">Ein lokales Lebens-Betriebssystem: <b>Dizzi-Core</b> orchestriert acht eigenständige Apps und eine Trading-Bot-Flotte. Alles läuft auf dem Gerät; externe Hilfe wird nur gezielt und nur mit Freigabe (HITL) dazugeholt. EIN Monorepo „dizz-network" (Variante B).</p>
+  <div class="statline">
+    <div class="stat"><b class="accent">10</b><span>Dienste (Core+8 Apps+TB)</span></div>
+    <div class="stat"><b>10/10</b><span>Health-Watch grün</span></div>
+    <div class="stat"><b>~2.180</b><span>Tests (Apps) + 400 TB</span></div>
+    <div class="stat"><b>50</b><span>Trading-Bots · 18 Strategien (dry_run)</span></div>
+    <div class="stat"><b>1</b><span>Repo · 0 Vendoring</span></div>
+  </div>
+</div></header>
+
+<nav class="bar"><div class="wrap">
+  <span class="brand"><span class="mk"></span> dizz-network</span>
+  <a class="lnk" href="#karte">Karte</a>
+  <a class="lnk" href="#ueberblick">Überblick</a>
+  <a class="lnk" href="#architektur">Architektur</a>
+  <a class="lnk" href="#apps">Apps</a>
+  <a class="lnk" href="#ki">KI: lokal vs. extern</a>
+  <a class="lnk" href="#vernetzung">Vernetzung</a>
+  <a class="lnk" href="#sicherheit">Sicherheit</a>
+  <a class="lnk" href="PROJEKT_STAND.html" title="Interaktiver Projektstand">📊 Projektstand</a>
+  <button class="tgl" id="tgl">☾</button>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ★ KONSTELLATION -->
+<section id="karte">
+  <div class="sh"><span class="num">★</span><h2>Die Konstellation — der Core und seine Welt</h2></div>
+  <p class="sub">Im Zentrum der <b>Dizzi-Core</b>, drumherum die acht Apps und der Trading-Bot — verbunden über ihre <b>echten Vernetzungen</b> (V2–V19). <b>Fahre über einen Knoten</b>, um seine Datenflüsse zu sehen; <b>klick ihn</b> für die Tiefe (Module, Verkettung, Sorgfaltskern). <span id="livehw" class="livehw off" title="optionaler Live-Check des Core-Health-Watch auf :8200 — Default offline-fähig">○ Health-Watch</span></p>
+  <div class="cwrap">
+    <div class="cstage" id="cstage">
+      <svg class="edges" id="cedges" viewBox="0 0 1000 780" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+      <div class="cnodes" id="cnodes"></div>
+    </div>
+    <div class="clegend">
+      <span><i style="border-top-color:var(--vio);border-top-style:dashed"></i>Core-Rückgrat · SSO · MCP · Health-Watch</span>
+      <span><i style="border-top-color:var(--cy)"></i>Archiv → Memory (V2–V11)</span>
+      <span><i style="border-top-color:var(--vio)"></i>Integration · Admin (V5/7/15–19)</span>
+      <span><i style="border-top-color:var(--amber)"></i>Geld · Steuer (V14)</span>
+    </div>
+    <p class="chint">Tipp: <b>Klick</b> einen Knoten — er öffnet sein Fenster mit Modulen, Verkettung &amp; Sorgfaltskern · der <b>Trading</b>-Knoten zeigt zusätzlich seine komplette Sub-Architektur (6 Schichten).</p>
+  </div>
+</section>
+
+<!-- 1 ÜBERBLICK -->
+<section id="ueberblick">
+  <div class="sh"><span class="num">01</span><h2>Was das ist</h2></div>
+  <p class="sub">Eine private, lokale KI-Lebens-Kommandozentrale für einen Solo-Entwickler — ernsthaft, sauber, ggf. verkäuflich. Jede App ist einzeln lauffähig und über drei Verträge nahtlos verbunden. <span style="color:var(--tx3)">Klick ein Prinzip für die Einordnung + Quellen ↗</span></p>
+  <div class="grid" id="prinzipgrid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+
+    <div class="card lift" data-acc="green" data-title="Lokal zuerst — Daten &amp; KI auf dem Gerät"
+         data-badge="Prinzip 1 · Local-First" data-detlabel="Im Detail · was „lokal zuerst" heißt" data-deeplabel="📐 Einordnung &amp; Quellen">
+      <div class="k">Prinzip 1</div><h3 style="margin:.3em 0">Lokal zuerst</h3><p style="color:var(--tx2);font-size:13px;margin:0">Daten + KI auf dem Gerät. Cloud nur gezielt, mit Freigabe. Sensible Apps verlassen das Gerät nie.</p>
+      <div class="topicwin" hidden>
+        <p class="one">Daten und KI leben auf dem Gerät; die Cloud wird nur gezielt und mit Freigabe dazugeholt. Sensible Apps (Healthy, Management, Admin) verlassen das Gerät nie.</p>
+        <ul class="kann"><li>Deine Daten bleiben bei dir — kein Konto, kein fremder Server</li><li>Auch das „Denken" (KI) läuft lokal über Ollama</li><li>Funktioniert offline; die Cloud ist Kür, nicht Pflicht</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Daten lokal</b> — alle Laufzeit-Daten unter <code>C:\Dizzik\data</code>, je App getrennt; nichts in der Cloud.</div>
+          <div class="fac"><b>KI lokal</b> — Ollama-Orchestrator + RAG (bge-m3) auf dem Gerät; extern nur gegated/HITL für Nicht-Sensibles.</div>
+          <div class="fac"><b>Sensitivitäts-Gate</b> — hoch/höchst-Apps sind strukturell <code>lokal_only</code> (Inhalte nie an Cloud-Modelle).</div>
+          <div class="fac"><b>Lokal-first ≠ offline-only</b> — Außenkontakte (Mail, Markt-Daten, Recherche) sind möglich, aber Ausnahme + Freigabe.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">„Local-First Software" ist ein benanntes Architektur-Ideal — Einordnung + Quellen:</div>
+          <ul class="deeplist">
+            <li><b>Local-First (Ink &amp; Switch / M. Kleppmann, Onward! 2019)</b> — Daten leben primär auf den Geräten der Nutzer; Eigentum, Privatsphäre &amp; Langlebigkeit by design statt Cloud-Abhängigkeit. Genau das Leitprinzip hier.</li>
+            <li><b>On-Device-KI</b> — Inferenz auf dem Gerät hält Daten privat und erfüllt DSGVO/HIPAA „by design"; kein Vendor-Lock-in, keine Token-Kosten fürs Denken.</li>
+          </ul>
+          <div class="deepaudit"><b>Quellen:</b> Ink &amp; Switch „Local-first software" · Kleppmann et al. (Onward! 2019) · „On-Device Language Models — A Comprehensive Review" (arXiv 2409.00088).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card lift" data-acc="vio" data-title="Eine Quelle — packages/ statt Vendoring"
+         data-badge="Prinzip 2 · Single Source of Truth" data-detlabel="Im Detail · Single-Source" data-deeplabel="📐 Einordnung &amp; Quellen">
+      <div class="k">Prinzip 2</div><h3 style="margin:.3em 0">Eine Quelle</h3><p style="color:var(--tx2);font-size:13px;margin:0">appkit + UI-Kit liegen <i>einmal</i> in <code>packages/</code>. Ein Edit wirkt netzweit — kein Vendoring.</p>
+      <div class="topicwin" hidden>
+        <p class="one">appkit + ui-kit liegen genau einmal in <code>packages/</code>. Ein Edit wirkt netzweit — kein Kopieren zwischen Apps, keine Drift.</p>
+        <ul class="kann"><li>Eine Verbesserung am Fundament verbessert alle Apps zugleich</li><li>Kein „läuft in App A, ist in App B veraltet" mehr</li><li>Ein Repo (Monorepo) hält alles synchron</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Single-Source</b> — <code>packages/{appkit,ui-kit}</code> sind die einzige Quelle; Apps binden sie via <code>PYTHONPATH=packages</code> / Mount.</div>
+          <div class="fac"><b>Kein Vendoring</b> — die alte Kopier-pro-App-Praxis (mit 0-Drift-Ritual) ist seit Variante B (24.06.) abgeschafft; Drift ist strukturell unmöglich.</div>
+          <div class="fac"><b>Ein Monorepo</b> — <code>dizz-network</code> enthält Fundament + 10 Apps + ops/docs; atomare, repo-weite Änderungen.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">„Single Source of Truth" + Monorepo sind etablierte Praktiken — Einordnung:</div>
+          <ul class="deeplist">
+            <li><b>Single Source of Truth (SSOT)</b> — jede Information hat genau eine maßgebliche Quelle; Kopien werden abgeleitet, nie parallel gepflegt ⇒ keine Divergenz.</li>
+            <li><b>Monorepo</b> — ein Repository für mehrere Pakete erlaubt geteilten Code ohne Versions-Drift und atomare Cross-Cutting-Änderungen (Praxis großer Codebasen).</li>
+          </ul>
+          <div class="deepaudit"><b>Effekt:</b> ein Sicherheits-Fix in appkit greift sofort in allen 8 Apps — kein Nachziehen, keine Drift.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card lift" data-acc="amber" data-title="Ehrlich vor aktiv — Mensch-im-Loop"
+         data-badge="Prinzip 3 · HITL &amp; Ehrlichkeit" data-detlabel="Im Detail · Leitplanken" data-deeplabel="📐 Einordnung &amp; Quellen">
+      <div class="k">Prinzip 3</div><h3 style="margin:.3em 0">Ehrlich vor aktiv</h3><p style="color:var(--tx2);font-size:13px;margin:0">Zweifel offen benennen; Außenwirkung &amp; Geld-Aktionen immer mit Mensch-im-Loop (HITL).</p>
+      <div class="topicwin" hidden>
+        <p class="one">Zweifel werden offen benannt; jede Außenwirkung und jede Geld-Aktion verlangt eine menschliche Freigabe (Human-in-the-Loop). Lieber „0 Bugs + nächste Wertgrenze" als künstliche Funde.</p>
+        <ul class="kann"><li>Senden, Posten, Geld bewegen — nie automatisch, immer mit deiner Freigabe</li><li>Das System sagt ehrlich, was es nicht kann (keine Diagnose, kein Steuer-Filing)</li><li>Autonome Aktionen können nur Risiko senken, nie erhöhen</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>HITL (Human-in-the-Loop)</b> — Außenwirkung (Mail/Post/Trade) ist eine Freigabe-Aktion (Stufe verifiziert, fail-closed); keine autonome Wirkung nach außen.</div>
+          <div class="fac"><b>Ehrliche Grenzen</b> — Disclaimer sichtbar: Steuer = Schätztool (kein Filing) · Health = keine Diagnose · Studium = keine Beratung.</div>
+          <div class="fac"><b>Defensiv-Default</b> — z. B. der Trading-Bot: jede autonome Aktion ist proposal-only, defensiv oder OOS-gegatet; Echtgeld-Transfer bewusst blockiert.</div>
+          <div class="fac"><b>Gesetz 2 (Ehrlichkeit vor Aktivität)</b> — Zweifel offen sagen; lieber kein Fund als ein erfundener.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Human-in-the-Loop ist eine anerkannte Leitplanke für autonome/agentische Systeme:</div>
+          <ul class="deeplist">
+            <li><b>Human-in-the-Loop</b> — kritische/irreversible Aktionen erfordern menschliche Bestätigung statt voller Autonomie; Standard-Leitplanke für KI-Agenten.</li>
+            <li><b>Fail-closed</b> — im Zweifel verweigern statt durchwinken (sicherer Default).</li>
+          </ul>
+          <div class="deepaudit"><b>Hausregel (Grundgesetz 2):</b> Ehrlichkeit vor Aktivität — der Wert liegt in echten Befunden, nicht in Aktivität.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card lift" data-acc="cy" data-title="3 Verträge — wie die Apps zusammenspielen"
+         data-badge="Verbindung · 3 Verträge" data-detlabel="Im Detail · die drei Verträge" data-deeplabel="📐 Einordnung &amp; Quellen">
+      <div class="k">Verbindung</div><h3 style="margin:.3em 0">3 Verträge</h3><p style="color:var(--tx2);font-size:13px;margin:0"><b>Dizzi-ID</b> (SSO) · <b>App-Vertrag</b> (Andocken) · <b>MCP</b> (Werkzeuge). Health-Watch über alles.</p>
+      <div class="topicwin" hidden>
+        <p class="one">Jede App ist einzeln lauffähig und dockt über drei klare Verträge an: Dizzi-ID (eine Anmeldung), App-Vertrag (Andocken ans Netz), MCP (Werkzeuge für die KI). Der Health-Watch wacht über alles.</p>
+        <ul class="kann"><li>Ein Login (Passkey) fürs ganze System</li><li>Apps klinken sich einheitlich ein — gleicher Aufbau, gleiche Regeln</li><li>Die KI bekommt pro App ein eng gefasstes Werkzeug-Set</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>① Dizzi-ID (SSO)</b> — eine Identität (Passkey/WebAuthn, lokal), Stufen <code>lokal &lt; verifiziert &lt; hochsicher</code>; Step-up für Sensibles.</div>
+          <div class="fac"><b>② App-Vertrag</b> — jede App baut via <code>appkit.create_app</code> auf demselben Vertrag (Panel-Registry, DB-Konventionen, Defense, CSP).</div>
+          <div class="fac"><b>③ MCP-Gateway</b> — je App <code>/mcp</code> (read-only/Bearer); der Core bündelt alle; Schreib-/Krypto-/höchst-Tools extern gesperrt.</div>
+          <div class="fac"><b>Health-Watch</b> — der Core prüft alle 10 Dienste + Ollama (Soll: alle <code>true</code>).</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Klare Verträge zwischen Diensten = lose Kopplung (Service-Architektur):</div>
+          <ul class="deeplist">
+            <li><b>Vertrag statt Verflechtung</b> — Dienste sprechen nur über definierte Schnittstellen (SSO/App-Vertrag/MCP), nicht über geteilte interne Zustände.</li>
+            <li><b>Lose Kopplung</b> — eine App kann ausfallen/ersetzt werden, ohne die anderen zu brechen (eigener Prozess, eigene Daten).</li>
+          </ul>
+          <div class="deepaudit"><b>Ergebnis:</b> einzeln lauffähig, gemeinsam orchestriert — Standalone-Export jeder App bleibt möglich.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 2 ARCHITEKTUR -->
+<section id="architektur">
+  <div class="sh"><span class="num">02</span><h2>Laufzeit-Architektur</h2></div>
+  <p class="sub">Von außen nach innen: dünne Schalen → der orchestrierende Core → die Apps → das geteilte Fundament → die lokale Datenschicht. Statisches Frontend wird von Disk serviert (Änderungen ohne Neustart), Python/Kit erst beim gegateten Neustart. <span style="color:var(--tx3)">Klick eine Schicht für die technische Tiefe ↗</span></p>
+  <div class="stack">
+
+    <div class="layer l-acc" data-acc="blue" data-title="Zugang — dünne Schalen über dem Core"
+         data-badge="① Zugang · Tauri · Browser · SSO" data-detlabel="Im Detail · Schalen &amp; Identität" data-deeplabel="🗂 Belege &amp; Standards">
+      <span class="lbl">Zugang</span><span class="body"><b>Tauri-Desktop</b> · <b>Browser-Shell</b> — dünne Hüllen über dem headless Core &nbsp;·&nbsp; <b>Dizzi-ID SSO</b> (Passkeys/WebAuthn, nur localhost, Step-up für Sensibles)</span>
+      <div class="topicwin" hidden>
+        <p class="one">Zwei dünne Hüllen — Tauri-Desktop und Browser-Shell — über dem headless Core; eine einzige Anmeldung (Dizzi-ID, Passkey) schaltet das ganze Netz frei.</p>
+        <ul class="kann"><li>Du startest entweder die Desktop-App oder den Browser — beide zeigen dasselbe System</li><li>Ein Login per Passkey gilt netzweit (SSO)</li><li>Sensibles (Geld, Tresor) verlangt einen zweiten Schritt (Step-up)</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Tauri-Desktop</b> — schlanke Rust/WebView-Hülle, rendert die lokale Web-UI als native App (kein Electron-Ballast). Reine Präsentationsschicht; die Logik liegt im Core und den App-Diensten.</div>
+          <div class="fac"><b>Browser-Shell</b> — dieselbe UI im Browser unter <code>127.0.0.1</code>; das Frontend wird statisch von Disk serviert ⇒ Frontend-Änderungen greifen ohne Neustart.</div>
+          <div class="fac"><b>Dizzi-ID SSO</b> (<code>appkit</code>, Master im Core) — Passkeys/WebAuthn nur auf <code>localhost</code> (eine IP ist keine gültige RP-ID, H10). Stufenmodell <code>lokal &lt; verifiziert &lt; hochsicher</code>; Step-up (TOTP/WebAuthn) für sensible Aktionen.</div>
+          <div class="fac"><b>Fail-closed</b> — Stufen-Pflicht-Routen verweigern ohne Login (<code>403</code>); nichts steht „versehentlich offen" (Details in der Sicherheits-Sektion).</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Der Zugang ist bewusst dünn — die Substanz sitzt im Core und den Diensten; der Localhost-Zugang folgt anerkannten Standards:</div>
+          <ul class="deeplist">
+            <li><b>Tauri/Browser</b> sind Hüllen über dem headless Core <code>:8200</code> — keine Geschäftslogik in der Schale.</li>
+            <li><b>SSO</b> liegt in <code>packages/appkit</code> (Auth/Token/WebAuthn), die Master-Instanz im Core.</li>
+            <li><b>Loopback ohne TLS = der akzeptierte Desktop-Weg</b> — Desktop-OAuth läuft per <b>RFC 8252</b> über die Loopback-Schnittstelle im <code>http</code>-Schema, weil der Request das Gerät nie verlässt; abgesichert durch <b>PKCE</b>. WebAuthn-RP-IDs dürfen zudem keine IP sein ⇒ Passkeys nur auf <code>localhost</code> (W3C WebAuthn).</li>
+          </ul>
+          <div class="deepaudit"><b>Prinzip:</b> die Zugangsschicht kann nichts, was der Core nicht erlaubt — Rechte werden zentral durchgesetzt, nicht in der UI. <span style="color:var(--tx3)">Quellen: RFC 8252 (OAuth 2.0 for Native Apps, §7.3 Loopback) · W3C Web Authentication (RP-ID).</span></div>
+        </div>
+      </div>
+    </div>
+    <span class="flowdot">▼</span>
+
+    <div class="layer l-core" data-acc="vio" data-title="Core — der orchestrierende Hub :8200" data-port=":8200"
+         data-badge="② Hub · Dizzi-Core" data-detlabel="Im Detail · Module &amp; Datenflüsse" data-deeplabel="🗂 Wo im Code · Belege">
+      <span class="lbl">Hub · Core</span><span class="body"><b>Dizzi-Core :8200</b> — KI-Orchestrator (lokale Modelle, JSON-Schema) · Panel-Registry (<code>/api/panels</code>) · MCP-Hub (alle App-Gateways an 1 Punkt) · Health-Watch (10 Ziele) · Master von SSO &amp; Memory L1–L4</span>
+      <div class="topicwin" hidden>
+        <p class="one">Der headless Dirigent: nimmt Anweisungen entgegen, routet sie per lokaler KI an die richtige App und hält Registry, MCP-Hub, SSO, Memory und Health-Watch zusammen — ohne je eigenmächtig nach außen zu schreiben.</p>
+        <ul class="kann"><li>Versteht deine Anweisung und reicht sie an die richtige App weiter</li><li>Bündelt alle App-Werkzeuge (MCP) an einem Punkt</li><li>Wacht über die Gesundheit aller Dienste (10/10)</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>KI-Orchestrator</b> — lokale Ollama-Modelle mit <b>JSON-Schema-Grammatik</b> (kein bloßes <code>format=json</code>), Tool-Routing, temperature 0, durchgehend fail-safe.</div>
+          <div class="fac"><b>Panel-Registry</b> (<code>/api/panels</code>) — jede App meldet ihre Panels an; der Core kennt das Gesamt-UI.</div>
+          <div class="fac"><b>MCP-Hub</b> — zieht alle App-Gateways (<code>/mcp</code>) an einen Punkt; read-only/Bearer-gegated; Schreib-/Krypto-/höchst-Tools nach außen gesperrt.</div>
+          <div class="fac"><b>Health-Watch</b> (<code>/api/health/watch</code>) — prüft alle Apps + Ollama, 10 Ziele, Soll alle <code>true</code>.</div>
+          <div class="fac"><b>Master von SSO &amp; Memory L1–L4</b> — zentrale Identität und das geschichtete Gedächtnis; QV-Relays V2–V19 laufen über den Core (mithört &amp; protokolliert).</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Der Core orchestriert nur — Außenwirkung bleibt bei der jeweiligen App:</div>
+          <ul class="deeplist">
+            <li><code>app.main:app</code> · 164 Tests (appkit separat).</li>
+            <li>Gotcha: <code>--app-dir</code> beim Start quoten (Leerzeichen im Pfad).</li>
+          </ul>
+          <div class="deepaudit"><b>Audit:</b> zieht alle App-Gateways zusammen, ohne selbst Außenwirkung zu erzeugen — jede Außenaktion ist eine App-HITL-Aktion.</div>
+        </div>
+      </div>
+    </div>
+    <span class="flowdot">▼</span>
+
+    <div class="layer l-app" data-acc="cy" data-title="Apps — 8 Dienste + Trading"
+         data-badge="③ Apps · 8 + Trading" data-detlabel="Im Detail · Aufbau je Dienst" data-deeplabel="🗂 Wo im Code · Belege">
+      <span class="lbl">Apps</span><span class="body"><b>8 Apps</b> (News · Money · Communication · Creating · Memory · Management · Healthy · Admin) <b>+ Trading</b> — je eigener FastAPI-Dienst, eigener Port, eigene Daten. <a href="#apps" style="color:var(--cy)">Details unten ↓</a></span>
+      <div class="topicwin" hidden>
+        <p class="one">Acht eigenständige FastAPI-Dienste plus der Trading-Bot — je eigener Port, eigene Daten, eigenes MCP-Gateway. Fällt einer aus, laufen die anderen weiter.</p>
+        <ul class="kann"><li>Jede App ist ein eigener Dienst — fällt einer aus, laufen die anderen weiter</li><li>Jede App hat ihre eigenen Daten, kein gemeinsamer Topf</li><li>Details je App in der Sektion „Die Apps" weiter unten</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Je App ein FastAPI-Dienst</b> auf eigenem Port (8210–8222) + eigener SQLite-Datenraum unter <code>C:\Dizzik\data\apps\&lt;id&gt;</code>.</div>
+          <div class="fac"><b>Gemeinsames Fundament</b> — alle bauen via <code>appkit.create_app</code> auf demselben Vertrag (SSO · Vault · Defense · CSP · MCP-Gateway · DB-Konventionen).</div>
+          <div class="fac"><b>Trading = Sonderfall</b> — eigener Stack (FastAPI + Freqtrade-Engines, eigene venvs, kein appkit), read-only ans Netz angebunden.</div>
+          <div class="fac"><b>Sensitivität pro App</b> — normal · hoch (Management/Admin) · höchst (Healthy) ⇒ steuert KI-Routing (lokal_only) und Gateways.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Ein Muster, zehnmal gleich — pro App dieselben Ordner:</div>
+          <ul class="deeplist">
+            <li><code>apps/&lt;id&gt;/</code>: <code>&lt;pkg&gt;app/ · static/ · tests/ · docs/ · README.md</code>.</li>
+            <li>~2.180 App-Tests + 400 TB; uvicorn-Spec je App (z. B. <code>moneyapp.main:app_factory</code>).</li>
+          </ul>
+          <div class="deepaudit">Klick eine App-Kachel in Sektion 03 für Sorgfaltskern, Tests und Gotchas je Dienst.</div>
+        </div>
+      </div>
+    </div>
+    <span class="flowdot">▼</span>
+
+    <div class="layer l-share" data-acc="green" data-title="Fundament — packages/appkit + ui-kit"
+         data-badge="④ Fundament · Single-Source" data-detlabel="Im Detail · appkit &amp; ui-kit" data-deeplabel="🗂 Wo im Code · Belege">
+      <span class="lbl">Fundament</span><span class="body"><b>packages/appkit</b> (create_app · Vault · defense · CSP · MCP-Gateway) &nbsp;+&nbsp; <b>packages/ui-kit</b> (Tokens · Controls · DzCharts · DzNetKit · Physik) — geteilt, Single-Source</span>
+      <div class="topicwin" hidden>
+        <p class="one">Das geteilte Framework: appkit (Server-Vertrag) und ui-kit (Frontend-Bausteine) liegen genau einmal unter <code>packages/</code> — ein Edit wirkt netzweit, kein Vendoring, kein 0-Drift-Ritual mehr.</p>
+        <ul class="kann"><li>Jede App erbt automatisch Sicherheit, Login und Design</li><li>Eine Verbesserung am Fundament verbessert alle Apps auf einmal</li><li>Kein Kopieren mehr zwischen Apps (Single-Source)</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>packages/appkit</b> — <code>create_app</code> (App-Fabrik) · <b>Vault</b> (Fernet/DPAPI) · <b>defense</b> (Immunsystem) · <b>CSP</b> (voll-strikt, Per-Request-Nonce) · <b>MCP-Gateway</b> · DB-Vertrags-Konventionen (DSGVO-Export/Löschung ohne Per-App-Code).</div>
+          <div class="fac"><b>packages/ui-kit</b> — Design-Tokens (2 Achsen <code>design_vorlage</code>/<code>farb_schema</code>) · Controls · <b>DzCharts</b> (Ringe/Gauge/Scatter) · <b>DzNetKit</b> (Kalender/RRULE/Gantt) · Physik-Helfer.</div>
+          <div class="fac"><b>Single-Source</b> (seit Variante B, 24.06.) — genau eine Quelle; <code>PYTHONPATH=packages</code> bindet sie ein. Verkaufs-Export bündelt sie via <code>ops/appexport</code> (Vertrag docs/66, Bau offen); <code>ops/mirror_export.py</code> = interner Voll-Spiegel.</div>
+          <div class="fac"><b>Serving-Gotcha</b> — 7 Apps mounten ui-kit (disk-served), Core/TB/archiv via Allowlist-Route (Rename ⇒ Neustart).</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Single-Source statt Vendoring war die Kern-Entscheidung der Monorepo-Migration (Variante B):</div>
+          <ul class="deeplist">
+            <li>Vor 24.06.: appkit/ui-kit in jede App vendored ⇒ 0-Drift-Ritual nötig. Jetzt: eine Quelle, Drift unmöglich.</li>
+            <li>appkit hat eine eigene Test-Suite (läuft einmal, nicht mehr pro App).</li>
+          </ul>
+          <div class="deepaudit"><b>Effekt:</b> ein Sicherheits-Fix in appkit greift sofort in allen 8 Apps — kein Nachziehen, keine Drift.</div>
+        </div>
+      </div>
+    </div>
+    <span class="flowdot">▼</span>
+
+    <div class="layer l-data" data-acc="amber" data-title="Daten — lokal auf C:\Dizzik\data"
+         data-badge="⑤ Daten · lokal · WAL-safe" data-detlabel="Im Detail · Datenlayout" data-deeplabel="🗂 Belege &amp; Standards">
+      <span class="lbl">Daten</span><span class="body"><b>C:\Dizzik\data</b> — <code>apps/&lt;id&gt;</code> (je-App-DBs) · <code>db</code> (dizzi+rag.sqlite) · <code>models</code> (Ollama ~12,8 GB) · <code>id</code> (SSO-Key im OS-Keystore) · <code>_backups</code> (täglich, WAL-safe)</span>
+      <div class="topicwin" hidden>
+        <p class="one">Alle Laufzeit-Daten liegen lokal und getrennt vom Code: je-App-DBs, das zentrale Memory, die Ollama-Modelle, der SSO-Key im OS-Keystore — täglich WAL-safe gesichert.</p>
+        <ul class="kann"><li>Nichts liegt in der Cloud — alle Daten bleiben auf dem Gerät</li><li>Code und Daten sind getrennt (Code im Repo, Daten in C:\Dizzik\data)</li><li>Tägliches Backup, ohne laufende Datenbanken zu beschädigen</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b><code>apps/&lt;id&gt;</code></b> — je-App-SQLite-DBs, strikt getrennt; keine App liest fremde Tabellen direkt (nur read-only Relays über den Core).</div>
+          <div class="fac"><b><code>db</code></b> — <code>dizzi.sqlite</code> (Kern) + <code>rag.sqlite</code> (Vektor-Index, sqlite-vec).</div>
+          <div class="fac"><b><code>models</code></b> — Ollama-Modelle (~12,8 GB; <code>OLLAMA_MODELS</code> auf C:\Dizzik\data gepinnt).</div>
+          <div class="fac"><b><code>id</code></b> — SSO-Schlüssel im OS-Keystore (DPAPI, CurrentUser); eine kopierte Datei ist auf fremdem Konto wertlos.</div>
+          <div class="fac"><b><code>_backups</code></b> — netzweiter WAL-safe Daten-Backup-Service (Task täglich 03:00) für ALLE Apps + Core + TB-Trade-DBs.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Die Laufzeit ist junction-unabhängig kanonisiert auf C:\Dizzik\data; die Sicherung folgt anerkannten Standards:</div>
+          <ul class="deeplist">
+            <li>Die alte Junction <code>C:\dizzi-world-data</code> ist seit 28.06.2026 <b>entfernt</b>; alle Daten liegen kanonisch direkt unter <code>C:\Dizzik\data</code>.</li>
+            <li><b>WAL-safe = SQLite-Backup-API</b> — <code>ops/backup_apps.py</code> kopiert jede <code>.sqlite</code> per <code>sqlite3.Connection.backup()</code> (transaktional konsistenter Snapshot, ohne Schreiber zu blockieren) und lässt die rohen <code>-wal/-shm</code>-Sidecars bewusst weg; ein nackter Datei-Kopie im WAL-Modus wäre inkonsistent.</li>
+            <li><b>3-2-1-Disziplin</b> — Original (Laufzeit) + lokales <code>_backups</code> + Offsite-Kopie nach <code>OneDrive\Backups\dizz-network</code> (Task <code>DizzNetwork-AppBackup</code>, täglich).</li>
+          </ul>
+          <div class="deepaudit"><b>Trennung Code↔Daten:</b> das Repo enthält nie Laufzeit-Daten oder Secrets; Tokens nur im Vault/OS-Keystore. <span style="color:var(--tx3)">Quellen: SQLite Online-Backup-API (sqlite.org) · 3-2-1-Backup-Regel.</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 3 APPS -->
+<section id="apps">
+  <div class="sh"><span class="num">03</span><h2>Die Apps — anklicken für Details</h2></div>
+  <p class="sub">Filtere nach Eigenschaft; klick eine Karte für Sorgfaltskern, Tests, Gotchas und KI-/Extern-Nutzung.</p>
+  <div class="chips" id="chips">
+    <span class="chip on" data-f="all">Alle</span>
+    <span class="chip" data-f="ai">● nutzt lokale KI</span>
+    <span class="chip" data-f="ext">↗ nutzt extern</span>
+    <span class="chip" data-f="sens">▲ sensibel (lokal_only)</span>
+    <span class="chip" data-f="money">Geld-System</span>
+  </div>
+  <div class="grid apps" id="appgrid">
+
+    <article class="app card lift" data-app="core" data-mode="core" data-ai="1" data-tags="ai">
+      <div class="ah"><div><h3>Dizzi-Core</h3><span class="port">:8200</span></div><button class="exp" aria-label="Details">+</button></div>
+      <p class="one">KI-Orchestrator, Panel-Registry, MCP-Hub, Health-Watch — der Dirigent.</p>
+      <div class="badges"><span class="b ai">● lokale KI (Orchestrator)</span><span class="b">Master appkit/Kit</span></div>
+      <ul class="kann lese-fn"><li>Versteht deine Anweisungen &amp; reicht sie an die richtige App</li><li>Wacht über die Gesundheit aller Dienste (10/10 grün)</li><li>Eine Anmeldung (Passkey) für das ganze System</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Orchestrator</b> · Ollama/JSON-Schema</span><span class="mchip"><b>Panel-Registry</b> · /api/panels</span><span class="mchip"><b>MCP-Hub</b> · alle Gateways</span><span class="mchip"><b>Health-Watch</b> · 10 Ziele</span><span class="mchip"><b>Dizzi-ID</b> · SSO</span><span class="mchip"><b>Memory</b> · L1–L4</span><span class="mchip"><b>QV-Relays</b> · V2–V19</span></div></div><dl>
+        <dt>Paket</dt><dd><code>app.main:app</code></dd>
+        <dt>Tests</dt><dd>164 (appkit separat)</dd>
+        <dt>Kern</dt><dd>zieht alle App-Gateways zusammen; schreibt nie eigenmächtig nach außen.</dd>
+        <dt>Lokale KI</dt><dd>Ollama-Orchestrator (JSON-Schema-Grammatik), Tool-Routing, Memory L1–L4.</dd>
+        <dt>Gotcha</dt><dd><code>--app-dir</code> beim Start quoten (Leerzeichen).</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="news" data-sens="normal" data-ai="1" data-tags="ai">
+      <div class="ah"><div><h3>Dizz News</h3><span class="port">:8216</span></div><button class="exp">+</button></div>
+      <p class="one">Feeds/Volltext/Dedup · Sektor-Akkordeon, Zeitfilter und <b>Watchlist</b> (lebende Themen-Ordner → Memory).</p>
+      <div class="badges"><span class="b ai">● KI-Cluster</span><span class="b">Muster-UI</span></div>
+      <ul class="kann lese-fn"><li>Bündelt all deine Nachrichtenquellen an einem Ort</li><li>Erkennt dieselbe Meldung über Quellen hinweg (kein Doppel)</li><li>Fasst lokal zusammen — nichts verlässt das Gerät</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Feeds</b> · RSS/Atom/OPML</span><span class="mchip"><b>extract.py</b> · Volltext</span><span class="mchip"><b>cluster.py</b> · Dedup</span><span class="mchip"><b>KI-Cluster</b> · JSON-Schema</span><span class="mchip"><b>Quell-Gesundheit</b></span><span class="mchip">→ Memory <b>V2</b></span></div></div><dl>
+        <dt>Paket</dt><dd><code>newsapp.main:app_factory</code></dd><dt>Tests</dt><dd>173</dd>
+        <dt>Kern</dt><dd><code>extract.py</code> (Volltext) · <code>cluster.py</code> (Dedup), pro-Quelle-Gesundheit.</dd>
+        <dt>Lokale KI</dt><dd>Cluster/Zusammenfassung per JSON-Schema (Ollama, fail-safe).</dd>
+        <dt>Hinweis</dt><dd>Erste Vanilla-UI-Portierung = netzweites Design-Muster.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="money" data-sens="normal" data-mode="ledger" data-tags="">
+      <div class="ah"><div><h3>Dizz Money</h3><span class="port">:8210</span></div><button class="exp">+</button></div>
+      <p class="one">Finanzmanager (Import, Budgets, EÜR, FX) — jetzt mit <b>Bereich×Modul</b>: Cashflow je Bereich.</p>
+      <div class="badges"><span class="b money">Ledger-Sorgfaltskern</span><span class="b ai">● KI-Kategorien</span></div>
+      <ul class="kann lese-fn"><li>Importiert Kontoauszüge &amp; sortiert Buchungen automatisch</li><li>Budgets, Abo-Erkennung und EÜR auf einen Blick</li><li>Rechnet die Trading-Steuer read-only aus dem Bot</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Import</b> · CSV/camt.053/MT940</span><span class="mchip"><b>ledger.py</b> · Minor-Units, Invariante</span><span class="mchip"><b>KI-Kategorien</b></span><span class="mchip"><b>Budgets · EÜR · FX</b></span><span class="mchip"><b>trading_steuer.py</b> · V14</span><span class="mchip">↔ Admin <b>V15/16/17</b></span><span class="mchip">→ Memory <b>V9</b> (sensibel)</span></div></div><dl>
+        <dt>Paket</dt><dd><code>moneyapp.main:app_factory</code></dd><dt>Tests</dt><dd>349</dd>
+        <dt>Kern</dt><dd><code>ledger.py</code>: int-Minor-Units, Balance-Invariante pro Währung (Summe=0).</dd>
+        <dt>Brücke</dt><dd><code>trading_steuer.py</code> (read-only TB → Anlage KAP/SO).</dd>
+        <dt>Gotcha</dt><dd>venv-pytest.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="communication" data-sens="normal" data-ext="1" data-tags="ext">
+      <div class="ah"><div><h3>Dizz Communication</h3><span class="port">:8218</span></div><button class="exp">+</button></div>
+      <p class="one"><b>Dizz Chat</b>: alle Kanäle pro Kontakt in einem Verlauf · E-Mail/Smart-Contacts · Termin-Erkennung.</p>
+      <div class="badges"><span class="b ext">↗ WhatsApp/IG (Meta)</span><span class="b ext">↗ Telegram</span></div>
+      <ul class="kann lese-fn"><li>Eine Inbox für E-Mail, WhatsApp &amp; Telegram — pro Kontakt</li><li>Antworten gehen nur mit deiner Freigabe raus (HITL)</li><li>Termine aus Mails wandern in den Kalender</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>E-Mail</b> · JMAP</span><span class="mchip"><b>Unified-Inbox</b> · Smart-Contacts</span><span class="mchip"><b>meta.py</b> · WhatsApp/IG</span><span class="mchip"><b>telegram.py</b></span><span class="mchip"><b>HITL-Senden</b> · fail-closed</span><span class="mchip">↔ Admin-Kalender <b>V5</b></span><span class="mchip">→ Memory <b>V4</b></span></div></div><dl>
+        <dt>Paket</dt><dd><code>kommapp.main:app_factory</code></dd><dt>Tests</dt><dd>277</dd>
+        <dt>Kern</dt><dd>Senden = HITL fail-closed (Stufe „verifiziert"). Inbound on-demand.</dd>
+        <dt>Extern</dt><dd>Meta-Graph (dormant bis Token) · Telegram Bot-API (Long-Polling).</dd>
+        <dt>Gotcha</dt><dd>Empfänger intl. ohne +/0; freier Text nur im 24-h-Fenster.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="creating" data-sens="normal" data-ai="1" data-tags="ai">
+      <div class="ah"><div><h3>Dizz Creating</h3><span class="port">:8214</span></div><button class="exp">+</button></div>
+      <p class="one">Bild/Video/Musik-Suite, Job-Queue, LoRA/Kohya-Training.</p>
+      <div class="badges"><span class="b ai">● lokale Generierung</span><span class="b ai">● LoRA-Training</span></div>
+      <ul class="kann lese-fn"><li>Erzeugt Bilder, Videos &amp; Musik lokal auf dem Gerät</li><li>Trainiert eigene Stile (LoRA) mit Live-Fortschritt</li><li>Reicht fertige Assets an Social-Media weiter</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Bild/Video/Musik</b> · Generierung</span><span class="mchip"><b>Job-Queue</b></span><span class="mchip"><b>LoRA</b> · Kohya</span><span class="mchip"><b>Concat/Tuning</b></span><span class="mchip"><b>DAM</b> · Asset-Verwaltung</span><span class="mchip">→ Memory <b>V3</b></span></div></div><dl>
+        <dt>Paket</dt><dd><code>creatorapp.main:app_factory</code></dd><dt>Tests</dt><dd>301</dd>
+        <dt>Kern</dt><dd>Generierung + LoRA via Kohya (Live-Progress), Concat/Tuning.</dd>
+        <dt>Lokale KI</dt><dd>Bild-/Video-/Musik-Modelle lokal; Echtbetrieb-Modelle = Nutzer-Schritt.</dd>
+        <dt>Gotcha</dt><dd>venv-pytest.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="memory" data-sens="normal" data-ai="1" data-tags="ai">
+      <div class="ah"><div><h3>Dizz Memory</h3><span class="port">:8212</span></div><button class="exp">+</button></div>
+      <p class="one">Wissensspeicher (Vault + FTS5 + RAG) mit <b>Bereichs-Achse</b>, Chat-Popover und Rechtsklick-<b>DzMenu</b>.</p>
+      <div class="badges"><span class="b ai">● RAG (Ollama bge-m3)</span><span class="b">Vault</span></div>
+      <ul class="kann lese-fn"><li>Dein durchsuchbares Zweitgehirn (Markdown-Vault)</li><li>Findet per Bedeutung, nicht nur per Stichwort (RAG)</li><li>Sammelt automatisch Wissen aus allen anderen Apps</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>vault.py</b> · pfad-sicher, purge_user</span><span class="mchip"><b>SQLite/FTS5</b></span><span class="mchip"><b>rag.py</b> · sqlite-vec + bge-m3</span><span class="mchip"><b>Wikilinks/Graph</b></span><span class="mchip"><b>Vault-Chat</b></span><span class="mchip"><b>Archiv-Regeln</b> · Quelle×Strom</span><span class="mchip">zentrales Archiv <b>V2–V11</b></span></div></div><dl>
+        <dt>Paket</dt><dd><code>archivapp.main:app_factory</code> (id memory)</dd><dt>Tests</dt><dd>198</dd>
+        <dt>Kern</dt><dd><code>rag.py</code> (fail-safe, Dim-Check) + <code>vault.py</code> (pfad-sicher, purge_user).</dd>
+        <dt>Lokale KI</dt><dd>Embeddings bge-m3 (1024-dim) via Ollama, swappbar; Wikilinks/Graph/Vault-Chat.</dd>
+        <dt>Gotcha</dt><dd>RAG nur mit <code>embed_fn</code>; ui-kit = Allowlist-Route (Rename → Neustart).</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="management" data-sens="hoch" data-tags="sens">
+      <div class="ah"><div><h3>Dizz Management</h3><span class="port">:8213</span></div><button class="exp">+</button></div>
+      <p class="one"><b>KI-Agenten-Verwaltung</b> (Heimat der Agenten-Regie, ★ 03.07.) — erste Agenten-Domäne: Social-Media <b>je Bereich</b> (Kanäle/Bots/Posts · Redaktion = Gesamtplan). <b>W2-Regie RG-1…RG-5 ✅ 13.07.</b> (Ereignis-Spine · Regie-Scheduler · Autonomie-Treppe T0–T3 + Not-Aus · Eval-Harness/Eichung · Produktionsleiter-Abo; Live gegatet).</p>
+      <div class="badges"><span class="b sens">▲ hoch · lokal_only</span><span class="b">HITL veröffentlichen</span></div>
+      <ul class="kann lese-fn"><li>Verwaltet deine KI-Agenten (Zielbild: Mission-Control, Agent-Inbox, Autonomie je Bereich)</li><li>Erste Domäne: Social-Media-Kanäle, Redaktionskalender, Composer, Auswertung</li><li>Veröffentlichen nur mit Freigabe — bleibt lokal</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Kanäle/Bots</b></span><span class="mchip"><b>Posts/Zeitplan</b></span><span class="mchip"><b>Redaktion-Panel</b> · Composer/Queue</span><span class="mchip"><b>Creating-Empfang</b></span><span class="mchip"><b>DzCharts</b></span><span class="mchip">↔ Admin <b>V18</b></span><span class="mchip">→ Memory <b>V8</b></span></div></div><dl>
+        <dt>Paket</dt><dd><code>managementapp.main:app_factory</code> (id management)</dd><dt>Tests</dt><dd>39 (App-Suite)</dd>
+        <dt>Kern</dt><dd>Redaktion-Panel (Kalender/Composer/Queue/Auswertung) + DzCharts.</dd>
+        <dt>Sensitiv.</dt><dd>hoch ⇒ Inhalte nicht an Cloud-Modelle; Veröffentlichen = HITL.</dd>
+        <dt>Gotcha</dt><dd>venv-pytest + snapshot/eval.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="healthy" data-sens="höchst" data-ai="1" data-tags="sens ai">
+      <div class="ah"><div><h3>Dizz Healthy</h3><span class="port">:8217</span></div><button class="exp">+</button></div>
+      <p class="one">Gesundheit: Messwerte/Training/Supplements · großes <b>Dashboard</b> · <b>BLE-Wearables</b> (NIE Diagnose).</p>
+      <div class="badges"><span class="b sens">▲ höchst · lokal_only</span><span class="b ai">● KI: NIE Diagnose</span></div>
+      <ul class="kann lese-fn"><li>Messwerte, Trainings &amp; Supplements an einem Ort</li><li>Lokale KI-Hinweise — ausdrücklich niemals eine Diagnose</li><li>Höchst sensibel: die Daten verlassen das Gerät nie</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Messwerte</b> · FHIR-nah</span><span class="mchip"><b>Trainings · Supplements</b></span><span class="mchip"><b>KI-Hinweise</b> · NIE Diagnose</span><span class="mchip"><b>DzCharts</b> · Ringe/Gauge</span><span class="mchip"><b>Wearable-Slots</b> · dormant</span><span class="mchip">→ Memory <b>V10</b> (sensibel)</span></div></div><dl>
+        <dt>Paket</dt><dd><code>healthapp.main:app_factory</code> (id health)</dd><dt>Tests</dt><dd>161</dd>
+        <dt>Kern</dt><dd>DzCharts (Ringe/Gauge/Scatter), Wearable-Slots (dormant), CSP voll-strikt.</dd>
+        <dt>Lokale KI</dt><dd>Hinweise rein lokal, ausdrücklich <b>keine Diagnose</b>.</dd>
+        <dt>Gotcha</dt><dd>:8217 (Autostart) nicht killen — isoliert auf :8317 verifizieren.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="admin" data-sens="hoch" data-tags="sens">
+      <div class="ah"><div><h3>Dizz Admin</h3><span class="port">:8222</span></div><button class="exp">+</button></div>
+      <p class="one">Vereint Plans+Admin+Leading, <b>Bereich-first</b>: der Bereichs-Typ schaltet die Module frei (docs/49).</p>
+      <div class="badges"><span class="b sens">▲ hoch</span><span class="b">Tresor Fernet-at-rest</span></div>
+      <ul class="kann lese-fn"><li>Tresor, Projekte, Geschäft, Studium &amp; Fristen vereint</li><li>Bereichs-Cockpit: Finanzen + Social + Wissen je Bereich</li><li>Geheimnisse verschlüsselt, mit Step-up-Schutz</li></ul>
+      <div class="det"><div class="mods"><div class="mk">Module &amp; Datenflüsse</div><div class="mchips"><span class="mchip"><b>Bereich × Modul</b></span><span class="mchip"><b>tresor.py</b> · Fernet, Step-up</span><span class="mchip"><b>Projekte</b> · RRULE/Gantt</span><span class="mchip"><b>Geschäft · Studium · Fristen</b></span><span class="mchip"><b>Bereichs-Cockpit</b> · V17/18/19</span><span class="mchip">← Money-EÜR <b>V16</b></span><span class="mchip">↔ Memory <b>V7/V19</b></span></div></div><dl>
+        <dt>Paket</dt><dd><code>adminapp.main:app_factory</code></dd><dt>Tests</dt><dd>289</dd>
+        <dt>Kern</dt><dd>Entität <code>bereich</code> × Module; <code>tresor.py</code>: Fernet, Key im OS-Keystore, Step-up.</dd>
+        <dt>Sensitiv.</dt><dd>verschlüsselt ⇒ nicht FTS-indexiert; Step-up (403) für Zugriff.</dd>
+        <dt>Gotcha</dt><dd>:8222 (Autostart) nicht killen → <code>admin-proxy</code> :8422 für Tests.</dd>
+      </dl></div>
+    </article>
+
+    <article class="app card lift" data-app="trading" data-mode="money" data-ext="1" data-tags="ext money">
+      <div class="ah"><div><h3>Dizz Trading</h3><span class="port">:8137</span></div><button class="exp">+</button></div>
+      <p class="one">Krypto-Bot-Flotte (50 Bots · 18 Strategien, dry_run) — eigener Stack, Echtgeld-Gate hochsicher.</p>
+      <div class="badges"><span class="b money">Geld-System · read-only</span><span class="b ext">↗ Anthropic-Recherche</span><span class="b ai">● lokale Lern-Ebenen</span></div>
+      <ul class="kann lese-fn"><li>Eine Flotte von 50 Krypto-Bots über 18 Strategien (jede ≥1; davon 6 neu aus Katalog-Vorlagen anwendbar gemacht) — alles im Trockenlauf (dry_run)</li><li>Lernt selbstständig dazu, kann das Risiko aber nur senken</li><li>Echtgeld-Transfer ist bewusst blockiert (hochsicheres Gate)</li><li><b style="color:var(--cy)">Klapp auf</b> für die komplette 6-Schichten-Sub-Architektur ↓</li></ul>
+      <div class="det"><dl>
+        <dt>Stack</dt><dd>eigener FastAPI + Freqtrade-Engines (kein appkit), eigene venvs.</dd>
+        <dt>KI-Ebenen</dt><dd>HMM/Master/Anchored-Walk-Forward/Autopilot + MN-Sockel (CSM/Pairs/StatArb/MM, jetzt als <b>Demo-Paper-Bots anlegbar</b>) — lokal.</dd>
+        <dt>Recherche</dt><dd>Katalog: KI-Strategien → freqtrade-Engines (Anthropic + web_search, Token).</dd>
+        <dt>Sicherheit</dt><dd>Echtgeld-Transfer „bewusst blockiert"; Bot-CRUD/Restart nur gegated.</dd>
+        <dt>Gotcha</dt><dd>Sandbox blockt HTTP-DELETE/„/stop" → autorisierte Live-Calls brauchen Sandbox-Aus.</dd>
+      </dl>
+
+      <div class="tbarch">
+        <div class="tbhd">Sub-Architektur · 6 Schichten → 4 Ketten → 1 Kern-Prinzip <span class="pill">Tiefenanalyse 25.06. · R1–R10 · 0 Akut-Bugs</span></div>
+
+        <div class="tblayer z-teal"><span class="tbnum">①</span><div><b>Markt &amp; Regime-Erkennung</b><span class="tbmods"><code>ccxt/Bitget</code> (OHLCV read-only) · <code>tracker.py</code> (Markt-Snapshot, Regime) · <code>hmm.py</code> (Gauss-HMM, kausal · Baum-Welch im Log-Space) · <code>fundamental.py</code> (Event-Risiko, fail-safe, key-frei)</span></div></div>
+        <div class="tbbridge">↓ schreibt Bridge <code>data/hmm_regime.json</code> (venv-übergreifend) · regime · Konfidenz · lev_scale · exposure_scale ↓</div>
+        <div class="tblayer z-blue"><span class="tbnum">②</span><div><b>Ausführung — freqtrade</b> <span style="color:var(--tx3);font-size:11px">(je Bot ein Prozess)</span><span class="tbmods">18 Engines (Spot + Futures-Short, lookahead-frei; 6 neu aus Vorlagen 26.06.) · <code>MasterMeta-Bot</code> (regime-schaltend, Hebel) · <code>runner.py</code> (Prozesse, sicherer Kill) · <code>registry.py</code> — 50 Bots dry_run (jede Strategie ≥1) → <code>tradesv3_*.sqlite</code> (Backend liest read-only, kann nie korrumpieren)</span></div></div>
+        <div class="tbbridge">↓ Trades (read-only) ↓</div>
+        <div class="tblayer z-purple"><span class="tbnum">③</span><div><b>KI-Lernen — das Gehirn</b> <span style="color:var(--tx3);font-size:11px">(proposal-only, OOS-gegated)</span><span class="tbmods"><code>stats.py</code> (Lern-DB, Trade-Reads) · <code>meta</code> + <code>mn_learn</code> (anchored Walk-Forward, OOS-Gate, Regressions-Gate) · MN-Sockel (CSM/Pairs/StatArb/MM, Sim) · <code>master.py</code> (Ensemble-Politik, PF-gated)</span></div></div>
+        <div class="tbbridge">↓ Evidenz + Politik ↓</div>
+        <div class="tblayer z-amber"><span class="tbnum">④</span><div><b>Autopilot</b> <span style="color:var(--tx3);font-size:11px">(alle 6 h, risk-first, exception-isoliert)</span><span class="tbmods"><code>governor</code> (de-risk ZUERST) · <code>improve</code> (Master-Tuning) · Auto-Upgrade (OOS + TF + opt-in, doppelt gegatet) · <code>cull</code> (Dauer-Verlierer) · Auto-Validate (proposal-only) · ↺ Rückkopplung → Bots ② (MERGE + Neustart) / Bridge</span></div></div>
+
+        <div class="tbquer">Quer- &amp; Außen-Schichten — greifen über alle Ebenen</div>
+        <div class="tblayer z-coral"><span class="tbnum">⑤</span><div><b>Risiko — kann Risiko nur senken</b><span class="tbmods"><code>risk.py</code> (Hard-Limits, kill_switch) · <code>concentration</code> (Klumpen/HHI, read-only) · <code>execution</code> (Slippage-Tracking, M6-Prep)</span></div></div>
+        <div class="tblayer z-green"><span class="tbnum">⑥</span><div><b>Außen / Netz / Sicherheit</b><span class="tbmods"><code>vertrag/appkit</code> (SSO·Vault·CSP·HITL) · <code>mcp_tools</code> (6 read-only Tools) · <code>report</code> (V11 → Memory, HITL) · <code>transfer</code> (Echtgeld-Gate, bewusst blockiert)</span></div></div>
+
+        <div class="tbketten">
+          <div class="tbkette k-reg"><b>① Regime-Kette</b><span>Markt → HMM/Fundamental → Bridge-Datei → MasterMeta liest live den Hebel/das Exposure (kausal, kein Lookahead).</span></div>
+          <div class="tbkette k-loop"><b>② Lern-Loop</b><span>Trades (read-only) → meta/mn_learn (anchored-WF, OOS) → master (Politik) → Autopilot → MERGE + Neustart der Bots.</span></div>
+          <div class="tbkette k-ens"><b>③ Ensemble-Politik</b><span>master.derive_policy verdichtet gerichtet (PF-gated) + MN-Sockel + HMM + Fundamental + Vol-Target → Bridge.</span></div>
+          <div class="tbkette k-risk"><b>④ Risk-Override</b><span>governor greift quer bei Breach: alert · de-risk · pause — MasterMeta geschützt, nur dry_run, debounced.</span></div>
+        </div>
+
+        <div class="tbprinzip"><b>Kern-Prinzip:</b> Jede autonome Aktion ist <b>proposal-only</b>, <b>defensiv</b> (senkt nur Risiko) oder <b>hart OOS-/opt-in-gegatet</b> — nichts erhöht autonom das Risiko, rollt Unvalidiertes aus oder korrumpiert Live-Daten. Einzige strukturelle Grenze = die <b>Datenreife</b> (die Gates warten korrekt auf Evidenz).</div>
+      </div>
+    </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- 4 KI -->
+<section id="ki">
+  <div class="sh"><span class="num">04</span><h2>KI — wo lokal, wo extern</h2></div>
+  <p class="sub">Die wichtigste Linie des Systems: Denken passiert lokal (Ollama). Externe Dienste werden nur gezielt, gegated und nur für nicht-sensible Aufgaben dazugeholt. <span style="color:var(--tx3)">Klick eine Linie für die technische Tiefe + Quellen ↗</span></p>
+  <div class="grid two">
+
+    <div class="card ai-col" data-acc="green" data-title="KI lokal — Ollama, auf dem Gerät"
+         data-badge="● Lokal · auf dem Gerät" data-detlabel="Im Detail · lokale KI-Bausteine" data-deeplabel="📐 Einordnung &amp; Quellen · lokale KI / Privacy">
+      <div class="k">● Lokal — Ollama, auf dem Gerät</div>
+      <div class="item"><span class="ic">🧠</span><div><h4>Core-Orchestrator</h4><p>JSON-Schema-Grammatik, Tool-Routing, Memory L1–L4.</p><div class="who">Core :8200</div></div></div>
+      <div class="item"><span class="ic">🔎</span><div><h4>Memory-RAG</h4><p>Embeddings bge-m3 (1024-dim), semantische Suche, swappbar.</p><div class="who">Memory :8212</div></div></div>
+      <div class="item"><span class="ic">🏷️</span><div><h4>Per-App-KI</h4><p>News-Cluster · Money-Kategorien · Health-Hinweise (NIE Diagnose) · Creating-Generierung.</p><div class="who">News · Money · Healthy · Creating</div></div></div>
+      <div class="item"><span class="ic">📈</span><div><h4>TB-Lern-Ebenen</h4><p>HMM/Regime, Master-Ensemble, Autopilot, Walk-Forward — alles lokal gerechnet.</p><div class="who">Trading :8137</div></div></div>
+      <div class="note" style="margin-top:14px">höchst/hoch-Apps (Healthy, Management, Admin) ⇒ Inhalte verlassen das Gerät <b>nie</b>.</div>
+      <div class="topicwin" hidden>
+        <p class="one">Das Denken passiert lokal: ein Ollama-Orchestrator im Core, semantische Suche im Memory, kleine Spezial-KIs pro App und die Lern-Ebenen des Trading-Bots — nichts davon verlässt das Gerät.</p>
+        <ul class="kann"><li>Zusammenfassen, Sortieren, Kategorisieren, Hinweise — alles rechnet die lokale KI</li><li>Höchst/hoch-sensible Apps nutzen ausschließlich lokale KI</li><li>Modelle sind austauschbar (Ollama) — keine Cloud-Abhängigkeit, keine Token-Kosten fürs Denken</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Core-Orchestrator</b> — Ollama mit <b>JSON-Schema-Grammatik</b> als <code>format</code> (nicht nur <code>format=json</code>) ⇒ bricht bei großen Eingaben nicht aus; Tool-Routing, Memory L1–L4, temperature 0, fail-safe (<code>None</code> statt Halluzination).</div>
+          <div class="fac"><b>Memory-RAG</b> — Embeddings <code>bge-m3</code> (1024-dim) via Ollama, semantische Suche über <code>sqlite-vec</code>; Modell swappbar, Dim-Check verhindert stille Fehlpaarung.</div>
+          <div class="fac"><b>Per-App-KI</b> — News-Cluster/Zusammenfassung · Money-Kategorisierung (lernend) · Healthy-Hinweise (<b>NIE Diagnose</b>) · Creating-Generierung (Bild/Video/Musik, lokal).</div>
+          <div class="fac"><b>TB-Lern-Ebenen</b> — HMM/Regime, Master-Ensemble, Anchored-Walk-Forward, Autopilot — alles lokal gerechnet, <b>proposal-only</b>.</div>
+          <div class="fac"><b>lokal_only-Routing</b> (<code>manifest.sensitivity</code> + K2 <code>ki_routing</code>) — hoch/höchst-Apps (Healthy · Management · Admin) ⇒ Inhalte gehen <b>nie</b> an Cloud-Modelle.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Lokale KI ist hier Architektur-Entscheidung, kein Add-on — Einordnung + Quellen:</div>
+          <ul class="deeplist">
+            <li><b>On-Device / Local-First-KI</b> — Inferenz auf dem Gerät hält Daten privat (sie verlassen das Gerät nicht), reduziert die Angriffsfläche und erfüllt DSGVO/HIPAA „by design"; kein Vendor-Lock-in, keine laufenden API-Kosten fürs Denken.</li>
+            <li><b>Strukturierte Generierung</b> — JSON-Schema-/Grammatik-getriebenes <i>constrained decoding</i> maskiert ungültige Tokens bei jedem Schritt und erzwingt schema-konforme, typsichere Ausgaben statt freier Texte.</li>
+            <li><b>Ehrliche Grenze (Gesetz 2):</b> Schema-Konformität ≠ semantische Wahrheit — valides JSON kann inhaltlich falsch sein. Deshalb zusätzlich <code>temperature 0</code>, Typ-Validierung und <b>fail-safe</b> (ehrlicher Error-Key statt Halluzination).</li>
+          </ul>
+          <div class="deepaudit"><b>Quellen:</b> „On-Device Language Models — A Comprehensive Review" (arXiv 2409.00088) · „Local LLM Deployment: Privacy-First" (digitalapplied) · JSONSchemaBench (arXiv 2501.10868) · OpenAI Structured Outputs / constrained decoding (2024).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card ext-col" data-acc="orange" data-title="KI extern — nur gezielt, gegated / HITL"
+         data-badge="↗ Extern · gegated / HITL" data-detlabel="Im Detail · externe Dienste" data-deeplabel="📐 Einordnung &amp; Quellen">
+      <div class="k">↗ Extern — nur gezielt, gegated / HITL</div>
+      <div class="item"><span class="ic">✦</span><div><h4>Anthropic API</h4><p>TB-Strategie-Recherche (Katalog) + web_search · Claude Opus/Sonnet (kostet Token).</p><div class="who">Trading :8137</div></div></div>
+      <div class="item"><span class="ic">✉️</span><div><h4>Meta-Graph</h4><p>WhatsApp/Instagram senden — Token im Tresor, Versand nur per HITL.</p><div class="who">Communication :8218</div></div></div>
+      <div class="item"><span class="ic">📨</span><div><h4>Telegram Bot-API</h4><p>Long-Polling getUpdates, dormant bis Bot-Token.</p><div class="who">Communication :8218</div></div></div>
+      <div class="item"><span class="ic">🏦</span><div><h4>FRED · Bitget</h4><p>Makro-Daten (TB-Fundamental) · Krypto-Marktdaten &amp; Paper-Trades.</p><div class="who">Trading :8137</div></div></div>
+      <div class="note" style="margin-top:14px">Außenwirkung immer per App-HITL · am MCP-Gateway sind Schreib-/Krypto-/höchst-Tools nach außen <b>gesperrt</b>.</div>
+      <div class="topicwin" hidden>
+        <p class="one">Externe Dienste werden nur punktuell und nur für nicht-sensible Aufgaben dazugeholt — jede Außenwirkung läuft über App-HITL, am MCP-Gateway sind Schreib-/Krypto-/höchst-Tools nach außen gesperrt.</p>
+        <ul class="kann"><li>Externe Hilfe nur, wenn nichts Sensibles betroffen ist</li><li>Senden/Posten geht nie automatisch — immer mit deiner Freigabe (HITL)</li><li>Tokens liegen verschlüsselt im Tresor, nie im Klartext</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Anthropic API</b> (Trading) — Strategie-Recherche-Katalog + <code>web_search</code> (Claude Opus/Sonnet); kostet Token, klar als externer Schritt markiert.</div>
+          <div class="fac"><b>Meta-Graph</b> (Communication) — WhatsApp/Instagram senden; Token im Tresor, Versand nur per HITL (Stufe verifiziert, fail-closed).</div>
+          <div class="fac"><b>Telegram Bot-API</b> (Communication) — Long-Polling <code>getUpdates</code>, dormant bis Bot-Token.</div>
+          <div class="fac"><b>FRED · Bitget</b> (Trading) — Makro-Daten (Fundamental) · Krypto-Marktdaten &amp; Paper-Trades (read-only, dry_run; Echtgeld-Transfer bewusst blockiert).</div>
+          <div class="fac"><b>MCP-Gateway-Sperre</b> — nach außen exponiert das Gateway nur read-only Tools; Schreib-/Krypto-/höchst-Tools bleiben lokal.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Extern = Ausnahme mit Leitplanken — Human-in-the-Loop und Least-Privilege:</div>
+          <ul class="deeplist">
+            <li><b>Human-in-the-Loop (HITL)</b> — Außenwirkung erfordert ausdrückliche Freigabe; keine autonome Aktion mit Außenwirkung.</li>
+            <li><b>Least-Privilege am MCP-Gateway</b> — nur read-only/Metadaten nach außen; sensible &amp; schreibende Werkzeuge bleiben lokal.</li>
+            <li><b>Sensitivitäts-Gate</b> — hoch/höchst-Inhalte sind vom externen Routing strukturell ausgeschlossen (lokal_only).</li>
+          </ul>
+          <div class="deepaudit warnaudit"><b>Ehrliche Grenze:</b> wer extern sendet, vertraut dem jeweiligen Anbieter (Meta/Anthropic/Telegram) für genau diese, nicht-sensible Nutzlast — bewusst, gegated, protokolliert.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 5 STRUKTUR -->
+<section id="struktur">
+  <div class="sh"><span class="num">05</span><h2>Ordnerstruktur (nach der Totalanalyse)</h2></div>
+  <p class="sub">Ein Repo, klares Muster: pro App dieselben Ordner; Übergreifendes gebündelt; Erledigtes liegt in <code>_archiv/</code> (Historie erhalten, aktueller Satz schlank). Klick die ▾-Knoten zum Auf-/Zuklappen.</p>
+  <div class="grid" style="grid-template-columns:1.3fr 1fr">
+    <div class="card tree" id="tree">
+      <ul>
+        <li class="open"><span class="node fold"><span class="tw"></span><span class="nm dir">dizz-network/</span></span>
+          <ul>
+            <li class="open"><span class="node fold"><span class="tw"></span><span class="nm dir">apps/&lt;id&gt;/</span> <span class="cm">— 10× gleich (core·news·money·…·trading)</span></span>
+              <ul>
+                <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">&lt;pkg&gt;app/ · static/ · tests/</span> <span class="cm">Code · Frontend · Tests</span></span></li>
+                <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">docs/ · _workfiles/</span> <span class="cm">App-Doku · Arbeits-Doku</span></span></li>
+                <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm">README.md</span></span></li>
+              </ul>
+            </li>
+            <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">packages/</span> <span class="cm">appkit · ui-kit (Single-Source)</span></span></li>
+            <li class="collapsed"><span class="node fold"><span class="tw"></span><span class="nm dir">docs/</span> <span class="cm">nur Aktuelles + README-Index</span></span>
+              <ul>
+                <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm">README.md · 01_GRUNDGESETZE · …</span></span></li>
+                <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">_archiv/</span> <span class="cm">erledigt: Pläne/Migration/Bautool</span></span></li>
+              </ul>
+            </li>
+            <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">ops/</span> <span class="cm">aktive Skripte + ops/_archiv/</span></span></li>
+            <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">_netzwerk/</span> <span class="cm">LOTSE · SYSTEMDATENBLATT · diese Karte</span></span></li>
+            <li><span class="node"><span class="tw" style="visibility:hidden">·</span><span class="nm dir">tools/ · connectors/ · shell/ · templates/</span></span></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><div class="k">Pro App identisch</div><p style="font-size:13px;color:var(--tx2);margin:.5em 0 0">Code · Frontend · Tests · App-Doku (<code>docs/</code>) · Einstieg (<code>README.md</code>). So weiß man sofort: hier App X, dort App Y, da das Übergreifende.</p></div>
+      <div class="card"><div class="k">Daten getrennt</div><p style="font-size:13px;color:var(--tx2);margin:.5em 0 0">Code in <code>dizz-network/</code>, Laufzeit-Daten in <code>C:\Dizzik\data\</code> — nichts vermischt, nichts in der Cloud.</p></div>
+      <div class="card"><div class="k">Sonderfälle</div><p style="font-size:13px;color:var(--tx2);margin:.5em 0 0"><b>Core</b>: Workfiles an der Wurzel. <b>Trading</b>: eigener Stack in <code>programm/</code>, Wurzel zeigt nur dorthin.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 VERNETZUNG -->
+<section id="vernetzung">
+  <div class="sh"><span class="num">06</span><h2>Vernetzung &amp; Infrastruktur</h2></div>
+  <p class="sub">Querverbindungen als read-only Core-Relays: Daten bleiben bei der Quelle, best-effort, idempotent, keine Außenwirkung über die Kante. <span style="color:var(--tx3)">Klick eine Kachel für die technische Tiefe ↗</span></p>
+  <div class="grid" id="vnetgrid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+
+    <div class="card lift" data-acc="vio" data-title="Cross-App-Vernetzung — Registry V2–V19"
+         data-badge="Cross-App · V2–V19" data-detlabel="Im Detail · Transport &amp; Kanten-Registry" data-deeplabel="🗂 Belege &amp; Lesart">
+      <div class="k">Cross-App V2–V19</div><h3 style="margin:.3em 0;font-size:16px">Wissen &amp; Belege</h3><p style="font-size:13px;color:var(--tx2);margin:0">Apps taggen Wissen → Memory · Kalender Comm↔Admin · Money↔Trading-Steuer · Money↔Admin-Belege · Bereichs-Cockpit.</p>
+      <div class="topicwin" hidden>
+        <p class="one">Querverbindungen als read-only Core-Relays: Apps taggen Wissen ins Memory, teilen Kalender, Steuer-Zahlen und Belege — Daten bleiben bei der Quelle, best-effort, idempotent, ohne Außenwirkung über die Kante.</p>
+        <ul class="kann"><li>Wissen wandert ins zentrale Memory, Termine in den Kalender</li><li>Trading liefert Steuer-Zahlen an Money, Money Belege an Admin</li><li>Sensible Ströme (Geld/Gesundheit) reisen als „sensibel" und bleiben lokal</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Transport</b> — alle Kanten laufen über den Core als read-only Relay: <b>best-effort</b> (eine ausgefallene App bricht nichts), <b>idempotent</b> (mehrfaches Senden = ein Ergebnis), <b>Timeout-verifiziert</b>. Keine Kante erzeugt Außenwirkung; sensible Ströme tragen <code>sensibel=True</code>.</div>
+          <div class="vscroll" style="margin-top:12px">
+            <table class="vtable">
+              <thead><tr><th>Kante</th><th>Von → Nach</th><th>Was fließt (read-only, idempotent, best-effort)</th></tr></thead>
+              <tbody>
+                <tr><td><span class="vtag archiv"></span>V2</td><td>News → Memory</td><td>Sektor-Reports (Memory-Regel-gegatet, Herkunftslabel „News")</td></tr>
+                <tr><td><span class="vtag archiv"></span>V3</td><td>Creating → Memory</td><td>Asset-Metadaten (Binärdatei bleibt im DAM)</td></tr>
+                <tr><td><span class="vtag archiv"></span>V4</td><td>Communication → Memory</td><td>Mail-Threads / Konversationen</td></tr>
+                <tr><td><span class="vtag integ"></span>V5</td><td>Communication ↔ Admin</td><td>Kalender / Termine — <b>bidirektional</b> (iCal-idempotent)</td></tr>
+                <tr><td><span class="vtag integ"></span>V7</td><td>Admin → Memory</td><td>Dokument-Metadaten (Steuer/Vertrag ⇒ <span class="vsens">sensibel</span>) · V6 Plans hier aufgegangen</td></tr>
+                <tr><td><span class="vtag archiv"></span>V8</td><td>Management → Memory</td><td>Post-Logs (heikle Inhalte ⇒ <span class="vsens">sensibel</span>)</td></tr>
+                <tr><td><span class="vtag archiv"></span>V9</td><td>Money → Memory</td><td>Belege aus dem Ledger — immer <span class="vsens">sensibel</span> (lokal_only)</td></tr>
+                <tr><td><span class="vtag archiv"></span>V10</td><td>Healthy → Memory</td><td>Verletzungen — immer <span class="vsens">sensibel</span> (höchst, lokal_only)</td></tr>
+                <tr><td><span class="vtag archiv"></span>V11</td><td>Trading → Memory</td><td>Reports — <span class="vsens">sensibel</span>, nur per HITL-Knopf (eigener Stack)</td></tr>
+                <tr><td><span class="vtag geld"></span>V14</td><td>Trading → Money</td><td>Steuer-Brücke (read-only, Paper-gelabelt, §20/§23 → Anlage KAP/SO)</td></tr>
+                <tr><td><span class="vtag integ"></span>V15</td><td>Money ↔ Admin</td><td>Beleg-Verknüpfung — <b>bidirektional</b> (Re-Link reaktiviert Soft-Delete)</td></tr>
+                <tr><td><span class="vtag integ"></span>V16</td><td>Money → Admin</td><td>EÜR-relevante Ausgaben (in die EÜR gefaltet)</td></tr>
+                <tr><td><span class="vtag integ"></span>V17</td><td>Money ↔ Admin</td><td>Bereichs-Finanzspur (A5-Cockpit, Kennzahlen je Bereich)</td></tr>
+                <tr><td><span class="vtag integ"></span>V18</td><td>Management ↔ Admin</td><td>Bereichs-Social (A5-Cockpit: Posts/Bots/Plattformen)</td></tr>
+                <tr><td><span class="vtag integ"></span>V19</td><td>Memory ↔ Admin</td><td>Bereichs-Kategorie/Wissen (A5-Cockpit, Ordner-Spiegelung)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Registry-Quellen &amp; Lesart der Kanten-Tabelle:</div>
+          <ul class="deeplist">
+            <li><code>docs/26</code> + <code>docs/34</code> definieren die Kanten V2–V19 (read-only, idempotent, best-effort).</li>
+            <li>Legende: <b style="color:var(--cy)">●</b> Memory-Strom · <b style="color:var(--vio)">●</b> Integration (bidirektional) · <b style="color:var(--amber)">●</b> Geld-Brücke · <span class="vsens">sensibel</span> = lokal_only.</li>
+          </ul>
+          <div class="deepaudit"><b>Kern:</b> Jede App behält ihre Daten; geteilt wird nur über den Core (mithört &amp; protokolliert), nie direkt App↔App — und nie nach außen.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card lift" data-acc="green" data-title="Health-Watch — 10/10 live"
+         data-badge="Health-Watch · 10 Ziele" data-detlabel="Im Detail · Gesundheits-Telemetrie" data-deeplabel="🗂 Belege">
+      <div class="k">Health-Watch</div><h3 style="margin:.3em 0;font-size:16px">10/10 grün</h3><p style="font-size:13px;color:var(--tx2);margin:0">Core <code>/api/health</code> prüft alle Apps + Ollama. Live-Status, Soll alle <code>true</code>.</p>
+      <div class="topicwin" hidden>
+        <p class="one">Der Core prüft fortlaufend alle Apps plus Ollama über <code>/api/health</code> — der Soll-Zustand ist „alle <code>true</code>", live oben in der Karte sichtbar.</p>
+        <ul class="kann"><li>Ein Blick zeigt, ob alle 10 Dienste laufen</li><li>Fällt ein Dienst aus, ist er sofort erkennbar</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b><code>/api/health/watch</code></b> (Core :8200) — aggregiert den Status aller App-Dienste + Ollama; 10 Ziele (Core + 8 Apps + Trading).</div>
+          <div class="fac"><b>Soll: alle <code>true</code></b> — diese Karte zeigt den Live-Wert (offline-fähig: ohne laufendes System „Default-Sicht").</div>
+          <div class="fac"><b>Autostart</b> — Dienste starten als Tasks (<code>dizz-server.exe</code> detached); nach Reboot meldet sich der Watch wieder grün.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Live-Beleg:</div>
+          <ul class="deeplist"><li>Aktueller Stand: <b>Health-Watch 10/10</b> nach dem Monorepo-Cutover (Reboot-Test bestanden).</li></ul>
+          <div class="deepaudit">Der Watch ist read-only Telemetrie — er startet/stoppt nichts; Restarts bleiben gegated (Nutzer-Go).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card lift" data-acc="cy" data-title="MCP-Gateway — Werkzeuge, eng gefasst"
+         data-badge="MCP · read-only · Bearer" data-detlabel="Im Detail · Werkzeug-Gateways" data-deeplabel="🗂 Belege">
+      <div class="k">MCP-Gateway</div><h3 style="margin:.3em 0;font-size:16px">Werkzeuge, eng</h3><p style="font-size:13px;color:var(--tx2);margin:0">Je App <code>/mcp</code> (read-only/Bearer/Hochsicher-Gate); Core zieht alle zusammen. Schreib-Tools extern gesperrt.</p>
+      <div class="topicwin" hidden>
+        <p class="one">Jede App stellt unter <code>/mcp</code> ein eng gefasstes Werkzeug-Gateway bereit; der Core zieht alle zusammen. Nach außen sind Schreib-, Krypto- und höchst-Tools gesperrt.</p>
+        <ul class="kann"><li>KI-Werkzeuge sind pro App sauber abgegrenzt</li><li>Von außen erreichbar sind nur ungefährliche Lese-Tools</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Je App <code>/mcp</code></b> — read-only / Bearer-Auth / Hochsicher-Gate; nur die für die App sinnvollen Tools.</div>
+          <div class="fac"><b>Core-MCP-Hub</b> — bündelt alle App-Gateways an einem Punkt (ein KI-Zugang fürs ganze Netz).</div>
+          <div class="fac"><b>Außen-Sperre</b> — Schreib-/Krypto-/höchst-Tools nach außen gesperrt; Management exponiert z. B. nur Metadaten/Zähler, keine Rohdaten.</div>
+          <div class="fac"><b>Trading-MCP</b> — 6 read-only Tools; <code>report</code> (V11 → Memory) nur per HITL.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Least-Privilege am Werkzeug-Rand:</div>
+          <ul class="deeplist"><li>Gateway-Härtung folgt dem Localhost-API-Konsens (Auth nicht optional, Bearer am Gateway).</li></ul>
+          <div class="deepaudit"><b>Prinzip:</b> das Gateway gibt nach außen nie mehr als read-only — schreibende/sensible Wirkung bleibt hinter HITL.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card lift" data-acc="amber" data-title="Betrieb — Autostart, gegated"
+         data-badge="Betrieb · Autostart · gegated" data-detlabel="Im Detail · Lauf &amp; Neustart" data-deeplabel="🗂 Belege">
+      <div class="k">Betrieb</div><h3 style="margin:.3em 0;font-size:16px">Autostart, gegated</h3><p style="font-size:13px;color:var(--tx2);margin:0">Tasks je Dienst (<code>dizz-server.exe</code> detached). Restarts mit Nutzer-Go + Backup-first.</p>
+      <div class="topicwin" hidden>
+        <p class="one">Jeder Dienst läuft als eigener Autostart-Task (<code>dizz-server.exe</code>, detached). Neustarts passieren nur mit Nutzer-Go und Backup-first — Live-Prozesse werden nie eigenmächtig angefasst.</p>
+        <ul class="kann"><li>Nach dem Anschalten sind alle Dienste automatisch da</li><li>Neustarts nur mit deiner Freigabe und vorherigem Backup</li></ul>
+        <div class="moddetail">
+          <div class="fac"><b>Autostart-Tasks</b> — je Dienst ein Task, startet <code>dizz-server.exe</code> detached; Laufzeit junction-unabhängig (kanonisch C:\Dizzik\data).</div>
+          <div class="fac"><b>Gegateter Neustart</b> — Restart = Nutzer-Go + UAC am Rechner + Backup-first; Frontend (disk-served) greift ohne Neustart.</div>
+          <div class="fac"><b>Trading isoliert</b> — eigener Stack/venvs, read-only ans Netz; nie ohne TB-Chat-Go neu gestartet.</div>
+          <div class="fac"><b>Verifikation isoliert</b> — Frontend-Checks auf Scratch-Ports, damit Live-Dienste (z. B. :8217/:8222 Autostart) nie gekillt werden.</div>
+        </div>
+        <div class="topicsrc">
+          <div class="deepkern">Betriebs-Disziplin (Grundgesetze 6 / 10):</div>
+          <ul class="deeplist">
+            <li>Live-Prozesse nie eigenmächtig neu starten; Static disk-served ⇒ Frontend ohne Neustart.</li>
+            <li>Tägliches WAL-safe Backup (Task 03:00) vor riskanten Eingriffen.</li>
+          </ul>
+          <div class="deepaudit"><b>Effekt:</b> das System ist nach Reboot selbsttragend, Eingriffe sind reversibel &amp; gesichert.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note lese-fn" style="margin-top:16px">Im Klartext: Jede App <b>behält ihre eigenen Daten</b>. Wer etwas teilt, schickt es über den Core (der mithört &amp; protokolliert) — z. B. Wissen ins <b>Memory</b>, Termine in den <b>Kalender</b>, Steuer-Zahlen von <b>Trading</b> zu <b>Money</b>. Nichts wird dabei nach außen gepostet oder Geld bewegt — das braucht immer deine Freigabe. <span style="color:var(--tx3)">(Klick die Kachel „Cross-App V2–V19" für die ganze Kanten-Tabelle.)</span></div>
+</section>
+
+<!-- 7 SICHERHEIT -->
+<section id="sicherheit">
+  <div class="sh"><span class="num">07</span><h2>Sicherheit, Datenschutz &amp; Recht — im Detail</h2></div>
+  <p class="sub">Defense-in-Depth, lokal verankert: vier Verteidigungs-Schalen vor jeder App, verschlüsselte Datenhaltung, gegateter KI-Außenkontakt, echte DSGVO-Löschung. <b>Klick eine Kachel</b> für Klartext-Übersicht, Einzelfaktoren (Module, Parameter, Header) und Standard-Konformität &amp; Quellen. Quell-Code: <code>appkit/{guard,headers,csp,defense,vault}.py</code> · <code>adminapp/tresor.py</code> · <code>docs/18</code>/<code>37</code>.</p>
+
+  <div class="grid secgrid">
+
+    <!-- Verteidigung -->
+    <article class="card scard s-def">
+      <div class="seyebrow"><b>① Verteidigung</b> · Defense-in-Depth</div>
+      <h3>Vier Schalen vor jeder App</h3>
+      <p class="one">Jede App verteidigt sich selbst — erkennt Angriffe und wehrt sie gestuft ab, ohne den lokalen Nutzer je auszusperren.</p>
+      <ul class="kann lese-fn"><li>Bösartige Webseiten kommen nicht an die lokalen APIs (Rebinding/CSRF geblockt)</li><li>Scanner, Brute-Force &amp; Einschleus-Versuche werden erkannt und gestuft gebremst</li><li>Du selbst (lokal) wirst nie automatisch ausgesperrt</li></ul>
+      <div class="secfac">
+        <div class="fac"><b>Local-Guard</b> (H1, <code>appkit/guard.py</code>) — Host-Header-Allowlist (<code>127.0.0.1</code>/<code>localhost</code>) + Origin-Prüfung auf schreibenden Methoden ⇒ blockt <b>DNS-Rebinding</b> &amp; Browser-<b>CSRF</b>. Cookies <code>SameSite=Lax</code> + <code>HttpOnly</code>.</div>
+        <div class="fac"><b>Security-Header</b> (H-2, <code>appkit/headers.py</code>) — auf JEDER Antwort: <code>X-Content-Type-Options: nosniff</code> · <code>Referrer-Policy: no-referrer</code> · <code>X-Frame-Options: SAMEORIGIN</code> (Clickjacking); HTML zusätzlich <code>Cache-Control: no-cache</code>. Äußerste Middleware — stempelt auch Abweisungen.</div>
+        <div class="fac"><b>CSP voll-strikt</b> (<code>appkit/csp.py</code>, docs/37) — Per-Request-Nonce (<code>secrets.token_urlsafe(16)</code>), <code>script-src 'self' 'nonce-…'</code> blockt Inline-Skripte UND <code>onclick=</code>-Handler; dazu <code>default-src 'self'</code> · <code>object-src 'none'</code> · <code>base-uri/frame-ancestors/form-action 'self'</code> · keine externen CDNs. <code>style-src</code> behält bewusst <code>'unsafe-inline'</code> (Style-Attribute sind kein Skript-XSS; Nonce gilt nicht für Attribute). Inline-Handler → DzActions (<code>data-dz-act</code>).</div>
+        <div class="fac"><b>Dizz Defense</b> (<code>appkit/defense.py</code>) — aktives <b>Per-App-Immunsystem</b>, 4 Schichten Sensorik→Detektion→Reaktion→Gedächtnis (DB-persistiert, überlebt Neustart, auditiert). Detektion: Köder-Pfade (RASP — <code>/wp-login.php</code>, <code>/.env</code>, <code>/.git/config</code>) · Injektions-Signaturen (SQLi/Traversal/XSS/Nullbyte) · Fenster-Zähler (Brute ≥6×401/403 · Scan ≥15×404 · Rate ≥240/min) · Last-Basislinie (EWMA, Robust-Z≥8). <b>Lokal-Schonung:</b> Loopback wird nie autonom gesperrt. <b>Verbund-Immunität</b> (F-DEF2): ein Treffer immunisiert alle Apps. KI-Triage (Ollama) erklärt — entscheidet nie.</div>
+      </div>
+      <div class="stufenleiter">
+        <div class="stufe s0"><span class="s">S0</span><span class="n">beobachten</span><span class="m">Journal</span></div>
+        <div class="stufe s1"><span class="s">S1</span><span class="n">drosseln</span><span class="m">auto · 300 s</span></div>
+        <div class="stufe s2"><span class="s">S2</span><span class="n">sperren</span><span class="m">auto · 900 s ×4</span></div>
+        <div class="stufe s3"><span class="s">S3</span><span class="n">Step-up</span><span class="m">auto</span></div>
+        <div class="stufe s4"><span class="s">S4</span><span class="n">Lockdown</span><span class="m">HITL</span></div>
+        <div class="stufe s5"><span class="s">S5</span><span class="n">Not-Aus</span><span class="m">HITL</span></div>
+      </div>
+      <p class="leiterhint"><b>S1–S3 autonom &amp; reversibel</b> (TTL, exponentiell bei Wiederholungstätern, Deckel 24 h) · <b>S4–S5 nur mit Freigabe</b> (HITL) — außer im „panik"-Modus. <span class="lese-tech">Ehrliche Grenze: volumetrische DDoS löst nur ein Edge-Pfad (Cloudflare/CrowdSec upstream) — diese Schicht beherrscht den L7-Anwendungs-Missbrauch.</span></p>
+    </article>
+
+    <!-- Identität & Zugang -->
+    <article class="card scard s-id">
+      <div class="seyebrow"><b>② Zugang</b> · Identität &amp; Stufen</div>
+      <h3>Eine Anmeldung, gestufte Rechte</h3>
+      <p class="one">Dizzi-ID (Passkey/WebAuthn, nur lokal) als zentrale Identität; sensible Aktionen verlangen eine zweite Bestätigung.</p>
+      <ul class="kann lese-fn"><li>Ein Login fürs ganze System — per Passkey, ohne Passwort-Tipperei</li><li>Sensibles (Geld, Tresor) verlangt einen zusätzlichen Schritt (Step-up)</li><li>Ohne Anmeldung bleibt geschützt — nichts steht versehentlich offen</li></ul>
+      <div class="secfac">
+        <div class="fac"><b>Stufenmodell:</b> <code>lokal</code> (Standalone/localhost) &lt; <code>verifiziert</code> (Passwort-<code>scrypt</code> oder Google mit Konto-<b>Pinning</b>) &lt; <code>hochsicher</code> (TOTP-Step-up / WebAuthn). <b>Fail-closed:</b> Stufen-Pflicht-Routen verweigern ohne Login (<code>403</code>) — nichts steht „versehentlich offen".</div>
+        <div class="fac"><b>Token-Sicherheit:</b> <code>Ed25519</code> (Algorithmus im Verifier gepinnt), <b>PKCE</b> Pflicht, Auth-Codes single-use/60 s, <b>Refresh-Rotation mit Familien-Widerruf</b> bei Reuse, DB-Secrets nur gehasht, alles auditiert.</div>
+        <div class="fac"><b>Passkeys/WebAuthn:</b> nur auf <code>localhost</code> (eine IP ist keine gültige RP-ID — H10); phishing-resistenter Step-up.</div>
+        <div class="fac"><b>Lockout</b> (H4): 5 freie Versuche, dann exponentielles Backoff (30 s ×2 je Fehlversuch, Deckel 1 h); TOTP-Replay gebannt (<code>last_counter</code>).</div>
+      </div>
+    </article>
+
+    <!-- Daten-Tresor / Datenressort -->
+    <article class="card scard s-vault">
+      <div class="seyebrow"><b>③ Datenressort</b> · Tresor &amp; Verschlüsselung</div>
+      <h3>Wo &amp; wie die Daten liegen</h3>
+      <p class="one">Geheimnisse verschlüsselt at-rest, Schlüssel ans Windows-Konto gebunden; sensible Apps rechnen rein lokal.</p>
+      <ul class="kann lese-fn"><li>Token &amp; Passwörter liegen verschlüsselt — nie im Klartext, nie im Backup lesbar</li><li>Tresor-Dokumente sind verschlüsselt und tauchen nicht in der Suche auf</li><li>Gesundheit/Admin verlassen das Gerät nie — keine Cloud-KI</li></ul>
+      <div class="secfac">
+        <div class="fac"><b>Token-Tresor</b> (<code>appkit/vault.py</code>, K2) — Dienst-Secrets (OAuth/API-Keys) <b>Fernet-verschlüsselt</b> in <code>&lt;data&gt;/apps/&lt;id&gt;/vault.dat</code>; der Schlüssel separat in <code>vault.key</code>, seit H2 <b>DPAPI-gebunden</b> (<code>secrets_os</code>, CurrentUser) ⇒ eine kopierte Datei ist auf fremdem Konto wertlos. API klein (<code>put/get/delete/names</code>) — <code>names()</code> zeigt nur Namen, Werte nur per gezieltem <code>get</code>. Nie in <code>app_settings</code>, nie im Repo.</div>
+        <div class="fac"><b>Admin-Tresor</b> (<code>adminapp/tresor.py</code>, hochsicher, GoBD-bewusst) — Dokument-Dateien im Vault <code>&lt;data&gt;/apps/admin/vault/&lt;user_id&gt;/</code>, die DB hält nur den relativen Pfad. Verschlüsselt-at-rest, Key im OS-Secret-Store (nie DB). <b>Verschlüsselt ⇒ NICHT FTS-indexiert.</b> Lese-<b>Step-up</b> (Dizzi-ID) ⇒ <code>403</code> ohne Freigabe. SHA-256-Dedupe, 50 MB-Limit.</div>
+        <div class="fac"><b>Sensitivität-Routing</b> (<code>manifest.sensitivity</code> + K2 <code>ki_routing</code>) — <code>hoch</code>/<code>höchst</code>-Apps (Healthy=höchst · Management/Admin=hoch) ⇒ KI <b>lokal_only</b>, Inhalte nie an Cloud-Modelle. Das MCP-Gateway sperrt Schreib-/Krypto-/höchst-Tools nach außen.</div>
+        <div class="fac"><b>Lokal-first:</b> alle Dienste binden an <code>127.0.0.1</code>. <span class="vsens">Kein TLS auf Loopback</span> — per RFC 8252 der akzeptierte Desktop-Weg; der Schutz trägt die OS-Integrität.</div>
+      </div>
+    </article>
+
+    <!-- DSGVO -->
+    <article class="card scard s-dsgvo">
+      <div class="seyebrow"><b>④ DSGVO</b> · Datenrechte &amp; Löschung</div>
+      <h3>Auskunft, Export, „weg = weg"</h3>
+      <p class="one">Jede Tabelle folgt den Vertrags-Konventionen — Export &amp; Löschung greifen netzweit ohne Per-App-Code.</p>
+      <ul class="kann lese-fn"><li>Du kannst deine Daten exportieren und vollständig löschen lassen</li><li>Gelöscht heißt gelöscht — auch im Suchindex und im Vektor-Speicher</li><li>Daten bleiben bei der Quell-App; nichts wird heimlich dupliziert</li></ul>
+      <div class="secfac">
+        <div class="fac"><b>Vertrags-Konventionen</b> (<code>appkit/db.py</code>) — jede Tabelle mit UUID/<code>user_id</code>/Timestamps/<b>Soft-Delete</b> ⇒ DSGVO-Export, Lösch-Kaskade &amp; Retention greifen <b>ohne Per-App-Code</b>.</div>
+        <div class="fac"><b>on_delete-Hook</b> (H-7, appkit 1.11.0) — Account-Löschung räumt app-eigene Artefakte; Memory hängt <code>RagIndex.remove_user</code> + <code>MarkdownVault.purge_user</code> ein ⇒ Markdown-Vault <b>und</b> RAG-Vektoren weg („weg = weg").</div>
+        <div class="fac"><b>Daten bei der Quelle</b> — die Querverbindungen (V2–V19) sind read-only Lesepfade und duplizieren nichts; sensible Ströme (Money/Health/Trading) reisen mit <code>sensibel=True</code>.</div>
+        <div class="fac"><b>Datenrechte-Endpunkte</b> (appkit-Vertrag, je App) — Export + Löschung, vollständig auditiert.</div>
+      </div>
+    </article>
+
+    <!-- Recht / Haftung -->
+    <article class="card scard s-recht">
+      <div class="seyebrow"><b>⑤ Recht</b> · Haftung &amp; Grenzen</div>
+      <h3>Ehrliche Funktions-Grenzen</h3>
+      <p class="one">Tools, die in regulierte Bereiche reichen, sagen klar, was sie sind — und was nicht.</p>
+      <ul class="kann lese-fn"><li>Steuer-Funktionen sind Schätzhilfen, keine Steuerberatung</li><li>Gesundheit gibt Hinweise — niemals eine Diagnose</li><li>Studium hilft beim Organisieren, ersetzt keine Fachberatung</li></ul>
+      <div class="secfac">
+        <div class="fac"><b>Disclaimer</b> sichtbar + im Export: Steuer = <b>Schätztool</b> (kein Filing) · Health = <b>keine Diagnose</b> · Studium = keine Beratung.</div>
+        <div class="fac"><b>Export-Härtung</b> <code>csv_safe</code> (<code>appkit/csv_safe.py</code>) — MD-/CSV-Injection-Schutz: führende <code>= + - @</code> in Exporten werden entschärft.</div>
+        <div class="fac"><b>GoBD-bewusst</b> (Admin-Dokument-Vault) — Soft-Delete + Retention, nachvollziehbare Belegablage.</div>
+      </div>
+    </article>
+
+    <!-- Ehrliche Restrisiken -->
+    <article class="card scard s-risk riskcard">
+      <div class="seyebrow"><b>⑥ Ehrlich</b> · Restrisiken (Gesetz 2)</div>
+      <h3>Was wir <i>nicht</i> verhindern</h3>
+      <p class="one">Nichts beschönigt — diese Grenzen gelten bewusst und sind benannt, nicht versteckt.</p>
+      <div class="secfac">
+        <div class="fac warn"><b>Same-User-Malware = Game over</b> — Code im selben Windows-Konto kann Dateien lesen, Tastatur mitschneiden, selbst <code>hochsicher</code> erlangen. DPAPI mildert die Datei-Exfiltration auf <i>fremde</i> Konten, schützt aber nicht vor Code im <i>eigenen</i> Konto. Gilt für jede lokale Desktop-Software.</div>
+        <div class="fac warn"><b>Kein TLS auf Loopback</b> — per RFC 8252 der akzeptierte Weg; der Schutz hängt an der OS-Integrität, nicht an Transportverschlüsselung.</div>
+        <div class="fac warn"><b>Single-User-Annahme</b> — Mehrnutzer-Betrieb erfordert den Stufe-3-Ausbau (geplant).</div>
+        <div class="fac warn"><b>Volumetrische DDoS</b> — stoppt nur ein Edge-Pfad (Cloudflare/CrowdSec upstream); die App-Schicht beherrscht den L7-Missbrauch.</div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="legend" style="margin-top:22px">
+    <span><i style="background:var(--vio)"></i>Hub/Core</span>
+    <span><i style="background:var(--cy)"></i>App (normal)</span>
+    <span><i style="background:var(--coral)"></i>sensibel · lokal_only</span>
+    <span><i style="background:var(--amber)"></i>Geld-System</span>
+    <span><i style="background:var(--green)"></i>geteilt / lokale KI</span>
+    <span><i style="background:var(--orange)"></i>externer Dienst</span>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <b>the world of dizzi</b> · Gesamtsystem-Karte · <span class="pill">Stand 25.06.2026 · Konstellation + TB-Sub-Architektur</span><br>
+  Quellen der Wahrheit: <code>_netzwerk/SYSTEMDATENBLATT.md</code> · <code>docs/01_GRUNDGESETZE.md</code> · App-<code>_workfiles/</code> · Code. Diese Karte wird von Zeit zu Zeit mitgeführt &amp; aktualisiert.
+</div></footer>
+
+<!-- App-Fenster (Modal): Übersicht oben → Detail drunter; geöffnet von Konstellations-Knoten + App-Kacheln -->
+<div class="appmodal" id="appmodal" hidden>
+  <div class="ambackdrop" data-close></div>
+  <div class="amdialog" role="dialog" aria-modal="true" aria-labelledby="am-title" tabindex="-1">
+    <div class="amhead">
+      <button class="amclose" data-close aria-label="App-Fenster schließen">✕</button>
+      <div class="amtitle-wrap"><h3 id="am-title"></h3><span class="amport"></span></div>
+      <div class="ambadges"></div>
+    </div>
+    <div class="ambody">
+      <div class="amsection amov"><div class="amlabel">Übersicht · was kann das</div><div class="amov-body"></div></div>
+      <div class="amsection amdet"><div class="amlabel">Im Detail · Module · Datenflüsse</div><div class="amdet-body"></div></div>
+      <div class="amsection amdeep" id="am-deep"><div class="amlabel">🔬 Tiefenanalyse · Sorgfaltskern (technisch)</div><div class="amdeep-body"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // theme toggle
+  var body=document.body, tgl=document.getElementById('tgl');
+  tgl.addEventListener('click',function(){
+    var d=body.getAttribute('data-theme')==='dark';
+    body.setAttribute('data-theme',d?'light':'dark');
+    tgl.textContent=d?'☀ Hell/Dunkel':'☾ Hell/Dunkel';
+  });
+  // (App-Kacheln öffnen jetzt das App-Fenster/Modal — verdrahtet im Konstellations-Block unten.)
+  // app filter
+  var grid=document.getElementById('appgrid');
+  document.getElementById('chips').addEventListener('click',function(e){
+    var c=e.target.closest('.chip'); if(!c)return;
+    document.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
+    c.classList.add('on');
+    var f=c.dataset.f;
+    grid.querySelectorAll('.app').forEach(function(a){
+      var show = f==='all'
+        || (f==='ai' && a.dataset.ai==='1')
+        || (f==='ext' && a.dataset.ext==='1')
+        || (f==='sens' && (a.dataset.sens==='hoch'||a.dataset.sens==='höchst'))
+        || (f==='money' && a.dataset.mode==='money');
+      a.classList.toggle('hidden',!show);
+    });
+  });
+  // folder tree toggle
+  document.getElementById('tree').addEventListener('click',function(e){
+    var n=e.target.closest('.node.fold'); if(!n)return;
+    var li=n.parentElement;
+    li.classList.toggle('collapsed'); li.classList.toggle('open');
+  });
+  // scrollspy
+  var links=[].slice.call(document.querySelectorAll('.bar a.lnk'));
+  var map={}; links.forEach(function(l){map[l.getAttribute('href').slice(1)]=l;});
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(l){l.classList.remove('on')});
+        if(map[en.target.id])map[en.target.id].classList.add('on');
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  document.querySelectorAll('section[id]').forEach(function(s){obs.observe(s)});
+  // Scroll-Fortschrittsbalken (oben)
+  var sp=document.getElementById('scrollprog');
+  if(sp){
+    var upd=function(){ var h=document.documentElement, max=h.scrollHeight-h.clientHeight, r=max>0?h.scrollTop/max:0;
+      sp.style.width=(r*100).toFixed(2)+'%'; sp.style.setProperty('--p', r.toFixed(3)); };
+    window.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); upd();
+  }
+})();
+</script>
+
+<script>
+/* ---- interaktive Konstellation + optionaler Live-Health-Watch ---- */
+(function(){
+  var stage=document.getElementById('cstage');
+  if(!stage) return;
+  var NS='http://www.w3.org/2000/svg';
+  var svg=document.getElementById('cedges'), wrap=document.getElementById('cnodes');
+
+  var NODES=[
+    {id:'core',         x:500, y:392, nm:'Dizzi-Core',        pt:':8200', acc:'vio', core:true, ic:'🧠'},
+    {id:'memory',       x:500, y:96,  nm:'Dizz Memory',       pt:':8212', acc:'cy',    ic:'📚'},
+    {id:'news',         x:730, y:160, nm:'Dizz News',         pt:':8216', acc:'cy',    ic:'📰'},
+    {id:'creating',     x:852, y:338, nm:'Dizz Creating',     pt:':8214', acc:'cy',    ic:'🎨'},
+    {id:'healthy',      x:806, y:532, nm:'Dizz Healthy',      pt:':8217', acc:'coral', ic:'🫀'},
+    {id:'management',   x:624, y:656, nm:'Dizz Management',   pt:':8213', acc:'coral', ic:'📣'},
+    {id:'communication',x:376, y:656, nm:'Dizz Communication',pt:':8218', acc:'cy',    ic:'💬'},
+    {id:'admin',        x:194, y:532, nm:'Dizz Admin',        pt:':8222', acc:'coral', ic:'🗂️'},
+    {id:'money',        x:148, y:338, nm:'Dizz Money',        pt:':8210', acc:'amber', ic:'💰'},
+    {id:'trading',      x:270, y:160, nm:'Dizz Trading',      pt:':8137', acc:'amber', ic:'📈'}
+  ];
+  var SECICON={karte:'🌐', ueberblick:'🧭', architektur:'🧱', apps:'🧩', ki:'🤖', struktur:'🗺️', vernetzung:'🔗', sicherheit:'🛡️'};
+  var SECACC ={karte:'vio', ueberblick:'cy', architektur:'vio', apps:'mag', ki:'green', struktur:'amber', vernetzung:'blue', sicherheit:'coral'};  // klare Farb-Hierarchie je Sektion
+  // Cross-App-Kanten (Vernetzungs-Registry V2–V19): v = Kurz-Label, d = Tooltip-Text
+  var EDGES=[
+    {a:'news',         b:'memory', t:'archiv', v:'V2',  d:'V2 · News → Memory · Sektor-Reports'},
+    {a:'creating',     b:'memory', t:'archiv', v:'V3',  d:'V3 · Creating → Memory · Asset-Metadaten'},
+    {a:'communication',b:'memory', t:'archiv', v:'V4',  d:'V4 · Communication → Memory · Mail-Threads'},
+    {a:'management',   b:'memory', t:'archiv', v:'V8',  d:'V8 · Management → Memory · Post-Logs'},
+    {a:'money',        b:'memory', t:'archiv', v:'V9',  d:'V9 · Money → Memory · Belege (sensibel)'},
+    {a:'healthy',      b:'memory', t:'archiv', v:'V10', d:'V10 · Healthy → Memory · Verletzungen (sensibel)'},
+    {a:'trading',      b:'memory', t:'archiv', v:'V11', d:'V11 · Trading → Memory · Reports (sensibel, HITL)'},
+    {a:'communication',b:'admin',  t:'integ',  v:'V5',  d:'V5 · Communication ↔ Admin · Kalender/Termine (bidirektional)'},
+    {a:'management',   b:'admin',  t:'integ',  v:'V18', d:'V18 · Management ↔ Admin · Bereichs-Social (Cockpit)'},
+    {a:'money',        b:'admin',  t:'integ',  v:'V15+',d:'V15/16/17 · Money ↔ Admin · Belege · EÜR · Finanzspur'},
+    {a:'admin',        b:'memory', t:'integ',  v:'V7/19',d:'V7/V19 · Admin ↔ Memory · Dokumente · Bereichs-Wissen'},
+    {a:'trading',      b:'money',  t:'geld',   v:'V14', d:'V14 · Trading → Money · Steuer-Brücke (read-only)'}
+  ];
+
+  var byId={}, adj={};
+  NODES.forEach(function(n){ byId[n.id]=n; adj[n.id]={}; });
+
+  // Rückgrat: Core ↔ jeder Knoten (SSO/MCP/Health)
+  NODES.forEach(function(n){
+    if(n.core) return;
+    adj.core[n.id]=true; adj[n.id].core=true;
+    var ln=document.createElementNS(NS,'line');
+    ln.setAttribute('x1',byId.core.x); ln.setAttribute('y1',byId.core.y);
+    ln.setAttribute('x2',n.x);         ln.setAttribute('y2',n.y);
+    ln.setAttribute('class','edge backbone');
+    ln.setAttribute('data-a','core');  ln.setAttribute('data-b',n.id);
+    var lt=document.createElementNS(NS,'title'); lt.textContent='Core-Rückgrat · SSO · MCP · Health-Watch'; ln.appendChild(lt);
+    svg.appendChild(ln);
+  });
+  // Cross-Kanten als sanft gebogene Pfade + Hover-Tooltip (<title>) + V-Nummern-Label + Daten-Komet
+  var REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  EDGES.forEach(function(e,ei){
+    var a=byId[e.a], b=byId[e.b];
+    adj[e.a][e.b]=true; adj[e.b][e.a]=true;
+    var mx=(a.x+b.x)/2, my=(a.y+b.y)/2, dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy)||1;
+    var px=-dy/len, py=dx/len, k=len*0.10;
+    var cx=mx+px*k, cy=my+py*k;
+    var p=document.createElementNS(NS,'path');
+    p.setAttribute('d','M'+a.x+' '+a.y+' Q'+cx.toFixed(1)+' '+cy.toFixed(1)+' '+b.x+' '+b.y);
+    p.setAttribute('class','edge '+e.t);
+    p.setAttribute('data-a',e.a); p.setAttribute('data-b',e.b);
+    p.setAttribute('id','edge-'+ei);
+    var ti=document.createElementNS(NS,'title'); ti.textContent=e.d; p.appendChild(ti);
+    svg.appendChild(p);
+    if(!REDUCE){   // Daten-Komet wandert Quelle → Hub entlang der Kante
+      var cm=document.createElementNS(NS,'circle'); cm.setAttribute('r','3.2'); cm.setAttribute('class','comet '+e.t);
+      var am=document.createElementNS(NS,'animateMotion');
+      am.setAttribute('dur',(2.2+len/240).toFixed(1)+'s'); am.setAttribute('repeatCount','indefinite');
+      var mp=document.createElementNS(NS,'mpath');
+      mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#edge-'+ei); mp.setAttribute('href','#edge-'+ei);
+      am.appendChild(mp); cm.appendChild(am); svg.appendChild(cm);
+    }
+    // V-Nummern-Label am Kurven-Mittelpunkt B(0.5) = Mittelpunkt + perp·(k/2)
+    var lx=mx+px*(k/2), ly=my+py*(k/2), w=e.v.length*8.4+14;
+    var g=document.createElementNS(NS,'g'); g.setAttribute('class','vlabel');
+    var rc=document.createElementNS(NS,'rect');
+    rc.setAttribute('x',(lx-w/2).toFixed(1)); rc.setAttribute('y',(ly-9).toFixed(1));
+    rc.setAttribute('width',w.toFixed(1)); rc.setAttribute('height','18'); rc.setAttribute('rx','5');
+    var tx=document.createElementNS(NS,'text');
+    tx.setAttribute('x',lx.toFixed(1)); tx.setAttribute('y',ly.toFixed(1));
+    tx.setAttribute('text-anchor','middle'); tx.setAttribute('dominant-baseline','central');
+    tx.textContent=e.v;
+    g.appendChild(rc); g.appendChild(tx); svg.appendChild(g);
+    p._vlabel = g;   // Label an seine Kante koppeln (JS-Toggle statt SVG-Geschwister-Selektor)
+    p.addEventListener('mouseenter', function(){ g.classList.add('show'); });
+    p.addEventListener('mouseleave', function(){ if(!p.classList.contains('hot')) g.classList.remove('show'); });
+  });
+  // Knoten (HTML, prozentual positioniert → deckungsgleich mit dem SVG-viewBox)
+  NODES.forEach(function(n,i){
+    var d=document.createElement('div');
+    d.className='cnode'+(n.core?' core':'');
+    d.setAttribute('data-app',n.id); d.setAttribute('data-acc',n.acc);
+    d.setAttribute('role','button'); d.setAttribute('tabindex','0');
+    d.setAttribute('aria-label',n.nm+' '+n.pt+' — Details öffnen');
+    d.style.left=(n.x/1000*100)+'%'; d.style.top=(n.y/780*100)+'%';
+    d.style.setProperty('--idelay',(i*0.06).toFixed(2)+'s');      // gestaffeltes Einblenden
+    d.style.setProperty('--ddur',(6.5+Math.random()*4).toFixed(2)+'s');   // organische Drift (variiert)
+    d.style.setProperty('--ddelay',(-Math.random()*8).toFixed(2)+'s');
+    d.innerHTML='<div class="cnm"><span class="cic" aria-hidden="true">'+n.ic+'</span>'+n.nm+'</div><div class="cpt">'+n.pt+'</div>';
+    wrap.appendChild(d);
+  });
+
+  var nodeEls={};
+  [].forEach.call(wrap.querySelectorAll('.cnode'),function(el){ nodeEls[el.getAttribute('data-app')]=el; });
+  var edgeEls=[].slice.call(svg.querySelectorAll('.edge'));
+  var selected=null;
+
+  // ---- Node-Magnetismus: Knoten lehnen sich zur Maus + glühen nach Nähe (deine Maus „zieht" am System) ----
+  if(!REDUCE){
+    var ncenters=[], mraf=0, mmx=0, mmy=0;
+    function measureNodes(){ var sr=stage.getBoundingClientRect();   // Basis-Zentren aus Prozent-Koords ⇒ unabhängig von Drift/Pull
+      ncenters=NODES.map(function(n){ return {el:nodeEls[n.id], cx:sr.left+n.x/1000*sr.width, cy:sr.top+n.y/780*sr.height}; }); }
+    function magnet(){ mraf=0; var R=175;
+      ncenters.forEach(function(nc){ var dx=mmx-nc.cx, dy=mmy-nc.cy, dist=Math.hypot(dx,dy)||1;
+        if(dist<R){ var f=1-dist/R, k=f*f*15;
+          nc.el.style.transform='translate(-50%,-50%) translate('+(dx/dist*k).toFixed(1)+'px,'+(dy/dist*k).toFixed(1)+'px) scale('+(1+f*0.13).toFixed(3)+')';
+          nc.el.style.setProperty('--near', f.toFixed(3)); }
+        else if(nc.el.style.getPropertyValue('--near')){ nc.el.style.transform=''; nc.el.style.removeProperty('--near'); } }); }
+    stage.addEventListener('pointermove', function(e){ mmx=e.clientX; mmy=e.clientY; if(!mraf)mraf=requestAnimationFrame(magnet); }, {passive:true});
+    stage.addEventListener('pointerleave', function(){ ncenters.forEach(function(nc){ nc.el.style.transform=''; nc.el.style.removeProperty('--near'); }); });
+    stage.addEventListener('pointerenter', measureNodes);   // frisches Zentrum bei jedem Hover ⇒ robust gegen späte Layouts
+    measureNodes(); window.addEventListener('resize',measureNodes,{passive:true}); window.addEventListener('scroll',measureNodes,{passive:true});
+  }
+
+  function applyFocus(id){
+    stage.classList.add('focus');
+    edgeEls.forEach(function(ed){
+      var hot = ed.getAttribute('data-a')===id || ed.getAttribute('data-b')===id;
+      ed.classList.toggle('hot', hot);
+      if(ed._vlabel) ed._vlabel.classList.toggle('show', hot);
+    });
+    NODES.forEach(function(n){
+      var el=nodeEls[n.id];
+      el.classList.toggle('hot', n.id===id || !!adj[id][n.id]);
+      el.classList.toggle('active', n.id===selected);
+    });
+  }
+  function clearFocus(){
+    if(selected){ applyFocus(selected); return; }
+    stage.classList.remove('focus');
+    edgeEls.forEach(function(ed){ ed.classList.remove('hot'); if(ed._vlabel) ed._vlabel.classList.remove('show'); });
+    NODES.forEach(function(n){ nodeEls[n.id].classList.remove('hot'); nodeEls[n.id].classList.remove('active'); });
+  }
+  // ---- App-Fenster (Modal): Übersicht oben → Detail drunter ----
+  var modal=document.getElementById('appmodal'), amDialog=modal?modal.querySelector('.amdialog'):null, amLast=null;
+  function accentOf(card){
+    if(card.dataset.mode==='core') return 'vio';
+    if(card.dataset.mode==='money') return 'amber';
+    if(card.dataset.sens==='hoch'||card.dataset.sens==='höchst') return 'coral';
+    return 'cy';
+  }
+  // Per-App-Tiefenanalyse (Sorgfaltskern + harte technische Daten + Audit-Verdikt).
+  // Quellen: docs/33 Kern-Dauerschleife (zeilennahe Kern-Audits) + SYSTEMDATENBLATT. Trading = eigene tbarch.
+  var DEEP = {
+    core: { kern:"<code>core/app/ai/mcp_gateway.py</code> — der Werkzeug-Türsteher", punkte:[
+      "<b>Default AUS</b> (403); externer Zugriff nur per <b>Bearer</b> über <code>secrets.compare_digest</code> (timing-sicher); Verwaltung (enable/rotate/freigabe) <b>nur localhost</b>.",
+      "<b>Read-only-v1:</b> <code>_ist_aktion</code> blockt Schreib-Tools nach außen <i>und</i> filtert sie aus <code>tools/list</code> — extern existieren sie quasi nicht.",
+      "<b>Hochsicher-Gate:</b> <code>_tool_stufe</code> klassifiziert Krypto/Echtgeld/Datei/Secret-Tools → <code>hochsicher</code>, gesperrt ohne befristete <code>/mcp/freigabe</code>.",
+      "<b>Health-Watch</b> (10 Ziele) + alle <b>Querverbindungs-Relays V2–V19</b>: best-effort mit <b>garantiertem Timeout</b> (25.06. verifiziert) — kein träger Dienst hängt den Core.",
+      "Orchestrator: lokales <b>Ollama</b> mit <b>JSON-Schema-Grammatik</b> (kein freies „json“), Tool-Routing, Memory L1–L4." ],
+      audit:"<b>Kern-Dauerschleife R6</b> (Zukunfts-Architekt): Core-Gateway zeilennah <b>0 Bugs</b>, starke Defense-in-Depth." },
+    money: { kern:"<code>ledger.py</code> (Double-Entry) + <code>trading_steuer.py</code>", punkte:[
+      "Geld ist <b>int-Minor-Units</b> (keine Float-Cent-Fehler); <code>Buchung</code> erzwingt im <b>Konstruktor</b> betrag≠0 ∧ ≥2 Konten ∧ <b>Summe==0</b> — eine unbalancierte Buchung kann strukturell nicht existieren.",
+      "<b>FX:</b> Balance <b>pro Währung</b> + 4-Zeilen-Tauschkonten ⇒ kein „Geld aus Kurs-Magie“; Decimal nur an den Rändern (<code>ROUND_HALF_UP</code>).",
+      "Saldo läuft <b>SQL-seitig</b> (<code>SUM/GROUP&nbsp;BY</code>) — kein O(n²).",
+      "<code>trading_steuer.py</code>: §20 Abgeltungsteuer / §23 Haltefrist <b>kalendarisch schaltjahrsicher</b>, Freigrenze „weniger als“ (alles-oder-nichts), unbekanntes Kaufdatum → konservativ steuerpflichtig, <b>MD-/CSV-Injection-Schutz</b> im Export." ],
+      audit:"<b>R3/R4</b> zeilennah als <b>Goldstandard, 0 Bugs</b> bestätigt." },
+    memory: { kern:"<code>rag.py</code> (RAG-L3) + <code>vault.py</code>", punkte:[
+      "<b>RAG fail-safe:</b> jeder Fehler / <b>Dim-Mismatch</b> ⇒ leeres Ergebnis, nie Crash; Modell-/Dim-Swap migriert (vec0 DROP + Re-Index); <code>busy_timeout=5000</code>; reindex resumable + streamend.",
+      "<b>Multi-User-sauber:</b> <code>user_id</code>-Prefilter im KNN (vec0-Metadaten) ⇒ kein Cross-User-Leak.",
+      "<code>vault.py</code>: <code>sanitize_segment</code> neutralisiert Pfad-Traversal (<code>..</code>, Steuerzeichen, <b>NUL</b>), <code>yaml.safe</code>, BOM-Strip, interne <code>_innerhalb</code>-Containment-Wache.",
+      "<b>DSGVO:</b> <code>purge_user</code> räumt Vault <i>und</i> RAG-Vektoren („weg = weg“). Embeddings <b>bge-m3</b> (1024-dim) lokal, swappbar." ],
+      audit:"<b>R3</b> 0 Bugs robust; Vault-Pfad-Hardening umgesetzt (<code>6d3ff98</code>)." },
+    admin: { kern:"<code>tresor.py</code> — verschlüsselter Dokument-Tresor (hochsicher)", punkte:[
+      "<b>Fernet-at-rest</b>; Schlüssel im <b>OS-Secret-Store</b> (selbst Fernet-verschlüsselt), <b>NIE in der DB</b>.",
+      "Verschlüsselte Dokumente werden <b>nicht FTS-extrahiert/indexiert</b> — sie liefern <code>volltext=\"\"</code> an <i>alle</i> Lese-/KI-/Tag-Pfade (kein Klartext-Leak).",
+      "Lesen verlangt <b>Dizzi-ID-Step-up</b> (sonst <code>403</code>); Pfad-Traversal mehrfach <code>is_relative_to</code>-gewacht; SQL durchweg parametrisiert.",
+      "<b>DSGVO-Purge</b> räumt Vault + FTS-Zeilen + Fernet-Key. Rückgrat: Entität <code>bereich</code> × Module + Bereichs-Cockpit (V16–V19)." ],
+      audit:"<b>R2</b> (Angreifer/Red-Team) zeilennah: <b>0 Bugs</b>, Step-up-Gate fail-closed." },
+    communication: { kern:"Outbound-Gate — was das Gerät verlässt", punkte:[
+      "<b>Senden = fail-closed:</b> nur über die appkit-Aktionen <code>mail_senden</code>/<code>nachricht_senden</code>, beide Stufe <b>verifiziert</b> (Dizzi-ID-Step-up) — nie autonom.",
+      "Dormante Kanäle <b>werfen selbst nach Freigabe</b> (kein versehentlicher Versand); Tokens ausschließlich aus dem <b>Tresor</b>.",
+      "Meta-Webhook prüft <b>X-Hub-Signature-256</b> fail-closed; Inbound <b>on-demand</b> (kein Hintergrund-Poller).",
+      "WhatsApp/IG (<code>meta.py</code>) + Telegram (<code>telegram.py</code>, Long-Polling) — beide live; Unified-Inbox/Smart-Contacts pro Kontakt." ],
+      audit:"<b>R8</b> (Rechts-/Datenschutz-Auditor): Außenwirkungs-Gate <b>hart</b>, 0 Bedenken." },
+    healthy: { kern:"<code>healthapp/ki.py</code> — „keine Diagnose“ hart erzwungen", punkte:[
+      "<b>Mehrschichtig:</b> System-Prompts verbieten Diagnose/Medikamente/Dosierung; ein <b>DISCLAIMER hängt IMMER</b> an der Ausgabe (auch bei Ollama-Fehler); Referenzbereiche „orientierend“.",
+      "<b>lokal_only:</b> nur lokales Ollama im Code, <b>kein Cloud-/Boost-Pfad</b>; Manifest <code>sensitivity='hoechst'</code> ⇒ Inhalte verlassen das Gerät nie.",
+      "JSON-Schema-Grammatik, temperature 0.1–0.2, durchgehend fail-safe.",
+      "FHIR-nahe Messwerte/Trainings/Supplements · DzCharts (Ringe/Gauge) · Wearable-Slots (dormant) · CSP voll-strikt." ],
+      audit:"<b>R7</b> zeilennah: <b>0 Bugs</b>, vorbildliche Recht-/Sicherheits-Disziplin." },
+    news: { kern:"<code>newsapp/ki.py</code> + <code>extract.py</code>/<code>cluster.py</code>", punkte:[
+      "KI per <b>JSON-Schema-Grammatik</b> als <code>format</code> (kein bloßes <code>format=json</code>) — bricht bei großen Eingaben nicht aus.",
+      "Durchgehend <b>fail-safe</b>: <code>None</code> bei ≠200/Exception; Briefing/Frage liefern einen <b>ehrlichen Error-Key statt Halluzination</b>; Output streng typ-validiert; temperature 0.",
+      "<code>extract.py</code> zieht den <b>Volltext</b> (bessere KI-Eingabe) · <code>cluster.py</code> macht <b>Cross-Source-Dedup</b>.",
+      "Pro-Quelle-Gesundheit persistiert; OPML-Import/-Export (XXE/Billion-Laughs abgewehrt)." ],
+      audit:"<b>R9</b> zeilennah: <b>0 Bugs</b>, robust (erste Vanilla-UI = netzweites Muster)." },
+    creating: { kern:"<code>schutz.py</code> (Illegal-Sperre) + <code>lora.py</code> (Kohya)", punkte:[
+      "<b>Schutz:</b> Illegal-Sperre §184b (Konstante); Generierung über <b>ComfyUI</b> (Flux/SDXL · Wan 2.2 · ACE-Step) als externer Dienst.",
+      "<b>LoRA-Training</b> via kohya sd-scripts (<code>accelerate launch</code>, eigener venv) — gehärtet: Path-Traversal-/Param-Validierung, Dedupe, Cleanup, Live-Progress.",
+      "<b>Eine GPU-Job-Queue</b> (seriell): Training XOR Generierung — kein OOM auf 16 GB.",
+      "<code>subprocess</code> = <b>Argument-Listen, kein <code>shell=True</code></b> (nicht injizierbar); DAM trägt Modell+Lizenz+Rezept; <code>dam.purge_user</code> (DSGVO)." ],
+      audit:"<b>Red-Team-Sweep:</b> 0 gefährliche Muster (kein <code>eval/exec/shell=True</code>); Subprocess sauber." },
+    management: { kern:"Veröffentlichen = HITL · hoch ⇒ lokal_only", punkte:[
+      "<b>Veröffentlichen</b> ist eine HITL-Aktion Stufe <b>verifiziert</b> (Außenwirkung, nie autonom/direkt).",
+      "Sensitivität <b>hoch ⇒ lokal_only</b>: Inhalte gehen nie an Cloud-Modelle.",
+      "Redaktion-Panel (Kalender/Composer/Queue/Auswertung) + <b>Creating-Empfang</b> (REV-3) + DzCharts.",
+      "Read-only MCP exponiert <b>nur Metadaten/Zähler</b>; Bereichs-Social (V18) liefert Kennzahlen, keine Rohdaten." ],
+      audit:"<b>R4</b> (Produkt-Skeptiker): dormante Kanäle konsistent verbucht, Publish-HITL hart." },
+    core: { kern:"Core-MCP-Gateway + Querverbindungs-Relays — das read-only-Rückgrat", punkte:[
+      "<b>MCP-Gateway</b> (<code>mcp_gateway.py</code>): Default AUS (403), Bearer via <code>compare_digest</code> (timing-sicher), <b>read-only-v1</b> (Schreib-Tools extern gesperrt + aus <code>tools/list</code> gefiltert), <b>Hochsicher-Gate</b> (Krypto/Echtgeld/Datei/Secret → befristete Freigabe).",
+      "<b>Querverbindung</b> (<code>querverbindung.py</code>): V2–V19-Relays best-effort + <b>bounded timeout</b> ⇒ Ziel offline/500/Timeout → leere Sicht, crasht/hängt nie.",
+      "<b>Identität:</b> Dizzi-ID = Master von SSO + Memory L1–L4; Step-up zentral durchgesetzt (nicht in der UI).",
+      "<b>Health-Watch</b> über alle Ziele; <code>defense.py</code> schont Loopback (lokaler Nutzer sperrt sich nie aus)." ],
+      audit:"<b>R6/R10</b> zeilennah: <b>0 Bugs</b>, starke Defense-in-Depth + Textbook-Degradation." }
+  };
+  // Sub-Architektur je App (Modul-Schichten, Trading-Niveau) — code-/docs-fundiert; renderDeep baut daraus den .tbarch-Block.
+  var SCHICHTEN = {
+    core:[
+      {nr:'①',zone:'z-purple',titel:'Orchestrator-KI',mods:'<code>ai/agent.py</code> (Ollama · JSON-Schema-Grammatik · Tool-Routing) · <code>ai/tools.py</code> (Cross-App-Connectoren, read-only aggregiert) · <code>ai/mcp_gateway.py</code> (Bearer · Hochsicher-Gate)'},
+      {nr:'②',zone:'z-blue',titel:'Identität & SSO',mods:'Dizzi-ID (Master) · <code>google.py</code> (OAuth/PKCE) · Memory L1–L4 · Step-up-Stufen verifiziert/hochsicher'},
+      {nr:'③',zone:'z-teal',titel:'Querverbindungs-Relays',mods:'V2–V19 read-only · best-effort · bounded timeout — Daten bleiben bei der Quelle, der Core hört nur mit & protokolliert'},
+      {nr:'④',zone:'z-green',titel:'Betrieb & Schutz',mods:'Health-Watch über alle Ziele · <code>defense.py</code> (Loopback-Schonung, Rate-Limits) · Audit-Log'}
+    ],
+    money:[
+      {nr:'①',zone:'z-amber',titel:'Ledger — der Sorgfaltskern',mods:'<code>ledger.py</code> · int-Minor-Units · Summe=0-Invariante PRO Währung (Konstruktor erzwingt) · Decimal nur an den Rändern'},
+      {nr:'②',zone:'z-blue',titel:'Import',mods:'<code>importers/</code> · CSV / camt.053 / MT940 · Dedupe-Hash · Sammelkonto „Nicht zugeordnet“'},
+      {nr:'③',zone:'z-teal',titel:'Kategorisierung & Bereiche',mods:'<code>regeln.py</code> (lernend, setzt jetzt auch den Bereich) · Budgets/Umschläge · Bereich×Modul-Achse (<code>bereiche.py</code>)'},
+      {nr:'④',zone:'z-purple',titel:'Auswertung',mods:'cashflow / vermögen / EÜR · FX & Multi-Währung · Abo-Erkennung · <code>trading_steuer.py</code> (§20/§23, kalendarisch)'},
+      {nr:'⑤',zone:'z-green',titel:'Cross-App',mods:'V9 Beleg → Memory (sensibel) · V15/16/17 ↔ Admin (Beleg-Link · EÜR · Finanzspur)'}
+    ],
+    memory:[
+      {nr:'①',zone:'z-teal',titel:'Vault (kanonisch)',mods:'<code>vault.py</code> · Markdown-Dateien · <code>..</code>-pfad-sicher (<code>sanitize_segment</code>) · <code>yaml.safe</code> · BOM-Strip · <code>purge_user</code> (DSGVO)'},
+      {nr:'②',zone:'z-blue',titel:'Index',mods:'SQLite/FTS5 (Volltext) · <code>busy_timeout=5000</code> · idempotente Migrationen'},
+      {nr:'③',zone:'z-purple',titel:'RAG-L3',mods:'<code>rag.py</code> · sqlite-vec + Ollama <code>bge-m3</code> (1024-dim, swappbar) · fail-safe · Dim-Check · <code>user_id</code>-KNN-Prefilter'},
+      {nr:'④',zone:'z-green',titel:'Wissens-UI',mods:'Wikilinks/Backlinks/Graph · Bereiche · Rechtsklick-<code>DzMenu</code> · schwebender Vault-Chat · Templates'}
+    ],
+    news:[
+      {nr:'①',zone:'z-teal',titel:'Feed-Abruf',mods:'RSS/Atom/OPML · getrennte Timeouts je Quelle · Pro-Quelle-Gesundheit (Fehlerzähler, Erholung)'},
+      {nr:'②',zone:'z-blue',titel:'Volltext & Dedup',mods:'<code>extract.py</code> (Volltext statt nur Summary) · <code>cluster.py</code> (Cross-Source-Dedup, eine Story aus mehreren Feeds)'},
+      {nr:'③',zone:'z-purple',titel:'KI',mods:'<code>ki.py</code> · JSON-Schema-Grammatik als <code>format</code> · temperature 0 · fail-safe (Error-Key statt Halluzination)'},
+      {nr:'④',zone:'z-green',titel:'Watchlist',mods:'lebende Themen-Ordner (<code>watchlist.py</code>, lokaler Themen-Match) → fortlaufende Memory-Sync (V2)'}
+    ],
+    communication:[
+      {nr:'①',zone:'z-teal',titel:'Unified-Inbox',mods:'kanalübergreifend pro Kontakt · Smart-Contacts (eine Identität über IG/Telegram/WhatsApp) · Unified-Reply'},
+      {nr:'②',zone:'z-blue',titel:'Connectoren',mods:'<code>meta.py</code> (WhatsApp/IG, Graph, dormant bis Token) · <code>telegram.py</code> (Long-Polling, kein Webhook) · Webhook-Signatur fail-closed'},
+      {nr:'③',zone:'z-purple',titel:'KI-Triage (lokal)',mods:'Zusammenfassung aller Chats · Termin-Auto-Erkennung → Sammel-HITL → V5 Admin-Kalender'},
+      {nr:'④',zone:'z-coral',titel:'Outbound-Gate — Sorgfaltskern',mods:'Senden = HITL <b>verifiziert</b> (Dizzi-ID-Step-up) · fail-closed (dormante Kanäle werfen selbst nach Freigabe) · Tokens nur im Tresor'}
+    ],
+    creating:[
+      {nr:'①',zone:'z-blue',titel:'Engine-Steuerung',mods:'ComfyUI headless (<code>comfy</code>-Adapter, POST/prompt + WS) · kohya sd-scripts (LoRA) · EINE GPU-Job-Queue (seriell, kein OOM auf 16 GB)'},
+      {nr:'②',zone:'z-teal',titel:'Generierung',mods:'<code>bild.py</code>/<code>video.py</code>/<code>audio.py</code> (profilgesteuert, <code>katalog/</code>) — Flux/SDXL · Wan 2.2 · ACE-Step'},
+      {nr:'③',zone:'z-purple',titel:'Bearbeitung',mods:'Veredlung (inpaint/upscale/hires · SAM-Maske · ControlNet · IP-Adapter) · Symbiose (Schnitt↔Musik, Ducking)'},
+      {nr:'④',zone:'z-amber',titel:'DAM & Stil',mods:'<code>dam.py</code> (Asset + Modell + <b>Lizenz</b> + Rezept) · <code>stil.py</code>/<code>charaktere</code> (LoRA-Handschrift) · <code>direktor.py</code> (Kreativ-Direktor)'},
+      {nr:'⑤',zone:'z-coral',titel:'Schutz — Sorgfaltskern',mods:'<code>schutz.py</code> · §184b-Illegal-Sperre (Konstante, nicht abschaltbar)'}
+    ],
+    healthy:[
+      {nr:'①',zone:'z-teal',titel:'Messwerte',mods:'FHIR-nah · Trainings/Supplements/Verletzungen · Tagebuch/Records'},
+      {nr:'②',zone:'z-blue',titel:'Auswertung',mods:'<code>DzCharts</code> (Ringe/Gauge/Sparkline) · Composite-Scores & Korrelationen · großes Übersichts-Dashboard'},
+      {nr:'③',zone:'z-green',titel:'Wearables',mods:'BLE/GATT lokal (<code>bleak</code>, optional) · Ingest-Slot (Apple/HealthConnect-Brücke, Gesetz 5)'},
+      {nr:'④',zone:'z-coral',titel:'KI — Sorgfaltskern',mods:'<code>ki.py</code> · <b>lokal_only</b> (kein Cloud-Pfad) · <b>NIE Diagnose</b> (DISCLAIMER hängt IMMER an) · JSON-Schema · temp 0.1'}
+    ],
+    management:[
+      {nr:'①',zone:'z-blue',titel:'Bereich-Achse',mods:'je Bereich Kanäle / Social-Bots / Posts (<code>bereiche.py</code>, eigener art-Katalog) · Bot-Plattform-Slot'},
+      {nr:'②',zone:'z-teal',titel:'Redaktion (Gesamtplan)',mods:'Kalender / Composer / Queue / Auswertung (bereichs-übergreifend) · <code>DzCharts</code> · Creating-Empfang (REV-3)'},
+      {nr:'③',zone:'z-purple',titel:'Connectoren',mods:'Social-Bots & Plattformen (dormant bis Token) · Read-only-MCP exponiert nur Metadaten/Zähler'},
+      {nr:'④',zone:'z-coral',titel:'Veröffentlichen — Sorgfaltskern',mods:'HITL Stufe <b>verifiziert</b> (Außenwirkung, nie autonom) · Sensitivität hoch ⇒ <b>lokal_only</b>'}
+    ],
+    admin:[
+      {nr:'①',zone:'z-blue',titel:'Bereich-Typ-Modell',mods:'Entität <code>bereich</code> × Typ (<code>art</code>) schaltet die Module frei (docs/49) · <code>parent_id</code>-Hierarchie · Bereich-first-Navigation'},
+      {nr:'②',zone:'z-coral',titel:'Tresor — Sorgfaltskern',mods:'<code>tresor.py</code> · Fernet-at-rest · Key im OS-Secret-Store (NIE in der DB) · verschlüsselt ⇒ nicht FTS-indexiert · Lese-Step-up (403)'},
+      {nr:'③',zone:'z-teal',titel:'Module',mods:'Projekte (RRULE/Gantt) · Geschäft (Rechnungen/Kunden/EÜR/Mahnwesen/Abos) · Studium (ECTS/Prüfungen) · Fristen'},
+      {nr:'④',zone:'z-green',titel:'Aggregator & Cross-App',mods:'read-only über den Core (keine Doppelung) · V5 Kalender ↔ Comm · V15/16 ↔ Money · V7/19 ↔ Memory'}
+    ]
+  };
+  function renderDeep(host, d){
+    host.innerHTML='';
+    if(d.schichten && d.schichten.length){   // visueller Sub-Architektur-Block (Trading-Stil) aus Daten
+      var arch=document.createElement('div'); arch.className='tbarch';
+      var hd=document.createElement('div'); hd.className='tbhd';
+      hd.innerHTML='Sub-Architektur · '+d.schichten.length+' Schichten <span class="pill">Modul-Ebenen &amp; Datenflüsse</span>';
+      arch.appendChild(hd);
+      d.schichten.forEach(function(s,i){
+        var L=document.createElement('div'); L.className='tblayer '+(s.zone||'z-teal');
+        L.innerHTML='<span class="tbnum">'+(s.nr||(i+1))+'</span><div><b>'+s.titel+'</b><span class="tbmods">'+s.mods+'</span></div>';
+        arch.appendChild(L);
+        if(i<d.schichten.length-1){ var br=document.createElement('div'); br.className='tbbridge'; br.textContent='↓'; arch.appendChild(br); }
+      });
+      host.appendChild(arch);
+    }
+    var kern=document.createElement('div'); kern.className='deepkern'; kern.innerHTML='Sorgfaltskern: '+d.kern; host.appendChild(kern);
+    var ul=document.createElement('ul'); ul.className='deeplist';
+    d.punkte.forEach(function(t){ var li=document.createElement('li'); li.innerHTML=t; ul.appendChild(li); });
+    host.appendChild(ul);
+    if(d.audit){ var a=document.createElement('div'); a.className='deepaudit'+(d.warn?' warnaudit':''); a.innerHTML=d.audit; host.appendChild(a); }
+  }
+  function setLabel(sec, txt){ var l=modal.querySelector(sec+' .amlabel'); if(l) l.textContent=txt; }
+  function showModal(srcEl){
+    amLast=document.activeElement;
+    modal.hidden=false;
+    if(srcEl){   // „aus dem Knoten/der Kachel wachsen": Transform-Origin auf die Klickquelle
+      var sr=srcEl.getBoundingClientRect(), w=amDialog.offsetWidth, h=amDialog.offsetHeight;
+      var lx=(window.innerWidth-w)/2, ty=(window.innerHeight-h)/2;
+      var ox=Math.max(0,Math.min(w, sr.left+sr.width/2-lx)), oy=Math.max(0,Math.min(h, sr.top+sr.height/2-ty));
+      amDialog.style.transformOrigin=ox.toFixed(0)+'px '+oy.toFixed(0)+'px';
+    } else { amDialog.style.transformOrigin='50% 50%'; }
+    requestAnimationFrame(function(){ modal.classList.add('open'); });
+    document.body.style.overflow='hidden';
+    amDialog.scrollTop=0; amDialog.focus();
+  }
+  function openModal(id, srcEl){
+    var card=document.querySelector('.app[data-app="'+id+'"]'); if(!card||!modal) return;
+    amDialog.setAttribute('data-acc', accentOf(card));
+    modal.querySelector('#am-title').textContent = card.querySelector('h3').textContent;
+    modal.querySelector('.amport').textContent  = card.querySelector('.port').textContent;
+    modal.querySelector('.ambadges').innerHTML  = card.querySelector('.badges').innerHTML;
+    var ov=modal.querySelector('.amov-body'); ov.innerHTML='';
+    var p=document.createElement('p'); p.className='amone'; p.textContent=card.querySelector('.one').textContent; ov.appendChild(p);
+    var kann=card.querySelector('.kann'); if(kann){ var k=kann.cloneNode(true); k.classList.remove('lese-fn'); ov.appendChild(k); }
+    var det=modal.querySelector('.amdet-body'); det.innerHTML='';
+    var mods=card.querySelector('.det .mods'); if(mods) det.appendChild(mods.cloneNode(true));
+    var dl=card.querySelector('.det dl'); if(dl) det.appendChild(dl.cloneNode(true));
+    setLabel('.amdet','Im Detail · Module · Datenflüsse');
+    var arch=card.querySelector('.tbarch');
+    var deepSec=modal.querySelector('#am-deep'), deepBody=modal.querySelector('.amdeep-body');
+    setLabel('.amdeep','🔬 Tiefenanalyse · Sorgfaltskern (technisch)');
+    if(arch){ det.appendChild(arch.cloneNode(true)); deepSec.hidden=true; deepBody.innerHTML=''; }
+    else if(DEEP[id]){ deepSec.hidden=false; renderDeep(deepBody, Object.assign({}, DEEP[id], {schichten:SCHICHTEN[id]})); }
+    else { deepSec.hidden=true; deepBody.innerHTML=''; }
+    showModal(srcEl);
+  }
+  // ---- Topic-Fenster (Sicherheit): Übersicht → Einzelfaktoren → Konformität/Quellen (Web-Recherche) ----
+  var SECSOURCES = `<div class="deepkern">Das Sicherheitsmodell folgt anerkannten Branchen-Standards — Einordnung + Quellen:</div>
+<ul class="deeplist">
+<li><b>Local-First-Software</b> (Ink &amp; Switch / M. Kleppmann, Onward! 2019): Daten leben auf dem Gerät, Privacy &amp; User-Control by design — exakt das Leitprinzip dieses Systems.</li>
+<li><b>Localhost-API-Härtung (2026-Konsens):</b> „assume hostile network access" — Auth nicht optional, Host-Validierung keine Paranoia, Defense-in-Depth kein Overkill ⇒ erfüllt durch Local-Guard (Host-Allowlist + Origin) + Bearer-MCP-Gateway.</li>
+<li><b>OWASP CSRF-Prävention:</b> SameSite-Cookies + Origin-/Host-Prüfung als Defense-in-Depth — 1:1 umgesetzt (<code>SameSite=Lax</code> + <code>HttpOnly</code> + Host-Allowlist).</li>
+<li><b>DNS-Rebinding-Schutz:</b> den finalen Host/die IP validieren, nicht nur die URL — der Local-Guard prüft den Host-Header gegen die Allowlist.</li>
+</ul>
+<div class="deepaudit"><b>Quellen:</b> Ink &amp; Switch „Local-first software" · Kleppmann (Onward! 2019) · OWASP CSRF Prevention Cheat Sheet · MDN Web Security (CSRF) · „DNS Rebinding &amp; Localhost MCP" (Rafter).</div>`;
+  function accentOfTopic(card){
+    var a=card.getAttribute('data-acc'); if(a) return a;       // Architektur/KI/Vernetzung setzen ihn explizit
+    if(card.classList.contains('s-def')) return 'vio';
+    if(card.classList.contains('s-vault')) return 'amber';
+    if(card.classList.contains('s-dsgvo')) return 'green';
+    if(card.classList.contains('s-risk')) return 'coral';
+    return 'cy';
+  }
+  // generalisiert: Übersicht (.one/.kann) → Detail (.moddetail-Kinder, sonst Sicherheits-Trio) → Tiefe (.topicsrc, sonst SECSOURCES)
+  function openTopic(card, srcEl){
+    if(!card||!modal) return;
+    amDialog.setAttribute('data-acc', accentOfTopic(card));
+    var titleEl=card.querySelector('h3')||card.querySelector('.lbl')||card.querySelector('.k');
+    modal.querySelector('#am-title').textContent = card.getAttribute('data-title') || (titleEl?titleEl.textContent:'');
+    modal.querySelector('.amport').textContent = card.getAttribute('data-port') || '';
+    var eb=card.querySelector('.seyebrow');
+    var badge=card.getAttribute('data-badge') || (eb?eb.textContent.replace(/\s+/g,' ').trim():'');
+    modal.querySelector('.ambadges').innerHTML = badge ? '<span class="b">'+badge+'</span>' : '';
+    // Übersicht
+    var ov=modal.querySelector('.amov-body'); ov.innerHTML='';
+    var one=card.querySelector('.one'); if(one){ var p=document.createElement('p'); p.className='amone'; p.textContent=one.textContent; ov.appendChild(p); }
+    var kann=card.querySelector('.kann'); if(kann){ var k=kann.cloneNode(true); k.classList.remove('lese-fn'); ov.appendChild(k); }
+    // Detail — eigener .moddetail-Block je Kachel, sonst das Sicherheits-Trio
+    var det=modal.querySelector('.amdet-body'); det.innerHTML='';
+    var md=card.querySelector('.moddetail');
+    if(md){ [].forEach.call(md.children, function(n){ det.appendChild(n.cloneNode(true)); }); }
+    else { ['.secfac','.stufenleiter','.leiterhint'].forEach(function(sel){ var n=card.querySelector(sel); if(n) det.appendChild(n.cloneNode(true)); }); }
+    setLabel('.amdet', card.getAttribute('data-detlabel') || 'Im Detail · Einzelfaktoren · Parameter');
+    // Tiefe / Quellen — eigener .topicsrc, sonst Sicherheits-Standardquellen
+    var deepSec=modal.querySelector('#am-deep'), deepBody=modal.querySelector('.amdeep-body');
+    var src=card.querySelector('.topicsrc');
+    if(src){ deepSec.hidden=false; setLabel('.amdeep', card.getAttribute('data-deeplabel') || '📐 Standard-Konformität & Quellen'); deepBody.innerHTML=src.innerHTML; }
+    else if(card.classList.contains('scard')){ deepSec.hidden=false; setLabel('.amdeep','📐 Standard-Konformität & Quellen'); deepBody.innerHTML=SECSOURCES; }
+    else { deepSec.hidden=true; deepBody.innerHTML=''; }
+    showModal(srcEl);
+  }
+  // macht beliebige Übersicht-Kacheln zu Topic-Triggern (Klick/Enter/Space, Links bleiben Links)
+  function wireTopics(scope, sel){
+    var root=(typeof scope==='string')?document.querySelector(scope):scope; if(!root) return;
+    root.addEventListener('click', function(e){
+      if(e.target.closest('a')) return;
+      var c=e.target.closest(sel); if(c && root.contains(c)) openTopic(c, c);
+    });
+    [].forEach.call(root.querySelectorAll(sel), function(c){
+      c.setAttribute('tabindex','0'); c.setAttribute('role','button'); c.classList.add('topic-tile');
+      c.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openTopic(c, c); } });
+    });
+  }
+  function closeModal(){
+    if(!modal||modal.hidden) return;
+    modal.classList.remove('open');
+    document.body.style.overflow='';
+    setTimeout(function(){ modal.hidden=true; }, 280);
+    if(amLast&&amLast.focus){ try{ amLast.focus(); }catch(e){} }
+  }
+  if(modal){
+    modal.addEventListener('click', function(e){ if(e.target.closest('[data-close]')) closeModal(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key==='Escape'){ closeModal(); return; }
+      if(e.key==='Tab' && !modal.hidden){            // einfacher Fokus-Trap
+        var f=amDialog.querySelectorAll('button,[href],input,[tabindex]:not([tabindex="-1"])');
+        if(!f.length) return; var first=f[0], last=f[f.length-1];
+        if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+      }
+    });
+    var ag=document.getElementById('appgrid');   // App-Kacheln öffnen das Fenster
+    if(ag) ag.addEventListener('click', function(e){
+      if(e.target.closest('a')) return;
+      var card=e.target.closest('.app[data-app]'); if(card) openModal(card.getAttribute('data-app'), card);
+    });
+    var secgrid=document.querySelector('#sicherheit .secgrid');  // Sicherheits-Kacheln öffnen das Topic-Fenster
+    if(secgrid){
+      secgrid.addEventListener('click', function(e){ var c=e.target.closest('.scard'); if(c) openTopic(c, c); });
+      [].forEach.call(secgrid.querySelectorAll('.scard'), function(c){
+        c.setAttribute('tabindex','0'); c.setAttribute('role','button');
+        c.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openTopic(c, c); } });
+      });
+    }
+    // Überblick · Architektur · KI · Vernetzung — selbe Übersicht-Kachel→Topic-Fenster-Mechanik
+    wireTopics('#prinzipgrid', '.card');
+    wireTopics('#architektur .stack', '.layer');
+    wireTopics('#ki .two', '.ai-col, .ext-col');
+    wireTopics('#vnetgrid', '.card');
+  }
+  var openCard = openModal;   // Konstellations-Knoten rufen weiter openCard(id) → öffnet das Modal
+
+  NODES.forEach(function(n){
+    var el=nodeEls[n.id];
+    el.addEventListener('mouseenter',function(){ applyFocus(n.id); });
+    el.addEventListener('mouseleave', clearFocus);
+    el.addEventListener('focus',function(){ applyFocus(n.id); });
+    el.addEventListener('blur', clearFocus);
+    function go(){ selected=n.id; applyFocus(n.id); openCard(n.id, el); }
+    el.addEventListener('click', go);
+    el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+  });
+
+  // ---- Mini-„Was kann die App"-Tooltip am Knoten (Inhalt aus der App-Karte, DRY) + App-/Sektions-Icons ----
+  var tip=document.createElement('div'); tip.className='cnodetip'; tip.setAttribute('aria-hidden','true');
+  if(stage) stage.appendChild(tip);
+  function appKann(id){ var card=document.querySelector('.app[data-app="'+id+'"]'); if(!card) return '';
+    var one=card.querySelector('.one'); var lis=[].slice.call(card.querySelectorAll('.kann li')).slice(0,2);
+    return (one?'<b>'+one.textContent+'</b>':'')+(lis.length?'<ul>'+lis.map(function(li){return '<li>'+li.innerHTML+'</li>';}).join('')+'</ul>':''); }
+  function showTip(n){ var html=appKann(n.id); if(!html) return;
+    tip.innerHTML='<div class="ct-h"><span>'+n.ic+'</span>'+n.nm+' <span class="ct-pt">'+n.pt+'</span></div>'+html;
+    tip.style.left=(n.x/1000*100)+'%'; tip.style.top=(n.y/780*100)+'%';
+    tip.classList.toggle('below', n.y<360); tip.classList.add('show'); }
+  function hideTip(){ tip.classList.remove('show'); }
+  NODES.forEach(function(n){ var el=nodeEls[n.id];
+    el.addEventListener('mouseenter',function(){ showTip(n); }); el.addEventListener('mouseleave', hideTip);
+    el.addEventListener('focus',function(){ showTip(n); }); el.addEventListener('blur', hideTip);
+    var h3=document.querySelector('.app[data-app="'+n.id+'"] .ah h3');
+    if(h3 && !h3.querySelector('.ah-ic')) h3.insertAdjacentHTML('afterbegin','<span class="ah-ic" aria-hidden="true">'+n.ic+'</span>'); });
+  Object.keys(SECICON).forEach(function(sid){ var sh=document.querySelector('#'+sid+' .sh');
+    if(sh && !sh.querySelector('.sec-ic')){ sh.insertAdjacentHTML('afterbegin','<span class="sec-ic" aria-hidden="true">'+SECICON[sid]+'</span>');
+      if(SECACC[sid]) sh.style.setProperty('--sacc','var(--'+SECACC[sid]+')'); } });
+
+  // ---- optionaler Live-Health-Watch (Default offline-fähig, bricht nie) ----
+  (function(){
+    var el=document.getElementById('livehw'); if(!el) return;
+    var ctrl=('AbortController' in window) ? new AbortController() : null;
+    var to=ctrl ? setTimeout(function(){ try{ctrl.abort();}catch(_){} },1600) : null;
+    try{
+      fetch('http://127.0.0.1:8200/api/health/watch',{signal:ctrl?ctrl.signal:undefined, mode:'cors', cache:'no-store'})
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+        .then(function(j){
+          if(to) clearTimeout(to);
+          var vals=[];
+          var src=j&&(j.ziele||j.targets||j.watch||j.checks||j);
+          if(Array.isArray(src)) vals=src.map(function(x){ return x&&(x.ok!==undefined?x.ok:x.status); });
+          else if(src&&typeof src==='object') vals=Object.keys(src).map(function(k){ return src[k]; });
+          var tot=vals.length, ok=vals.filter(function(v){ return v===true||v==='ok'||v==='up'||v===200; }).length;
+          el.textContent='● Health-Watch '+(tot ? (ok+'/'+tot+' live') : 'live');
+          el.className='livehw ok';
+        })
+        .catch(function(){
+          if(to) clearTimeout(to);
+          el.textContent='○ Health-Watch · offline (Default-Sicht)';
+          el.className='livehw off';
+        });
+    }catch(_){ el.textContent='○ Health-Watch · offline (Default-Sicht)'; el.className='livehw off'; }
+  })();
+})();
+</script>
+
+<script>
+/* ---- ★ Globale Interaktiv-Effekte: Cursor-Aura · Klick-Welle · Scroll-Reveal ---- */
+(function(){
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Cursor-Aura — folgt der Maus, leicht nachziehend, blendet bei Stillstand aus
+  var glow=document.createElement('div'); glow.className='cursorglow'; glow.setAttribute('aria-hidden','true');
+  document.body.appendChild(glow);
+  var tx=innerWidth/2, ty=innerHeight/2, gx=tx, gy=ty, graf=0, idle=0;
+  function gloop(){ gx+=(tx-gx)*0.18; gy+=(ty-gy)*0.18; glow.style.transform='translate('+gx.toFixed(1)+'px,'+gy.toFixed(1)+'px)';
+    graf=(Math.abs(tx-gx)>0.3||Math.abs(ty-gy)>0.3)?requestAnimationFrame(gloop):0; }
+  window.addEventListener('pointermove', function(e){ if(e.pointerType==='touch')return; tx=e.clientX; ty=e.clientY; glow.style.opacity='1';
+    clearTimeout(idle); idle=setTimeout(function(){ glow.style.opacity='0'; }, 1100); if(!graf)graf=requestAnimationFrame(gloop); }, {passive:true});
+
+  // Klick-Welle — verstärkter Ring AN der Klick-Position (left/top, damit die scale-Animation nicht die Position frisst)
+  window.addEventListener('pointerdown', function(e){ if(e.pointerType==='touch')return;
+    var w=document.createElement('div'); w.className='clickwave'; w.style.left=e.clientX+'px'; w.style.top=e.clientY+'px';
+    document.body.appendChild(w); setTimeout(function(){ w.remove(); }, 740); }, {passive:true});
+
+  // Scroll-Hintergrund — die Farb-Blobs parallaxen mit dem Scrollen (translate-Property ⇒ komponiert
+  // mit ihrer Float-Animation), und eine Aurora schwillt zur Scroll-Mitte an (--sy wandert mit, --p-artig).
+  var aura2=document.createElement('div'); aura2.className='scrollaura'; aura2.setAttribute('aria-hidden','true'); document.body.appendChild(aura2);
+  var blobs=[].slice.call(document.querySelectorAll('.blob')), pf=[0.06,-0.05,0.085], sraf=0;
+  function scrollBg(){ sraf=0; var h=document.documentElement, max=h.scrollHeight-h.clientHeight, y=h.scrollTop, r=max>0?y/max:0;
+    blobs.forEach(function(b,i){ b.style.translate='0 '+(y*pf[i%pf.length]).toFixed(1)+'px'; });
+    aura2.style.setProperty('--sy',(12+r*76).toFixed(1)+'%');
+    aura2.style.opacity=(0.22+Math.sin(r*Math.PI)*0.78).toFixed(2); }
+  window.addEventListener('scroll', function(){ if(!sraf)sraf=requestAnimationFrame(scrollBg); }, {passive:true}); scrollBg();
+
+  // Scroll-Reveal — Karten/Köpfe gleiten beim Reinscrollen ein (gestaffelt je Container);
+  // nach dem Einblenden entfernt sich die Klasse wieder ⇒ Hover/Lift bleiben unberührt.
+  var targets=[].slice.call(document.querySelectorAll('section .sh, section .grid > *'))
+    .filter(function(el){ return !el.closest('#appmodal'); });
+  targets.forEach(function(el){ el.classList.add('reveal');
+    var i=el.parentNode?[].indexOf.call(el.parentNode.children,el):0; el.style.transitionDelay=((i%8)*0.05).toFixed(2)+'s'; });
+  var ro=new IntersectionObserver(function(ents){ ents.forEach(function(en){ if(en.isIntersecting){
+    var el=en.target; el.classList.add('in'); ro.unobserve(el);
+    setTimeout(function(){ el.classList.remove('reveal','in'); el.style.transitionDelay=''; }, 760); } }); },
+    {rootMargin:'0px 0px -8% 0px', threshold:0.05});
+  targets.forEach(function(el){ ro.observe(el); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+/* ============================================================================
+   Dizz Mini-Chart-Kit — Styles (app-neutral, tokenbasiert)
+   KANONISCH (the world of dizzi/shared/charts.css) — Master-Quelle. Alle Farben
+   über var(--…), damit Charts/Karten dem aktiven Farbschema folgen (K2.2). Begleitet
+   charts.js. Enthält: Sparkline · Aktivitätsringe · Linienchart · Metrik-Karte ·
+   Disclaimer-Bar + lokal_only-Badge (KI-UI) · Aktivitäts-Kacheln · Balken · Donut ·
+   Heatmap (die letzten drei aus dem Management-App-Chat eingeschmolzen, 20.06.).
+   ============================================================================ */
+
+/* ── Sparkline ─────────────────────────────────────────────────────────────*/
+.dz-spark { display: block; overflow: visible; }
+.dz-spark-line { fill: none; stroke: var(--cy); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 2px rgba(var(--cy-rgb), .5)); }
+.dz-spark-dot { fill: var(--mg); stroke: none; }
+.dz-spark-band { fill: rgba(73, 212, 154, .10); }
+/* Magenta-Variante (opts.cls:'mg') — z. B. Warn-KPIs (offene/überfällige Posten) */
+.dz-spark.mg .dz-spark-line { stroke: var(--mg); filter: drop-shadow(0 0 2px rgba(var(--mg-rgb), .5)); }
+.dz-spark.mg .dz-spark-dot { fill: var(--cy); }
+
+/* ── Segmentleiste (gestapelte Anteils-/Aging-Pille) — DzCharts.segments() ──*/
+.dz-seg { display: flex; height: 11px; border-radius: 999px; overflow: hidden;
+  background: var(--bg-deep, rgba(0, 0, 0, .25)); border: 1px solid var(--line); }
+.dz-seg-teil { display: block; min-width: 2px; }
+.dz-seg-leer { opacity: .5; }
+
+/* ── Metrik-Karte (P1a) ────────────────────────────────────────────────────*/
+.dz-metric-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(152px, 1fr)); gap: 9px; margin-top: 10px; }
+.dz-metric { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 10px 11px; background: var(--bg-deep, rgba(0, 0, 0, .16)); cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.dz-metric:hover { border-color: rgba(var(--cy-rgb), .4); }
+.dz-metric.warn { border-color: rgba(var(--mg-rgb), .55); box-shadow: 0 0 0 1px rgba(var(--mg-rgb), .16); }
+.dz-metric-top { display: flex; align-items: baseline; gap: 6px; justify-content: space-between; }
+.dz-metric-label { font-size: 11px; color: var(--mut); text-transform: uppercase; letter-spacing: .05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dz-metric-valrow { display: flex; align-items: baseline; gap: 4px; margin-top: 4px; }
+.dz-metric-val { font-family: "Orbitron", sans-serif; font-size: 22px; color: var(--fg); line-height: 1; }
+.dz-metric-unit { font-size: 11px; color: var(--mut); }
+.dz-metric-foot { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 10.5px; color: var(--mut); flex-wrap: wrap; }
+.dz-metric-ref { font-size: 10px; color: var(--mut); }
+.dz-metric .dz-spark { margin-top: 7px; width: 100%; height: 30px; }
+.dz-metric-chart { margin-top: 9px; }
+.dz-arrow { font-family: "Orbitron", sans-serif; font-weight: 700; }
+.dz-arrow.up { color: var(--mg); } .dz-arrow.down { color: var(--cy); } .dz-arrow.flat { color: var(--mut); }
+.dz-badge-out { font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; border: 1px solid rgba(var(--mg-rgb), .5); color: var(--mg); border-radius: 999px; padding: 1px 6px; }
+.dz-badge-in { font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; border: 1px solid rgba(73, 212, 154, .45); color: var(--ok, #49d49a); border-radius: 999px; padding: 1px 6px; }
+
+/* ── Aktivitätsringe (P1d) ─────────────────────────────────────────────────*/
+.dz-rings { display: block; }
+.dz-ring-bg { opacity: .15; }
+.dz-ring-bg.dz-ring-1 { stroke: var(--cy); } .dz-ring-bg.dz-ring-2 { stroke: var(--mg); } .dz-ring-bg.dz-ring-3 { stroke: var(--ok, #49d49a); }
+.dz-ring-prog { transition: stroke-dashoffset .6s ease; }
+.dz-ring-prog.dz-ring-1 { stroke: var(--cy); filter: drop-shadow(0 0 4px rgba(var(--cy-rgb), .6)); }
+.dz-ring-prog.dz-ring-2 { stroke: var(--mg); filter: drop-shadow(0 0 4px rgba(var(--mg-rgb), .6)); }
+.dz-ring-prog.dz-ring-3 { stroke: var(--ok, #49d49a); filter: drop-shadow(0 0 4px rgba(73, 212, 154, .55)); }
+.dz-ring-wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.dz-ring-legend { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+.dz-ring-legend .lg { display: flex; align-items: center; gap: 8px; }
+.dz-ring-legend .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dz-ring-legend .dot.r1 { background: var(--cy); } .dz-ring-legend .dot.r2 { background: var(--mg); } .dz-ring-legend .dot.r3 { background: var(--ok, #49d49a); }
+.dz-ring-legend b { font-family: "Orbitron", sans-serif; }
+.dz-ring-legend .done { color: var(--ok, #49d49a); }
+
+/* ── Aktivitäts-Kacheln ────────────────────────────────────────────────────*/
+.dz-akt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; margin-top: 12px; }
+.dz-akt-tile { border: 1px solid var(--line); border-radius: 10px; padding: 7px 9px; background: var(--bg-deep, rgba(0, 0, 0, .16)); }
+.dz-akt-tile .v { font-family: "Orbitron", sans-serif; font-size: 16px; color: var(--cy); }
+.dz-akt-tile .u { font-size: 10px; color: var(--mut); }
+.dz-akt-tile .l { font-size: 10px; color: var(--mut); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+/* ── Einzweck-Linienchart (P1b) ────────────────────────────────────────────*/
+.dz-chart { position: relative; width: 100%; }
+.dz-chart-svg { display: block; overflow: visible; }
+.dz-chart-line { fill: none; stroke: var(--cy); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 3px rgba(var(--cy-rgb), .45)); }
+.dz-chart-dot { fill: var(--cy); } .dz-chart-cursor { fill: var(--mg); }
+.dz-chart-band { fill: rgba(73, 212, 154, .10); }
+.dz-chart-cross { stroke: var(--mut); stroke-width: 1; stroke-dasharray: 3 3; opacity: .6; }
+.dz-chart-tick { fill: var(--mut); font-size: 9px; font-family: "Chakra Petch", sans-serif; }
+.dz-chart-leer { color: var(--mut); font-size: 12px; padding: 14px 0; text-align: center; }
+.dz-chart-tip { position: absolute; transform: translateX(-50%); background: var(--panel-solid, var(--panel)); border: 1px solid var(--line); border-radius: 7px; padding: 3px 7px; font-size: 11.5px; color: var(--fg); pointer-events: none; white-space: nowrap; z-index: 5; box-shadow: var(--sh); }
+.dz-chart-tipd { color: var(--mut); margin-left: 6px; }
+
+/* ── KI-UI: Disclaimer-Bar (immer sichtbar) + lokal_only-Badge (P1c) ───────*/
+.dz-disclaimer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 11.5px; color: var(--mut); border: 1px solid rgba(var(--mg-rgb), .35); border-radius: 8px; padding: 7px 9px; background: rgba(var(--mg-rgb), .06); }
+.dz-disclaimer b { color: var(--mg); }
+.dz-lokal { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; letter-spacing: .04em; text-transform: uppercase; border: 1px solid rgba(73, 212, 154, .5); color: var(--ok, #49d49a); border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.dz-lokal::before { content: "🔒"; font-size: 9px; }
+.dz-ki-hinweis { border-left: 2px solid var(--cy); padding: 6px 0 6px 10px; margin: 7px 0; font-size: 13px; background: linear-gradient(90deg, rgba(var(--cy-rgb), .05), transparent); }
+
+/* ── Streudiagramm / Korrelation (P2) ──────────────────────────────────────*/
+.dz-axis { stroke: var(--line); stroke-width: 1; }
+.dz-axis-lbl { fill: var(--mut); font-size: 9px; font-family: "Chakra Petch", sans-serif; }
+.dz-scatter-dot { fill: var(--cy); opacity: .8; transition: fill .1s; }
+.dz-scatter-dot:hover { fill: var(--mg); opacity: 1; }
+.dz-korr-r { font-family: "Orbitron", sans-serif; font-size: 18px; }
+.dz-korr-r.pos { color: var(--mg); } .dz-korr-r.neg { color: var(--cy); } .dz-korr-r.zero { color: var(--mut); }
+
+/* ── Unified Timeline (P2) ─────────────────────────────────────────────────*/
+.dz-timeline { position: relative; margin-top: 10px; }
+.dz-timeline::before { content: ""; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 1px; background: var(--line); }
+.dz-tl-ev { display: flex; gap: 11px; padding: 6px 0 8px; position: relative; }
+.dz-tl-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; margin-top: 3px; z-index: 1; box-shadow: 0 0 0 2px var(--panel), 0 0 0 3px var(--line); }
+.dz-tl-dot.cy { background: var(--cy); box-shadow: 0 0 0 2px var(--panel), 0 0 6px rgba(var(--cy-rgb), .6); }
+.dz-tl-dot.mg { background: var(--mg); box-shadow: 0 0 0 2px var(--panel), 0 0 6px rgba(var(--mg-rgb), .6); }
+.dz-tl-dot.ok { background: var(--ok, #49d49a); box-shadow: 0 0 0 2px var(--panel), 0 0 6px rgba(73, 212, 154, .55); }
+.dz-tl-dot.warn { background: var(--mg); box-shadow: 0 0 0 2px var(--panel), 0 0 7px rgba(var(--mg-rgb), .75); }
+.dz-tl-body { flex: 1; min-width: 0; }
+.dz-tl-titel { font-weight: 600; font-size: 13px; }
+.dz-tl-titel .dom { font-size: 9.5px; color: var(--mut); text-transform: uppercase; letter-spacing: .05em; margin-left: 6px; }
+.dz-tl-meta { font-size: 11px; color: var(--mut); margin-top: 1px; display: flex; gap: 8px; flex-wrap: wrap; }
+.dz-tl-datum { font-family: "Chakra Petch", sans-serif; }
+
+/* ── Composite-Score-Gauge + Score-Karten (P3) ─────────────────────────────*/
+.dz-gauge { display: block; }
+.dz-gauge-bg { stroke: rgba(var(--cy-rgb), .14); }
+.dz-gauge-fg { stroke: var(--cy); filter: drop-shadow(0 0 5px rgba(var(--cy-rgb), .55)); transition: d .5s; }
+.dz-gauge-fg.gut { stroke: var(--ok, #49d49a); filter: drop-shadow(0 0 5px rgba(73, 212, 154, .55)); }
+.dz-gauge-fg.mittel { stroke: var(--cy); }
+.dz-gauge-fg.schwach { stroke: var(--mg); filter: drop-shadow(0 0 5px rgba(var(--mg-rgb), .55)); }
+.dz-gauge-val { fill: var(--fg); font-family: "Orbitron", sans-serif; font-size: 27px; }
+.dz-gauge-sub { fill: var(--mut); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+.dz-score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 10px; }
+.dz-score-card { border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; background: var(--bg-deep, rgba(0, 0, 0, .16)); }
+.dz-score-head { display: flex; align-items: center; gap: 12px; }
+.dz-score-titel { font-family: "Orbitron", sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--cy); }
+.dz-score-stufe { font-size: 12px; color: var(--mut); margin-top: 2px; }
+.dz-konf { font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; color: var(--mut); }
+.dz-konf.hoch { border-color: rgba(73, 212, 154, .45); color: var(--ok, #49d49a); }
+.dz-konf.niedrig { border-color: rgba(var(--mg-rgb), .45); color: var(--mg); }
+.dz-komp { margin-top: 9px; display: flex; flex-direction: column; gap: 6px; }
+.dz-komp-row { display: grid; grid-template-columns: 92px 1fr 42px; align-items: center; gap: 8px; font-size: 11.5px; }
+.dz-komp-bar { height: 6px; border-radius: 999px; background: rgba(var(--cy-rgb), .14); overflow: hidden; }
+.dz-komp-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--cy), var(--mg)); }
+.dz-komp-val { text-align: right; color: var(--mut); font-family: "Chakra Petch", sans-serif; }
+.dz-komp-eff { text-align: right; font-family: "Orbitron", sans-serif; }
+.dz-komp-eff.plus { color: var(--mg); } .dz-komp-eff.minus { color: var(--ok, #49d49a); }
+.dz-bioalter { font-family: "Orbitron", sans-serif; font-size: 30px; color: var(--fg); }
+.dz-bioalter .d { font-size: 13px; margin-left: 6px; }
+.dz-bioalter .d.juenger { color: var(--ok, #49d49a); } .dz-bioalter .d.aelter { color: var(--mg); }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ERWEITERUNG · Dizz-Management-App-Chat (P2) · Promotion-Kandidat (additiv).
+   FÜR WORLD-CHAT: mit der health-Variante zur EINEN zentralen charts.css mergen.
+   Balken (Posts je Plattform) · Donut (Status-Verteilung) · Heatmap (Posting-Zeiten).
+   ════════════════════════════════════════════════════════════════════════════ */
+/* ── Balken ────────────────────────────────────────────────────────────────*/
+.dz-bars { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.dz-bar-row { display: grid; grid-template-columns: 88px 1fr 36px; align-items: center; gap: 8px; font-size: 12px; }
+.dz-bar-label { color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dz-bar-track { height: 12px; border-radius: 6px; background: var(--bg-deep, rgba(0,0,0,.22)); overflow: hidden; }
+.dz-bar-fill { display: block; height: 100%; border-radius: 6px; min-width: 2px; background: linear-gradient(90deg, var(--cy), var(--mg)); box-shadow: 0 0 8px rgba(var(--cy-rgb), .4); transition: width .5s ease; }
+.dz-bar-fill.mg { background: var(--mg); } .dz-bar-fill.ok { background: var(--ok, #49d49a); } .dz-bar-fill.mut { background: var(--mut); }
+.dz-bar-val { text-align: right; font-family: "Orbitron", sans-serif; font-size: 12px; color: var(--fg); }
+/* ── Donut ─────────────────────────────────────────────────────────────────*/
+.dz-donut { display: block; }
+.dz-donut-bg { stroke: var(--line); }
+.dz-donut-total { fill: var(--fg); font-family: "Orbitron", sans-serif; font-size: 20px; }
+.dz-donut-seg { transition: stroke-dashoffset .5s ease; }
+.dz-seg-1 { stroke: var(--cy); } .dz-seg-2 { stroke: var(--mg); } .dz-seg-3 { stroke: var(--ok, #49d49a); }
+.dz-seg-4 { stroke: var(--amber, #e0a106); } .dz-seg-5 { stroke: var(--mut); }
+.dz-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 8px; font-size: 11.5px; }
+.dz-legend .lg { display: flex; align-items: center; gap: 5px; color: var(--mut); }
+.dz-legend .sw { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.dz-legend .sw.dz-seg-1 { background: var(--cy); } .dz-legend .sw.dz-seg-2 { background: var(--mg); }
+.dz-legend .sw.dz-seg-3 { background: var(--ok, #49d49a); } .dz-legend .sw.dz-seg-4 { background: var(--amber, #e0a106); }
+.dz-legend .sw.dz-seg-5 { background: var(--mut); }
+/* ── Heatmap (Wochentag × Stunde) ──────────────────────────────────────────*/
+.dz-heat { overflow-x: auto; margin-top: 6px; }
+.dz-heat-grid { display: grid; gap: 2px; min-width: 360px; }
+.dz-heat-h { font-size: 8.5px; color: var(--mut); text-align: center; line-height: 1.4; }
+.dz-heat-wd { font-size: 10px; color: var(--mut); padding-right: 6px; display: flex; align-items: center; }
+.dz-heat-cell { --a: 0; aspect-ratio: 1; min-height: 13px; border-radius: 2px; background: rgba(var(--cy-rgb), calc(var(--a) * .85 + .05)); outline: 1px solid rgba(var(--cy-rgb), calc(var(--a) * .4)); }
+.dz-heat-cell:hover { outline: 1px solid var(--mg); }

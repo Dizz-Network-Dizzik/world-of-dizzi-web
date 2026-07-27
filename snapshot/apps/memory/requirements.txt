@@ -1,0 +1,22 @@
+# Dizz Memory [ME] — Laufzeit-Abhängigkeiten (App-Ebene).
+# Im Netzwerk läuft alles in der geteilten venv C:\Dizzik\data\tools\venv;
+# diese Liste macht die App einzeln verkaufbar/aufsetzbar (Föderation). appkit ist
+# vendort (im Repo unter appkit/), daher hier nicht gelistet — nur dessen + die
+# Domänen-Abhängigkeiten.
+
+fastapi              # Core-Service (HTTP-API, App-Vertrag)
+uvicorn[standard]    # ASGI-Server (Start via --factory)
+pydantic             # Schemata/Validierung (Vertrag + Domäne)
+httpx                # Ollama-Calls (KI-Antworten + RAG-Embeddings), Health
+cryptography         # Token-Tresor (appkit/vault.py, Fernet)
+sqlite-vec           # Vektor-Suche L3 (RAG/Bedeutungssuche, archivapp/rag.py)
+PyYAML               # Markdown-Frontmatter (Vault-Format + Import)
+pypdf                # PDF-Textschicht für Ordner-Import/RAG (appkit.extract, KA-M7 C1)
+fastmcp              # read-only MCP-Server (mcp_server.py)
+
+# NICHT benötigt: onnxruntime / sentence-transformers — die Embeddings laufen
+# bewusst über das LOKALE Ollama-Modell bge-m3 (1024-dim), exakt der Stack des
+# Core-L3 (the world of dizzi/core/app/ai/rag.py). Reuse statt Duplikat (0 €).
+# Voraussetzung zur Laufzeit: ein lokaler Ollama-Dienst mit `bge-m3` (RAG) und
+# einem Chat-Modell (Default qwen3:4b); fehlt Ollama, degradiert die App sauber
+# (Suche/KI fallen auf FTS5 zurück, kein Crash).

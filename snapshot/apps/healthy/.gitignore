@@ -1,0 +1,27 @@
+# Dizz Healthy [HE] — VCS-Ausschlüsse
+# Laufzeitdaten liegen außerhalb des Repos (C:\Dizzik\data) — nie eingecheckt.
+# HOCHSENSIBEL: Gesundheitsdaten/-DB gehören NIE in die Versionsverwaltung.
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Secrets / Laufzeit (gehören NIE ins Repo)
+.env
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+vault.dat
+vault.key
+rp_session_secret.txt
+
+# OS / Editor
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/

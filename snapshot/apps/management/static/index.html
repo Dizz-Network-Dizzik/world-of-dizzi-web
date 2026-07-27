@@ -1,0 +1,1455 @@
+<!doctype html>
+<html lang="de" data-design="metall" data-farbe="cyan-magenta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dizz Management — Social Media</title>
+<!-- ============================================================================
+   Dizz Management [MG] — Social-Media-Verwaltung. Aus templates/refapp (K3).
+   P1 UI/UX (docs/27 §8, Hybrid-Layout): großer „Redaktion"-Panel mit Ansicht-
+   Umschalter (Kalender · Queue · Composer) + Verknüpfungs-Chips (📥 Creating-Lineage
+   · ⇲ Memory) über das geteilte Netzwerk-Kit (DzNetKit, ui-kit/netkit.*). Darunter
+   kompakte Verwaltungs-Panels (Kanäle · Social-Bots · Creating-Eingang · KI-Planung).
+   Mini-Dizzi an /api/ki/frage. Einstellungs-/Konto-Fenster = STANDARD-KIT (docs/19 §2b).
+   ============================================================================ -->
+<link rel="stylesheet" href="/ui-kit/tokens.css">
+<link rel="stylesheet" href="/ui-kit/controls.css">
+<!-- UX-5a · AI-Act Art. 50(1): KI-Offenlegungs-Chip (DzUx.agentchip{ki:true}) an der Chat-Fläche (docs/70). -->
+<link rel="stylesheet" href="/ui-kit/ux-kit.css">
+<script defer src="/ui-kit/ux-kit.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var slot = document.getElementById("dizziKiChip");
+    if (slot && window.DzUx && DzUx.agentchip) slot.innerHTML = DzUx.agentchip({ ki: true });
+  });
+</script>
+<!-- Klick-Wellen-Effekt (DzWave, netzweit · token-/design-abhängig) -->
+<link rel="stylesheet" href="/ui-kit/clickwave.css">
+<script defer src="/ui-kit/clickwave.js"></script>
+<!-- DzHalter — Float-Andock-Schale + Frei/Fix-Schalter (Spin-Physik v4.4, netzweit · tokenbasiert); VOR floats.js laden -->
+<link rel="stylesheet" href="/ui-kit/float_dock.css">
+<script defer src="/ui-kit/float_dock.js"></script>
+<link rel="stylesheet" href="/ui-kit/netkit.css">
+<link rel="stylesheet" href="/ui-kit/charts.css">
+<link rel="stylesheet" href="/ui-kit/background.css">
+<!-- Geteilte Bereichs-Filter-Leiste (DzBereichBar, netzweite Single-Source, W4) -->
+<link rel="stylesheet" href="/ui-kit/bereichbar.css">
+<script defer src="/ui-kit/collapse.js"></script>
+<script defer src="/ui-kit/background.js"></script>
+<script defer src="/ui-kit/netkit.js"></script>
+<script defer src="/ui-kit/charts.js"></script>
+<script defer src="/ui-kit/bereichbar.js"></script>
+<script>
+  try { var d=localStorage.getItem('mg_design'), f=localStorage.getItem('mg_farbe');
+    if(d)document.documentElement.setAttribute('data-design',d);
+    if(f)document.documentElement.setAttribute('data-farbe',f); } catch(e){}
+</script>
+<style>
+  *{box-sizing:border-box} [hidden]{display:none!important}
+  html{overflow-x:clip} html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:"Chakra Petch","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.45;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  h1,h2{font-family:"Orbitron","Chakra Petch",sans-serif;margin:0}
+  a{color:var(--cy)}
+  .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  /* Kopf — kanonische Kopf-Norm aus dem Kit (.dz-appkopf, docs/39 §1b + Glow docs/41). Pille bleibt rechts. */
+  header.dz-appkopf{flex:0 0 auto;padding:22px 16px 10px}
+  /* B-Schritt (docs/39): zentriert statt vollgepfropft — Kopf + Arbeitsbereich auf max-width zentriert. */
+  header.dz-appkopf, main{width:100%;max-width:1500px;margin-left:auto;margin-right:auto}
+  .pill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--mut)}
+  #authpill{flex:none;cursor:pointer;white-space:nowrap}
+  .pill.on{color:var(--cy);border-color:rgba(var(--cy-rgb),.5);background:rgba(var(--cy-rgb),.08)}
+  main{flex:1 1 auto;overflow:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;align-content:start}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-win);box-shadow:var(--sh);border-top:1px solid var(--edge-t);position:relative;overflow:hidden;align-self:start}
+  /* .card::before (linker Akzentstreifen) jetzt kanonisch in /ui-kit/controls.css (V2, De-Fork 24.06.) */
+  /* Greif-/Schleuder-Glow (das ganze Panel glüht beim Greifen, docs/06 §6.3) jetzt
+     kanonisch in /ui-kit/controls.css (.card.spinlift/.dz-panel.spinlift, De-Fork). */
+  .card .dz-panel-koerper{padding:11px 14px 14px}
+  .card .dz-panel-koerper p{margin:0 0 10px;color:var(--mut)}
+  /* Hybrid-Arbeitsfläche (docs/27 §8): der große Redaktion-Panel spannt die volle Breite. */
+  .redaktion{grid-column:1/-1}
+  /* Domänen-UI-Helfer */
+  .mut{color:var(--mut)} .small{font-size:11.5px} .spacer{flex:1}
+  .grow{flex:1 1 auto;min-width:0}
+  .form{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px}
+  .form input,.form select,.form textarea,.comp-edit input,.comp-edit textarea{font-family:inherit;font-size:13px;background:var(--bg-deep,rgba(0,0,0,.22));color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .form textarea,.comp-edit textarea{width:100%;min-height:46px;resize:vertical}
+  .liste{display:flex;flex-direction:column;gap:6px}
+  .zeile{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:13px;background:var(--bg-deep,rgba(0,0,0,.14))}
+  .zeile .t{font-weight:600} .zeile .meta,.q-card .meta{font-size:11px;color:var(--mut)}
+  .badge{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+  .badge.ok{color:var(--ok);border-color:var(--ok)} .badge.cy{color:var(--cy);border-color:rgba(var(--cy-rgb),.5)}
+  .badge.mg{color:var(--mg);border-color:rgba(var(--mg-rgb),.5)} .badge.warn{color:var(--amber,#e0a106);border-color:var(--amber,#e0a106)}
+  .ic{width:1.4em;height:1.4em;display:inline-block;vertical-align:-0.25em;flex:none;color:var(--cy);fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px currentColor)}
+  /* Netkit-Icons (Chip/Umschalter/Palette) stroke-basiert über currentColor. */
+  .lc-ic,.vs-ic,.ci-ic,.dz-cmdk-top .lc-ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .chips{display:flex;gap:5px;flex-wrap:wrap}
+  /* ===== Redaktion: Leiste ===== */
+  .rk-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .rk-bar .hint{font-size:11px;color:var(--mut)}
+  /* ===== Kalender ===== */
+  .cal-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .cal-bar b{min-width:140px;text-align:center}
+  .cal-rail{display:flex;align-items:center;gap:6px;flex-wrap:wrap;border:1px dashed var(--line);border-radius:9px;padding:6px 8px;margin-bottom:8px;min-height:34px}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal-wd{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);text-align:center;padding:2px 0}
+  .cal-tag{min-height:88px;border:1px solid var(--line);border-radius:9px;padding:5px;background:var(--bg-deep,rgba(0,0,0,.14));display:flex;flex-direction:column;gap:4px;transition:border-color .1s,background .1s}
+  .cal-grid.woche .cal-tag{min-height:170px}
+  .cal-tag.aus{opacity:.38}
+  .cal-tag.heute{border-color:rgba(var(--cy-rgb),.6);box-shadow:inset 0 0 0 1px rgba(var(--cy-rgb),.28)}
+  .cal-tag.drop{border-color:var(--mg);background:rgba(var(--mg-rgb),.13)}
+  .cal-tag .d{font-size:11px;color:var(--mut);text-align:right;line-height:1}
+  .cal-post{font-size:11px;border-radius:6px;padding:3px 6px;background:rgba(var(--cy-rgb),.14);border:1px solid rgba(var(--cy-rgb),.4);color:var(--fg);cursor:grab;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cal-post:active{cursor:grabbing} .cal-post.drag{opacity:.45}
+  .cal-post.frei{background:rgba(var(--amber,224,161,6),.16);border-color:var(--amber,#e0a106)}
+  .cal-post.veroeff{background:rgba(var(--ok-rgb,73,212,154),.16);border-color:var(--ok)}
+  .cal-rail .cal-post{flex:none;max-width:170px}
+  /* ===== Queue ===== */
+  .q-gate{border:1px solid var(--mg);border-radius:10px;padding:8px 11px;margin-bottom:10px;font-size:12px;
+    background:linear-gradient(90deg,rgba(var(--mg-rgb),.10),rgba(var(--cy-rgb),.06))}
+  .q-gate b{color:var(--mg)}
+  .queue{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+  .q-col{border:1px solid var(--line);border-radius:10px;background:var(--bg-deep,rgba(0,0,0,.14));padding:8px;display:flex;flex-direction:column;gap:6px;min-height:60px}
+  .q-col h4{margin:0 0 2px;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--cy);font-family:"Orbitron",sans-serif}
+  .q-card{border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:var(--panel);font-size:12.5px;display:flex;flex-direction:column;gap:5px}
+  .q-card .t{font-weight:600}
+  /* ===== Composer ===== */
+  .comp{display:grid;grid-template-columns:minmax(250px,1fr) minmax(280px,1.15fr);gap:14px}
+  @media (max-width:720px){.comp{grid-template-columns:1fr}}
+  .comp-edit{display:flex;flex-direction:column;gap:8px}
+  .plat-pick{display:flex;flex-wrap:wrap;gap:6px}
+  .pchip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:3px 9px;cursor:pointer;color:var(--mut);user-select:none}
+  .pchip:has(input:checked){color:var(--cy);border-color:rgba(var(--cy-rgb),.6);background:rgba(var(--cy-rgb),.10)}
+  .pchip input{accent-color:var(--cy);width:13px;height:13px}
+  .comp-prev{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto}
+  .prevcard{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--bg-deep,rgba(0,0,0,.16))}
+  .prevcard .ph{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+  .prevcard .pv-titel{font-weight:700;margin-bottom:3px}
+  .prevcard .pv-body{font-size:12.5px;white-space:pre-wrap;word-break:break-word} .prevcard .pv-ht{color:var(--cy)}
+  .cc{font-size:11px;color:var(--mut)} .cc.over{color:var(--bad,#ff6b6b);font-weight:700}
+  .ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:8px}
+  .ig-cell{aspect-ratio:1;background:rgba(var(--cy-rgb),.10);border:1px solid var(--line);border-radius:4px;display:grid;place-items:center;font-size:11px;color:var(--mut)}
+  /* ===== Auswertung (P2) ===== */
+  .aw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
+  .aw-card{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:var(--bg-deep,rgba(0,0,0,.14))}
+  .aw-card h4{margin:0 0 8px;font-family:"Orbitron",sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--cy)}
+  .aw-card.full{grid-column:1/-1}
+  .aw-donut-wrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .aw-dormant{border-style:dashed}
+  /* ===== Bulk-Import + Bot-Viz ===== */
+  .bulk-box{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+  .bulk-box textarea{width:100%;min-height:64px;font-family:"Chakra Petch",monospace;font-size:12px;background:var(--bg-deep,rgba(0,0,0,.22));color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;resize:vertical}
+  .botviz{margin-bottom:10px}
+  /* Schwebende Knöpfe = einheitliches Kit (SVG-Doppelicon, Charge-Glow, lgshoot) */
+  .floatacct{--charge:0;position:fixed;top:84px;right:26px;z-index:41;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;background:var(--panel);background-image:var(--brush),var(--panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--line);color:var(--cy);box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),0 0 calc(var(--charge)*110px) calc(var(--charge)*17px) rgba(var(--cy-rgb),calc(var(--charge)*.82)),0 0 calc(var(--charge)*165px) calc(var(--charge)*13px) rgba(var(--mg-rgb),calc(var(--charge)*.72));transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatacct:hover{border-color:rgba(var(--cy-rgb),.45)}
+  .floatacct .duo{position:relative;width:58px;height:52px;pointer-events:none}
+  .floatacct .duo .ic{position:absolute;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.7))}
+  .floatacct .duo .ic.fg{width:44px;height:44px;left:0;top:0}
+  .floatacct .duo .ic.fa{width:28px;height:28px;right:-2px;bottom:-2px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.65))}
+  .floatdizzi{--charge:0;position:fixed;top:196px;right:34px;z-index:41;width:80px;height:80px;border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;background:var(--panel);background-image:var(--brush),var(--panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--line);color:var(--mg);box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),0 0 calc(var(--charge)*110px) calc(var(--charge)*15px) rgba(var(--mg-rgb),calc(var(--charge)*.8));transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatdizzi:hover{border-color:rgba(var(--mg-rgb),.45)}
+  .floatdizzi .ic{width:40px;height:40px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.6))}
+  .floatdizzi .spark{position:absolute;top:9px;right:11px;width:16px;height:16px;color:var(--cy);filter:drop-shadow(0 0 5px rgba(var(--cy-rgb),.8))}
+  .floatacct.lgshoot,.floatdizzi.lgshoot{animation:lgshoot .36s ease-out}
+  @keyframes lgshoot{0%{box-shadow:var(--sh),0 0 120px 26px rgba(var(--cy-rgb),.9),0 0 180px 18px rgba(var(--mg-rgb),.8);transform:scale(1.16)}100%{transform:scale(1)}}
+  /* --- Einstellungs-/Konto-FENSTER (Norm docs/19 §2b) = STANDARD-KIT-ELEMENT ---- */
+  .kmwrap{position:fixed;inset:0;z-index:60;background:rgba(4,6,10,.6)}
+  .km{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(900px,94vw);height:min(82vh,780px);display:flex;flex-direction:column;
+    background:var(--panel-solid,var(--panel));background-image:var(--brush),var(--panel);
+    border:1px solid rgba(var(--cy-rgb),.3);border-radius:var(--r-win);
+    box-shadow:var(--sh),0 0 70px -16px rgba(var(--cy-rgb),.5),0 0 110px -28px rgba(var(--mg-rgb),.34),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b)}
+  .km-kopf{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .km-kopf h2{margin:0;font-size:14px;letter-spacing:.06em;text-transform:uppercase;background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .km-koerper{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px 16px 16px}
+  .kmsec{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:11px;background:var(--bg-deep,rgba(0,0,0,.18))}
+  .kmsech{font-family:"Orbitron",sans-serif;font-weight:700;color:var(--cy);font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:8px;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.4))}
+  .kmrow{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:4px 0}
+  .kmrow>label{font-size:12.5px}
+  .kmdienst{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:5px 0;font-size:12.5px}
+  .kmcat{margin:10px 0 2px;border-top:1px solid var(--line);padding-top:8px}
+  .kmcat .kmcath{font-weight:700;color:var(--cy);font-size:11px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
+  .km .mut{color:var(--mut)} .km .small{font-size:11.5px} .km .spacer{flex:1}
+  .km-aktion{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .dizzibubble{position:fixed;right:30px;top:288px;z-index:55;width:min(340px,90vw);padding:10px;
+    background:var(--panel-solid,var(--panel));border:1px solid var(--line);border-top:1px solid var(--edge-t);border-radius:var(--r-win);box-shadow:var(--sh)}
+  .db-kopf{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  .db-out{min-height:42px;font-size:13px} .db-q{color:var(--cy)} .db-src{font-size:11px;color:var(--mut);margin-top:6px}
+  .db-eingabe{display:flex;gap:6px;margin-top:8px}
+  .btn{font-family:inherit;background:var(--panel-kopf-bg,#1b2230);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;text-decoration:none}
+  .btn.mini{padding:3px 9px;font-size:12px} .btn.mg{color:var(--mg);border-color:var(--mg)} .btn.cy{color:var(--cy);border-color:rgba(var(--cy-rgb),.5)}
+  .btn.active{color:var(--cy);border-color:rgba(var(--cy-rgb),.6);background:rgba(var(--cy-rgb),.1)}
+  @media (prefers-reduced-motion: reduce){.floatacct,.floatdizzi{position:fixed!important}}
+  /* ===== Bereich-Filter-Leiste = geteilte Komponente DzBereichBar (.dz-berbar/.dz-berchip
+     in /ui-kit/bereichbar.css, W4); hier nur die App-Positionierung. + Bereiche-Panel ===== */
+  .berbar-pos{margin:0 0 12px}
+  .ber-row .art{font-size:11px;color:var(--mut)}
+</style>
+</head>
+<body>
+<header class="dz-appkopf">
+  <span class="dz-kopf-brand">Dizz Management</span>
+  <span class="dz-kopf-sub">Kanäle · Posts · ein Redaktionsfluss</span>
+  <span class="dz-kopf-spacer"></span>
+  <span class="pill" id="authpill" data-dz-act="oeffneKm" title="Einstellungen &amp; Konto (Dizzi-ID)">…</span>
+</header>
+<div id="bg-stage" aria-hidden="true"></div>
+<div class="bgfx" aria-hidden="true"></div>
+<div class="bgbrush" aria-hidden="true"></div>
+
+<main>
+  <!-- ============ BEREICH-FILTER-LEISTE (geteilte ui-kit-Komponente DzBereichBar, W4) ============ -->
+  <nav class="berbar-pos" id="bereich-bar" aria-label="Bereiche"></nav>
+
+  <!-- ===================== REDAKTION (Hybrid-Arbeitsfläche, docs/27 §8) ===================== -->
+  <section class="card dz-panel redaktion" data-dz-collapsible data-pkey="redaktion">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Redaktion</span>
+      <span class="dz-panel-kurz" id="redaktion-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <div class="rk-bar">
+        <span id="rk-switch"></span>
+        <span id="rk-bereich-focus"></span>
+        <span class="spacer"></span>
+        <span class="hint">Strg/Cmd+K = Befehle · Posten ist HITL &amp; v1 DORMANT</span>
+      </div>
+
+      <!-- ---- KALENDER ---- -->
+      <div id="rk-kalender">
+        <div class="cal-bar">
+          <button class="btn mini" data-dz-act="calNav" data-dz-arg="-1" aria-label="zurück">‹</button>
+          <b id="cal-label">…</b>
+          <button class="btn mini" data-dz-act="calNav" data-dz-arg="1" aria-label="vor">›</button>
+          <button class="btn mini" data-dz-act="calHeute">heute</button>
+          <span style="width:8px"></span>
+          <button class="btn mini active" id="cal-monat" data-dz-act="calMode" data-dz-arg="monat">Monat</button>
+          <button class="btn mini" id="cal-woche" data-dz-act="calMode" data-dz-arg="woche">Woche</button>
+          <span class="spacer"></span>
+          <span class="mut small">Post auf einen anderen Tag ziehen = umplanen.</span>
+        </div>
+        <div class="cal-rail" id="cal-rail"></div>
+        <div class="cal-grid" id="cal-wd"></div>
+        <div class="cal-grid" id="cal-cells"></div>
+      </div>
+
+      <!-- ---- QUEUE ---- -->
+      <div id="rk-queue" hidden></div>
+
+      <!-- ---- COMPOSER ---- -->
+      <div id="rk-composer" hidden>
+        <div class="comp">
+          <div class="comp-edit">
+            <div id="comp-editnote" class="mut small" hidden></div>
+            <div class="small mut">Bereich (für die neuen Entwürfe)</div>
+            <select id="c-bereich" class="dz-select"></select>
+            <div class="small mut">Plattformen (Mehrfachauswahl ⇒ je Plattform ein Entwurf)</div>
+            <div class="plat-pick" id="c-plats"></div>
+            <input id="c-titel" placeholder="Titel">
+            <textarea id="c-text" placeholder="Caption / Text …"></textarea>
+            <input id="c-hashtags" placeholder="#hashtags">
+            <input id="c-medien" placeholder="Medien-Pfade (DAM), kommagetrennt — optional">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn mini cy" id="c-save" data-dz-act="compSpeichern">Entwürfe anlegen</button>
+              <button class="btn mini" data-dz-act="compReset">Zurücksetzen</button>
+            </div>
+          </div>
+          <div class="comp-prev" id="c-prev"></div>
+        </div>
+        <details class="bulk-box"><summary class="mut small" style="cursor:pointer">📥 Bulk-Import (CSV) — viele Entwürfe auf einmal</summary>
+          <p class="mut small" style="margin:6px 0">Spalten: <code>titel,text,plattform,hashtags,geplant_fuer</code> (Kopfzeile optional). Legt nur <b>Entwürfe</b> an — kein Posten.</p>
+          <textarea id="bulk-csv" placeholder="titel,text,plattform,hashtags,geplant_fuer&#10;Reel A,Hallo Welt,instagram,#start,&#10;Tweet B,Kurz,x,,2026-09-01T10:00"></textarea>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:6px"><button class="btn mini cy" data-dz-act="bulkImport">Importieren</button><span class="mut small" id="bulk-out"></span></div>
+        </details>
+      </div>
+
+      <!-- ---- AUSWERTUNG (P2) ---- -->
+      <div id="rk-auswertung" hidden></div>
+    </div>
+  </section>
+
+  <!-- ===================== BEREICHE ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="bereiche">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Bereiche</span>
+      <span class="dz-panel-kurz" id="bereiche-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Übergeordnete Kategorien (z. B. „Social Media Manager für Ludwig Hülsen Nagelfabrik").
+        Kanäle, Bots und Posts werden je Bereich verwaltet — die <b>Redaktion bleibt der bereichs-übergreifende
+        Gesamtplan</b>. <code>kontext</code> koppelt einen Bereich read-only mit Dizz Admin (V18).</p>
+      <div class="form">
+        <input id="ber-name" class="grow" placeholder="Name des Bereichs">
+        <select id="ber-art" class="dz-select"></select>
+        <input id="ber-kontext" placeholder="kontext (Admin-Kopplung, optional)">
+        <button class="btn mini cy" data-dz-act="bereichAnlegen">+ Bereich</button>
+      </div>
+      <div class="liste" id="bereiche-liste"><span class="mut small">lädt …</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== KANÄLE ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="kanaele">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Kanäle</span>
+      <span class="dz-panel-kurz" id="kanaele-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Angesteuerte Accounts je Plattform. Verbindung läuft über vorbereitete
+        Adapter (Gesetz 5) — <b>Posten bleibt v1 DORMANT</b> (Recht/Opt-in).</p>
+      <div class="form">
+        <select id="k-plattform" class="dz-select"></select>
+        <input id="k-handle" class="grow" placeholder="@handle / Account-Name">
+        <button class="btn mini cy" data-dz-act="kanalAnlegen">+ Kanal</button>
+      </div>
+      <div class="liste" id="kanaele-liste"><span class="mut small">lädt …</span></div>
+      <details style="margin-top:10px"><summary class="mut small" style="cursor:pointer">Vorbereitete Kanal-Adapter (dormant)</summary>
+        <div class="liste" id="kanal-quellen" style="margin-top:6px"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===================== SOCIAL-BOTS ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="bots">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Social-Media-Bots</span>
+      <span class="dz-panel-kurz" id="bots-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Benannte Themen-/Marken-Profile (Ton, Zielgruppe, Hashtags). Die
+        übergeordnete KI plant über alle Bots hinweg — <b>vorschlagen, nie eigenmächtig</b>.</p>
+      <div class="form">
+        <input id="b-name" placeholder="Name (z. B. IG-Bot)">
+        <input id="b-thema" class="grow" placeholder="Thema / Marke">
+        <select id="b-ton" class="dz-select"></select>
+        <select id="b-plattform" class="dz-select" title="Optionale Ziel-Plattform (z. B. ein Instagram-Bot)"></select>
+        <button class="btn mini cy" data-dz-act="botAnlegen">+ Bot</button>
+      </div>
+      <div class="liste" id="bots-liste"><span class="mut small">lädt …</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== CREATING-EINGANG (REV-3) ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="creating">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Creating-Eingang</span>
+      <span class="dz-panel-kurz" id="creating-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Assets von <b>Dizz Creating</b> kommen als Post-Entwürfe je Kanal-Derivat an
+        (REV-3, <code>POST /api/creating/empfang</code>, idempotent). Der <span class="dz-linkchip lc-mg" style="cursor:default"><svg class="lc-ic"><use href="#ic-download"/></svg><span>Creating</span></span>-Chip am Post zeigt die Lineage zum Asset.</p>
+      <div class="liste" id="creating-liste"><span class="mut small">lädt …</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== KI-PLANUNG ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="plan">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">KI-Planung</span>
+      <span class="dz-panel-kurz" id="plan-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Übergeordnete Social-KI (lokal): Vorschläge zu Planung/Recycling/Posting-Zeiten
+        aus dem App-Bestand. Reine Vorschläge — <b>nichts wird gepostet</b>.</p>
+      <button class="btn mini mg" id="plan-btn" data-dz-act="planAbrufen">Vorschläge erzeugen</button>
+      <div class="liste" id="plan-liste" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <!-- ===================== AGENTEN-REGIE (D13, docs/63 §5) ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="agenten">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Agenten-Regie</span>
+      <span class="dz-panel-kurz" id="agenten-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Die <b>KI-Agenten-Verwaltung</b> des Netzes (D13): Agenten <b>definieren</b>
+        (Rolle · Tools · Wissen · Grenzen), Autonomie je Bereich festlegen. Ein Agent ist ein
+        <b>Datensatz</b> — erweitern ist Anlegen, kein Deployment. <b>Ausgeführt</b> wird nichts hier
+        (das wohnt beim Core, folgt).</p>
+      <p class="small mut" id="agenten-aiact">🤖 KI-Agenten: Aktionen mit Wirkung (senden, posten, …)
+        laufen <b>immer</b> über deine Freigabe in der Inbox — nie eigenmächtig (AI-Act Art. 50).</p>
+
+      <!-- Not-Aus (RG-4, docs/83 §3): Master-Schalter der reaktiven Regie -->
+      <div id="regie-notaus" class="small" style="margin:8px 0"><span class="mut small">lädt …</span></div>
+
+      <!-- Neuer Agent (D5-d: Erweitern = CRUD, kein Deploy) -->
+      <div class="form">
+        <input id="ag-name" placeholder="Name (z. B. E-Mail-Manager)">
+        <input id="ag-rolle" class="grow" placeholder="Rolle — was dieser Agent tut">
+        <select id="ag-task" class="dz-select" title="Task-Klasse (Modell-Slot, FP-3)"></select>
+        <button class="btn mini cy" data-dz-act="agentAnlegen">+ Agent</button>
+      </div>
+      <div class="liste" id="agenten-liste"><span class="mut small">lädt …</span></div>
+
+      <!-- Autonomie-Treppe (RG-4, docs/83 §3): begehbare Preset-Folge T0–T3 -->
+      <div style="margin-top:14px">
+        <div class="small" style="margin-bottom:6px"><b>Autonomie-Treppe</b>
+          <span id="ag-tr-bereich" class="mut"></span> — <b>T0 beobachten</b> ist die neue Null
+          (Schatten-Betrieb); höhere Stufen nur nach Eichung. Anheben ist ein bewusster Schritt.</div>
+        <div id="agenten-treppe"><span class="mut small">lädt …</span></div>
+      </div>
+
+      <!-- Bereichs-Autonomie-Matrix (P4/V-1) — geld/gesundheit gedeckelt auf pre_approval -->
+      <div style="margin-top:14px">
+        <div class="small" style="margin-bottom:6px"><b>Bereichs-Autonomie</b>
+          <span id="ag-mx-bereich" class="mut"></span> — Stufe je Aktions-Klasse.
+          <code>geld</code>/<code>gesundheit</code> sind auf <b>pre_approval</b> gedeckelt
+          (🔒 höher nie; <b>beobachten</b> strenger ist erlaubt).</div>
+        <div id="agenten-matrix"><span class="mut small">lädt …</span></div>
+      </div>
+
+      <!-- Eichung / Evals (RG-5, docs/83 §4): die Messung VOR jeder Autonomie-Lockerung -->
+      <div style="margin-top:14px">
+        <div class="small" style="margin-bottom:6px"><b>Eichung (Evals)</b>
+          — misst <b>vor</b> jeder Lockerung. Grün <b>nur</b> bei passendem <code>def_hash</code>
+          + n≥20 Entscheidungen + Schwellen erfüllt + Golden-Suite grün (fail-closed).
+          <button class="btn mini" data-dz-act="eichungPoll">↻ Eichung aktualisieren</button></div>
+        <div id="agenten-eichung"><span class="mut small">lädt …</span></div>
+      </div>
+
+      <!-- Werks-Vorlagen (RG-5, docs/83 §6): Domäne-Naht per Klick (K-9 Produktionsleiter) -->
+      <div style="margin-top:14px">
+        <div class="small" style="margin-bottom:6px"><b>Werks-Vorlagen</b>
+          — eine Domäne-Naht per Klick, installiert <b>fail-closed</b> (Abo AUS · T0 beobachten).</div>
+        <div id="agenten-vorlagen"><span class="mut small">lädt …</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RUNNING (Mission-Control, docs/63 §5 P1/P7 · Z4.2-D) ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="running">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Läufe (Running)</span>
+      <span class="dz-panel-kurz" id="running-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Was <b>gerade läuft</b> — Live-Log (SSE), <b>Guardrail-Zähler</b> (Runden ·
+        Tool-Aufrufe · Delegationen · Token) und <b>Stop je Lauf</b>. Ausgeführt wird beim
+        <b>Core</b> (:8200); Definitionen wohnen hier. <button class="btn mini" data-dz-act="ladeLaeufe">↻ Aktualisieren</button></p>
+      <p class="small mut" id="running-aiact">🤖 KI-Agenten: ein Lauf startet nur auf deinen Klick, nie
+        eigenmächtig; Aktionen mit Wirkung warten immer auf deine Freigabe in der Inbox (AI-Act Art. 50).</p>
+
+      <!-- Lauf starten (nur Nutzer-Klick) -->
+      <div class="form">
+        <select id="run-agent" class="dz-select" title="Agent (aktiv zuerst)"></select>
+        <input id="run-auftrag" class="grow" placeholder="Auftrag (optional) — was soll der Agent tun?">
+        <button class="btn mini cy" data-dz-act="laufStarten">▶ Starten</button>
+      </div>
+
+      <!-- Live-Log des aktiven Laufs (SSE) -->
+      <div id="running-log-box" hidden style="margin-top:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="small"><b>Live-Log</b></span><span style="flex:1"></span>
+          <button class="btn mini" id="run-stop" data-dz-act="laufStoppen" data-dz-arg="" hidden>■ Stop</button>
+        </div>
+        <div id="running-log" class="mut small" style="white-space:pre-wrap;border:1px solid var(--line,#2a2f3a);border-radius:10px;padding:9px;max-height:260px;overflow:auto"></div>
+      </div>
+
+      <div id="running-offline" class="small" style="margin-top:8px"></div>
+      <div class="liste" id="laeufe-liste" style="margin-top:8px"><span class="mut small">lädt …</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== NETZ-INBOX (Agent-Inbox-Spine, docs/63 §2 P3) ===================== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="netzinbox">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Netz-Inbox</span>
+      <span class="dz-panel-kurz" id="inbox-kurz"></span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">Alles, was netzweit auf deine <b>Freigabe</b> wartet — Agenten-Vorschläge
+        (<b>WAS · WARUM · Argumente</b>) zuerst. Freigeben/Ablehnen geht <b>direkt an die besitzende
+        App</b> (Management proxyt nie; die Stufen-Prüfung bleibt dort).
+        <button class="btn mini" data-dz-act="ladeInbox">↻ Aktualisieren</button></p>
+      <div id="inbox-offline" class="small" style="margin-bottom:6px"></div>
+      <div class="liste" id="inbox-liste"><span class="mut small">lädt …</span></div>
+    </div>
+  </section>
+</main>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
+  <symbol id="ic-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.4v2.3M12 18.3v2.3M5.4 5.4 7 7M17 17l1.6 1.6M3.4 12h2.3M18.3 12h2.3M5.4 18.6 7 17M17 7l1.6-1.6"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3.5 5.5 6v5c0 4.2 2.7 7.4 6.5 9 3.8-1.6 6.5-4.8 6.5-9V6Z"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-8.6 8 8.2 8.2 0 0 1-3.7-.85L3.5 20l1.4-4.5A8 8 0 0 1 12 3.5a8 8 0 0 1 8.5 8Z"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.6 9 19 10.6 13.6 12.2 12 17.6 10.4 12.2 5 10.6 10.4 9Z"/></symbol>
+  <symbol id="ic-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-2.5-6.5L4 12Z"/></symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></symbol>
+  <symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol>
+  <symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 20v-6M12.5 20V9M17 20v-9"/></symbol>
+  <symbol id="ic-edit" viewBox="0 0 24 24"><path d="M4 16.5 15 5.5l3 3L7 19.5 3.5 20.5 4 16.5ZM13 7.5l3 3"/></symbol>
+  <symbol id="ic-cmdk" viewBox="0 0 24 24"><path d="M5.5 6.5h13v11h-13zM8 10l2.6 2L8 14M12.5 14h4"/></symbol>
+  <symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v10m0 0 4-4m-4 4-4-4M5 19h14"/></symbol>
+  <symbol id="ic-archive" viewBox="0 0 24 24"><path d="M4.5 4.5h15v3.5h-15zM5.5 8.5 6 19h12l.5-10.5M9.5 11.5h5"/></symbol>
+</defs></svg>
+
+<button class="floatacct" id="floatAcct" title="Konto &amp; Einstellungen — greifen &amp; schleudern, Tipp = öffnen" aria-label="Konto &amp; Einstellungen"><span class="duo"><svg class="ic fg" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic fa" aria-hidden="true"><use href="#ic-shield"/></svg></span></button>
+<button class="floatdizzi" id="floatDizzi" title="Mini-Dizzi fragen — greifen &amp; schleudern, Tipp = Sprechblase" aria-label="Mini-Dizzi fragen"><svg class="ic" aria-hidden="true"><use href="#ic-chat"/></svg><svg class="spark ic" aria-hidden="true"><use href="#ic-sparkle"/></svg></button>
+
+<!-- STANDARD-KIT: Einstellungs-/Konto-Fenster (Norm docs/19 §2b). Generisch aus den
+     appkit-Endpunkten gefüllt — UNVERÄNDERT aus dem Template. Auf BODY-Ebene (Gotcha 4). -->
+<div class="kmwrap" id="kmWrap" hidden>
+  <div class="km" role="dialog" aria-modal="true" aria-label="Einstellungen &amp; Konto">
+    <div class="km-kopf">
+      <span class="duo" style="width:30px;height:28px;position:relative;display:inline-block;flex:none"><svg class="ic" style="width:24px;height:24px;position:absolute;left:0;top:0" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic" style="width:16px;height:16px;position:absolute;right:-2px;bottom:-2px;color:var(--mg)" aria-hidden="true"><use href="#ic-shield"/></svg></span>
+      <h2>Einstellungen &amp; Konto</h2>
+      <span class="pill">Dizzi-ID</span>
+      <span class="spacer"></span>
+      <button class="btn mini" id="kmZu" aria-label="Schließen">✕</button>
+    </div>
+    <div class="km-koerper">
+      <div class="kmsec"><div class="kmsech">Identität &amp; Sicherheit</div>
+        <div id="konto-auth" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="mut small">lädt …</span></div>
+        <div id="konto-acc" class="small mut" style="margin:9px 0 4px"></div>
+        <div id="konto-aktionen" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 2px"></div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Design</div>
+        <div class="mut small" style="margin-bottom:6px">Design-Theme und Farbschema getrennt wählbar — die Vorschau ist sofort live.</div>
+        <div class="kmrow"><label>Design-Theme</label><span class="dz-field"><select id="designSel" class="dz-select" data-dz-act="themeWahl" data-dz-on="change"></select></span></div>
+        <div class="kmrow"><label>Farbschema</label><span class="dz-field"><select id="farbeSel" class="dz-select" data-dz-act="themeWahl" data-dz-on="change"></select></span></div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Verbundene Dienste</div><div id="konto-dienste" class="mut small">lädt …</div></div>
+      <div class="kmsec"><div class="kmsech">Vernetzung &amp; KI-Aktivität</div>
+        <div class="mut small" style="margin-bottom:6px">Was die KI im Hintergrund vorschlägt — Wirkung gibt es NUR nach deiner Freigabe (HITL).</div>
+        <div id="konto-ki" class="mut small">lädt …</div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Einstellungen</div><div id="konto-settings"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Mini-Dizzi-Sprechblase (Vertrag 1.5) — fragt die Social-KI über POST /api/ki/frage. -->
+<div class="dizzibubble" id="dizziBubble" hidden>
+  <div class="db-kopf"><svg class="ic" style="width:16px;height:16px;color:var(--mg)" aria-hidden="true"><use href="#ic-chat"/></svg>
+    <span>Mini-Dizzi</span><span class="mut small">— fragt die Social-KI (lokal)</span><span id="dizziKiChip"></span><span style="flex:1"></span><button class="btn mini" id="dizziZu">✕</button></div>
+  <div class="db-out" id="dizziOut"><span class="mut small">Frag mich zu deinen Kanälen, Social-Bots, Entwürfen und dem Zeitplan — ich antworte nur aus dem App-Bestand (lokal). Posten passiert nie ohne deine Freigabe.</span></div>
+  <div class="db-eingabe">
+    <input id="dizziFrage" class="grow" placeholder="… deine Frage zur Verwaltung">
+    <button class="btn mg mini" id="dizziBtn" data-dz-act="dizziFragen" aria-label="Fragen"><svg class="ic" style="width:14px;height:14px" aria-hidden="true"><use href="#ic-send"/></svg></button>
+  </div>
+  <div class="db-src" id="dizziSrc"></div>
+</div>
+
+<script defer src="/ui-kit/floats.js"></script>
+<script defer src="/ui-kit/spinfling.js"></script>
+<script>
+  // ===== Gemeinsame Helfer =====
+  const api = (p,o)=>fetch(p,Object.assign({headers:{'Content-Type':'application/json'}},o)).then(async r=>{ if(!r.ok){let e={};try{e=await r.json()}catch(_){}throw new Error(e.error||e.detail||('HTTP '+r.status))} return r.status===204?null:r.json(); });
+  const esc = s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const v = id=>{const el=document.getElementById(id);return el?(el.value||'').trim():'';};
+  const fmtZeit = s=>(s||'').replace('T',' ').slice(0,16);
+  const pad = n=>String(n).padStart(2,'0');
+  // CSP-sicherer Verknüpfungs-Chip: nutzt die dz-linkchip-Optik aus netkit.css, aber
+  // data-dz-act/data-dz-arg statt des inline onclick, das DzNetKit.linkchip erzeugt
+  // (strikte Nonce-CSP blockt inline-Handler; ui-kit ist READ-ONLY ⇒ Chip hier bauen).
+  function chip(o){ o=o||{};
+    const cls='dz-linkchip'+(o.kind?' lc-'+o.kind:'')+(o.act?' klick':'');
+    const ic=o.icon?'<svg class="lc-ic" aria-hidden="true"><use href="#'+o.icon+'"/></svg>':'';
+    const n=(o.count!=null&&o.count!=='')?'<span class="lc-n">'+esc(o.count)+'</span>':'';
+    const act=o.act?(' role="button" tabindex="0" data-dz-act="'+esc(o.act)+'"'+(o.arg!=null?' data-dz-arg="'+esc(o.arg)+'"':'')):'';
+    return '<span class="'+cls+'" title="'+esc(o.title||o.label||'')+'"'+act+'>'+ic+'<span>'+esc(o.label||'')+'</span>'+n+'</span>'; }
+  let PLATTFORMEN=[], TOENE=[], KANAELE=[];
+  // Zeichen-Limits je Plattform — SINGLE SOURCE aus /api/plattformen (Backend, P2), nicht mehr hartkodiert.
+  let CHAR_LIMITS={}, CHAR_LIMIT_DEFAULT=2200;
+
+  // ===== Katalog =====
+  async function ladeKatalog(){
+    try{ const d=await api('/api/plattformen'); PLATTFORMEN=d.plattformen||[]; TOENE=d.toene||[]; CHAR_LIMITS=d.zeichen_limits||{}; CHAR_LIMIT_DEFAULT=d.zeichen_limit_default||2200; }catch(e){ return; }
+    const fill=(id,arr)=>{ const el=document.getElementById(id); if(el)el.innerHTML=arr.map(x=>'<option value="'+x+'">'+esc(x)+'</option>').join(''); };
+    fill('k-plattform',PLATTFORMEN); fill('b-ton',TOENE);
+    const bp=document.getElementById('b-plattform');
+    if(bp)bp.innerHTML='<option value="">— übergreifend</option>'+PLATTFORMEN.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
+  }
+
+  // ============================================================
+  //  BEREICHE (übergeordnete Kategorie-Achse) + Kontext-Umschalter
+  // ============================================================
+  let BEREICHE=[], BEREICH_TYPEN=[], BER_DEFAULT='marke';
+  let AKTIVER_BEREICH='';   // '' = Gesamt (alle Bereiche) — scoped Kanäle/Bots + Composer-Default
+  let RK_BEREICH='';        // Redaktion-Fokus ('' = Gesamtplan über ALLE Bereiche, Standard)
+  const bereichById=id=>BEREICHE.find(b=>b.id===id)||null;
+  const artMeta=art=>BEREICH_TYPEN.find(t=>t.id===art)||{label:art||'—',icon:'📦'};
+  // Query-String mit aktivem Bereich-Filter ('' = alle). ``extra`` = weitere Params (z. B. limit=500).
+  function bereichParam(extra){ const p=AKTIVER_BEREICH?('bereich_id='+encodeURIComponent(AKTIVER_BEREICH)):'';
+    if(!extra) return p?('?'+p):''; return '?'+extra+(p?('&'+p):''); }
+
+  async function ladeBereiche(){
+    if(!BEREICH_TYPEN.length){ try{ const t=await api('/api/bereich-typen'); BEREICH_TYPEN=t.typen||[]; BER_DEFAULT=t.default||'marke'; }catch(e){} }
+    try{ BEREICHE=await api('/api/bereiche'); }catch(e){ BEREICHE=[]; }
+    renderBereichBar(); fillBereichSelects(); renderRkFocus(); await renderBereichePanel();
+  }
+  // art-Katalog (aus /api/bereich-typen) → {art:{icon,farbe}} für die geteilte Leiste (Typ-Farbe).
+  function _typMeta(){ const m={}; (BEREICH_TYPEN||[]).forEach(t=>{ m[t.id]={icon:t.icon,farbe:t.farbe}; }); return m; }
+  let _berBar=null;
+  function renderBereichBar(){
+    const host=document.getElementById('bereich-bar'); if(!host)return;
+    if(_berBar){ _berBar.set(BEREICHE, AKTIVER_BEREICH); return; }
+    _berBar=DzBereichBar.mount(host,{ bereiche:BEREICHE, aktiv:AKTIVER_BEREICH, typMeta:_typMeta(),
+      titel:'Bereich', alleLabel:'Alle Bereiche', onWaehl:id=>bereichWaehlen(id) });
+  }
+  function fillBereichSelects(){
+    const artSel=document.getElementById('ber-art');
+    if(artSel&&!artSel.options.length) artSel.innerHTML=BEREICH_TYPEN.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===BER_DEFAULT?' selected':'')+'>'+esc((t.icon||'')+' '+t.label)+'</option>').join('');
+    const cb=document.getElementById('c-bereich');
+    if(cb){ const cur=cb.value; cb.innerHTML='<option value="">🌐 Allgemein</option>'+BEREICHE.map(b=>'<option value="'+esc(b.id)+'">'+esc((artMeta(b.art).icon||'')+' '+b.name)+'</option>').join(''); cb.value=cur||AKTIVER_BEREICH||''; }
+  }
+  async function renderBereichePanel(){
+    const host=document.getElementById('bereiche-liste'); if(!host)return;
+    const kurz=document.getElementById('bereiche-kurz'); if(kurz)kurz.textContent=BEREICHE.length?(BEREICHE.length+' Bereiche'):'';
+    if(!BEREICHE.length){ host.innerHTML='<span class="mut small">Noch keine Bereiche — oben anlegen (z. B. einen Kunden-Bereich).</span>'; return; }
+    const inh=await Promise.all(BEREICHE.map(b=>api('/api/bereiche/'+b.id+'/inhalt').catch(()=>null)));
+    host.innerHTML=BEREICHE.map((b,i)=>{ const z=(inh[i]&&inh[i].zaehler)||{}; const m=artMeta(b.art);
+      return '<div class="zeile ber-row" style="flex-wrap:wrap"><span class="badge cy">'+esc((m.icon||'')+' '+m.label)+'</span>'
+        +'<span class="t grow">'+esc(b.name)+(b.kontext?(' <span class="art">🔗 '+esc(b.kontext)+'</span>'):'')+'</span>'
+        +'<span class="dz-linkchip lc-mut" style="cursor:default" title="Kanäle · Bots · Posts in diesem Bereich"><span>🔗 '+(z.kanaele||0)+' · 🤖 '+(z.social_bots||0)+' · 📝 '+(z.posts||0)+'</span></span>'
+        +'<button class="btn mini'+((AKTIVER_BEREICH===b.id)?' active':'')+'" data-dz-act="bereichWaehlen" data-dz-arg="'+esc(b.id)+'">wählen</button>'
+        +'<button class="btn mini" data-dz-act="bereichBearbeiten" data-dz-arg="'+esc(b.id)+'" aria-label="bearbeiten">✎</button>'
+        +'<button class="btn mini mg" data-dz-act="bereichLoeschen" data-dz-arg="'+esc(b.id)+'" aria-label="löschen">✕</button></div>'; }).join('');
+  }
+  function bereichWaehlen(id){ AKTIVER_BEREICH=id||''; if(RK_BEREICH) RK_BEREICH=AKTIVER_BEREICH;
+    renderBereichBar(); fillBereichSelects(); renderRkFocus(); renderBereichePanel(); ladeKanaele(); ladeBots(); renderRedaktion();
+    renderAutonomieMatrix(); renderTreppe(); }   // Agenten-Regie: Autonomie + Treppe folgen dem aktiven Bereich
+  async function bereichAnlegen(){ const name=v('ber-name'); if(!name){ alert('Name ist Pflicht.'); return; }
+    const art=v('ber-art')||BER_DEFAULT, kontext=v('ber-kontext');
+    try{ await api('/api/bereiche',{method:'POST',body:JSON.stringify({name,art,kontext})}); }catch(e){ alert(e.message); return; }
+    document.getElementById('ber-name').value=''; document.getElementById('ber-kontext').value=''; ladeBereiche(); }
+  async function bereichBearbeiten(id){ const b=bereichById(id); if(!b)return;
+    const name=prompt('Name des Bereichs:',b.name); if(name===null)return;
+    const kontext=prompt('kontext (Admin-Kopplung V18; leer = keine):',b.kontext||''); if(kontext===null)return;
+    try{ await api('/api/bereiche/'+id,{method:'PUT',body:JSON.stringify({name:name.trim()||b.name,kontext:kontext.trim()})}); }catch(e){ alert(e.message); return; } ladeBereiche(); }
+  async function bereichLoeschen(id){ const b=bereichById(id);
+    if(!confirm('Bereich „'+((b&&b.name)||'')+'" löschen? Zugeordnete Kanäle/Bots/Posts bleiben erhalten (→ Allgemein).'))return;
+    try{ await api('/api/bereiche/'+id,{method:'DELETE'}); }catch(e){ alert(e.message); return; }
+    if(AKTIVER_BEREICH===id) AKTIVER_BEREICH=''; ladeBereiche(); ladeKanaele(); ladeBots(); renderRedaktion(); }
+  // Redaktion-Fokus (OPTIONAL): Standard = Gesamtplan über alle Bereiche; ein Klick fokussiert
+  // die Redaktion auf den aktiven Bereich. Ohne aktiven Bereich gibt es keinen Fokus-Schalter.
+  function renderRkFocus(){ const host=document.getElementById('rk-bereich-focus'); if(!host)return;
+    if(!AKTIVER_BEREICH){ RK_BEREICH=''; host.innerHTML=''; return; }
+    const b=bereichById(AKTIVER_BEREICH), on=(RK_BEREICH===AKTIVER_BEREICH);
+    host.innerHTML='<button class="btn mini'+(on?' active':'')+'" data-dz-act="rkFokusToggle" title="Standard: Gesamtplan über alle Bereiche. Klick = nur den aktiven Bereich zeigen.">'+(on?('🎯 nur '+esc((b&&b.name)||'')):'🌐 Gesamtplan')+'</button>'; }
+  function rkFokusToggle(){ RK_BEREICH=RK_BEREICH?'':AKTIVER_BEREICH; renderRkFocus(); renderRedaktion(); }
+  // Posts-Quelle der Redaktion: Gesamtplan (alle) oder — wenn fokussiert — nur der aktive Bereich.
+  function redPosts(){ return RK_BEREICH?POSTS.filter(p=>p.bereich_id===RK_BEREICH):POSTS; }
+
+  // ============================================================
+  //  REDAKTION (Hybrid-Arbeitsfläche): Kalender · Queue · Composer
+  // ============================================================
+  let POSTS=[];                 // alle Posts (Quelle für alle drei Ansichten)
+  let RK_VIEW='kalender', VS=null;
+  let CAL_MODE='monat', CAL_REF=new Date(), DRAG_ID=null, COMP_EDIT=null;
+  const MONATE=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const isoDay=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  function startOfWeek(d){ const x=new Date(d); const wd=(x.getDay()+6)%7; x.setDate(x.getDate()-wd); x.setHours(0,0,0,0); return x; }
+
+  async function ladePosts(){
+    try{ POSTS=await api('/api/posts?limit=500'); }catch(e){ POSTS=[]; }
+    renderRedaktion(); ladeCreating(); aktualisiereKurz();
+  }
+  function aktualisiereKurz(){
+    const g=POSTS.filter(p=>p.status==='geplant').length, e=POSTS.filter(p=>p.status==='entwurf').length;
+    const el=document.getElementById('redaktion-kurz'); if(el)el.textContent=(g+' geplant · '+e+' Entwürfe');
+  }
+  function initRedaktion(){
+    const sw=document.getElementById('rk-switch');
+    if(window.DzNetKit&&sw){ VS=DzNetKit.viewSwitch(sw,{views:[
+      {id:'kalender',label:'Kalender',icon:'ic-calendar'},
+      {id:'queue',label:'Queue',icon:'ic-grid'},
+      {id:'composer',label:'Komponieren',icon:'ic-edit'},
+      {id:'auswertung',label:'Auswertung',icon:'ic-chart'}],
+      value:RK_VIEW, onChange:(id)=>{ RK_VIEW=id; renderRedaktion(); }}); }
+    buildPlatPick();
+    renderRedaktion();
+  }
+  function setView(id){ if(VS)VS.set(id); else { RK_VIEW=id; renderRedaktion(); } }
+  function renderRedaktion(){
+    ['kalender','queue','composer','auswertung'].forEach(x=>{ const el=document.getElementById('rk-'+x); if(el)el.hidden=(x!==RK_VIEW); });
+    if(RK_VIEW==='kalender') renderKalender();
+    else if(RK_VIEW==='queue') renderQueue();
+    else if(RK_VIEW==='auswertung') renderAuswertung();
+    else compPreview();
+  }
+
+  // ----- Kalender -----
+  function calMode(m){ CAL_MODE=m; document.getElementById('cal-monat').classList.toggle('active',m==='monat'); document.getElementById('cal-woche').classList.toggle('active',m==='woche'); renderKalender(); }
+  function calNav(delta){ delta=Number(delta)||0; if(CAL_MODE==='woche') CAL_REF.setDate(CAL_REF.getDate()+7*delta); else CAL_REF.setMonth(CAL_REF.getMonth()+delta); renderKalender(); }
+  function calHeute(){ CAL_REF=new Date(); renderKalender(); }
+  function calChip(p,rail){
+    const st=p.status==='veroeffentlicht'?'veroeff':(p.status==='freigegeben'?'frei':'');
+    const hh=(!rail&&p.geplant_fuer&&p.geplant_fuer.length>=16)?p.geplant_fuer.slice(11,16)+' ':'';
+    const cr=p.quelle==='creating'?'📥 ':'';
+    return '<div class="cal-post '+st+'" draggable="true" data-id="'+p.id+'" title="'+esc((p.titel||'(ohne Titel)')+' · '+(p.plattform||'—')+' · '+p.status)+'" data-dz-act="compEdit" data-dz-arg="'+p.id+'">'+hh+cr+esc(p.titel||'(ohne Titel)')+'</div>';
+  }
+  function renderKalender(){
+    document.getElementById('cal-wd').innerHTML=['Mo','Di','Mi','Do','Fr','Sa','So'].map(w=>'<div class="cal-wd">'+w+'</div>').join('');
+    const byDay={}; const RP=redPosts();
+    RP.forEach(p=>{ if(p.geplant_fuer&&['geplant','freigegeben','veroeffentlicht'].includes(p.status)){ const k=p.geplant_fuer.slice(0,10); (byDay[k]=byDay[k]||[]).push(p); }});
+    const rail=RP.filter(p=>p.status==='entwurf'&&!p.geplant_fuer);
+    document.getElementById('cal-rail').innerHTML='<span class="mut small" style="margin-right:4px">Entwürfe (ziehen zum Planen):</span>'+(rail.length?rail.map(p=>calChip(p,true)).join(''):'<span class="mut small">keine</span>');
+    let start,count; const lbl=document.getElementById('cal-label');
+    if(CAL_MODE==='woche'){ start=startOfWeek(CAL_REF); count=7; const end=new Date(start); end.setDate(start.getDate()+6); lbl.textContent=start.getDate()+'.–'+end.getDate()+'. '+MONATE[end.getMonth()].slice(0,3)+' '+end.getFullYear(); }
+    else { const first=new Date(CAL_REF.getFullYear(),CAL_REF.getMonth(),1); start=startOfWeek(first); count=42; lbl.textContent=MONATE[CAL_REF.getMonth()]+' '+CAL_REF.getFullYear(); }
+    const today=isoDay(new Date()), curMonth=CAL_REF.getMonth();
+    let html='';
+    for(let i=0;i<count;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const k=isoDay(d);
+      const aus=(CAL_MODE==='monat'&&d.getMonth()!==curMonth)?' aus':''; const heute=(k===today)?' heute':'';
+      html+='<div class="cal-tag'+aus+heute+'" data-day="'+k+'"><div class="d">'+d.getDate()+'</div>'+(byDay[k]||[]).map(p=>calChip(p,false)).join('')+'</div>';
+    }
+    const cells=document.getElementById('cal-cells');
+    cells.className='cal-grid'+(CAL_MODE==='woche'?' woche':''); cells.innerHTML=html;
+    attachCalDnD();
+  }
+  function attachCalDnD(){
+    document.querySelectorAll('#rk-kalender .cal-post[draggable]').forEach(el=>{
+      el.addEventListener('dragstart',e=>{ DRAG_ID=el.dataset.id; el.classList.add('drag'); e.dataTransfer.setData('text/plain',el.dataset.id); e.dataTransfer.effectAllowed='move'; });
+      el.addEventListener('dragend',()=>el.classList.remove('drag'));
+    });
+    document.querySelectorAll('#rk-kalender .cal-tag[data-day]').forEach(cell=>{
+      cell.addEventListener('dragover',e=>{ e.preventDefault(); cell.classList.add('drop'); e.dataTransfer.dropEffect='move'; });
+      cell.addEventListener('dragleave',()=>cell.classList.remove('drop'));
+      cell.addEventListener('drop',e=>{ e.preventDefault(); cell.classList.remove('drop'); const id=DRAG_ID||(e.dataTransfer&&e.dataTransfer.getData('text/plain')); DRAG_ID=null; if(id)replanPost(id,cell.dataset.day); });
+    });
+  }
+  async function replanPost(id,dayISO){
+    const p=POSTS.find(x=>x.id===id); if(!p)return;
+    let hhmm='09:00'; if(p.geplant_fuer&&p.geplant_fuer.length>=16) hhmm=p.geplant_fuer.slice(11,16);
+    try{ await api('/api/posts/'+id+'/planen',{method:'POST',body:JSON.stringify({geplant_fuer:dayISO+'T'+hhmm+':00'})}); }catch(e){ alert(e.message); return; }
+    ladePosts();
+  }
+
+  // ----- Queue + HITL-Gate -----
+  function qCard(p){
+    let chips='';
+    if(p.quelle==='creating') chips+=chip({icon:'ic-download',label:'Creating',kind:'mg',title:'Aus Dizz Creating empfangen (REV-3) · Asset '+(p.herkunft_asset_id||'?'),act:'creatingLineage',arg:p.id});
+    chips+=chip({icon:'ic-archive',label:'Memory',kind:'mut',title:'In Dizz Memory archivieren (V8 post_log)',act:'postArchivieren',arg:p.id});
+    let act='';
+    if(p.status==='entwurf'){ act+='<button class="btn mini" data-dz-act="compEdit" data-dz-arg="'+p.id+'">bearbeiten</button>';
+      act+='<button class="btn mini" data-dz-act="autoPlanen" data-dz-arg="'+p.id+'" title="Beste Zeit aus deiner Historie vorschlagen + planen">🤖 Beste Zeit</button>'; }
+    if(p.status!=='veroeffentlicht') act+='<button class="btn mini cy" data-dz-act="postFreigabe" data-dz-arg="'+p.id+'">freigeben…</button>';
+    act+='<button class="btn mini mg" data-dz-act="postDelete" data-dz-arg="'+p.id+'">✕</button>';
+    return '<div class="q-card"><div style="display:flex;gap:6px;align-items:center"><span class="t grow">'+esc(p.titel||'(ohne Titel)')+'</span>'
+      +(p.plattform?'<span class="badge cy">'+esc(p.plattform)+'</span>':'')+(p.heikel?'<span class="badge warn">HEIKEL</span>':'')+'</div>'
+      +(p.geplant_fuer?'<div class="meta">⏱ '+esc(fmtZeit(p.geplant_fuer))+'</div>':'')
+      +'<div class="chips">'+chips+'</div>'
+      +'<div style="display:flex;gap:5px;flex-wrap:wrap">'+act+'</div></div>';
+  }
+  function renderQueue(){
+    const host=document.getElementById('rk-queue');
+    const gate='<div class="q-gate"><b>🔒 Veröffentlich-Gate (HITL · K4)</b> — Posten an echte Kanäle läuft nie eigenmächtig: '
+      +'„freigeben…" schlägt vor, die Freigabe verlangt eine <b>verifizierte Verbindung</b> (Dizzi-ID). '
+      +'v1 ist der Live-Pfad <b>DORMANT</b> (Recht/Opt-in).</div>';
+    const cols=[['entwurf','Entwürfe'],['geplant','Geplant'],['freigegeben','Freigegeben'],['veroeffentlicht','Veröffentlicht']];
+    const RP=redPosts();
+    let q='<div class="queue">';
+    for(const [st,lbl] of cols){ const items=RP.filter(p=>p.status===st);
+      q+='<div class="q-col"><h4>'+lbl+' · '+items.length+'</h4>'+(items.length?items.map(qCard).join(''):'<span class="mut small">—</span>')+'</div>'; }
+    q+='</div>';
+    host.innerHTML=gate+q+'<div id="freigaben-box" style="margin-top:10px"></div>';
+    ladeFreigaben();
+  }
+  function creatingLineage(id){ const p=POSTS.find(x=>x.id===id); if(!p)return;
+    alert('📥 Aus Dizz Creating empfangen (REV-3 — Lineage)\n\nAsset-ID: '+(p.herkunft_asset_id||'—')+'\nPlattform: '+(p.plattform||'—')+'\nFormat: '+(p.format||'—')+'\nMedien: '+((p.medien||[]).join(', ')||'—')+'\nStatus: '+p.status); }
+
+  // ----- KI-Auto-Scheduling (P3): beste Zeit vorschlagen + übernehmen (HITL) -----
+  async function autoPlanen(id){
+    let s; try{ s=await api('/api/auto-zeit'); }catch(e){ alert('Vorschlag nicht abrufbar.'); return; }
+    if(!confirm('🤖 Auto-Scheduling-Vorschlag:\n\n'+fmtZeit(s.vorschlag)+'  ('+s.wochentag+')\nBasis: '+s.basis+'\n\nDiesen Entwurf auf die Zeit planen?')) return;
+    try{ await api('/api/posts/'+id+'/planen',{method:'POST',body:JSON.stringify({geplant_fuer:s.vorschlag})}); }catch(e){ alert(e.message); return; }
+    ladePosts();
+  }
+
+  // ----- Bulk-CSV-Import (P3): viele Entwürfe auf einmal -----
+  async function bulkImport(){
+    const ta=document.getElementById('bulk-csv'), out=document.getElementById('bulk-out');
+    const text=(ta.value||'').trim(); if(!text){ alert('CSV einfügen (titel,text,plattform,hashtags,geplant_fuer).'); return; }
+    let r; try{ r=await api('/api/posts/bulk',{method:'POST',body:JSON.stringify({csv:text})}); }catch(e){ alert(e.message||'Import fehlgeschlagen'); return; }
+    const n=(r.angelegt||[]).length, f=(r.fehler||[]);
+    out.innerHTML='<b style="color:var(--ok)">'+n+'</b> Entwürfe angelegt.'+(f.length?' <span style="color:var(--bad,#ff6b6b)">'+f.length+' Fehler: '+f.map(x=>'Z'+x.zeile+' ('+esc(x.grund)+')').join(', ')+'</span>':'');
+    if(n){ ta.value=''; ladePosts(); }
+  }
+
+  // ----- Auswertung (P2): KPIs + Charts + Best-Time-Heatmap + Reichweite (dormant) -----
+  async function renderAuswertung(){
+    const host=document.getElementById('rk-auswertung');
+    const aq=RK_BEREICH?('?bereich_id='+encodeURIComponent(RK_BEREICH)):'';
+    let a; try{ a=await api('/api/analytics'+aq); }catch(e){ host.innerHTML='<div class="mut small">Auswertung nicht abrufbar.</div>'; return; }
+    const k=a.kpis||{}, postsGes=(k.entwuerfe||0)+(k.geplant||0)+(k.veroeffentlicht||0)+((a.status_verteilung||{}).freigegeben||0);
+    const tile=(label,val)=>'<div class="dz-akt-tile"><div class="v">'+esc(val)+'</div><div class="l">'+esc(label)+'</div></div>';
+    let h='<div class="dz-akt-grid">'+tile('Posts',postsGes)+tile('Entwürfe',k.entwuerfe||0)+tile('Geplant',k.geplant||0)
+      +tile('Veröffentlicht',k.veroeffentlicht||0)+tile('Kanäle',k.kanaele_gesamt||0)+tile('verbunden',k.kanaele_verbunden||0)+'</div>';
+    h+='<div class="aw-grid">'
+      +'<div class="aw-card"><h4>Posts je Plattform</h4><div id="aw-bars"></div></div>'
+      +'<div class="aw-card"><h4>Status-Verteilung</h4><div class="aw-donut-wrap"><div id="aw-donut"></div><div id="aw-legend" class="grow"></div></div></div>'
+      +'<div class="aw-card full"><h4>Posting-Zeiten-Heatmap (Wochentag × Stunde)</h4><div id="aw-heat"></div><div class="mut small" id="aw-beste" style="margin-top:7px"></div></div>'
+      +'<div class="aw-card aw-dormant full"><h4>Reichweite &amp; Engagement</h4>'
+      +'<div class="dz-disclaimer"><b>vorbereitet · dormant</b><span>'+esc(a.reichweite.hinweis)+'</span></div></div>'
+      +'</div>';
+    host.innerHTML=h;
+    if(!window.DzCharts){ return; }
+    DzCharts && (document.getElementById('aw-bars').innerHTML=DzCharts.barChart((a.je_plattform||[]).map(p=>({label:p.plattform,value:p.gesamt}))));
+    const SV=a.status_verteilung||{}, segDefs=[['entwurf','Entwurf'],['geplant','Geplant'],['freigegeben','Freigegeben'],['veroeffentlicht','Veröffentlicht']];
+    const segs=segDefs.map(([key,l])=>({label:l,value:SV[key]||0}));
+    document.getElementById('aw-donut').innerHTML=DzCharts.donut(segs);
+    document.getElementById('aw-legend').innerHTML='<div class="dz-legend">'+segs.map((s,i)=>'<span class="lg"><span class="sw dz-seg-'+((i%5)+1)+'"></span>'+esc(s.label)+' <b>'+s.value+'</b></span>').join('')+'</div>';
+    document.getElementById('aw-heat').innerHTML=DzCharts.heatmap(a.heatmap,{rows:a.wochentage});
+    const bz=a.beste_zeiten||[];
+    document.getElementById('aw-beste').innerHTML=bz.length
+      ? ('Beste Zeiten (aus deinem Plan): '+bz.map(b=>'<b>'+esc(b.label)+'</b> ('+b.anzahl+')').join(' · ')+' — speist 🤖 Auto-Scheduling in der Queue.')
+      : 'Noch keine geplanten Posts — sobald du welche planst, lernt die Heatmap deine Zeiten.';
+  }
+
+  // ----- Composer -----
+  function buildPlatPick(){
+    const host=document.getElementById('c-plats'); if(!host)return;
+    host.innerHTML=PLATTFORMEN.map(p=>'<label class="pchip"><input type="checkbox" value="'+p+'" data-dz-act="compPreview" data-dz-on="change">'+esc(p)+'</label>').join('');
+  }
+  function selectedPlats(){ return Array.from(document.querySelectorAll('#c-plats input:checked')).map(c=>c.value); }
+  function compPreview(){
+    const host=document.getElementById('c-prev'); if(!host)return;
+    const plats=selectedPlats();
+    const titel=v('c-titel'), text=(document.getElementById('c-text').value||''), ht=v('c-hashtags');
+    const body=(text+(ht?(' '+ht):'')).trim(), len=[...body].length;
+    if(!plats.length){ host.innerHTML='<div class="mut small">Wähle links eine oder mehrere Plattformen für die Live-Vorschau (mit Zeichen-Zähler).</div>'; return; }
+    host.innerHTML=plats.map(pl=>{ const lim=CHAR_LIMITS[pl]||CHAR_LIMIT_DEFAULT, over=len>lim;
+      const ig=(pl==='instagram')?'<div class="ig-grid">'+Array.from({length:9},(_,i)=>'<div class="ig-cell">'+(i===0?'▦':'')+'</div>').join('')+'</div>':'';
+      return '<div class="prevcard"><div class="ph"><span class="badge cy">'+esc(pl)+'</span><span class="spacer"></span><span class="cc'+(over?' over':'')+'">'+len+' / '+lim+'</span></div>'
+        +'<div class="pv-titel">'+esc(titel||'(ohne Titel)')+'</div>'
+        +'<div class="pv-body">'+esc(text||'(kein Text)')+(ht?' <span class="pv-ht">'+esc(ht)+'</span>':'')+'</div>'
+        +(over?'<div class="small" style="color:var(--bad,#ff6b6b);margin-top:4px">⚠ über dem Limit für '+esc(pl)+' ('+(len-lim)+' zu viel)</div>':'')
+        +ig+'</div>'; }).join('');
+  }
+  function compReset(){
+    COMP_EDIT=null;
+    ['c-titel','c-text','c-hashtags','c-medien'].forEach(i=>{const el=document.getElementById(i); if(el)el.value='';});
+    document.querySelectorAll('#c-plats input').forEach(cb=>cb.checked=false);
+    { const cb=document.getElementById('c-bereich'); if(cb)cb.value=AKTIVER_BEREICH||''; }
+    const note=document.getElementById('comp-editnote'); if(note){note.hidden=true;note.innerHTML='';}
+    const sv=document.getElementById('c-save'); if(sv)sv.textContent='Entwürfe anlegen';
+    compPreview();
+  }
+  function compEdit(id){
+    const p=POSTS.find(x=>x.id===id); if(!p)return;
+    COMP_EDIT=id; setView('composer');
+    document.getElementById('c-titel').value=p.titel||''; document.getElementById('c-text').value=p.text||'';
+    document.getElementById('c-hashtags').value=p.hashtags||''; document.getElementById('c-medien').value=(p.medien||[]).join(', ');
+    { const cb=document.getElementById('c-bereich'); if(cb)cb.value=p.bereich_id||''; }
+    document.querySelectorAll('#c-plats input').forEach(cb=>{ cb.checked=(cb.value===p.plattform); });
+    const note=document.getElementById('comp-editnote');
+    note.hidden=false; note.innerHTML='✎ Bearbeite vorhandenen <b>'+esc(p.status)+'</b> · Plattform '+esc(p.plattform||'—')
+      +' · <a href="#" data-dz-act="compReset" style="cursor:pointer">stattdessen neu</a>';
+    document.getElementById('c-save').textContent='Änderungen speichern';
+    compPreview();
+  }
+  async function compSpeichern(){
+    const titel=v('c-titel'), text=(document.getElementById('c-text').value||'').trim(), ht=v('c-hashtags');
+    const medien=v('c-medien')?v('c-medien').split(',').map(s=>s.trim()).filter(Boolean):[];
+    const cbsel=document.getElementById('c-bereich'); const ber=cbsel?cbsel.value:'';
+    if(!titel&&!text){ alert('Titel oder Text angeben.'); return; }
+    try{
+      if(COMP_EDIT){ const pl=selectedPlats(); await api('/api/posts/'+COMP_EDIT,{method:'PATCH',body:JSON.stringify({titel,text,hashtags:ht,medien,plattform:pl[0]||'',bereich_id:ber})}); }
+      else { let plats=selectedPlats(); if(!plats.length)plats=['']; for(const pl of plats){ await api('/api/posts',{method:'POST',body:JSON.stringify({titel,text,plattform:pl,hashtags:ht,medien,bereich_id:ber})}); } }
+    }catch(e){ alert(e.message); return; }
+    compReset(); await ladePosts(); renderBereichePanel(); setView('queue');
+  }
+
+  // ----- Post-Aktionen (geteilt von Queue/Kalender) -----
+  async function postFreigabe(id){
+    try{ await api('/api/posts/'+id+'/freigabe-anfordern',{method:'POST'}); }catch(e){ alert(e.message); return; }
+    if(RK_VIEW!=='queue') setView('queue');
+    alert('Freigabe angefordert (HITL). Bestätige sie unten unter „Offene Freigaben" — Veröffentlichen verlangt eine verifizierte Verbindung; echtes Posten ist v1 DORMANT.');
+    ladeFreigaben();
+  }
+  async function postArchivieren(id){
+    let r; try{ r=await api('/api/posts/'+id+'/archivieren',{method:'POST'}); }
+    catch(e){ alert('Archivieren fehlgeschlagen: '+(e.message||'')); return; }
+    const s=r&&r.status;
+    if(s==='archiviert') alert('✓ In Dizz Memory archiviert.');
+    else if(s==='vorhanden') alert('✓ War bereits in Dizz Memory.');
+    else if(r&&r.ok===false) alert('Dizz Memory nicht erreichbar: '+(r.fehler||'?'));
+    else if(s==='uebersprungen') alert('Übersprungen (Archiv-Regel: '+(r.modus||r.grund||'manuell')+').');
+    else alert('✓ An Dizz Memory gesendet.');
+  }
+  async function postDelete(id){ if(!confirm('Post löschen?'))return; try{ await api('/api/posts/'+id,{method:'DELETE'}); }catch(e){} ladePosts(); }
+  async function ladeFreigaben(){
+    const box=document.getElementById('freigaben-box'); if(!box)return; let a;
+    try{ a=await api('/api/actions?status=pending'); }catch(e){ box.innerHTML=''; return; }
+    const liste=(a.liste||[]).filter(x=>x.name==='post_veroeffentlichen');
+    if(!liste.length){ box.innerHTML='<span class="mut small">Keine offenen Freigaben.</span>'; return; }
+    box.innerHTML='<div class="kmsech" style="color:var(--mg);margin-bottom:6px">Offene Freigaben (HITL)</div>'+liste.map(x=>
+      '<div class="zeile"><span class="meta grow">Veröffentlichen · Stufe '+esc(x.level)+' · '+esc(fmtZeit(x.created_at))+'</span>'
+      +'<button class="btn mini cy" data-dz-act="freigabeEntscheidenAct" data-dz-arg="'+x.id+'" data-ok="1">freigeben</button>'
+      +'<button class="btn mini mg" data-dz-act="freigabeEntscheidenAct" data-dz-arg="'+x.id+'" data-ok="0">ablehnen</button></div>').join('');
+  }
+  async function freigabeEntscheiden(id,ok){
+    let r; try{ r=await fetch('/api/actions/'+id+'/'+(ok?'approve':'reject'),{method:'POST',headers:{'Content-Type':'application/json'}}); }catch(e){ return; }
+    if(r.status===403){ alert('Veröffentlichen verlangt eine verifizierte Verbindung (Dizzi-ID). Standalone fail-closed.'); return; }
+    let j={}; try{ j=await r.json(); }catch(_){}
+    if(j&&j.dormant){ alert('Freigabe gespeichert — echtes Posten ist v1 DORMANT: '+(j.hinweis||'')); }
+    ladePosts();
+  }
+
+  // ===== Kanäle =====
+  async function ladeKanaele(){
+    let liste; try{ liste=await api('/api/kanaele'+bereichParam()); }catch(e){ return; }
+    KANAELE=liste;
+    document.getElementById('kanaele-kurz').textContent=liste.length?(liste.length+' Kanäle'):'';
+    const host=document.getElementById('kanaele-liste');
+    host.innerHTML=liste.length?liste.map(k=>{
+      const st=k.status==='verbunden'?'ok':(k.status==='pausiert'?'warn':'');
+      return '<div class="zeile"><span class="badge cy">'+esc(k.plattform)+'</span><span class="t grow">'+esc(k.handle||k.anzeigename||'—')+'</span>'
+        +'<span class="badge '+st+'">'+esc(k.status)+'</span>'
+        +'<button class="btn mini" data-dz-act="kanalStatusAct" data-dz-arg="'+k.id+'" data-status="'+(k.status==='verbunden'?'getrennt':'verbunden')+'">'+(k.status==='verbunden'?'trennen':'verbinden')+'</button>'
+        +'<button class="btn mini mg" data-dz-act="kanalDelete" data-dz-arg="'+k.id+'">✕</button></div>';
+    }).join(''):'<span class="mut small">Noch keine Kanäle — oben anlegen.</span>';
+  }
+  async function kanalAnlegen(){ const plattform=v('k-plattform'); if(!plattform)return;
+    try{ await api('/api/kanaele',{method:'POST',body:JSON.stringify({plattform,handle:v('k-handle'),bereich_id:AKTIVER_BEREICH})}); }catch(e){ alert(e.message); return; }
+    document.getElementById('k-handle').value=''; ladeKanaele(); renderBereichePanel(); }
+  async function kanalStatus(id,status){ try{ await api('/api/kanaele/'+id,{method:'PATCH',body:JSON.stringify({status})}); }catch(e){} ladeKanaele(); }
+  async function kanalDelete(id){ if(!confirm('Kanal löschen?'))return; try{ await api('/api/kanaele/'+id,{method:'DELETE'}); }catch(e){} ladeKanaele(); }
+  async function ladeQuellen(){
+    let q; try{ q=(await api('/api/kanaele/quellen')).quellen; }catch(e){ return; }
+    document.getElementById('kanal-quellen').innerHTML=q.map(x=>'<div class="zeile"><span class="t grow">'+esc(x.name)+'</span><span class="badge '+(x.verbunden?'ok':'')+'">'+(x.verbunden?'verbunden':'dormant')+'</span></div>').join('');
+  }
+
+  // ===== Social-Bots =====
+  async function ladeBots(){
+    let liste; try{ liste=await api('/api/bots'+bereichParam()); }catch(e){ return; }
+    document.getElementById('bots-kurz').textContent=liste.length?(liste.filter(b=>b.aktiv).length+' aktiv'):'';
+    const host=document.getElementById('bots-liste');
+    if(!liste.length){ host.innerHTML='<span class="mut small">Noch keine Bots — oben anlegen.</span>'; return; }
+    const postsProBot=id=>POSTS.filter(p=>p.bot_id===id).length;
+    const kanProBot=id=>(KANAELE||[]).filter(k=>k.bot_id===id).length;
+    // Social-Bot-Visualisierung (P3): Posts je aktivem Bot als Balken (DzCharts)
+    const vizData=liste.filter(b=>b.aktiv).map(b=>({label:b.name,value:postsProBot(b.id)})).filter(x=>x.value>0);
+    const viz=(window.DzCharts&&vizData.length)
+      ? '<div class="botviz"><div class="mut small" style="margin-bottom:4px">Posts je aktivem Bot</div>'+DzCharts.barChart(vizData)+'</div>' : '';
+    host.innerHTML=viz+liste.map(b=>'<div class="zeile" style="flex-wrap:wrap"><span class="t grow">'+esc(b.name)+'</span>'
+      +'<span class="meta">'+esc(b.thema||'')+(b.ton?' · '+esc(b.ton):'')+'</span>'
+      +(b.plattform?'<span class="badge cy">'+esc(b.plattform)+'</span>':'')
+      +'<span class="badge '+(b.aktiv?'ok':'')+'">'+(b.aktiv?'aktiv':'aus')+'</span>'
+      +'<span style="display:flex;gap:5px;align-items:center;width:100%;margin-top:5px">'
+      +'<span class="dz-linkchip lc-mut" style="cursor:default"><span>🔗 '+kanProBot(b.id)+' Kanäle</span></span>'
+      +'<span class="dz-linkchip lc-mut" style="cursor:default"><span>📝 '+postsProBot(b.id)+' Posts</span></span>'
+      +'<span class="spacer"></span>'
+      +'<button class="btn mini" data-dz-act="botToggleAct" data-dz-arg="'+b.id+'" data-aktiv="'+(b.aktiv?'0':'1')+'">'+(b.aktiv?'aus':'an')+'</button>'
+      +'<button class="btn mini mg" data-dz-act="botDelete" data-dz-arg="'+b.id+'">✕</button></span></div>').join('');
+  }
+  async function botAnlegen(){ const name=v('b-name'); if(!name){alert('Name ist Pflicht.');return;}
+    try{ await api('/api/bots',{method:'POST',body:JSON.stringify({name,thema:v('b-thema'),ton:v('b-ton'),plattform:v('b-plattform'),bereich_id:AKTIVER_BEREICH})}); }catch(e){ alert(e.message); return; }
+    document.getElementById('b-name').value=''; document.getElementById('b-thema').value=''; ladeBots(); renderBereichePanel(); }
+  async function botToggle(id,aktiv){ try{ await api('/api/bots/'+id,{method:'PATCH',body:JSON.stringify({aktiv})}); }catch(e){} ladeBots(); }
+  async function botDelete(id){ if(!confirm('Bot löschen?'))return; try{ await api('/api/bots/'+id,{method:'DELETE'}); }catch(e){} ladeBots(); }
+
+  // ===== Creating-Eingang (mit Lineage-Chip) =====
+  function ladeCreating(){
+    const liste=POSTS.filter(p=>p.quelle==='creating');
+    document.getElementById('creating-kurz').textContent=liste.length?(liste.length+''):'';
+    const host=document.getElementById('creating-liste');
+    host.innerHTML=liste.length?liste.map(p=>'<div class="zeile" style="flex-wrap:wrap"><span class="t grow">'+esc(p.titel||'(ohne Titel)')+'</span>'
+      +(p.plattform?'<span class="badge cy">'+esc(p.plattform)+'</span>':'')+(p.heikel?'<span class="badge warn">HEIKEL</span>':'')
+      +'<span class="badge '+(_STBADGE[p.status]||'')+'">'+esc(p.status)+'</span>'
+      +'<span class="chips" style="width:100%;margin-top:5px">'+chip({icon:'ic-download',label:'Asset '+esc((p.herkunft_asset_id||'?')).slice(0,10),kind:'mg',title:'Lineage zum Creating-Asset',act:'creatingLineage',arg:p.id})
+      +chip({icon:'ic-edit',label:'bearbeiten',kind:'mut',act:'compEdit',arg:p.id})+'</span></div>').join('')
+      :'<span class="mut small">Noch keine Übergaben von Dizz Creating.</span>';
+  }
+  const _STBADGE={entwurf:'',geplant:'cy',freigegeben:'warn',veroeffentlicht:'ok',abgelehnt:'mg',fehler:'mg'};
+
+  // ===== KI-Planung =====
+  async function planAbrufen(){
+    const btn=document.getElementById('plan-btn'), host=document.getElementById('plan-liste');
+    btn.disabled=true; host.innerHTML='<span class="mut small">denke lokal nach … (10–60 s)</span>';
+    let r; try{ r=await api('/api/plan',{method:'POST'}); }catch(e){ host.innerHTML='<span class="mut small">KI nicht erreichbar.</span>'; btn.disabled=false; return; }
+    const vs=r.vorschlaege||[];
+    host.innerHTML=(vs.length?vs.map(x=>'<div class="zeile"><span class="grow">'+esc(x)+'</span></div>').join(''):'<span class="mut small">Keine Vorschläge (Quelle: '+esc(r.quelle||'?')+').</span>')
+      +'<div class="mut small" style="margin-top:6px">'+esc(r.hinweis||'')+'</div>';
+    btn.disabled=false;
+  }
+
+  // ===== Mini-Dizzi (POST /api/ki/frage) =====
+  const _QMAP={app_ki:'Social-KI (lokal)',fallback_ollama:'lokaler Ollama-Kontext',kein_ollama:'Ollama nicht erreichbar',aus:'Mini-Dizzi deaktiviert',leer:'—'};
+  let DIZZI_OPEN=false;
+  function openDizzi(){ const b=document.getElementById('dizziBubble'); if(!b)return; b.hidden=false; DIZZI_OPEN=true; const i=document.getElementById('dizziFrage'); if(i)setTimeout(()=>i.focus(),30); }
+  function closeDizzi(){ const b=document.getElementById('dizziBubble'); if(b)b.hidden=true; DIZZI_OPEN=false; }
+  async function dizziFragen(){
+    const inp=document.getElementById('dizziFrage'), out=document.getElementById('dizziOut'), src=document.getElementById('dizziSrc'), btn=document.getElementById('dizziBtn');
+    const f=(inp.value||'').trim(); if(!f)return;
+    out.innerHTML='<div class="db-q">„'+esc(f)+'"</div><div class="mut small" style="margin-top:5px">denke lokal nach … (10–60 s)</div>'; src.textContent=''; btn.disabled=true;
+    try{ const j=await api('/api/ki/frage',{method:'POST',body:JSON.stringify({frage:f})});
+      out.innerHTML='<div class="db-q">„'+esc(f)+'"</div><div style="margin-top:6px">'+esc(j.antwort||'(keine Antwort)')+'</div>';
+      src.innerHTML='Quelle: <b>'+esc(_QMAP[j.quelle]||j.quelle||'?')+'</b> · vorschlagen, nie eigenmächtig'; inp.value='';
+    }catch(e){ out.innerHTML='<div class="mut">Mini-Dizzi ist gerade nicht erreichbar.</div>'; }
+    btn.disabled=false; inp.focus();
+  }
+
+  // ===== Command-Palette (Strg/Cmd+K) — geteiltes Netzwerk-Kit =====
+  function cmdkCommands(){ return [
+    {group:'Ansicht',label:'Kalender',hint:'Redaktionsplan',icon:'ic-calendar',keywords:'redaktion zeitplan',run:()=>setView('kalender')},
+    {group:'Ansicht',label:'Queue',hint:'Status-Spalten',icon:'ic-grid',keywords:'entwurf geplant',run:()=>setView('queue')},
+    {group:'Ansicht',label:'Komponieren',hint:'neuer Post',icon:'ic-edit',keywords:'composer schreiben',run:()=>{compReset();setView('composer');}},
+    {group:'Ansicht',label:'Auswertung',hint:'Analytics & Heatmap',icon:'ic-chart',keywords:'statistik analytics heatmap',run:()=>setView('auswertung')},
+    {group:'Aktion',label:'Neuer Entwurf',icon:'ic-edit',keywords:'post anlegen',run:()=>{compReset();setView('composer');}},
+    {group:'Aktion',label:'KI-Vorschläge erzeugen',icon:'ic-sparkle',keywords:'plan',run:()=>{planAbrufen();}},
+    {group:'Bereich',label:'Gesamt (alle Bereiche)',icon:'ic-grid',keywords:'bereich kontext alle gesamt',run:()=>bereichWaehlen('')},
+    ...BEREICHE.map(b=>({group:'Bereich',label:'→ '+b.name,hint:'Kontext wählen',icon:'ic-grid',keywords:'bereich kontext '+b.name,run:()=>bereichWaehlen(b.id)})),
+    {group:'Konto',label:'Einstellungen & Konto',icon:'ic-gear',keywords:'settings design',run:()=>oeffneKm()},
+  ]; }
+
+  function ladeStats(){ /* Kachel-KPIs zieht Dizzi über /api/summary; Kurz-Labels aktualisieren die Loader. */ }
+
+  // ===== STANDARD-KIT: Konto-/Einstellungs-Fenster (Norm docs/19 §2b) =====
+  // Generisch aus den appkit-Endpunkten — UNVERÄNDERT aus dem Template übernommen.
+  const _CATLBL={konto:'Konto & Identität',sicherheit:'Sicherheit',ki:'KI',vernetzung:'Vernetzung & Dienste',darstellung:'Darstellung & Sprache',daten:'Daten & Backup'};
+  const DESIGN_OPT=[['metall','Mattglanz-Metall (Standard)'],['neon','Neon / Retro-Chrome'],['flach','Flach (minimal-dunkel)'],['tag','Tag / Hell'],['carbon','Carbon (OLED-Schwarz)'],['pergament','Pergament (hell-warm)'],['synthwave','Synthwave (Neon-Sunset)'],['lagune','Lagune (Tropical-Aqua)'],['inferno','Inferno (Magma-Rot)'],['kobalt','Kobalt (Royalblau)']];
+  const FARBE_OPT=[['cyan-magenta','Cyan–Magenta (Standard)'],['smaragd-gold','Smaragd–Gold'],['violett-eis','Violett–Eis'],['bernstein','Bernstein'],['arktis','Arktis'],['koralle','Koralle'],['limette','Limette'],['feuer','Feuer'],['toxic','Toxic (Neon-Acid)'],['voltage','Voltage (Elektro)']];
+  let AUTH=null;
+  function applyTheme(d,f){ const h=document.documentElement;
+    if(d){h.dataset.design=d; try{localStorage.setItem('mg_design',d)}catch(e){}}
+    if(f){h.dataset.farbe=f; try{localStorage.setItem('mg_farbe',f)}catch(e){}}
+    const ds=document.getElementById('designSel'),fs=document.getElementById('farbeSel');
+    if(ds&&d)ds.value=d; if(fs&&f)fs.value=f; }
+  function themeWahl(){ const d=document.getElementById('designSel').value,f=document.getElementById('farbeSel').value; applyTheme(d,f); saveSetting('design_vorlage',d); saveSetting('farb_schema',f); }
+  function fuelleSelect(id,opt){ const el=document.getElementById(id); if(el&&!el.options.length) el.innerHTML=opt.map(([val,l])=>'<option value="'+val+'">'+esc(l)+'</option>').join(''); }
+  function oeffneKm(){ document.getElementById('kmWrap').hidden=false; fuelleSelect('designSel',DESIGN_OPT); fuelleSelect('farbeSel',FARBE_OPT); ladeAuth(); loadKonto(); renderKiAktivitaet(); }
+  function schliesseKm(){ document.getElementById('kmWrap').hidden=true; }
+  async function ladeAuth(){
+    try{ AUTH=await api('/auth/me'); }catch(e){ AUTH={angemeldet:false,level:'lokal'}; }
+    const me=AUTH||{};
+    const pill=document.getElementById('authpill');
+    if(pill){ if(me.angemeldet){ pill.className='pill on'; pill.textContent='✓ '+(me.level||'lokal'); pill.title='Angemeldet via Dizzi-ID — Klick = Einstellungen & Konto'; }
+      else{ pill.className='pill'; pill.textContent='Anmelden (Dizzi-ID)'; pill.title='Einmal anmelden ⇒ überall angemeldet (SSO) — Klick = Konto-Fenster'; } }
+    renderKontoAuth(me);
+  }
+  // Identität & Sicherheit (Chips + amr + Hochstufen/Abmelden) — 1:1 abgesegnetes Schema (News/Money/Komm/Admin).
+  function renderKontoAuth(me){
+    const host=document.getElementById('konto-auth'); if(!host||!me)return;
+    if(me.angemeldet){ const hoch=me.level==='hochsicher';
+      host.innerHTML='<span class="pill on">✓ Angemeldet</span>'
+        +'<span class="small">via <b>'+esc(me.via||'?')+'</b> · Stufe <b>'+esc(me.level)+'</b>'+(me.amr&&me.amr.length?' ('+esc(me.amr.join(', '))+')':'')+'</span>'
+        +'<span class="spacer"></span>'
+        +(hoch?'<span class="pill on">✓ Echtgeld-Stufe</span>':'<a class="btn mini" href="/auth/login?level=hochsicher" title="Per MFA-Code auf die Stufe hochsicher hochstufen.">Hochstufen (MFA)</a>')
+        +'<button class="btn mini" data-dz-act="logoutDizzi">Abmelden</button>';
+    } else {
+      host.innerHTML='<span class="pill">Nicht angemeldet</span>'
+        +'<span class="small mut">Einmal über Dizzi-ID anmelden ⇒ in allen Dizz-Apps angemeldet (SSO).</span>'
+        +'<span class="spacer"></span>'
+        +'<a class="btn mini" href="/auth/login">Mit Dizzi-ID anmelden</a>';
+    }
+  }
+  async function logoutDizzi(){ try{ await fetch('/auth/logout',{method:'POST',headers:{'Accept':'application/json'}}); }catch(e){} ladeAuth(); }
+  async function loadKonto(){ let schema,vals,vault;
+    try{ schema=await api('/api/settings/schema'); vals=await api('/api/settings'); }catch(e){ return; }
+    try{ vault=await api('/api/vault'); }catch(e){ vault=[]; }
+    applyTheme(vals.design_vorlage||vals.x_design_vorlage, vals.farb_schema||vals.x_farb_schema);
+    const accHost=document.getElementById('konto-acc');
+    if(accHost){ const lvl=(AUTH&&AUTH.level)||'lokal', via=(AUTH&&AUTH.via)||'standalone';
+      accHost.innerHTML='Profil <b>'+esc(vals.anzeigename||'—')+'</b> · Identität '+esc((AUTH&&AUTH.sub)||'dizzi')
+        +' · Stufe <b>'+esc(lvl)+'</b> ('+esc(via)+') · Token-Tresor: '+((vault&&vault.length)||0)+' Eintrag(e) · Vertrag v'+(schema.version!=null?schema.version:'?'); }
+    renderKontoAktionen(); renderDienste(vault);
+    const host=document.getElementById('konto-settings'); if(!host)return;
+    let h='<div class="mut small" style="margin:2px 0 6px">6 Kategorien — Änderungen werden sofort gespeichert.</div>';
+    for(const cat of Object.keys(schema.kategorien||{})){
+      const defs=schema.kategorien[cat]; if(!defs||!defs.length)continue;
+      let rows='';
+      for(const d of defs){ if(d.key==='design_vorlage'||d.key==='farb_schema')continue;
+        const val=(d.key in vals)?vals[d.key]:d.default;
+        rows+='<div class="kmrow"><label title="'+esc(d.description||'')+'">'+esc(d.label||d.key)+'</label>'+_settingInput(d,val)+'</div>'; }
+      if(!rows)continue;
+      h+='<div class="kmcat"><div class="kmcath">'+esc(_CATLBL[cat]||cat)+'</div>'+rows+'</div>';
+    }
+    host.innerHTML=h;
+    if(window.DzControls)DzControls.initControls(host);
+  }
+  async function renderKiAktivitaet(){ const host=document.getElementById('konto-ki'); if(!host)return;
+    let a; try{ a=await api('/api/actions'); }catch(e){ host.textContent='KI-Aktivität nicht abrufbar.'; return; }
+    let h='';
+    if(a.katalog&&a.katalog.length) h+='<div class="mut small" style="margin-bottom:4px">Registrierte Aktionen: '+a.katalog.map(k=>'<b>'+esc(k.name)+'</b> (Stufe '+esc(k.level)+')').join(' · ')+'</div>';
+    else h+='<div class="mut small">Keine ausführbaren KI-Aktionen registriert — reine Lese-/Vorschlags-KI.</div>';
+    if(a.liste&&a.liste.length) h+=a.liste.slice(0,8).map(x=>'<div class="kmdienst"><b>'+esc(x.name)+'</b><span class="mut small">'+esc(x.status||'')+' · '+esc(x.created_at||'')+' · Quelle: '+esc(x.source||'?')+'</span></div>').join('');
+    else h+='<div class="mut small" style="margin-top:4px">Keine offenen KI-Vorschläge.</div>';
+    host.innerHTML=h;
+  }
+  function renderDienste(vault){ const host=document.getElementById('konto-dienste'); if(!host)return;
+    if(!vault||!vault.length){ host.innerHTML='<span class="mut small">Keine verbundenen Dienste — OAuth-Tokens/Keys der Plattformen landen hier (verschlüsselter Tresor).</span>'; return; }
+    host.innerHTML=vault.map(n=>'<div class="kmdienst"><b>'+esc(n)+'</b><span class="mut small">im Tresor (verschlüsselt)</span><span class="spacer"></span><button class="btn mini" data-dz-act="dienstTrennen" data-dz-arg="'+esc(n).replace(/\x27/g,'')+'">Trennen</button></div>').join('');
+  }
+  function renderKontoAktionen(){ const host=document.getElementById('konto-aktionen'); if(!host)return;
+    host.innerHTML='<a class="btn mini" href="http://localhost:8200/id/geraete" target="_blank" rel="noopener">Sitzungen &amp; Geräte</a>'
+      +'<button class="btn mini" data-dz-act="kontoExport">Daten-Export (JSON)</button>'
+      +'<button class="btn mini" style="color:var(--mg);border-color:var(--mg)" data-dz-act="kontoLoeschen">Daten löschen</button>'
+      +'<span class="mut small">Export/Löschen = Re-Auth-Pflicht.</span>';
+  }
+  function _settingInput(d,v){ const id='set_'+d.key;
+    if(d.type==='bool') return '<label class="dz-check"><input type="checkbox" id="'+id+'" '+(v?'checked':'')+' data-dz-act="settingChange" data-dz-on="change" data-dz-arg="'+d.key+'" data-vtype="bool"></label>';
+    if(d.type==='choice'){ const o=(d.choices||[]).map(c=>'<option '+(String(c)===String(v)?'selected':'')+'>'+esc(c)+'</option>').join(''); return '<span class="dz-field"><select class="dz-select" id="'+id+'" data-dz-act="settingChange" data-dz-on="change" data-dz-arg="'+d.key+'" data-vtype="choice">'+o+'</select></span>'; }
+    if(d.type==='int'||d.type==='float'){
+      const g=(d.min!=null?' min="'+esc(d.min)+'"':'')+(d.max!=null?' max="'+esc(d.max)+'"':'')+(d.step!=null?' step="'+esc(d.step)+'"':'');
+      return '<span class="dz-stepper"><button type="button" data-dz-step="-1" aria-label="weniger">▾</button><input type="number" id="'+id+'" value="'+esc(v)+'"'+g+' data-dz-act="settingChange" data-dz-on="change" data-dz-arg="'+d.key+'" data-vtype="'+d.type+'"><button type="button" data-dz-step="1" aria-label="mehr">▴</button></span>'; }
+    return '<input type="text" id="'+id+'" value="'+esc(v)+'" style="width:180px" data-dz-act="settingChange" data-dz-on="change" data-dz-arg="'+d.key+'" data-vtype="str">';
+  }
+  async function saveSetting(key,value){ try{ await api('/api/settings',{method:'PUT',body:JSON.stringify({key,value})}); }catch(e){ alert('Speichern fehlgeschlagen: '+key); } }
+  async function dienstTrennen(name){ if(!confirm('Dienst „'+name+'" trennen?'))return; try{ await api('/api/vault/'+encodeURIComponent(name),{method:'DELETE'}); }catch(e){} loadKonto(); }
+  async function kontoExport(){ let r; try{ r=await fetch('/api/account/export',{method:'POST'}); }catch(e){ alert('Export fehlgeschlagen'); return; } if(r.status===403){ alert('Frische Anmeldung nötig'); location.href='/auth/login'; return; } if(!r.ok){ alert('Export HTTP '+r.status); return; } const b=await r.blob(),a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='dizz-management-export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); }
+  async function kontoLoeschen(){ if(!confirm('ALLE App-Daten löschen?'))return; if(!confirm('Sicher? Soft-Delete, auditiert.'))return; let r; try{ r=await fetch('/api/account/loeschen',{method:'POST'}); }catch(e){ return; } if(r.status===403){ alert('Frische Anmeldung nötig'); location.href='/auth/login'; return; } location.reload(); }
+
+  document.getElementById('kmZu').onclick=schliesseKm;
+  document.getElementById('dizziZu').onclick=closeDizzi;
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ schliesseKm(); closeDizzi(); } });
+  document.addEventListener('click',e=>{ if(e.target&&e.target.id==='kmWrap')schliesseKm(); });
+
+  // ============================================================
+  //  AGENTEN-REGIE (D13, docs/63 §5) — Definition + Autonomie-Matrix.
+  //  Read-only bzgl. AUSFÜHRUNG (die wohnt beim Core, Z4.2): hier nur definieren/steuern.
+  // ============================================================
+  let AGENTEN=[], AG_KAT=null;
+  async function ladeAgentenKatalog(){
+    if(AG_KAT) return AG_KAT;
+    try{ AG_KAT=await api('/api/agenten/katalog'); }
+    catch(e){ AG_KAT={task_klassen:['chat'],aktions_klassen:[],autonomie_stufen:['pre_approval']}; }
+    const sel=document.getElementById('ag-task');
+    if(sel) sel.innerHTML=(AG_KAT.task_klassen||['chat']).map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('');
+    return AG_KAT;
+  }
+  const agentName=id=>{ const a=AGENTEN.find(x=>x.id===id); return a?a.name:id; };
+  async function ladeAgenten(){
+    await ladeAgentenKatalog();
+    try{ AGENTEN=await api('/api/agenten'); }catch(e){ AGENTEN=[]; }
+    renderAgentenPanel(); renderAutonomieMatrix(); renderTreppe(); renderNotAus();
+    renderEichung(); renderVorlagen();   // RG-5: Eichungs-Karten + Werks-Vorlagen
+    fuelleRunAgenten();  // Running-Tab-Auswahl mitziehen
+  }
+  function renderAgentenPanel(){
+    const host=document.getElementById('agenten-liste'); if(!host)return;
+    const kurz=document.getElementById('agenten-kurz');
+    if(kurz) kurz.textContent=AGENTEN.length?(AGENTEN.length+' Agent'+(AGENTEN.length>1?'en':'')):'';
+    if(!AGENTEN.length){ host.innerHTML='<span class="mut small">Noch keine Agenten. Lege oben einen an — ein Agent ist ein Datensatz (kein Deploy).</span>'; return; }
+    host.innerHTML=AGENTEN.map(a=>{
+      const k=a.karte||{}, g=k.grenzen||{}, w=k.wissen||{};
+      const tools=(k.tools&&k.tools.length)?k.tools.map(t=>chip({label:t,kind:'mg'})).join(' ')
+        :'<span class="mut small">keine Tools (deny-by-default)</span>';
+      const subs=(a.sub_agenten&&a.sub_agenten.length)
+        ?('<div class="small" style="margin-top:3px">↳ Worker: '+a.sub_agenten.map(s=>esc(agentName(s))).join(', ')+'</div>'):'';
+      const auto=(g.autonomie&&Object.keys(g.autonomie).length)
+        ?Object.keys(g.autonomie).map(kl=>esc(kl)+'='+esc(g.autonomie[kl])).join(' · '):'—';
+      const prompt=w.system_prompt_auszug?('<div class="mut small" style="margin-top:3px">'+esc(w.system_prompt_auszug)+'</div>'):'';
+      return '<div class="agent-karte" style="border:1px solid var(--line,#2a2f3a);border-radius:10px;padding:10px;margin-bottom:8px">'
+        +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+          +'<b>'+esc(a.name)+'</b><span class="pill">'+esc(a.status)+'</span>'
+          +'<span class="mut small">'+esc(a.rolle||'ohne Rolle')+'</span>'
+          +'<span style="flex:1"></span>'
+          +'<button class="btn mini" data-dz-act="agentLoeschen" data-dz-arg="'+esc(a.id)+'">Löschen</button></div>'
+        +'<div class="small" style="margin-top:6px"><b>Tools:</b> '+tools+'</div>'+prompt+subs
+        +'<div class="mut small" style="margin-top:5px">Grenzen: Sensibilität '+esc(g.sensitivitaet||'?')
+          +' · Autonomie '+auto+' · Runden '+esc(g.max_runden!=null?g.max_runden:'?')
+          +' · Tool-Aufrufe '+esc(g.max_tool_aufrufe!=null?g.max_tool_aufrufe:'?')
+          +' · Läufe/Tag '+esc(g.laeufe_pro_tag!=null?g.laeufe_pro_tag:'?')+'</div></div>';
+    }).join('');
+  }
+  async function agentAnlegen(){
+    const name=v('ag-name'); if(!name){ alert('Name ist Pflicht.'); return; }
+    const rolle=v('ag-rolle'); const ts=document.getElementById('ag-task');
+    const task_klasse=ts?ts.value:'chat';
+    try{ await api('/api/agenten',{method:'POST',body:JSON.stringify({name,rolle,task_klasse})}); }
+    catch(e){ alert(e.message); return; }
+    const n=document.getElementById('ag-name'); if(n)n.value='';
+    const rr=document.getElementById('ag-rolle'); if(rr)rr.value='';
+    ladeAgenten();
+  }
+  async function agentLoeschen(id){
+    if(!confirm('Agent „'+agentName(id)+'" löschen?'))return;
+    try{ await api('/api/agenten/'+encodeURIComponent(id),{method:'DELETE'}); }catch(e){ alert(e.message); return; }
+    ladeAgenten();
+  }
+  async function renderAutonomieMatrix(){
+    const host=document.getElementById('agenten-matrix'); if(!host)return;
+    await ladeAgentenKatalog();
+    const lbl=document.getElementById('ag-mx-bereich');
+    if(lbl) lbl.textContent=AKTIVER_BEREICH?('· '+((bereichById(AKTIVER_BEREICH)||{}).name||AKTIVER_BEREICH)):'· Allgemein';
+    let d; try{ d=await api('/api/agenten/autonomie'+(AKTIVER_BEREICH?('?bereich_id='+encodeURIComponent(AKTIVER_BEREICH)):'')); }
+    catch(e){ host.innerHTML='<span class="mut small">Matrix nicht abrufbar.</span>'; return; }
+    const stufen=(AG_KAT&&AG_KAT.autonomie_stufen)||['beobachten','pre_approval','monitored','autonom_audit'];
+    host.innerHTML='<div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center">'
+      +(d.matrix||[]).map(row=>{
+        // V-1: Optionen bis zur Klassen-Kappe (geld/gesundheit ⇒ nur beobachten/pre_approval).
+        const kappeIdx=Math.max(0,stufen.indexOf(row.kappe||stufen[stufen.length-1]));
+        const opts=stufen.filter((s,i)=>i<=kappeIdx)
+          .map(s=>'<option value="'+esc(s)+'"'+(s===row.stufe?' selected':'')+'>'+esc(s)+'</option>').join('');
+        const schloss=row.gesperrt?'<span class="pill" title="'+esc(row.grund)+'">🔒 ≤pre_approval</span> ':'';
+        const cell=schloss+'<span class="dz-field"><select class="dz-select" data-dz-act="autonomieSetzen" data-dz-on="change" data-dz-arg="'+esc(row.klasse)+'">'+opts+'</select></span>';
+        return '<div class="small"><b>'+esc(row.klasse)+'</b></div><div>'+cell+'</div>';
+      }).join('')+'</div>';
+  }
+  async function autonomieSetzen(klasse,stufe){
+    try{ await api('/api/agenten/autonomie',{method:'PUT',body:JSON.stringify({bereich_id:AKTIVER_BEREICH,klasse,stufe})}); }
+    catch(e){ alert(e.message); }
+    renderAutonomieMatrix(); renderTreppe();
+  }
+
+  // ---- Autonomie-Treppe (RG-4, docs/83 §3): begehbare Preset-Folge T0–T3 ----
+  async function renderTreppe(){
+    const host=document.getElementById('agenten-treppe'); if(!host)return;
+    const lbl=document.getElementById('ag-tr-bereich');
+    if(lbl) lbl.textContent=AKTIVER_BEREICH?('· '+((bereichById(AKTIVER_BEREICH)||{}).name||AKTIVER_BEREICH)):'· Allgemein';
+    let d; try{ d=await api('/api/agenten/treppe'+(AKTIVER_BEREICH?('?bereich_id='+encodeURIComponent(AKTIVER_BEREICH)):'')); }
+    catch(e){ host.innerHTML='<span class="mut small">Treppe nicht abrufbar.</span>'; return; }
+    const labels=d.labels||{};
+    host.innerHTML=(d.stufen||[]).map(t=>{
+      const an=(t===d.treppe);
+      return '<button class="btn mini'+(an?' cy':'')+'" data-dz-act="treppeSetzen" data-dz-arg="'+esc(t)
+        +'" title="'+esc(labels[t]||'')+'">'+esc(t)+' · '+esc(labels[t]||'')+'</button>';
+    }).join(' ')+(d.treppe?'':' <span class="mut small">· eigene Kombination</span>');
+  }
+  async function treppeSetzen(t){
+    if((t==='T2'||t==='T3') && !confirm('Treppe '+t+' anwenden? Höhere Stufen wirken erst nach Eichung (eval_gruen).')) return;
+    try{ await api('/api/agenten/treppe',{method:'PUT',body:JSON.stringify({bereich_id:AKTIVER_BEREICH,treppe:t})}); }
+    catch(e){ alert(e.message); }
+    renderTreppe(); renderAutonomieMatrix();
+  }
+
+  // ---- Not-Aus (RG-4, docs/83 §3): Master-Schalter der reaktiven Regie ----
+  async function renderNotAus(){
+    const host=document.getElementById('regie-notaus'); if(!host)return;
+    let d; try{ d=await api('/api/agenten/regie/status'); }
+    catch(e){ host.innerHTML=''; return; }
+    if(d.core_offline){ host.innerHTML='<b>Reaktive Regie:</b> <span class="mut">⚠ Core offline — Status/Schalter nicht verfügbar.</span>'; return; }
+    const an=!!d.aktiv;
+    host.innerHTML='<b>Reaktive Regie (Not-Aus):</b> '
+      +'<span class="pill" title="Master-Schalter agenten_regie_aktiv">'+(an?'🟢 AN':'⛔ AUS')+'</span> '
+      +'<button class="btn mini'+(an?'':' cy')+'" data-dz-act="notAus" data-dz-arg="'+(an?'aus':'an')+'">'
+      +(an?'Not-Aus (ausschalten)':'Einschalten')+'</button> '
+      +'<span class="mut small">'+(an?'Automatik läuft — jederzeit sofort abschaltbar.'
+        :'Automatik gestoppt. Einschalten ist gegatet (Live-Zündung erst nach Eichung + Neustart).')+'</span>';
+  }
+  async function notAus(mode){
+    const aktiv=(mode==='an');
+    if(aktiv && !confirm('Reaktive Regie einschalten? Das ist die Live-Zündung — sie wirkt erst nach vereinbarter Eichung + Neustart.')) return;
+    try{ await api('/api/agenten/regie/schalter',{method:'POST',body:JSON.stringify({aktiv})}); }
+    catch(e){ alert(e.message); }
+    renderNotAus();
+  }
+
+  // ---- Eichung / Evals (RG-5, docs/83 §4): Eval-Ampel je Agent × Klasse ----
+  async function renderEichung(){
+    const host=document.getElementById('agenten-eichung'); if(!host)return;
+    let d; try{ d=await api('/api/agenten/eichung'); }
+    catch(e){ host.innerHTML='<span class="mut small">Eichung nicht abrufbar.</span>'; return; }
+    if(!d||!d.length){ host.innerHTML='<span class="mut small">Noch keine Eichung — „Eichung aktualisieren" pollt die Spines (Ground-Truth = deine echten Freigaben).</span>'; return; }
+    host.innerHTML=d.map(a=>{
+      const zeilen=(a.evals||[]).map(z=>{
+        const gruen=z.aktuell_gruen;
+        const pill='<span class="pill">'+(gruen?'🟢 grün':'⛔ ungrün')+'</span>';
+        const chips=(z.metriken||[]).map(x=>{
+          const g=x.status==='gruen'?'✓':(x.status==='ungruen'?'✗':'–');
+          return '<span class="mut small" title="'+esc(x.detail||'')+'">'+esc(x.label)+' '+g+'</span>';
+        }).join(' · ');
+        const why=(!gruen&&(z.gruende||[]).length)?'<div class="mut small">↳ '+esc(z.gruende.join(' · '))+'</div>':'';
+        const fr=(z.frische&&z.frische!=='aktuell')?' <span class="pill" title="Definition geändert oder abgelaufen">⟳ '+esc(z.frische)+'</span>':'';
+        return '<div class="small" style="margin:3px 0"><b>'+esc(z.klasse)+'</b> '+pill+fr
+          +'<div class="mut small">'+chips+'</div>'+why+'</div>';
+      }).join('');
+      return '<div style="border:1px solid var(--line,#2a2f3a);border-radius:10px;padding:8px;margin-bottom:6px">'
+        +'<div class="small"><b>'+esc(a.name)+'</b></div>'+zeilen+'</div>';
+    }).join('');
+  }
+  async function eichungPoll(){
+    const host=document.getElementById('agenten-eichung'); if(host)host.innerHTML='<span class="mut small">pollt die Spines …</span>';
+    try{ const r=await api('/api/agenten/eichung/poll',{method:'POST'});
+      if(r&&r.quellen_offline&&r.quellen_offline.length) console.info('Eichung: Quellen offline', r.quellen_offline); }
+    catch(e){ alert(e.message); }
+    renderEichung();
+  }
+
+  // ---- Werks-Vorlagen (RG-5, docs/83 §6): Domäne-Naht per Klick ----
+  async function renderVorlagen(){
+    const host=document.getElementById('agenten-vorlagen'); if(!host)return;
+    let d; try{ d=await api('/api/agenten/vorlagen'); }
+    catch(e){ host.innerHTML=''; return; }
+    host.innerHTML=(d||[]).map(v=>
+      '<div class="small" style="margin:3px 0"><b>'+esc(v.titel)+'</b> '
+      +'<button class="btn mini cy" data-dz-act="vorlageInstall" data-dz-arg="'+esc(v.name)+'">+ installieren</button>'
+      +'<div class="mut small">'+esc(v.beschreibung)+' <code>'+esc(v.quelle_app)+'×'+esc(v.ereignis_typ)+'</code></div></div>'
+    ).join('')||'<span class="mut small">keine Vorlagen.</span>';
+  }
+  async function vorlageInstall(name){
+    try{ await api('/api/agenten/vorlagen/'+encodeURIComponent(name),{method:'POST'});
+      alert('Vorlage installiert — fail-closed: Abo AUS, Autonomie T0 (beobachten). Agent + Abo angelegt; nichts zündet ohne dein Wort.'); }
+    catch(e){ alert(e.message); }
+    ladeAgenten(); renderVorlagen();
+  }
+
+  // ---- Netz-Inbox (Agent-Inbox-Spine, §2 P3): aggregierte pending-Aktionen ----
+  async function ladeInbox(){
+    const host=document.getElementById('inbox-liste'); if(!host)return;
+    let d; try{ d=await api('/api/agent-inbox'); }
+    catch(e){ host.innerHTML='<span class="mut small">Inbox nicht abrufbar.</span>'; return; }
+    const off=document.getElementById('inbox-offline');
+    if(off) off.innerHTML=(d.apps_offline&&d.apps_offline.length)
+      ? '<span class="mut">⚠ Offline (nicht erreichbar): '+d.apps_offline.map(esc).join(', ')+'</span>' : '';
+    const eintr=d.eintraege||[]; const kurz=document.getElementById('inbox-kurz');
+    if(kurz) kurz.textContent=eintr.length?(eintr.length+' wartet'+(eintr.length>1?'en':'')):'nichts wartet';
+    if(!eintr.length){ host.innerHTML='<span class="mut small">Nichts wartet auf Freigabe.</span>'; return; }
+    host.innerHTML=eintr.map(e=>{
+      const istAgent=!!e.agent_id;
+      const rand=istAgent?'border-left:3px solid var(--mg,#c678dd);':'';
+      const kopf='<b>'+esc(e.was||'—')+'</b> <span class="pill">'+esc(e.klasse||'')+'</span>'
+        +' <span class="mut small">'+esc(e.app_brand||e.app_id||'')+' · Stufe '+esc(e.level||'')+'</span>';
+      const agent=istAgent?('<span class="mut small"> · Agent '+esc(e.agent_id)+(e.lauf_id?(' · Lauf '+esc(e.lauf_id)):'')+'</span>'):'';
+      const warum=e.warum?('<div class="small" style="margin-top:3px">🤖 <b>Warum:</b> '+esc(e.warum)+'</div>'):'';
+      const args=(e.argumente&&Object.keys(e.argumente).length)
+        ?('<div class="mut small" style="margin-top:2px">Argumente: '+esc(JSON.stringify(e.argumente))+'</div>'):'';
+      return '<div class="inbox-eintrag" style="border:1px solid var(--line,#2a2f3a);'+rand+'border-radius:10px;padding:9px;margin-bottom:7px">'
+        +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+kopf+agent
+          +'<span style="flex:1"></span>'
+          +'<button class="btn mini cy" data-dz-act="inboxApprove" data-dz-arg="'+esc(e.id)+'" data-app-url="'+esc(e.app_url||'')+'">Freigeben</button>'
+          +'<button class="btn mini" data-dz-act="inboxReject" data-dz-arg="'+esc(e.id)+'" data-app-url="'+esc(e.app_url||'')+'">Ablehnen</button>'
+        +'</div>'+warum+args+'</div>';
+    }).join('');
+  }
+  async function inboxEntscheiden(id,appUrl,approve){
+    const pfad='/api/actions/'+encodeURIComponent(id)+'/'+(approve?'approve':'reject');
+    try{
+      if(!appUrl){ await api(pfad,{method:'POST'}); }                                    // eigene App (same-origin)
+      else{ await fetch(appUrl+pfad,{method:'POST',credentials:'include',mode:'cors'}); } // besitzende App direkt (§2)
+    }catch(e){ /* cross-origin: Antwort opak / Stufen-403 ⇒ einfach neu laden */ }
+    setTimeout(ladeInbox,250);
+  }
+
+  // ============================================================
+  //  RUNNING (Mission-Control, docs/63 §5 P1/P7 · Z4.2-D): Live-Läufe.
+  //  Ausführung wohnt beim Core (:8200); Management ruft server-seitig (Definition-Brücke),
+  //  der Browser bleibt same-origin. Nur der Nutzer-Klick startet (AI-Act).
+  // ============================================================
+  let LAUF_AKTIV=null;                       // {lauf_id} des gerade gestreamten Laufs
+  function fuelleRunAgenten(){
+    const sel=document.getElementById('run-agent'); if(!sel)return;
+    const aktive=AGENTEN.filter(a=>a.status==='aktiv'); const liste=aktive.length?aktive:AGENTEN;
+    const cur=sel.value;
+    sel.innerHTML=liste.length
+      ? liste.map(a=>'<option value="'+esc(a.id)+'">'+esc(a.name)+(a.status!=='aktiv'?(' ('+esc(a.status)+')'):'')+'</option>').join('')
+      : '<option value="">— erst einen Agenten anlegen —</option>';
+    if(cur) sel.value=cur;
+  }
+  function laufBudget(agent_id){ const a=AGENTEN.find(x=>x.id===agent_id); return (a&&a.karte&&a.karte.grenzen)||{}; }
+  async function ladeLaeufe(){
+    const host=document.getElementById('laeufe-liste'); if(!host)return;
+    let d; try{ d=await api('/api/agenten/laeufe'); }
+    catch(e){ host.innerHTML='<span class="mut small">Läufe nicht abrufbar.</span>'; return; }
+    const laeufe=d.laeufe||[]; const laufend=laeufe.filter(l=>l.status==='laeuft').length;
+    const kurz=document.getElementById('running-kurz');
+    if(kurz) kurz.textContent=d.core_offline?'Core offline'
+      :(laufend?(laufend+' läuft'+(laufend>1?'en':'')):(laeufe.length?(laeufe.length+' Läufe'):'keine Läufe'));
+    const off=document.getElementById('running-offline');
+    if(off) off.innerHTML=d.core_offline
+      ? '<span class="mut">⚠ Core (:8200) nicht erreichbar — Ausführung ruht. Läufe erscheinen, sobald der Core läuft.</span>' : '';
+    renderLaeufe(host,laeufe);
+  }
+  function renderLaeufe(host,laeufe){
+    if(!laeufe.length){ host.innerHTML='<span class="mut small">Noch keine Läufe. Starte oben einen Agenten.</span>'; return; }
+    host.innerHTML=laeufe.map(l=>{
+      const g=laufBudget(l.agent_id);
+      const yR=g.max_runden!=null?('/'+g.max_runden):'', yT=g.max_tool_aufrufe!=null?('/'+g.max_tool_aufrufe):'', yD=g.max_delegationen!=null?('/'+g.max_delegationen):'';
+      const tok=(l.nutzung&&(l.nutzung.total_tokens||l.nutzung.tokens||l.nutzung.eval_count));
+      const stop=(l.status==='laeuft')?('<button class="btn mini" data-dz-act="laufStoppen" data-dz-arg="'+esc(l.id)+'">■ Stop</button>'):'';
+      const fehler=l.fehler?('<div class="mut small" style="margin-top:3px">⚠ '+esc(l.fehler)+'</div>'):'';
+      return '<div class="lauf-zeile" style="border:1px solid var(--line,#2a2f3a);border-radius:10px;padding:9px;margin-bottom:7px">'
+        +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
+          +'<b>'+esc(agentName(l.agent_id))+'</b> <span class="pill">'+esc(l.status)+'</span>'
+          +(l.started_at?(' <span class="mut small">'+esc(l.started_at)+'</span>'):'')
+          +'<span style="flex:1"></span>'+stop+'</div>'
+        +'<div class="mut small" style="margin-top:5px">Guardrails: Runden '+esc(l.runden!=null?l.runden:0)+yR
+          +' · Tool-Aufrufe '+esc(l.tool_aufrufe!=null?l.tool_aufrufe:0)+yT
+          +' · Delegationen '+esc(l.delegationen!=null?l.delegationen:0)+yD
+          +' · Token '+esc(tok!=null&&tok!==''?tok:'—')+'</div>'+fehler+'</div>';
+    }).join('');
+  }
+  function runLog(text,append){ const el=document.getElementById('running-log'); if(!el)return;
+    el.textContent=append?(el.textContent+text):text; el.scrollTop=el.scrollHeight; }
+  function runStopBtn(id){ const b=document.getElementById('run-stop'); if(!b)return; b.dataset.dzArg=id||''; b.hidden=!id; }
+  async function laufStarten(){
+    const sel=document.getElementById('run-agent'); if(!sel||!sel.value){ alert('Erst einen Agenten wählen (oben anlegen).'); return; }
+    const aid=sel.value, auftrag=v('run-auftrag');
+    const box=document.getElementById('running-log-box'); if(box) box.hidden=false;
+    runLog('▶ Lauf startet …'); runStopBtn(null); let text='';
+    try{
+      const resp=await fetch('/api/agenten/'+encodeURIComponent(aid)+'/lauf',
+        {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({auftrag})});
+      if(!resp.ok||!resp.body){ runLog('Start fehlgeschlagen (HTTP '+(resp&&resp.status)+').'); return; }
+      const reader=resp.body.getReader(), dec=new TextDecoder(); let buf='';
+      for(;;){
+        const {value,done}=await reader.read(); if(done)break;
+        buf+=dec.decode(value,{stream:true}); let i;
+        while((i=buf.indexOf('\n\n'))>=0){
+          const zeile=buf.slice(0,i).split('\n').find(l=>l.indexOf('data:')===0); buf=buf.slice(i+2);
+          if(!zeile)continue; let ev; try{ ev=JSON.parse(zeile.slice(5).trim()); }catch(_){ continue; }
+          if(ev.start){ LAUF_AKTIV={lauf_id:ev.lauf_id}; runStopBtn(ev.lauf_id); text=''; runLog('▶ Lauf '+ev.lauf_id+' läuft …\n\n'); }
+          else if('t' in ev){ text+=ev.t; runLog(text); }
+          else if(ev.tool){ runLog('\n🔧 '+ev.tool+' '+JSON.stringify(ev.args||{})+'\n',true); }
+          else if(ev.lauf){ runLog('\n['+(ev.lauf.status||'')+(ev.lauf.grund?(' '+ev.lauf.grund):'')+(ev.lauf.fehler?(' '+ev.lauf.fehler):'')+']\n',true); }
+          else if(ev.error){ runLog('\n⚠ '+ev.error+'\n',true); }
+          else if(ev.done){ runLog('\n\n✔ Ende: '+(ev.status||'')+(ev.fehler?(' — '+ev.fehler):''),true); runStopBtn(null); LAUF_AKTIV=null; ladeLaeufe(); }
+        }
+      }
+    }catch(e){ runLog('\n⚠ '+e.message,true); runStopBtn(null); LAUF_AKTIV=null; }
+  }
+  async function laufStoppen(id){
+    if(!id)return;
+    try{ await api('/api/agenten/lauf/'+encodeURIComponent(id)+'/stop',{method:'POST'}); }
+    catch(e){ /* Core offline ⇒ ehrlich neu laden */ }
+    setTimeout(ladeLaeufe,300);
+  }
+
+  // ===== Initialisierung =====
+  window.addEventListener('DOMContentLoaded', async ()=>{
+    // CSP-strikt (docs/37): Event-Delegation aktivieren + die Mehr-Argument-/Wert-Aktionen
+    // registrieren, die früher inline on*-Handler waren. ui-kit/DzActions ist READ-ONLY.
+    if(window.DzControls){
+      DzControls.initActions();
+      DzControls.registerAction('settingChange',(key,el)=>{ const t=el.dataset.vtype; let val;
+        if(t==='bool')val=el.checked; else if(t==='int')val=parseInt(el.value,10);
+        else if(t==='float')val=parseFloat(el.value); else val=el.value; saveSetting(key,val); });
+      DzControls.registerAction('kanalStatusAct',(id,el)=>kanalStatus(id,el.dataset.status));
+      DzControls.registerAction('botToggleAct',(id,el)=>botToggle(id,el.dataset.aktiv==='1'));
+      DzControls.registerAction('freigabeEntscheidenAct',(id,el)=>freigabeEntscheiden(id,el.dataset.ok==='1'));
+      DzControls.registerAction('autonomieSetzen',(klasse,el)=>autonomieSetzen(klasse,el.value));
+      DzControls.registerAction('treppeSetzen',(t)=>treppeSetzen(t));        // RG-4: begehbare Treppe
+      DzControls.registerAction('notAus',(mode)=>notAus(mode));              // RG-4: Not-Aus-Schalter
+      DzControls.registerAction('eichungPoll',()=>eichungPoll());            // RG-5: Eichungs-Poll
+      DzControls.registerAction('vorlageInstall',(n)=>vorlageInstall(n));    // RG-5: Werks-Vorlage
+      DzControls.registerAction('inboxApprove',(id,el)=>inboxEntscheiden(id,el.dataset.appUrl,true));
+      DzControls.registerAction('inboxReject',(id,el)=>inboxEntscheiden(id,el.dataset.appUrl,false));
+    }
+    // input/keydown sind NICHT delegiert (DzActions deckt nur click/change) ⇒ direkt
+    // verdrahten; das Skript trägt den CSP-Nonce, addEventListener ist erlaubt.
+    ['c-titel','c-text','c-hashtags'].forEach(i=>{ const el=document.getElementById(i); if(el)el.addEventListener('input',compPreview); });
+    { const df=document.getElementById('dizziFrage'); if(df)df.addEventListener('keydown',e=>{ if(e.key==='Enter')dizziFragen(); }); }
+    await ladeKatalog();
+    await ladeBereiche();      // Bereich-Achse: Kontext-Leiste + Bereiche-Panel + Composer-Select
+    initRedaktion();           // Ansicht-Umschalter + Plattform-Picker + erste Darstellung
+    await ladeKanaele();       // KANAELE-Cache (Bot-Viz braucht Kanal-Zuordnung)
+    await ladePosts();         // POSTS laden ⇒ Kalender/Queue/Composer/Auswertung + Creating-Eingang
+    ladeQuellen(); ladeBots();
+    ladeAgenten();             // Agenten-Regie (D13): Library + Bereichs-Autonomie-Matrix
+    ladeInbox();               // Netz-Inbox (§2 P3): aggregierte pending-Aktionen
+    ladeLaeufe();              // Running-Tab (Z4.2-D): Läufe + Guardrail-Zähler vom Core
+    ladeAuth();                // Header-Anmeldestatus-Pill (Stufe/hochsicher), netzwerkweit identisch
+    if(window.DzNetKit) DzNetKit.initCmdPalette({getCommands:cmdkCommands});
+    if(window.DizzSpin) DizzSpin.initSpinFling({ gridSelector:'main', panelSelector:'.card',
+      floatSelector:'.floatacct,.floatdizzi', storageKey:'mgPanelOrder', layoutKey:'mgLayoutVer', layoutVer:'2026-06-19-mg-p1' });
+    if(window.DizzFloats){
+      DizzFloats.initFloat('floatAcct', { regKey:'floatAcct', onTap:oeffneKm,
+        paused:()=>!document.getElementById('kmWrap').hidden, panelSelector:'main > .card' });
+      DizzFloats.initFloat('floatDizzi', { regKey:'floatDizzi', onTap:()=>{ DIZZI_OPEN?closeDizzi():openDizzi(); },
+        paused:()=>!document.getElementById('dizziBubble').hidden, panelSelector:'main > .card' });
+    }
+  });
+</script>
+</body>
+</html>

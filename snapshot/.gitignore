@@ -1,0 +1,20 @@
+# Laufzeitdaten liegen IMMER außerhalb des Repos (C:\Dizzik\data\) — Gesetz/Architektur.
+# Hier nur Build-/Tool-Artefakte:
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+dist/
+*.tsbuildinfo
+*.log
+.env
+.env.*
+*.sqlite
+*.db
+.DS_Store
+Thumbs.db
+# Native EXEs werden aus Quelle gebaut (z. B. ops/monitor via build_monitor.ps1), nicht eingecheckt —
+# der Launcher (launch_monitor.ps1) baut sie bei Bedarf neu.
+*.exe

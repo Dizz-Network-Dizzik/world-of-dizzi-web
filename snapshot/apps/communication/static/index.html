@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="de" data-design="metall" data-farbe="cyan-magenta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dizz Communication</title>
+<!-- Lokal-first/0 €: KEIN Runtime-Font-CDN (würde offline hängen + widerspricht dem Prinzip).
+     Die font-Stacks fallen sauber auf System-Schriften zurück (Segoe UI / system-ui).
+     TODO (Design-Sammellauf, Architektur-KI): „Chakra Petch" + „Orbitron" LOKAL bündeln (self-hosted
+     @font-face unter static/fonts/) — dann tragen alle Apps dieselben Marken-Schriften offline. -->
+<script>
+/* Anti-FOUC (docs/19 §2b Gotcha-Verwandt): zuletzt gewähltes Design/Farbschema SOFORT anwenden,
+   bevor das CSS lädt; der Server-Wert (x_-Settings) folgt beim Boot. */
+try{const t=JSON.parse(localStorage.getItem('kommTheme')||'{}');
+  if(t.d)document.documentElement.dataset.design=t.d;
+  if(t.f)document.documentElement.dataset.farbe=t.f;}catch(e){}
+</script>
+<link rel="stylesheet" href="/ui-kit/background.css?v=20260614e">
+<script defer src="/ui-kit/background.js?v=20260614e"></script>
+<script defer src="/ui-kit/collapse.js?v=20260614e"></script>
+<script defer src="/ui-kit/spinfling.js?v=20260618"></script>
+<!-- DzHalter — Float-Andock-Schale + Frei/Fix-Schalter (Spin-Physik v4.4, netzweit · tokenbasiert); VOR floats.js laden -->
+<link rel="stylesheet" href="/ui-kit/float_dock.css">
+<script defer src="/ui-kit/float_dock.js"></script>
+<script defer src="/ui-kit/floats.js?v=20260618"></script>
+<link rel="stylesheet" href="/ui-kit/tokens.css">
+<link rel="stylesheet" href="/ui-kit/controls.css">
+<!-- UX-5a · AI-Act Art. 50(1): KI-Offenlegungs-Chip (DzUx.agentchip{ki:true}) an der Mini-Dizzi-Fläche (docs/70). -->
+<link rel="stylesheet" href="/ui-kit/ux-kit.css">
+<script defer src="/ui-kit/ux-kit.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var slot = document.getElementById("dizziKiChip");
+    if (slot && window.DzUx && DzUx.agentchip) slot.innerHTML = DzUx.agentchip({ ki: true });
+  });
+</script>
+<!-- Klick-Wellen-Effekt (DzWave, netzweit · token-/design-abhängig) -->
+<link rel="stylesheet" href="/ui-kit/clickwave.css">
+<script defer src="/ui-kit/clickwave.js"></script>
+<style>
+ /* ============================================================
+    Dizz Communication — Design nach „the world of dizzi" (Mattglanz-Metall v2)
+    als START-DESIGN auf ZWEI-ACHSEN-TOKENS (R-Rollout-Port von Dizz News, 13.06.):
+      html[data-design]  = Design-Theme (Material/Form):  metall | neon
+      html[data-farbe]   = Farbschema  (Palette):         cyan-magenta | smaragd-gold | violett-eis
+    Vorbereitung K2.2 (WoD docs/19 §2): Theme-Wechsel = Attribut-/Token-Tausch.
+    Persistenz über freie x_-Settings (appkit read-only); sobald appkit
+    design_vorlage/farb_schema liefert, wird nur die Quelle umgehängt.
+    Grund-Thematik (überall gleich, NICHT wechselbar): weiche Platten-Kästen,
+    float-leichter Abstand, Akzentlinie, Spin-Physik.
+
+    ── TOKEN-VERTRAG (1:1 aus news/ übernommen — bei Änderungen beide syncen) ──
+    Das restliche CSS nutzt AUSSCHLIESSLICH diese Tokens — KEINE hartkodierten Farben.
+      ACHSE „farbe" (Palette):  --cy --mg --cy-rgb --mg-rgb · semantisch --ok --warn --bad --ok-rgb
+      ACHSE „design" (Material): --bg --bg-deep --fg --mut --line --panel --panel-solid
+                                 --brush --satin --edge-t --edge-b --r --r-win --r-chip --sh --blur
+    Neue Themes/Schemata = nur ein weiterer html[data-design=…]/html[data-farbe=…]-Block.
+    >> App-neutrale KOPIERVORLAGE des Token-Blocks: ../ui-kit/tokens.css <<
+    ============================================================ */
+
+ /* Design-Tokens (K2.2-Achsen + K2.4-Komponenten-Tokens) = VERLINKT via <head>
+    aus /ui-kit/tokens.css (Single Source: the world of dizzi/shared/dizz-tokens.css).
+    Token-WERTE aendern = NUR im Master + vendoren (ui-kit-Sync), NIE hier inline.
+    Anti-FOUC oben (localStorage -> data-design/-farbe); verlinktes CSS ist render-
+    blocking => Theme-Werte vor dem ersten Paint da. */
+
+ *{box-sizing:border-box}
+ html,body{overflow-x:clip}                 /* v4.3 Float-Regel 1: clip statt hidden (kein Scroll-Container) */
+ /* Token-Scrollbars app-weit jetzt netzweit kanonisch in /ui-kit/controls.css (De-Fork;
+    vorher hier app-lokal mit denselben Werten). */
+ body{margin:0;background:var(--bg);color:var(--fg);min-height:100vh;
+   font:14px/1.55 "Chakra Petch",system-ui,"Segoe UI",sans-serif;padding:0 0 60px}
+ h1,h2,.disp{font-family:"Orbitron","Chakra Petch",sans-serif}
+
+ /* --- Hintergrund: background.css (background.css?v=20260614e) --- */
+ .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+ .bgbrush{position:fixed;inset:0;z-index:-1;background:var(--brush);pointer-events:none}
+
+ /* --- Kopfzeile (WoD-Muster: Satin-Titel + Magenta-Sub + Akzentlinie) --- */
+ .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+ /* Kopf bleibt EINZEILIG (§3.3): Marke nie umbrechen, lange Sub kürzt zuerst, Authpill bleibt intakt. */
+ /* Kopf-Norm: komm laedt controls.css NICHT (inlinet sein Kit) -> dz-appkopf-Block hier gespiegelt
+    (Quelle shared/controls.css; bei Kit-Aenderung mitziehen). Marke solid-cyan (Variante B). */
+ .dz-appkopf{display:flex;align-items:baseline;gap:14px;padding:26px 0 10px;position:relative}
+ .dz-appkopf .dz-kopf-brand{margin:0;font-size:21px;font-weight:900;letter-spacing:.14em;text-transform:lowercase;color:var(--cy);filter:drop-shadow(0 0 14px rgba(var(--cy-rgb),.35))}
+ .dz-appkopf .dz-kopf-sub{color:var(--mg);font-size:11px;letter-spacing:.22em;text-transform:uppercase;text-shadow:0 0 12px rgba(var(--mg-rgb),.55)}
+ .dz-appkopf .dz-kopf-spacer{flex:1}
+ .dz-appkopf .dz-kopf-hochsicher{color:var(--mg);font-size:13px;cursor:default;filter:drop-shadow(0 0 8px rgba(var(--mg-rgb),.6))}
+ .dz-appkopf::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--cy),var(--mg) 60%,transparent);box-shadow:0 0 12px rgba(var(--cy-rgb),.5),0 0 18px rgba(var(--mg-rgb),.25)}
+ /* Komm-spezifisch: langer Tagline + 2 Pillen -> Marke/Tagline duerfen schrumpfen + ellipsen (nowrap-Kopf). */
+ header.dz-appkopf .dz-kopf-brand{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ header.dz-appkopf .dz-kopf-sub{flex:0 2 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ header.dz-appkopf #authpill{flex:none;white-space:nowrap}
+
+ /* --- Panel-Kachel: matte Platte, Akzentlinie, farbiges Licht (WoD .card) --- */
+ .card{position:relative;overflow:hidden;padding:16px 18px 14px;margin-bottom:16px;
+   background:var(--panel);background-image:var(--brush),var(--panel);
+   -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+   border:1px solid var(--line);border-radius:var(--r);
+   box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b);
+   transition:border-color var(--t),box-shadow var(--t);cursor:grab}
+ /* .card::before (linker Akzentstreifen) jetzt kanonisch in /ui-kit/controls.css (V2, De-Fork 24.06.) */
+ /* KARTEN/PANELS GLÜHEN NIE BEIM HOVERN (Grunddesign, TB-Muster, docs/06 §6.3):
+    KEINE `.card:hover`-Glow-Regel mehr — weder klappbare noch normale Karten reagieren
+    auf die Maus. Eine Karte/ein Panel leuchtet NUR (a) aufgeklappt = die Kopf-Leiste,
+    bzw. (b) beim Greifen/Schleudern (`.spinlift`). Sonst Ruhezustand. */
+ /* Greif-Glow (.card.spinlift/.dz-panel.spinlift) jetzt kanonisch in /ui-kit/controls.css (De-Fork). */
+
+ h2{font-size:12.5px;margin:0 0 12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+   background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+ h2 .mut{color:var(--mut)}
+
+ /* --- Bedienelemente (WoD tblink-Chips + Pills) --- */
+ button,a.btn{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;cursor:pointer;
+   border-radius:var(--r-chip);text-decoration:none;font:inherit;font-size:11.5px;font-weight:600;
+   background:rgba(var(--cy-rgb),.08);border:1px solid rgba(var(--cy-rgb),.35);color:var(--cy);
+   transition:box-shadow var(--t),border-color var(--t)}
+ button:hover,a.btn:hover{box-shadow:0 0 14px -3px rgba(var(--cy-rgb),.6);border-color:var(--cy)}
+ button.mg,a.btn.mg{background:rgba(var(--mg-rgb),.08);border-color:rgba(var(--mg-rgb),.4);color:var(--mg)}
+ button.mg:hover{box-shadow:0 0 14px -3px rgba(var(--mg-rgb),.6);border-color:var(--mg)}
+ button.mut,button.ghost{background:var(--bg-deep);border-color:var(--line);color:var(--mut);font-weight:400}
+ button.mut:hover,button.ghost:hover{color:var(--fg);border-color:rgba(var(--cy-rgb),.45);box-shadow:none}
+ button:disabled{opacity:.45;cursor:wait}
+ .pill{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:.12em;
+   text-transform:uppercase;padding:3px 11px;border-radius:999px;cursor:pointer;
+   border:1px solid rgba(var(--mg-rgb),.4);color:var(--mg);background:rgba(var(--mg-rgb),.07)}
+ .pill.on{color:var(--ok);border-color:rgba(var(--ok-rgb),.45);background:rgba(var(--ok-rgb),.08);
+   box-shadow:0 0 10px -2px rgba(var(--ok-rgb),.6)}
+ label.pill{letter-spacing:.04em;font-weight:600;text-transform:none;font-size:11.5px;color:var(--mut);
+   border-color:var(--line);background:var(--bg-deep)}
+ label.pill input{accent-color:var(--cy)}
+ .tag{display:inline-block;border:1px solid rgba(var(--mg-rgb),.45);color:var(--mg);font-size:9.5px;
+   padding:1px 8px;margin-right:8px;text-transform:uppercase;letter-spacing:.09em;border-radius:999px;
+   background:rgba(var(--mg-rgb),.06)}
+ .tag.cy{border-color:rgba(var(--cy-rgb),.45);color:var(--cy);background:rgba(var(--cy-rgb),.06)}
+ .tag.ok{border-color:rgba(var(--ok-rgb),.5);color:var(--ok);background:rgba(var(--ok-rgb),.07)}
+ .tag.warn{border-color:rgba(var(--warn-rgb),.5);color:var(--warn);background:rgba(var(--warn-rgb),.07)}
+ input,select,textarea{background:var(--bg-deep);color:var(--fg);border:1px solid var(--line);
+   border-radius:10px;padding:7px 10px;font:inherit;font-size:12.5px}
+ input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(var(--cy-rgb),.5)}
+ textarea{width:100%;resize:vertical;min-height:96px;line-height:1.5}
+ .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+ .mut{color:var(--mut)} .small{font-size:12px}
+
+ /* ── UI-Kit jetzt via /ui-kit/controls.css (De-Fork 24.06.) — nur komm-Eigenheiten ─────
+    Controls + einklappbare Panels (dz-check/-select/-stepper/-panel/-kopf/-chevron/-titel/-kurz)
+    kommen aus dem geladenen controls.css (Single Source). Hier nur komm-Skin-Abweichungen. */
+ .card.dz-panel{padding:8px}                  /* komm: kompakteres Panel-Padding */
+ .dz-panel-koerper{padding:.7em .4em .2em}    /* komm: etwas breiterer Körper-Seitenrand (Kit=.2em) */
+
+ /* --- Inhalts-Zeilen (WoD noticerow/factrow) --- */
+ .msg{border:1px solid var(--line);border-left:3px solid var(--cy);border-radius:10px;
+   background:var(--bg-deep);padding:9px 12px;margin:8px 0}
+ .msg b{font-size:13.5px} .msg .von{color:var(--mg);font-size:12px}
+ .msg .txt{color:var(--mut);font-size:12px;margin-top:3px;white-space:pre-line}
+ .msg.bad{border-left-color:var(--mg)}
+
+ /* --- Konto-/Konversations-/Kontakt-Zeilen (Domäne Kommunikation) --- */
+ .konto,.konv,.kontakt{display:flex;gap:10px;align-items:center;border:1px solid var(--line);
+   border-radius:10px;background:var(--bg-deep);padding:8px 11px;margin:6px 0;font-size:12.5px}
+ .konv{cursor:pointer;transition:border-color var(--t),box-shadow var(--t)}
+ .konv:hover{border-color:rgba(var(--cy-rgb),.45);box-shadow:0 0 14px -6px rgba(var(--cy-rgb),.5)}
+ .konv.ungelesen{border-left:3px solid var(--mg)}
+ .konv .titel{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
+   padding:0 5px;border-radius:999px;font-size:10px;font-weight:700;
+   background:rgba(var(--mg-rgb),.16);color:var(--mg);border:1px solid rgba(var(--mg-rgb),.4)}
+ .thread{border:1px solid var(--line);border-radius:10px;background:var(--bg-deep);padding:4px 12px 10px;margin-top:8px}
+ .thread .msg{margin:8px 0}
+ .msg.aus{border-left-color:var(--ok);background:rgba(var(--ok-rgb),.04)}
+
+ /* --- Drei-Spalten-Mail-Arbeitsfläche (P1c: Liste │ Thread │ Lesen) --- */
+ .mail3{display:grid;grid-template-columns:minmax(185px,.85fr) minmax(225px,1.1fr) minmax(0,1.65fr);
+   gap:10px;align-items:start;margin-top:4px}
+ .mail3-col{border:1px solid var(--line);border-radius:10px;background:var(--bg-deep);max-height:66vh;overflow:auto}
+ .mail3-list,.mail3-thread{padding:6px}
+ .mail3-read{padding:12px 14px}
+ .mail3-leer{padding:14px;color:var(--mut);font-size:12.5px}
+ @media (max-width:880px){ .mail3{grid-template-columns:1fr} .mail3-col{max-height:44vh} }
+ .konvrow,.msgrow{display:block;padding:7px 9px;border-radius:8px;cursor:pointer;border-left:3px solid transparent;margin:2px 0}
+ .konvrow:hover,.msgrow:hover{background:rgba(var(--cy-rgb),.08)}
+ .konvrow.aktiv,.msgrow.aktiv{background:rgba(var(--cy-rgb),.14);border-left-color:var(--cy)}
+ .konvrow.ungelesen,.msgrow.ungelesen{border-left-color:var(--mg)}
+ .konvrow .z1{display:flex;gap:8px;align-items:center}
+ .konvrow .z1 b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+ .konvrow .z2,.msgrow .msnip{color:var(--mut);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;display:block}
+ .msgrow .mfrom{font-size:12.5px;font-weight:600}
+ .thread-summary{border:1px solid rgba(var(--cy-rgb),.3);border-radius:8px;background:rgba(var(--cy-rgb),.05);
+   padding:8px 10px;margin:0 2px 8px;font-size:12px;line-height:1.5}
+ .thread-summary b{color:var(--cy)}
+ .lese-kopf{border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px}
+ .lese-kopf .betreff{font-size:15px;font-weight:700}
+ .lese-body{white-space:pre-wrap;line-height:1.55;font-size:13px}
+ .sek-kopf{font-family:"Orbitron",sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.14em;
+   text-transform:uppercase;color:var(--mg);padding:8px 6px 3px;display:flex;gap:8px;align-items:center}
+ .sek-kopf:first-child{padding-top:2px}
+ .lbl{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:999px;
+   letter-spacing:.04em;border:1px solid rgba(var(--cy-rgb),.45);color:var(--cy);background:rgba(var(--cy-rgb),.08)}
+ .lbl.mg{border-color:rgba(var(--mg-rgb),.5);color:var(--mg);background:rgba(var(--mg-rgb),.08)}
+ .lbl.ok{border-color:rgba(var(--ok-rgb),.5);color:var(--ok);background:rgba(var(--ok-rgb),.08)}
+ .lbl.warn{border-color:rgba(var(--warn-rgb),.5);color:var(--warn);background:rgba(var(--warn-rgb),.08)}
+ .lbl button{all:unset;cursor:pointer;opacity:.65;font-size:11px;line-height:1}
+ .lbl button:hover{opacity:1}
+
+ /* --- Klappzeilen (v4.2-Norm: 30px-Toggle vorne = FOLDZONE, Rest Greiffläche) --- */
+ details>summary{list-style:none;position:relative;padding-left:20px;min-height:22px;
+   display:flex;align-items:center;cursor:grab;color:var(--mut);font-size:12.5px;margin:8px 0}
+ details>summary:active{cursor:grabbing}
+ details>summary::-webkit-details-marker{display:none}
+ details>summary::before{content:"";position:absolute;left:2px;top:50%;width:7px;height:7px;margin-top:-5px;
+   border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(-45deg);transform-origin:60% 60%;
+   transition:transform .2s ease,border-color .2s ease}
+ details[open]>summary::before{transform:rotate(45deg);border-right-color:var(--cy);border-bottom-color:var(--cy)}
+ details>summary:hover::before{border-right-color:var(--cy);border-bottom-color:var(--cy)}
+
+ /* --- Icon-System (Neon-Outline, currentColor + Glow) --- */
+ .ic{width:1.4em;height:1.4em;display:inline-block;vertical-align:-0.25em;flex:none;color:var(--cy);
+     fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+     filter:drop-shadow(0 0 3px currentColor)}
+
+ /* --- Schwebende Knöpfe: Metall-Scheiben im App-Material (WoD floatset) --- */
+ .floatacct{--charge:0;position:fixed;top:84px;right:26px;z-index:41;width:96px;height:96px;
+   border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;
+   background:var(--panel);background-image:var(--brush),var(--panel);
+   -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+   border:1px solid var(--line);color:var(--cy);
+   box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),
+     0 0 calc(var(--charge)*110px) calc(var(--charge)*17px) rgba(var(--cy-rgb),calc(var(--charge)*.82)),
+     0 0 calc(var(--charge)*165px) calc(var(--charge)*13px) rgba(var(--mg-rgb),calc(var(--charge)*.72));
+   transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+ .floatacct:hover{border-color:rgba(var(--cy-rgb),.45)}
+ .floatacct .duo{position:relative;width:58px;height:52px;pointer-events:none}
+ .floatacct .duo .ic{position:absolute;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.7))}
+ .floatacct .duo .ic.fg{width:44px;height:44px;left:0;top:0}
+ .floatacct .duo .ic.fa{width:28px;height:28px;right:-2px;bottom:-2px;color:var(--mg);
+   filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.65))}
+ .floatdizzi{--charge:0;position:fixed;top:196px;right:34px;z-index:41;width:80px;height:80px;
+   border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;
+   background:var(--panel);background-image:var(--brush),var(--panel);
+   -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+   border:1px solid var(--line);color:var(--mg);
+   box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),
+     0 0 calc(var(--charge)*110px) calc(var(--charge)*15px) rgba(var(--mg-rgb),calc(var(--charge)*.8));
+   transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+ .floatdizzi:hover{border-color:rgba(var(--mg-rgb),.45)}
+ .floatdizzi .ic{width:40px;height:40px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.6))}
+ .floatdizzi .spark{position:absolute;top:9px;right:11px;width:16px;height:16px;color:var(--cy);
+   filter:drop-shadow(0 0 5px rgba(var(--cy-rgb),.8))}
+ .floatacct.lgshoot,.floatdizzi.lgshoot{animation:lgshoot .36s ease-out}
+ @keyframes lgshoot{0%{box-shadow:var(--sh),0 0 120px 26px rgba(var(--cy-rgb),.9),0 0 180px 18px rgba(var(--mg-rgb),.8);transform:scale(1.16)}100%{transform:scale(1)}}
+ .spinlift:not(.card){z-index:9999!important;cursor:grabbing!important;transition:box-shadow 80ms ease-out,filter 80ms ease-out!important;
+   box-shadow:0 0 calc(8px + var(--charge,0)*28px) rgba(var(--cy-rgb),calc(.35 + var(--charge,0)*.45)),0 0 calc(4px + var(--charge,0)*14px) rgba(var(--mg-rgb),calc(.15 + var(--charge,0)*.30)),0 12px 32px -10px rgba(0,0,0,.55);
+   filter:drop-shadow(0 0 calc(6px + var(--charge,0)*18px) rgba(var(--mg-rgb),calc(.2 + var(--charge,0)*.3)))}
+ @media (prefers-reduced-motion: reduce){.floatacct,.floatdizzi{position:fixed!important}}
+
+ /* --- Mini-Dizzi-Sprechblase: kleines Metall-Fenster --- */
+ .dizzibubble[hidden]{display:none!important}
+ .dizzibubble{position:fixed;right:24px;bottom:24px;z-index:60;width:min(360px,92vw);
+   background:var(--panel);background-image:var(--brush),var(--panel);
+   border:1px solid rgba(var(--mg-rgb),.4);border-radius:var(--r-win);
+   box-shadow:var(--sh),0 0 30px -8px rgba(var(--mg-rgb),.45),
+     inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b)}
+ .dizzibubble::after{content:"";position:absolute;right:42px;bottom:-9px;width:16px;height:16px;
+   background:var(--panel-solid);border-right:1px solid rgba(var(--mg-rgb),.4);
+   border-bottom:1px solid rgba(var(--mg-rgb),.4);transform:rotate(45deg)}
+ .dizzibubble .dbhead{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line)}
+ .dizzibubble .dbhead b{font-family:"Orbitron",sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+   background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+ .dizzibubble .dbbody{padding:11px 13px}
+ .dizzibubble .dbout{font-size:12.5px;line-height:1.5;color:var(--fg);min-height:22px;max-height:230px;
+   overflow-y:auto;margin-bottom:9px}
+ .dizzibubble .dbout .q{color:var(--mut)}
+ .dizzibubble .dbq{display:flex;gap:7px}
+ .dizzibubble .dbq input{flex:1}
+ .dbsrc{font-size:10.5px;color:var(--mut);margin-top:5px}
+ .dbsrc b{color:var(--cy)}
+
+ /* --- Einstellungs-/Konto-FENSTER (Norm WoD docs/19 §2b) im App-Material --- */
+ .kmwrap[hidden]{display:none!important}                       /* Gotcha 1 */
+ .kmwrap{position:fixed;inset:0;z-index:90;background:rgba(5,6,10,.78);backdrop-filter:blur(4px)}
+ .kmwin{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);  /* Gotcha 2: exakte Mitte + Maße */
+   width:min(900px,94vw);height:min(82vh,780px);display:flex;flex-direction:column;
+   background:var(--panel);background-image:var(--brush),var(--panel);    /* Gotcha 5: solid, nicht durchsichtig */
+   border:1px solid rgba(var(--cy-rgb),.3);border-radius:var(--r-win);
+   box-shadow:var(--sh),0 0 70px -16px rgba(var(--cy-rgb),.5),0 0 110px -28px rgba(var(--mg-rgb),.34),
+     inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b)}
+ .kmhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+ .kmhead h2{margin:0;font-size:14px;background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+ .kmbody{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px 16px 16px}   /* Gotcha 2: flex:1 + min-height:0 */
+ .kmsec{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:11px;background:var(--bg-deep)}
+ .kmsech{font-family:"Orbitron",sans-serif;font-weight:700;color:var(--cy);font-size:10.5px;
+   text-transform:uppercase;letter-spacing:.16em;margin-bottom:8px;
+   filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.4))}
+ .kmdienst{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;
+   padding:6px 10px;margin:5px 0;font-size:12.5px}
+ .kmrow{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:3px 0}
+ .kmrow label{font-size:12.5px}
+ .kmcat{margin:10px 0 2px;border-top:1px solid var(--line);padding-top:8px}
+ .kmcat .kmcath{font-weight:700;color:var(--cy);font-size:11px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
+ .prep{opacity:.82}
+ .prep .kmrow label::after{content:" · vorbereitet";color:var(--warn);font-size:10px;letter-spacing:.04em}
+
+ /* --- Verknüpfungs-Chip (Leitlinie 17.06: Querverbindungen SICHTBAR) — tokenisiert,
+    app-lokal; Kandidat fürs zentrale Netzwerk-Kit. cy=offen/Memory · mg=Plans · ok=erledigt. --- */
+ .chipbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 10px}
+ /* komm-eigener Verknüpfungs-Chip (.mg/.done) — bewusst app-lokal; white-space:normal pinnt das
+    Vor-De-Fork-Verhalten (Kit-.dz-chip setzt nowrap; komm-Chips dürfen umbrechen). */
+ .dz-chip{display:inline-flex;align-items:center;gap:.4em;padding:3px 10px;border-radius:999px;font:inherit;font-size:11px;
+   font-weight:600;white-space:normal;cursor:pointer;text-decoration:none;border:1px solid rgba(var(--cy-rgb),.4);color:var(--cy);
+   background:rgba(var(--cy-rgb),.08);transition:box-shadow var(--t),border-color var(--t)}
+ .dz-chip:hover{box-shadow:0 0 12px -3px rgba(var(--cy-rgb),.6);border-color:var(--cy)}
+ .dz-chip.mg{border-color:rgba(var(--mg-rgb),.45);color:var(--mg);background:rgba(var(--mg-rgb),.08)}
+ .dz-chip.mg:hover{box-shadow:0 0 12px -3px rgba(var(--mg-rgb),.6);border-color:var(--mg)}
+ .dz-chip.done{border-color:rgba(var(--ok-rgb),.5);color:var(--ok);background:rgba(var(--ok-rgb),.10);cursor:default}
+ .dz-chip.done:hover{box-shadow:none}
+
+ /* --- Command-Palette (Cmd/Strg+K) — tastatur-first Overlay (Superhuman/Linear-Muster) --- */
+ .cmdk[hidden]{display:none!important}
+ .cmdk{position:fixed;inset:0;z-index:95;background:rgba(5,6,10,.7);backdrop-filter:blur(4px)}
+ .cmdk-win{position:fixed;left:50%;top:14vh;transform:translateX(-50%);width:min(640px,94vw);
+   display:flex;flex-direction:column;max-height:70vh;
+   background:var(--panel);background-image:var(--brush),var(--panel);
+   border:1px solid rgba(var(--cy-rgb),.32);border-radius:var(--r-win);
+   box-shadow:var(--sh),0 0 60px -14px rgba(var(--cy-rgb),.5),0 0 100px -28px rgba(var(--mg-rgb),.34),
+     inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b)}
+ .cmdk-input{flex:0 0 auto;width:100%;font:inherit;font-size:15px;color:var(--fg);background:transparent;
+   border:0;border-bottom:1px solid var(--line);padding:14px 16px}
+ .cmdk-input:focus{outline:none}
+ .cmdk-list{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px}
+ .cmdk-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13px}
+ .cmdk-item .hint{color:var(--mut);font-size:11px}
+ .cmdk-item .kbd{margin-left:auto;font-size:9.5px;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:1px 6px;letter-spacing:.06em}
+ .cmdk-item.active{background:rgba(var(--cy-rgb),.14)}
+ .cmdk-leer{padding:16px;color:var(--mut);font-size:12.5px;text-align:center}
+ @media (prefers-reduced-motion:reduce){.dz-chip{transition:none}}
+ /* Smart Contacts · Unified Inbox (Paket D1) */
+ .uni2{display:grid;grid-template-columns:minmax(195px,290px) minmax(0,1fr);gap:10px;align-items:start;margin-top:4px}
+ @media (max-width:760px){.uni2{grid-template-columns:1fr}}
+ .uni-col{border:1px solid var(--line);border-radius:10px;background:var(--bg-deep);max-height:62vh;overflow:auto;padding:6px}
+ .uni-msg{border-left:2px solid rgba(var(--cy-rgb),.5);padding:5px 0 6px 9px;margin:7px 2px}
+ .uni-msg.aus{border-left-color:rgba(var(--mg-rgb),.6)}
+ .uni-msg .ubody{white-space:pre-wrap;line-height:1.5;font-size:12.5px;margin-top:2px}
+ .uni-msg .umeta{color:var(--mut);font-size:11px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+ .kanal-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+   padding:1px 6px;border-radius:999px;border:1px solid rgba(var(--cy-rgb),.45);color:var(--cy);background:rgba(var(--cy-rgb),.08)}
+ .kanal-badge.dormant{border-color:rgba(var(--mut-rgb,150,160,180),.5);color:var(--mut);background:transparent}
+ .kanal-badge.aktiv{border-color:rgba(var(--ok-rgb),.5);color:var(--ok);background:rgba(var(--ok-rgb),.08)}
+</style>
+</head>
+<body>
+<div id="bg-stage" aria-hidden="true"></div>
+<div class="bgfx" aria-hidden="true"></div>
+<div class="bgbrush" aria-hidden="true"></div>
+<!-- Minimal-Icon-Sprite (Geometrie; Look/Glow via .ic-CSS) — Floats + Fenster + Domäne -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
+  <symbol id="ic-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.4v2.3M12 18.3v2.3M5.4 5.4 7 7M17 17l1.6 1.6M3.4 12h2.3M18.3 12h2.3M5.4 18.6 7 17M17 7l1.6-1.6"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3.5 5.5 6v5c0 4.2 2.7 7.4 6.5 9 3.8-1.6 6.5-4.8 6.5-9V6Z"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-8.6 8 8.2 8.2 0 0 1-3.7-.85L3.5 20l1.4-4.5A8 8 0 0 1 12 3.5a8 8 0 0 1 8.5 8Z"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.6 9 19 10.6 13.6 12.2 12 17.6 10.4 12.2 5 10.6 10.4 9Z"/></symbol>
+  <symbol id="ic-lock" viewBox="0 0 24 24"><rect x="5.5" y="10.5" width="13" height="9" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+  <symbol id="ic-send" viewBox="0 0 24 24"><path d="M4 11.5 20 4l-7.5 16-2.5-6.5z"/><path d="M10 13.5 20 4"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></symbol>
+  <symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.2 0 1.9-.8 1.9-1.7 0-.8-.5-1.2-.5-2 0-1 .8-1.8 1.9-1.8h2.2a3 3 0 0 0 3-3c0-4.7-3.8-8.5-8.5-8.5Z"/><circle cx="7.8" cy="11" r="1.1"/><circle cx="10.6" cy="7.6" r="1.1"/><circle cx="15" cy="7.8" r="1.1"/></symbol>
+  <symbol id="ic-mail" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+  <symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 9.5h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
+</defs></svg>
+
+<!-- Doppelicon-Knopf (Einstellungen + Konto) — bewusst AUF BODY-EBENE (docs/19 §2b Gotcha 4):
+     in einem Vorfahr mit backdrop-filter/transform würde dieser zum Containing Block für
+     position:fixed und der Screen-Wrap rechts erzeugte eine flackernde Scrollbar. -->
+<button class="floatacct" id="floatAcct" aria-label="Einstellungen &amp; Konto"
+        title="Einstellungen &amp; Konto (Dizzi-ID) — greifen &amp; schleudern, Tipp = öffnen"><span class="duo"><svg class="ic fg" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic fa" aria-hidden="true"><use href="#ic-shield"/></svg></span></button>
+
+<!-- Mini-Dizzi-Knopf: KI-Stimme der App (Vertrag 1.5) — Tipp öffnet die Sprechblase (/api/ki/frage). -->
+<button class="floatdizzi" id="floatDizzi" aria-label="Mini-Dizzi fragen"
+        title="Mini-Dizzi — frag die lokale Komm-KI (0 €, Inhalte bleiben hier). Greifen &amp; schleudern, Tipp = Sprechblase öffnen"><svg class="ic" aria-hidden="true"><use href="#ic-chat"/></svg><svg class="spark ic" aria-hidden="true"><use href="#ic-sparkle"/></svg></button>
+
+<!-- Mini-Dizzi-Sprechblase -->
+<div class="dizzibubble" id="dizziBubble" hidden>
+  <div class="dbhead"><svg class="ic" style="width:18px;height:18px;color:var(--mg)" aria-hidden="true"><use href="#ic-chat"/></svg>
+    <b>Mini-Dizzi</b><span class="mut small">— lokale Komm-KI</span><span id="dizziKiChip"></span><span style="flex:1"></span>
+    <button class="ghost" style="padding:2px 8px" data-dz-act="closeDizzi" aria-label="Schließen">✕</button></div>
+  <div class="dbbody">
+    <div class="dbout" id="dizziOut"><span class="mut small">Frag mich zu deinem Posteingang — ich antworte lokal (Ollama, 0 €). Inhalte verlassen die Maschine nie (hoechst-App).</span></div>
+    <div class="dbq">
+      <input id="dizziFrage" placeholder="… deine Frage an den Posteingang">
+      <button class="mg" id="dizziBtn" data-dz-act="dizziFragen" aria-label="Fragen"><svg class="ic" style="width:15px;height:15px" aria-hidden="true"><use href="#ic-send"/></svg></button>
+    </div>
+    <div class="dbsrc" id="dizziSrc"></div>
+  </div>
+</div>
+
+<!-- Einstellungs-/Konto-FENSTER (Norm WoD docs/19 §2b) — öffnet über den Doppelicon-Knopf bzw. die
+     Auth-Pille; liegt auf BODY-EBENE. Trägt das DESIGN DER APP (Token-gesteuert). -->
+<div class="kmwrap" id="kontoModal" hidden>
+  <div class="kmwin" role="dialog" aria-label="Einstellungen &amp; Konto">
+    <div class="kmhead">
+      <span class="duo" style="width:30px;height:28px;position:relative;display:inline-block"><svg class="ic" style="width:24px;height:24px;position:absolute;left:0;top:0" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic" style="width:16px;height:16px;position:absolute;right:-2px;bottom:-2px;color:var(--mg)" aria-hidden="true"><use href="#ic-shield"/></svg></span>
+      <h2>Einstellungen &amp; Konto</h2>
+      <span class="pill">Dizzi-ID</span>
+      <span style="flex:1"></span>
+      <button class="ghost" data-dz-act="closeKontoModal" aria-label="Schließen">✕</button>
+    </div>
+    <div class="kmbody">
+      <div class="kmsec"><div class="kmsech">Identität &amp; Sicherheit</div>
+        <div id="konto-auth" class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><span class="mut small">lädt …</span></div>
+        <div id="konto-acc" class="small mut" style="margin:9px 0 4px"></div>
+        <div id="konto-aktionen" class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 2px"></div>
+      </div>
+      <div class="kmsec"><div class="kmsech"><svg class="ic" style="width:13px;height:13px;vertical-align:-2px" aria-hidden="true"><use href="#ic-palette"/></svg> Design</div>
+        <div class="small mut" style="margin-bottom:6px">Grund-Thematik bleibt — Design-Theme und Farbschema sind GETRENNT wählbar (K2.2-Vorbau; Katalog wächst im Design-Sammellauf).</div>
+        <div class="kmrow"><label title="Material/Form der Oberfläche — Themes anderer Apps sind überall wählbar.">Design-Theme</label>
+          <span class="dz-field"><select class="dz-select" id="designSel" data-dz-act="themeWahl" data-dz-on="change">
+            <option value="metall">Mattglanz-Metall (Standard)</option>
+            <option value="neon">Neon / Retro-Chrome</option>
+            <option value="flach">Flach (minimal-dunkel)</option>
+            <option value="tag">Tag / Hell</option>
+            <option value="carbon">Carbon (OLED-Schwarz)</option>
+            <option value="pergament">Pergament (hell-warm)</option>
+            <option value="synthwave">Synthwave (Neon-Sunset)</option>
+            <option value="lagune">Lagune (Tropical-Aqua)</option>
+            <option value="inferno">Inferno (Magma-Rot)</option>
+            <option value="kobalt">Kobalt (Royalblau)</option>
+          </select></span></div>
+        <div class="kmrow"><label title="Farbpalette — unabhängig vom Design-Theme.">Farbschema</label>
+          <span class="dz-field"><select class="dz-select" id="farbeSel" data-dz-act="themeWahl" data-dz-on="change">
+            <option value="cyan-magenta">Cyan–Magenta (Standard)</option>
+            <option value="smaragd-gold">Smaragd–Gold</option>
+            <option value="violett-eis">Violett–Eis</option>
+            <option value="bernstein">Bernstein</option>
+            <option value="arktis">Arktis</option>
+            <option value="koralle">Koralle</option>
+            <option value="limette">Limette</option>
+            <option value="feuer">Feuer</option>
+            <option value="toxic">Toxic (Neon-Acid)</option>
+            <option value="voltage">Voltage (Elektro)</option>
+          </select></span></div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Verbundene Konten &amp; Dienste</div>
+        <div id="konto-dienste" class="small mut">lädt …</div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Vernetzung &amp; KI-Aktivität</div>
+        <div class="small mut" style="margin-bottom:6px">Was die KIs im Hintergrund vorschlagen — Wirkung gibt es NUR nach deiner Freigabe (HITL, App-Vertrag K4). Senden ist hier die einzige Außenwirkung.</div>
+        <div id="konto-ki" class="small mut">lädt …</div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Messenger-Kanäle (Meta · WhatsApp/Instagram)</div>
+        <div class="small mut" style="margin-bottom:6px">DORMANT bis Token im Tresor. Senden bleibt HITL (verifiziert). Eingang (Webhook) braucht eine öffentliche HTTPS-URL (Tunnel/Server) — Senden läuft auch rein lokal.</div>
+        <div id="meta-status" class="small mut">lädt …</div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Messenger-Kanäle (Telegram · Bot-API)</div>
+        <div class="small mut" style="margin-bottom:6px">DORMANT bis Bot-Token im Tresor. Rein LOKAL: Empfang über Long-Polling (KEIN Webhook/öffentliche URL), KEIN App-Review. Bot über @BotFather anlegen, Token hier hinterlegen. Senden bleibt HITL (verifiziert); Empfänger = numerische chat_id (der Bot kann nur Chats anschreiben, die ihn zuerst kontaktiert haben).</div>
+        <div id="tg-status" class="small mut">lädt …</div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Einstellungen</div>
+        <div id="konto-settings"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="dz-appkopf">
+    <h1 class="dz-kopf-brand">dizz communication</h1>
+    <span class="dz-kopf-sub">kompletter Nachrichtenverkehr · lokal-first · hoechst-sensibel</span>
+    <span class="dz-kopf-spacer"></span>
+    <span class="pill" data-dz-act="openPalette" style="cursor:pointer" title="Befehlspalette (Strg/⌘ + K) — Archiv · Antwort · Suche ohne Maus">⌘K</span>
+    <span class="dz-kopf-hochsicher" title="Höchst sensibel — lokal-only">🛡</span>
+    <span class="pill" id="authpill" data-dz-act="openKontoModal" title="Einstellungen &amp; Konto (Dizzi-ID)">…</span>
+  </header>
+
+  <!-- Command-Palette (Cmd/Strg+K) — tastatur-first Overlay; position:fixed (DOM-Ort egal) -->
+  <div class="cmdk" id="cmdk" hidden>
+    <div class="cmdk-win" role="dialog" aria-label="Befehlspalette">
+      <input class="cmdk-input" id="cmdk-input" autocomplete="off" spellcheck="false"
+             placeholder="Befehl … (Archiv · Antwort · Suche · Verfassen)">
+      <div class="cmdk-list" id="cmdk-list"></div>
+    </div>
+  </div>
+
+  <!-- ★ DIZZ CHAT — kanalübergreifender Chat pro Kontakt. EINZIGES Panel ohne
+       Einklappen (default offen): das Herz der App. -->
+  <section class="card" id="dizzchat">
+    <h2>Dizz Chat</h2>
+    <div class="mut small" style="margin-bottom:6px">Alle Kanäle pro Kontakt in EINEM Verlauf — E-Mail real, Messenger über Konnektoren (dormant bis Token) bzw. Demo. Antwort geht kanal-treu zurück; Senden bleibt HITL (verifiziert).</div>
+    <div class="row" style="margin-bottom:8px;gap:6px;flex-wrap:wrap">
+      <button class="mut" data-dz-act="ladeSmartInbox" title="Kontakte + Verläufe neu laden">aktualisieren</button>
+      <button class="ghost" data-dz-act="chatTriage" id="chat-triage-btn" title="Lokale KI: fasst ALLE Chats zusammen und erkennt Termine (Ollama, opt-in; Inhalte bleiben auf der Maschine).">KI-Zusammenfassung + Termine</button>
+      <span class="mut small" id="chat-status"></span>
+    </div>
+    <div class="uni2">
+      <div class="uni-col" id="uni-liste"><span class="mut small">lädt …</span></div>
+      <div class="uni-col" id="uni-thread"><div class="mail3-leer">Wähle links einen Kontakt — sein Verlauf über alle Kanäle erscheint hier.</div></div>
+    </div>
+    <!-- Videocall im Chat (Jitsi v1, on-demand: Verbindung erst beim Beitreten) -->
+    <div style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px">
+      <div class="row" style="gap:6px;flex-wrap:wrap;align-items:center">
+        <span class="mut small">📹 Videocall</span>
+        <input id="jitsi-raum" placeholder="Raumname (z. B. dizzi-besprechung)" style="flex:1;min-width:170px">
+        <button data-dz-act="videoBeitreten" id="jitsi-btn" title="Jitsi-Raum beitreten (iframe; Verbindung entsteht erst beim Klick).">Beitreten</button>
+        <button class="mut" data-dz-act="videoVerlassen" id="jitsi-leave" hidden>Verlassen</button>
+        <span class="mut small" id="jitsi-hint"></span>
+      </div>
+      <div id="jitsi-frame" style="margin-top:8px"></div>
+    </div>
+    <!-- KI-Zusammenfassung (alle Chats gebündelt) + Termin-Flow -->
+    <div style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px">
+      <div class="mut small" style="text-transform:uppercase;letter-spacing:.08em">KI-Zusammenfassung · alle Chats · lokal</div>
+      <div id="triageout" style="margin-top:6px"><span class="mut small">„KI-Zusammenfassung + Termine" oben starten — läuft lokal (Ollama), opt-in; erkennt auch Termine zur Anlage im Admin-Kalender.</span></div>
+      <div id="termine-vorschlaege" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <!-- KONTEN & KONNEKTOREN — separat (nicht verschmolzen), jetzt einklappbar; wächst
+       mit der Connector-Liste (Gesetz 5: dormante Slots sichtbar). -->
+  <section class="card dz-panel" data-dz-collapsible data-dz-collapsed>
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Konten &amp; Konnektoren</span>
+      <span class="dz-panel-kurz" id="konten-kurz">E-Mail + Kanäle</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <div id="konten"><span class="mut small">lädt …</span></div>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap">
+        <button data-dz-act="gmailStart" title="Google-Consent im Browser: Mail-Zugriff für dieses Gmail-Konto; das Refresh-Token landet verschlüsselt im Token-Tresor."><svg class="ic" style="width:14px;height:14px" aria-hidden="true"><use href="#ic-mail"/></svg> Gmail verbinden</button>
+        <button class="mut" data-dz-act="syncAlle" title="Alle Konten jetzt abrufen (zusätzlich zur getakteten Automatik).">Jetzt abrufen</button>
+        <button class="mut" style="opacity:.8" data-dz-act="jmapHinweis" title="VORBEREITET (Gesetz 5): JMAP-Mehrkonten — Slot vorhanden, Aktivierung folgt.">+ JMAP (vorbereitet)</button>
+        <span class="mut small" id="syncinfo"></span>
+      </div>
+      <details>
+        <summary>IMAP-Konto manuell anlegen (beliebiger Anbieter)</summary>
+        <div class="row">
+          <input id="k-name" placeholder="Name">
+          <input id="k-host" placeholder="imap.anbieter.de">
+          <input id="k-benutzer" placeholder="adresse@anbieter.de">
+          <input id="k-geheimnis" type="password" placeholder="Passwort/App-Passwort">
+          <input id="k-smtp" placeholder="smtp.anbieter.de (optional, fürs Senden)">
+          <button data-dz-act="kontoAnlegen">Anlegen</button>
+        </div>
+        <div class="mut small" style="margin-top:5px">Das Geheimnis wandert in den verschlüsselten Token-Tresor — nie in die Datenbank.</div>
+      </details>
+      <div style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px">
+        <div class="mut small" style="text-transform:uppercase;letter-spacing:.08em">Kanäle &amp; Dienste (Konnektoren)</div>
+        <div class="mut small" style="margin:4px 0">Tokens/Verbinden im Einstellungsfenster (🛡 oben rechts). Dormante Slots sind vorbereitet (Gesetz 5) — aktivierbar, sobald nötig.</div>
+        <div id="kanaele-strip" class="row" style="gap:6px;flex-wrap:wrap;margin:6px 0"><span class="mut small">Kanäle …</span></div>
+        <div id="konnektoren-liste" class="small mut">lädt …</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card dz-panel" data-dz-collapsible>
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Posteingang</span>
+      <span class="dz-panel-kurz" id="posteingang-kurz">lädt …</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <div class="mut small" id="posteingang-sub" style="margin-bottom:6px"></div>
+      <div class="row" id="post-filter" style="margin-bottom:8px">
+        <span class="dz-field"><select class="dz-select" id="f-konto" data-dz-act="ladeKonversationen" data-dz-on="change" title="Nach Konto filtern"><option value="">alle Konten</option></select></span>
+        <span class="dz-field"><select class="dz-select" id="f-ordner" data-dz-act="ladeKonversationen" data-dz-on="change" title="Nach Ordner filtern"><option value="">alle Ordner</option><option value="INBOX">INBOX</option></select></span>
+        <label class="dz-check" title="Nur Konversationen mit ungelesenen Nachrichten"><input type="checkbox" id="f-ungelesen" data-dz-act="ladeKonversationen" data-dz-on="change"> <span class="mut small">nur ungelesen</span></label>
+        <label class="dz-check" title="Posteingang in Sektionen gruppieren (Wichtig / Benachrichtigungen / Newsletter)"><input type="checkbox" id="f-split" data-dz-act="toggleSplit" data-dz-on="change"> <span class="mut small">Sektionen</span></label>
+        <label class="dz-check" title="Geschlummerte (zurückgestellte) Konversationen anzeigen"><input type="checkbox" id="f-geschlummert" data-dz-act="toggleGeschlummert" data-dz-on="change"> <span class="mut small">💤 Schlummernd</span></label>
+        <input id="f-suche" placeholder="suchen …" style="min-width:150px" title="Im Posteingang suchen (Betreff/Absender/Text — lokal)">
+        <button class="mut" data-dz-act="ladeSuche">Suchen</button>
+        <button class="mut" data-dz-act="ladeKonversationen">aktualisieren</button>
+        <span style="flex:1"></span>
+        <button data-dz-act="verfassen" title="Neue Nachricht verfassen — legt einen HITL-Vorschlag (mail_senden) an; Freigabe im Konto-Fenster."><svg class="ic" style="width:14px;height:14px" aria-hidden="true"><use href="#ic-send"/></svg> Verfassen</button>
+      </div>
+      <div id="compose" hidden></div>
+      <div class="mail3">
+        <div class="mail3-col mail3-list" id="konvliste"><span class="mut small">lädt …</span></div>
+        <div class="mail3-col mail3-thread" id="thread"><div class="mail3-leer">Wähle links eine Konversation (oder ↑/↓ + Enter).</div></div>
+        <div class="mail3-col mail3-read" id="lesen"><div class="mail3-leer">Wähle in der Mitte eine Nachricht zum Lesen.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card dz-panel" data-dz-collapsible>
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Kontakte · Smart Contacts</span>
+      <span class="dz-panel-kurz" id="kontakte-kurz">lädt …</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <div class="mut small" style="margin-bottom:6px">Ein Kontakt bündelt alle Kanäle (Unified Inbox). ⭐ Favoriten stehen oben · Kategorie wählbar · Top 10, darunter „mehr aufklappen".</div>
+      <div class="row" style="margin-bottom:8px;gap:6px;flex-wrap:wrap">
+        <input id="kontakte-suche" placeholder="Kontakt suchen …" style="min-width:150px">
+        <span class="dz-field"><select class="dz-select" id="kontakte-sort" data-dz-act="ladeKontakte" data-dz-on="change" title="Sortierung"><option value="relevanz">zuletzt aktiv</option><option value="menge">Nachrichtenmenge</option><option value="name">Name</option><option value="kategorie">Kategorie</option></select></span>
+        <span class="dz-field"><select class="dz-select" id="kontakte-kat" data-dz-act="ladeKontakte" data-dz-on="change" title="Nach Kategorie filtern"><option value="">alle Kategorien</option></select></span>
+        <label class="dz-check" title="Nur Favoriten anzeigen"><input type="checkbox" id="kontakte-fav" data-dz-act="ladeKontakte" data-dz-on="change"> <span class="mut small">nur ⭐</span></label>
+        <button class="mut" data-dz-act="ladeKontakte">aktualisieren</button>
+        <button class="ghost" data-dz-act="zeigeVorschlaege" title="Mögliche Dubletten über Kanäle finden (lokal, deterministisch) — Zusammenführen bleibt deine Entscheidung.">Merge-Vorschläge</button>
+        <button class="ghost" data-dz-act="toggleSimForm" title="Demo: eine eingehende Messenger-Nachricht simulieren (keine echte Plattform-Anbindung, Gesetz 5).">＋ Kanal simulieren (Demo)</button>
+      </div>
+      <div id="kontakte-vorschlaege" hidden style="margin-bottom:8px"></div>
+      <div id="kontakte-simform" hidden style="margin-bottom:8px"></div>
+      <div id="kontakte"><span class="mut small">lädt …</span></div>
+      <div id="kontakte-mehr" style="margin-top:6px"></div>
+    </div>
+  </section>
+
+  <section class="card dz-panel" data-dz-collapsible data-dz-collapsed>
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Anstehende Termine</span>
+      <span class="dz-panel-kurz" id="termine-kurz">aus dem Netzwerk · read-only</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="mut small" style="margin:.1em 0 .6em">Termine, die andere Apps (z. B. Dizz Admin) als Erinnerung hierher geschickt haben. Nur-Lese-Sicht.</p>
+      <div class="liste" id="liste-termine"><span class="mut small">lädt …</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- K2.4 Collapse + Stepper: konvergiert 18.06.2026 aufs geteilte /ui-kit/collapse.js
+     (window.DzControls, im <head> verlinkt). Verhalten identisch (Auto-Collapse + Stepper, docs/06 §6). -->
+<script>
+async function api(p,opt){const r=await fetch(p,opt);if(!r.ok)throw r;return r.json();}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+// ===================== Design-/Farb-Achsen (K2.2-Vorbau) =====================
+// Zwei getrennte Achsen als <html>-Attribute; CSS-Token machen den Rest. Persistenz über die
+// FREIEN x_-Settings des Vertrags (appkit read-only) + localStorage (Anti-FOUC). Sobald appkit
+// design_vorlage/farb_schema (K2.2) liefert, wird hier nur die Quelle umgehängt.
+const DESIGNS=['metall','neon','flach','tag','carbon','pergament','synthwave','lagune','inferno','kobalt'],
+      FARBEN=['cyan-magenta','smaragd-gold','violett-eis','bernstein','arktis','koralle','limette','feuer','toxic','voltage'];
+function applyTheme(d,f){
+  if(DESIGNS.includes(d))document.documentElement.dataset.design=d;
+  if(FARBEN.includes(f))document.documentElement.dataset.farbe=f;
+  try{localStorage.setItem('kommTheme',JSON.stringify({d:document.documentElement.dataset.design,f:document.documentElement.dataset.farbe}));}catch(e){}
+  const ds=document.getElementById('designSel'),fs=document.getElementById('farbeSel');
+  if(ds)ds.value=document.documentElement.dataset.design;
+  if(fs)fs.value=document.documentElement.dataset.farbe;
+}
+async function themeBoot(){
+  try{const s=await api('/api/settings');applyTheme(s.design_vorlage||s.x_design_vorlage,s.farb_schema||s.x_farb_schema);}catch(e){applyTheme();}
+}
+async function themeWahl(){
+  const d=document.getElementById('designSel').value, f=document.getElementById('farbeSel').value;
+  applyTheme(d,f);
+  try{
+    await api('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'design_vorlage',value:d})});
+    await api('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'farb_schema',value:f})});
+  }catch(e){/* offline-tolerant: localStorage hält die Wahl */}
+}
+
+// ===================== Auth-Pille =====================
+let AUTH=null;
+async function ladeAuth(){
+  try{AUTH=await api('/auth/me');}catch(e){AUTH={angemeldet:false,level:'lokal'};}
+  const p=document.getElementById('authpill');
+  if(p){
+    if(AUTH.angemeldet){p.className='pill on';p.textContent='✓ '+AUTH.level;p.title='Angemeldet via Dizzi-ID — Klick = Einstellungen & Konto öffnen';}
+    else{p.className='pill';p.textContent='Anmelden (Dizzi-ID)';p.title='Einmal anmelden ⇒ überall angemeldet (SSO) — Klick = Konto-Fenster';}
+  }
+  renderKontoAuth(AUTH);
+}
+
+// ===================== Konten =====================
+let KONTEN=[];
+async function ladeKonten(){
+  let ks;try{ks=await api('/api/konten');}catch(e){return;}
+  KONTEN=ks;
+  fuelleKontoFilter();
+  const h=document.getElementById('konten');
+  if(!ks.length){h.innerHTML='<span class="mut small">Noch kein Konto — Gmail verbinden oder IMAP manuell anlegen.</span>';return;}
+  h.innerHTML=ks.map(k=>'<div class="konto"><svg class="ic" style="width:15px;height:15px" aria-hidden="true"><use href="#ic-mail"/></svg><b>'+esc(k.name)+'</b><span class="mut small">'+esc(k.art)+' · '+esc(k.benutzer||'')+(k.smtp_host?' · SMTP':'')+'</span><span style="flex:1"></span><button class="mut" data-dz-act="syncEin" data-dz-arg="'+k.id+'">abrufen</button></div>').join('');
+}
+async function syncEin(id){
+  document.getElementById('syncinfo').textContent='synchronisiere …';
+  try{const r=await api('/api/sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({konto_id:id})});
+    document.getElementById('syncinfo').textContent='geholt '+r.geholt+', neu '+r.neu;}
+  catch(e){const j=await e.json().catch(()=>({}));document.getElementById('syncinfo').textContent='Fehler: '+(j.error||e.status);}
+  ladePost();
+}
+async function syncAlle(){if(!KONTEN.length){alert('Erst ein Konto verbinden.');return;}for(const k of KONTEN){await syncEin(k.id);}}
+async function kontoAnlegen(){
+  const b={name:v('k-name'),host:v('k-host'),benutzer:v('k-benutzer'),geheimnis:v('k-geheimnis'),smtp_host:v('k-smtp')};
+  if(!b.name||!b.host||!b.benutzer||!b.geheimnis){alert('Name, Host, Benutzer und Geheimnis sind Pflicht.');return;}
+  try{await api('/api/konten',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});}catch(e){alert('Anlegen fehlgeschlagen');return;}
+  ['k-name','k-host','k-benutzer','k-geheimnis','k-smtp'].forEach(i=>document.getElementById(i).value='');
+  ladeKonten();
+}
+function v(id){return document.getElementById(id).value.trim();}
+
+// ===================== Posteingang-Tiefe (Konversationen + Thread + Kontakte) =====================
+let GESCHLUMMERT_VIEW=false;
+function filterQuery(){
+  const ko=document.getElementById('f-konto').value, or=document.getElementById('f-ordner').value;
+  const ug=document.getElementById('f-ungelesen').checked;
+  const p=[]; if(ko)p.push('konto_id='+encodeURIComponent(ko)); if(or)p.push('ordner='+encodeURIComponent(or));
+  if(ug)p.push('nur_ungelesen=true'); if(GESCHLUMMERT_VIEW)p.push('geschlummert=true');
+  return p.length?('?'+p.join('&')):'';
+}
+function toggleGeschlummert(){ const c=document.getElementById('f-geschlummert'); GESCHLUMMERT_VIEW=!!(c&&c.checked); ladeKonversationen(); }
+// Snooze-Aktionen
+function _isoLocal(d){ const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes()); }
+function schlummernForm(id){
+  const f=document.getElementById('kal-form'); if(!f)return; f.hidden=false;
+  const now=new Date(), h1=new Date(now.getTime()+3600e3);
+  const ab=new Date(now); ab.setHours(18,0,0,0); if(ab<=now)ab.setDate(ab.getDate()+1);
+  const mo=new Date(now); mo.setDate(mo.getDate()+1); mo.setHours(8,0,0,0);
+  const wo=new Date(now); wo.setDate(wo.getDate()+7); wo.setHours(8,0,0,0);
+  const b=(d,l)=>'<button class="ghost" data-dz-act="schlummernBis" data-id="'+id+'" data-bis="'+_isoLocal(d)+'">'+l+'</button>';
+  f.innerHTML='<div class="row" style="margin:0 0 8px;gap:6px"><span class="mut small">Schlummern bis:</span>'
+    +b(h1,'+1 Std')+b(ab,'heute Abend')+b(mo,'morgen früh')+b(wo,'nächste Woche')
+    +'<button class="ghost" data-dz-act="kalFormZu">Abbrechen</button></div>';
+}
+async function schlummern(id,bis){
+  try{ await api('/api/konversationen/'+encodeURIComponent(id)+'/schlummern',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bis:bis})}); }
+  catch(e){ alert('Schlummern fehlgeschlagen.'); return; }
+  resetThreadCols(); ladeKonversationen();
+}
+function fuelleKontoFilter(){
+  const sel=document.getElementById('f-konto'); if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">alle Konten</option>'+KONTEN.map(k=>'<option value="'+k.id+'">'+esc(k.name)+'</option>').join('');
+  sel.value=cur;
+}
+let THREAD_OFFEN=null;
+// ===== Drei-Spalten-Mail-Arbeitsfläche (P1c): Liste │ Thread │ Lesen =====
+let KONV_LIST=[], KONV_SEL=-1, THREAD_DATA=null, MSG_SEL=-1, SPLIT_ON=false;
+async function ladeKonversationen(){
+  const sb=document.getElementById('f-suche'); if(sb)sb.value='';   // Normalansicht ⇒ Suche leeren
+  const liste=document.getElementById('konvliste');
+  let ks;try{ks=await api('/api/konversationen'+filterQuery());}catch(e){return;}
+  const ORD={wichtig:0,benachrichtigung:1,newsletter:2};
+  if(SPLIT_ON)ks=ks.slice().sort((a,b)=>(ORD[a.sektion||'wichtig']-ORD[b.sektion||'wichtig'])); // Reihenfolge = Sektionen
+  KONV_LIST=ks; KONV_SEL=-1;
+  const ung=ks.reduce((s,k)=>s+(k.ungelesen||0),0);
+  document.getElementById('posteingang-sub').textContent=ks.length?('— '+ks.length+' Konversation(en), '+ung+' ungelesen'):'';
+  const kurz=document.getElementById('posteingang-kurz');   // Kurzanzeige (eingeklappt): letzter Betreff + ungelesen
+  if(kurz)kurz.textContent=ks.length?('„'+(ks[0].titel||'(ohne Betreff)')+'" · '+ung+' ungelesen'):'leer';
+  if(!ks.length){liste.innerHTML='<div class="mail3-leer">Keine Konversationen — Konto verbinden und abrufen (oder Filter lockern).</div>';resetThreadCols();return;}
+  if(SPLIT_ON){
+    const LBL={wichtig:'Wichtig',benachrichtigung:'Benachrichtigungen',newsletter:'Newsletter'};
+    let html='', cur=null;
+    ks.forEach((k,i)=>{ const s=k.sektion||'wichtig';
+      if(s!==cur){ cur=s; const n=ks.filter(x=>(x.sektion||'wichtig')===s).length;
+        html+='<div class="sek-kopf">'+LBL[s]+' <span class="mut small" style="letter-spacing:0;text-transform:none">'+n+'</span></div>'; }
+      html+=konvRow(k,i); });
+    liste.innerHTML=html;
+  } else { liste.innerHTML=ks.map((k,i)=>konvRow(k,i)).join(''); }
+}
+function toggleSplit(){ const c=document.getElementById('f-split'); SPLIT_ON=!!(c&&c.checked);
+  try{localStorage.setItem('kommSplit',SPLIT_ON?'1':'0');}catch(e){} ladeKonversationen(); }
+function konvRow(k,i){
+  const u=k.ungelesen||0;
+  return '<div class="konvrow'+(u?' ungelesen':'')+(THREAD_OFFEN===k.id?' aktiv':'')+'" data-i="'+i+'" data-dz-act="oeffneThread" data-dz-arg="'+k.id+'" title="Thread öffnen">'
+    +'<div class="z1"><b>'+esc(k.titel||'(ohne Betreff)')+'</b>'+(u?'<span class="badge">'+u+'</span>':'')
+    +(GESCHLUMMERT_VIEW?'<button class="ghost" style="padding:0 7px;font-size:10px" data-dz-act="wecken" data-id="'+k.id+'" title="Jetzt wieder in den Posteingang">wecken</button>':'')
+    +'<span class="mut small">'+esc((k.letzte||'').slice(0,10))+'</span></div>'
+    +'<div class="z2">'+esc(k.letzter_von||'')+' · '+(k.nachrichten||0)+' Nachricht(en)'
+    +(GESCHLUMMERT_VIEW&&k.schlummern_bis?(' · 💤 bis '+esc(k.schlummern_bis.slice(0,16))):'')+'</div>'
+    +((k.labels&&k.labels.length)?('<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">'+k.labels.map(l=>'<span class="lbl '+esc(l.farbe||'cy')+'">'+esc(l.name)+'</span>').join('')+'</div>'):'')
+    +'</div>';
+}
+async function renderLabels(id){
+  const bar=document.getElementById('thread-labels'); if(!bar)return;
+  let ls=[]; try{ ls=await api('/api/konversationen/'+encodeURIComponent(id)+'/labels'); }catch(e){}
+  bar.innerHTML='<span class="mut small" style="margin-right:2px">Labels:</span>'
+    +ls.map(l=>'<span class="lbl '+esc(l.farbe||'cy')+'">'+esc(l.name)+' <button title="Label entfernen" data-dz-act="labelEntfernen" data-konv="'+id+'" data-label="'+l.id+'">×</button></span>').join(' ')
+    +' <button class="ghost" style="padding:0 8px;font-size:11px" data-dz-act="labelHinzu" data-dz-arg="'+id+'" title="Label zuweisen (legt es bei Bedarf an)">+ Label</button>';
+}
+async function labelHinzu(id){
+  const name=(prompt('Label-Name:')||'').trim(); if(!name)return;
+  try{ await api('/api/konversationen/'+encodeURIComponent(id)+'/labels',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name})}); }
+  catch(e){ alert('Label fehlgeschlagen.'); return; }
+  renderLabels(id); ladeKonversationen();
+}
+async function labelEntfernen(id,lid){
+  try{ await api('/api/konversationen/'+encodeURIComponent(id)+'/labels/'+encodeURIComponent(lid),{method:'DELETE'}); }catch(e){}
+  renderLabels(id); ladeKonversationen();
+}
+function resetThreadCols(){
+  const t=document.getElementById('thread'), l=document.getElementById('lesen');
+  if(t)t.innerHTML='<div class="mail3-leer">Wähle links eine Konversation (oder ↑/↓ + Enter).</div>';
+  if(l)l.innerHTML='<div class="mail3-leer">Wähle in der Mitte eine Nachricht zum Lesen.</div>';
+  THREAD_OFFEN=null; THREAD_DATA=null; MSG_SEL=-1;
+}
+async function ladeSuche(){
+  const q=(document.getElementById('f-suche').value||'').trim();
+  if(!q){ ladeKonversationen(); return; }
+  const liste=document.getElementById('konvliste');
+  liste.innerHTML='<span class="mut small">suche lokal …</span>';
+  const ko=document.getElementById('f-konto').value, ug=document.getElementById('f-ungelesen').checked;
+  let p='q='+encodeURIComponent(q); if(ko)p+='&konto_id='+encodeURIComponent(ko); if(ug)p+='&nur_ungelesen=true';
+  let ms;try{ms=await api('/api/suche?'+p);}catch(e){liste.innerHTML='<span class="mut small">Suche fehlgeschlagen.</span>';return;}
+  document.getElementById('posteingang-sub').textContent='Suche „'+q+'" — '+ms.length+' Treffer';
+  const ksk=document.getElementById('posteingang-kurz'); if(ksk)ksk.textContent='Suche „'+q+'" · '+ms.length+' Treffer';
+  KONV_LIST=[]; KONV_SEL=-1;
+  if(!ms.length){liste.innerHTML='<div class="mail3-leer">Keine Treffer für „'+esc(q)+'".</div>';return;}
+  liste.innerHTML=ms.map(m=>'<div class="konvrow'+(m.gelesen?'':' ungelesen')+'" data-dz-act="oeffneThread" data-dz-arg="'+m.konversation_id+'" title="Thread öffnen">'
+    +'<div class="z1"><b>'+esc(m.betreff||'(ohne Betreff)')+'</b><span class="mut small">'+esc((m.gesendet_at||'').slice(0,10))+'</span></div>'
+    +'<div class="z2">'+esc(m.von_adresse||'')+' · '+esc((m.snippet||'').slice(0,60))+'</div></div>').join('');
+}
+async function oeffneThread(id){
+  THREAD_OFFEN=id; KONV_SEL=KONV_LIST.findIndex(k=>k.id===id);
+  document.querySelectorAll('#konvliste .konvrow').forEach(el=>{ const i=+el.getAttribute('data-i');
+    el.classList.toggle('aktiv', KONV_LIST[i] && KONV_LIST[i].id===id); });
+  const tcol=document.getElementById('thread'); tcol.innerHTML='<div class="mail3-leer">lädt …</div>';
+  document.getElementById('lesen').innerHTML='<div class="mail3-leer">…</div>';
+  let d;try{d=await api('/api/konversationen/'+encodeURIComponent(id));}catch(e){tcol.innerHTML='<div class="mail3-leer">Thread nicht abrufbar.</div>';return;}
+  THREAD_DATA=d; const k=d.konversation||{}, msgs=d.nachrichten||[];
+  // Antwort-Kontext aus der JÜNGSTEN EINGEHENDEN Nachricht (An + Re:-Betreff).
+  const eingehend=msgs.filter(n=>n.richtung!=='aus');
+  const letzte=eingehend.length?eingehend[eingehend.length-1]:(msgs[0]||{});
+  const betr=(letzte.betreff||k.titel||'');
+  THREAD_REPLY={konto_id:k.konto_id||'', an:letzte.von_adresse||'',
+                betreff:(/^re:/i.test(betr)?betr:('Re: '+betr))};
+  MSG_SEL = msgs.length? msgs.length-1 : -1;            // jüngste Nachricht vorausgewählt
+  let h='<div class="row" style="margin:2px 2px 8px;gap:6px"><b style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(k.titel||'(ohne Betreff)')+'</b>'
+    +'<button data-dz-act="antwortenAufThread" title="Antworten — HITL-Vorschlag (mail_senden)"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#ic-send"/></svg> Antworten</button>'
+    +'<button class="ghost" data-dz-act="threadUngelesen" data-dz-arg="'+id+'" title="Konversation als ungelesen markieren">als ungelesen</button>'
+    +'<button class="ghost" data-dz-act="schlummernForm" data-dz-arg="'+id+'" title="Konversation bis später zurückstellen (Snooze)">💤 Schlummern</button>'
+    +'<button class="ghost" data-dz-act="videoFuerThread" data-dz-arg="'+id+'" title="Video-Call zu dieser Konversation (Jitsi, lokal/self-host-fähig)">📹 Video</button></div>'
+    +'<div class="chipbar" id="thread-chips" style="padding:0 2px;margin-bottom:6px"><span class="mut small">Querverbindungen …</span></div>'
+    +'<div class="chipbar" id="thread-labels" style="padding:0 2px;margin-bottom:6px"></div>'
+    +'<div id="kal-form" hidden style="padding:0 2px"></div>'
+    +'<div id="thread-summary"></div>'
+    +msgs.map((n,i)=>msgRow(n,i)).join('');
+  tcol.innerHTML=h;
+  renderChipbar(id);                                    // V4/V5-Chips
+  renderLabels(id);                                     // Labels (P2)
+  threadSummarySlot(id);                                // KI-Zusammenfassung (opt-in, auf Knopf)
+  if(MSG_SEL>=0) zeigeNachricht(MSG_SEL);               // jüngste Mail direkt im Lesebereich
+  await threadGelesen(id,true,true);
+}
+function msgRow(n,i){
+  const aus=n.richtung==='aus', von=aus?('→ '+(n.an_adressen||'')):(n.von_adresse||'');
+  return '<div class="msgrow'+(i===MSG_SEL?' aktiv':'')+(n.gelesen?'':' ungelesen')+'" data-dz-act="zeigeNachricht" data-dz-arg="'+i+'">'
+    +'<span class="mfrom">'+esc(von)+(n.gelesen?'':' <span class="tag">neu</span>')+'</span>'
+    +'<span class="msnip">'+esc((n.text||'').replace(/\s+/g,' ').slice(0,80)||'(kein Text)')+'</span></div>';
+}
+function zeigeNachricht(i){
+  if(!THREAD_DATA)return; const n=(THREAD_DATA.nachrichten||[])[i]; if(!n)return; MSG_SEL=i;
+  document.querySelectorAll('#thread .msgrow').forEach((el,j)=>el.classList.toggle('aktiv',j===i));
+  const aus=n.richtung==='aus';
+  document.getElementById('lesen').innerHTML=
+    '<div class="lese-kopf"><div class="betreff">'+esc(n.betreff||'(ohne Betreff)')+'</div>'
+    +'<div class="mut small" style="margin-top:3px">'+(aus?'An: '+esc(n.an_adressen||''):'Von: '+esc(n.von_adresse||''))+'</div>'
+    +'<div class="mut small">'+esc(n.gesendet_at||n.created_at||'')+' · '+esc(n.ordner||'')+'</div>'
+    +'<div style="margin-top:6px"><span class="dz-chip done" style="font-size:10px;cursor:default" title="Lokal-first: Nachrichten werden als KLARTEXT dargestellt — Tracking-Pixel und externe Bilder werden NICHT geladen, kein Absender erfährt, ob/wann du liest. Keine Cloud, 0 €.">🔒 Tracking-Pixel blockiert · nur Text · lokal</span></div></div>'
+    +'<div class="lese-body">'+esc(n.text||'(kein Text)')+'</div>';
+}
+function threadSummarySlot(id){
+  const slot=document.getElementById('thread-summary'); if(!slot)return;
+  slot.innerHTML='<div class="thread-summary"><b>KI-Zusammenfassung</b> '
+    +'<button class="ghost" style="padding:1px 8px" data-dz-act="threadZusammenfassung" data-dz-arg="'+id+'" title="Lokaler Thread-Überblick (Ollama, opt-in)">erstellen</button></div>';
+}
+async function threadZusammenfassung(id){
+  const slot=document.getElementById('thread-summary'); if(!slot)return;
+  slot.innerHTML='<div class="thread-summary"><b>KI-Zusammenfassung</b> <span class="mut small">… lokal (10–60 s)</span></div>';
+  let r;try{ r=await fetch('/api/konversationen/'+encodeURIComponent(id)+'/zusammenfassung',{method:'POST'}); }catch(e){ slot.innerHTML='<div class="thread-summary mut small">Nicht verfügbar.</div>'; return; }
+  if(r.status===409){
+    if(!confirm('KI-Triage ist aus (bewusst opt-in). Jetzt aktivieren? Läuft NUR lokal (Ollama), Inhalte bleiben auf der Maschine.')){ threadSummarySlot(id); return; }
+    await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'ki_triage_aktiv',value:true})});
+    try{ r=await fetch('/api/konversationen/'+encodeURIComponent(id)+'/zusammenfassung',{method:'POST'}); }catch(e){ slot.innerHTML='<div class="thread-summary mut small">Nicht verfügbar.</div>'; return; }
+  }
+  let j; try{ j=await r.json(); }catch(e){ j={}; }
+  if(j.error){ slot.innerHTML='<div class="thread-summary mut small">Zusammenfassung nicht verfügbar ('+esc(j.error)+').</div>'; return; }
+  slot.innerHTML='<div class="thread-summary"><b>KI-Zusammenfassung:</b> '+esc(j.zusammenfassung||'')+'</div>';
+}
+async function threadGelesen(id,gelesen,still){
+  try{await api('/api/konversationen/'+encodeURIComponent(id)+'/gelesen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({gelesen:gelesen})});}catch(e){}
+  if(still)return;                       // beim Öffnen: Thread offen lassen
+  if(THREAD_OFFEN===id&&!gelesen){ resetThreadCols(); }
+  ladeKonversationen();
+}
+// Tastatur-first-Triage (Superhuman): ↑/↓ bzw. j/k wählen in der Liste, Enter/o öffnet, c verfasst.
+function konvNav(d){
+  if(!KONV_LIST.length)return;
+  KONV_SEL = KONV_SEL<0 ? (d>0?0:KONV_LIST.length-1) : (KONV_SEL+d+KONV_LIST.length)%KONV_LIST.length;
+  const rows=document.querySelectorAll('#konvliste .konvrow');
+  rows.forEach((el,i)=>el.classList.toggle('aktiv',i===KONV_SEL));
+  if(rows[KONV_SEL])rows[KONV_SEL].scrollIntoView({block:'nearest'});
+}
+document.addEventListener('keydown',e=>{
+  if(CMDK_OPEN||KM_OPEN||DIZZI_OPEN)return;                 // Overlays haben Vorrang
+  const t=e.target;
+  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable))return;
+  if(e.key==='j'||e.key==='ArrowDown'){ e.preventDefault(); konvNav(1); }
+  else if(e.key==='k'||e.key==='ArrowUp'){ e.preventDefault(); konvNav(-1); }
+  else if(e.key==='Enter'||e.key==='o'){ if(KONV_SEL>=0&&KONV_LIST[KONV_SEL]){ e.preventDefault(); oeffneThread(KONV_LIST[KONV_SEL].id); } }
+  else if(e.key==='c'){ e.preventDefault(); verfassen(); }
+});
+// Querverbindungs-Chipbar (Leitlinie 17.06): VORHANDENE Links als ✓-Chips (ref im Title fürs
+// Drill-down), sonst Erstell-Aktions-Chips. Neu gerendert beim Thread-Öffnen + nach jeder Aktion.
+async function renderChipbar(id){
+  const bar=document.getElementById('thread-chips'); if(!bar)return;
+  let links=[]; try{ links=await api('/api/konversationen/'+encodeURIComponent(id)+'/verknuepfungen'); }catch(e){}
+  const by={}; links.forEach(l=>by[l.ziel]=l);
+  const mem=by.memory, pl=by.plans;
+  bar.innerHTML='<span class="mut small" style="margin-right:2px">Querverbindungen:</span>'
+    +(mem
+      ? '<span class="dz-chip done" title="In Dizz Memory archiviert · '+esc(mem.ref)+' (V4)">⇲ in Memory ✓</span>'
+      : '<button class="dz-chip" data-dz-act="threadArchivieren" data-dz-arg="'+id+'" title="Diese Konversation in Dizz Memory ablegen (V4, auf Zuruf)">⇲ in Memory</button>')
+    +(pl
+      ? '<span class="dz-chip done" title="Termin im Plans-Kalender · '+esc(pl.ref)+' (V5)">✉ Termin in Plans ✓</span>'
+      : '<button class="dz-chip mg" data-dz-act="kalenderForm" data-dz-arg="'+id+'" title="Aus dieser Konversation einen Termin im Plans-Kalender anlegen (V5)">✉ Termin → Plans</button>');
+}
+async function threadArchivieren(id){
+  try{ await api('/api/konversationen/'+encodeURIComponent(id)+'/archivieren',{method:'POST'}); }
+  catch(e){ alert('Archiv: Dizz Memory nicht erreichbar.'); return; }
+  renderChipbar(id);
+}
+function kalenderForm(id){
+  const f=document.getElementById('kal-form'); if(!f)return; f.hidden=false;
+  f.innerHTML='<div class="row" style="margin:0 0 8px;gap:6px"><input type="datetime-local" id="kal-beginn" title="Beginn (Pflicht)">'
+    +'<input id="kal-ort" placeholder="Ort (optional)" style="min-width:130px">'
+    +'<button class="mg" data-dz-act="kalenderEintragen" data-dz-arg="'+id+'">Termin anlegen</button>'
+    +'<button class="ghost" data-dz-act="kalFormZu">Abbrechen</button></div>';
+  setTimeout(()=>{const b=document.getElementById('kal-beginn'); if(b)b.focus();},30);
+}
+async function kalenderEintragen(id){
+  const beginn=(document.getElementById('kal-beginn').value||'').trim();
+  if(!beginn){alert('Bitte einen Beginn wählen.');return;}
+  const ort=(document.getElementById('kal-ort').value||'').trim();
+  try{ await api('/api/konversationen/'+encodeURIComponent(id)+'/kalender',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({beginn:beginn,ende:'',ort:ort})}); }
+  catch(e){ alert('Kalender: Dizz Admin nicht erreichbar.'); return; }
+  document.getElementById('kal-form').hidden=true; renderChipbar(id); ladeKalenderTermine();
+}
+async function ladePost(){ await ladeKonversationen(); await ladeKontakte(); ladeSmartInbox(); ladeKonnektoren(); ladeKalenderTermine(); }  // Alias (Sync/Start rufen das)
+
+// ===================== Kontakte · Smart Contacts (Verwaltung) =====================
+let KONTAKTE_ALLE=[], KONTAKTE_MEHR=false;
+function _initKontakteFilter(){
+  const sel=document.getElementById('kontakte-kat'); if(!sel||sel.dataset.init)return;
+  sel.insertAdjacentHTML('beforeend', KATEGORIEN.map(k=>'<option value="'+k+'">'+esc(katLabel(k))+'</option>').join(''));
+  sel.dataset.init='1';
+}
+async function ladeKontakte(){
+  _initKontakteFilter();
+  const v=id=>((document.getElementById(id)||{}).value||'');
+  let p='sort='+encodeURIComponent(v('kontakte-sort')||'relevanz')+'&limit=500';
+  if(v('kontakte-suche').trim())p+='&q='+encodeURIComponent(v('kontakte-suche').trim());
+  if(v('kontakte-kat'))p+='&kategorie='+encodeURIComponent(v('kontakte-kat'));
+  if((document.getElementById('kontakte-fav')||{}).checked)p+='&nur_favoriten=true';
+  let cs;try{cs=await api('/api/smartkontakte?'+p);}catch(e){return;}
+  KONTAKTE_ALLE=cs;
+  const kurz=document.getElementById('kontakte-kurz'); if(kurz)kurz.textContent=(cs.length||0)+' Kontakt(e)';
+  _renderKontakte();
+}
+function _renderKontakte(){
+  const h=document.getElementById('kontakte'); if(!h)return;
+  const cs=KONTAKTE_ALLE, mehr=document.getElementById('kontakte-mehr');
+  if(!cs.length){h.innerHTML='<span class="mut small">Keine Kontakte — sie entstehen beim Abruf aus Absendern (oder „Kanal simulieren").</span>';if(mehr)mehr.innerHTML='';return;}
+  h.innerHTML=(KONTAKTE_MEHR?cs:cs.slice(0,10)).map(kontaktRow).join('');
+  if(mehr)mehr.innerHTML=(cs.length>10&&!KONTAKTE_MEHR)?'<button class="ghost" data-dz-act="kontakteMehr">mehr aufklappen ('+(cs.length-10)+')</button>':'';
+}
+function kontakteMehr(){ KONTAKTE_MEHR=true; _renderKontakte(); }
+function kontaktRow(c){
+  const icons=(c.kanaele||[]).map(k=>'<span title="'+esc(kanalLabel(k))+'">'+kanalIcon(k)+'</span>').join(' ');
+  const opts=['',...KATEGORIEN].map(k=>'<option value="'+k+'"'+(c.kategorie===k?' selected':'')+'>'+esc(katLabel(k))+'</option>').join('');
+  const aliasse=(c.aliasse||[]).map(a=>'<span class="lbl">'+esc(kanalLabel(a.kanal_typ))+': '+esc(a.adresse)
+    +' <button title="In eigenen Kontakt herauslösen (Split)" data-dz-act="uniSplit" data-kont="'+c.id+'" data-alias="'+a.id+'">✂</button></span>').join(' ');
+  return '<div class="kontakt" style="flex-wrap:wrap;align-items:center;gap:6px">'
+    +'<button class="ghost" title="Favorit" data-dz-act="toggleFavorit" data-id="'+c.id+'" style="font-size:15px;padding:0 6px;color:'+(c.favorit?'var(--warn)':'var(--mut)')+'">'+(c.favorit?'★':'☆')+'</button>'
+    +'<b>'+esc(c.name||'(ohne Name)')+'</b><span class="mut small">'+icons+'</span>'
+    +'<span style="flex:1"></span>'
+    +'<span class="dz-field"><select class="dz-select" data-dz-act="setKategorie" data-dz-on="change" data-id="'+c.id+'" title="Kategorie">'+opts+'</select></span>'
+    +'<span class="tag cy" title="Nachrichten gesamt">'+(c.nachrichten||0)+'</span>'
+    +'<div style="flex-basis:100%;display:flex;gap:5px;flex-wrap:wrap;align-items:center">'+aliasse
+    +'<button class="ghost" style="padding:0 8px;font-size:11px" data-dz-act="uniAliasHinzu" data-dz-arg="'+c.id+'" title="Kanal-Identität (Handle/Adresse) verknüpfen">＋ Kanal</button></div>'
+    +'</div>';
+}
+function toggleFavorit(_a,el){ if(!el)return;
+  api('/api/smartkontakte/'+encodeURIComponent(el.dataset.id)+'/favorit',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(ladeKontakte).catch(()=>{}); }
+function setKategorie(_a,el){ if(!el)return;
+  api('/api/smartkontakte/'+encodeURIComponent(el.dataset.id)+'/kategorie',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kategorie:el.value})}).then(ladeKontakte).catch(()=>alert('Kategorie fehlgeschlagen.')); }
+// Konnektoren-Katalog im Konten-Panel (aktive + dormante Slots, Gesetz 5)
+async function ladeKonnektoren(){
+  const h=document.getElementById('konnektoren-liste'); if(!h)return;
+  let d;try{d=await api('/api/konnektoren');}catch(e){h.innerHTML='<span class="mut small">Nicht ladbar.</span>';return;}
+  const cs=d.konnektoren||[];
+  h.innerHTML=cs.map(c=>'<div class="kontakt" style="gap:6px"><b>'+esc(c.label||c.id)+'</b>'
+    +(c.verbunden?'<span class="tag ok">verbunden</span>':'<span class="tag" style="opacity:.7">dormant</span>')
+    +'<span style="flex:1"></span><span class="mut small" style="flex-basis:100%">'+esc(c.hinweis||'')+'</span></div>').join('')
+    +'<div class="mut small" style="margin-top:4px">'+cs.length+' Dienste · '+(d.verbunden||0)+' verbunden</div>';
+}
+
+// ============ Smart Contacts · Unified Inbox (Paket D1, docs/35 §2) ============
+let UNI_SEL=null, UNI_KONTAKTE=[], KANAELE_STATUS=[];
+const KLABEL={email:'E-Mail',telegram:'Telegram',whatsapp:'WhatsApp',instagram:'Instagram',snapchat:'Snapchat',
+  facebook_messenger:'Messenger',threads:'Threads',x_twitter:'X',linkedin:'LinkedIn',slack:'Slack',discord:'Discord',signal:'Signal',sms_rcs:'SMS',matrix:'Matrix'};
+function kanalLabel(k){return KLABEL[k]||k;}
+// Kleines Quellen-Icon je Kanal (Emoji = CSP-sicher, kein externes Asset).
+const KICON={email:'✉️',whatsapp:'🟢',instagram:'📷',telegram:'✈️',snapchat:'👻',
+  facebook_messenger:'💬',threads:'🧵',x_twitter:'✖',linkedin:'in',slack:'#',discord:'🎮',signal:'🔵',sms_rcs:'📱',matrix:'⬡'};
+function kanalIcon(k){return KICON[k]||'💬';}
+// Kontakt-Kategorien (Anzeige; Slugs decken sich mit KONTAKT_KATEGORIEN im Backend).
+const KATEGORIEN=['freund','familie','geschaeft','service','haendler','behoerde','sonstiges'];
+const KATLABEL={'':'— Kategorie',freund:'Freund',familie:'Familie',geschaeft:'Geschäftskontakt',
+  service:'Serviceanbieter',haendler:'Händler',behoerde:'Behörde/Amt',sonstiges:'Sonstiges'};
+function katLabel(k){return KATLABEL[k]||k;}
+async function ladeKanaele(){
+  const strip=document.getElementById('kanaele-strip'); if(!strip)return;
+  let ks;try{ks=await api('/api/kanaele');}catch(e){return;}
+  KANAELE_STATUS=ks;
+  strip.innerHTML=ks.map(k=>{
+    const cls=k.aktiv?(k.verbunden?'aktiv':''):'dormant';
+    const tip=esc((k.hinweis||'')+(k.modus_setting?(' · Schalter: '+k.modus_setting):''));
+    const z=k.nachrichten||0;
+    return '<span class="kanal-badge '+cls+'" title="'+tip+'">'+esc(kanalLabel(k.kanal_typ))
+      +(k.aktiv?(k.verbunden?' ✓':' ·'):' · vorbereitet')+(z?(' '+z):'')+'</span>';
+  }).join('');
+}
+async function ladeSmartInbox(){
+  ladeKanaele();
+  const liste=document.getElementById('uni-liste'); if(!liste)return;
+  let cs;try{cs=await api('/api/smartkontakte?limit=200');}catch(e){return;}
+  UNI_KONTAKTE=cs;
+  const kurz=document.getElementById('unified-kurz');
+  if(kurz)kurz.textContent=cs.length?(cs.length+' Kontakt(e) · alle Kanäle'):'noch keine Kontakte';
+  if(!cs.length){liste.innerHTML='<span class="mut small">Noch keine Kontakte — beim E-Mail-Abruf entstehen sie automatisch; Messenger über „Kanal simulieren".</span>';return;}
+  liste.innerHTML=cs.map(c=>{
+    const u=c.ungelesen||0;
+    const badges=(c.kanaele||[]).map(k=>'<span class="kanal-badge" style="font-size:8.5px">'+esc(kanalLabel(k))+'</span>').join(' ');
+    return '<div class="konvrow'+(u?' ungelesen':'')+(UNI_SEL===c.id?' aktiv':'')+'" data-dz-act="oeffneUniKontakt" data-dz-arg="'+c.id+'" title="Verlauf über alle Kanäle">'
+      +'<div class="z1"><b>'+esc(c.name||'(ohne Name)')+'</b>'+(u?'<span class="badge">'+u+'</span>':'')
+      +'<span class="mut small">'+esc((c.letzte||'').slice(0,10))+'</span></div>'
+      +'<div class="z2">'+(badges||'<span class="mut small">keine Kanäle</span>')+' · '+(c.nachrichten||0)+' Nachricht(en)</div></div>';
+  }).join('');
+}
+async function oeffneUniKontakt(id){
+  UNI_SEL=id;
+  document.querySelectorAll('#uni-liste .konvrow').forEach(el=>el.classList.remove('aktiv'));
+  const col=document.getElementById('uni-thread'); col.innerHTML='<div class="mail3-leer">lädt …</div>';
+  let d;try{d=await api('/api/smartkontakte/'+encodeURIComponent(id)+'/verlauf');}catch(e){col.innerHTML='<div class="mail3-leer">Verlauf nicht abrufbar.</div>';return;}
+  const k=d.kontakt||{}, msgs=d.nachrichten||[], kanaele=k.kanaele||[];
+  // Sauberer Chat-Kopf: Name + Kanal-Icons + Videocall. Die Kontakt-VERWALTUNG
+  // (Merge/Split/Alias/Kategorie/Favorit) liegt im Kontakte-Panel (Smart Contacts).
+  let h='<div class="row" style="margin:2px 2px 8px;gap:8px;align-items:center;flex-wrap:wrap">'
+    +'<b style="font-size:14px">'+esc(k.name||'(ohne Name)')+'</b>'
+    +'<span class="mut small">'+kanaele.map(kk=>'<span title="'+esc(kanalLabel(kk))+'">'+kanalIcon(kk)+'</span>').join(' ')+'</span>'
+    +'<span style="flex:1"></span>'
+    +'<button class="ghost" style="padding:0 8px;font-size:11px" data-dz-act="videoFuerKontakt" data-dz-arg="'+id+'" title="Videocall zu diesem Kontakt (Jitsi)">📹 Video</button></div>';
+  // Verlauf über alle Kanäle (chronologisch, je mit Herkunfts-Label)
+  if(!msgs.length){ h+='<div class="mail3-leer">Noch keine Nachrichten für diesen Kontakt.</div>'; }
+  else { h+=msgs.map(n=>{
+    const dormant=n.kanal_typ!=='email';
+    return '<div class="uni-msg'+(n.richtung==='aus'?' aus':'')+'">'
+      +'<div class="umeta"><span class="kanal-badge '+(dormant?'dormant':'aktiv')+'" title="'+esc(kanalLabel(n.kanal_typ))+'">'+kanalIcon(n.kanal_typ)+' '+esc(kanalLabel(n.kanal_typ))+'</span>'
+      +'<span>'+(n.richtung==='aus'?('an '+esc(n.an_adressen||'')):('von '+esc(n.von_adresse||'')))+'</span>'
+      +'<span>'+esc((n.gesendet_at||n.created_at||'').slice(0,16))+'</span>'
+      +(n.betreff?'<b>'+esc(n.betreff)+'</b>':'')+'</div>'
+      +'<div class="ubody">'+esc((n.text||'').slice(0,2000))+'</div></div>';
+  }).join(''); }
+  // Unified Reply (Kanal: auto/letzter ODER explizit; Senden = HITL)
+  h+='<div style="border-top:1px solid var(--line);margin-top:10px;padding-top:9px">';
+  h+='<div class="row" style="gap:6px;margin-bottom:5px;align-items:center;flex-wrap:wrap"><span class="mut small">Antworten über</span>'
+    +'<span class="dz-field"><select class="dz-select" id="uni-kanal" data-dz-act="uniKanalWechsel" data-dz-on="change">'
+    +'<option value="">auto · letzter Kanal'+(k.letzter_kanal?(' ('+esc(kanalLabel(k.letzter_kanal))+')'):'')+'</option>'
+    + kanaele.map(kk=>'<option value="'+kk+'">'+esc(kanalLabel(kk))+'</option>').join('')
+    +'</select></span><span class="mut small" id="uni-kanal-hint"></span></div>';
+  h+='<input id="uni-betreff" placeholder="Betreff (nur E-Mail)" style="width:100%;margin-bottom:5px">';
+  h+='<textarea id="uni-text" rows="3" placeholder="Antwort …" style="width:100%;resize:vertical"></textarea>';
+  h+='<div class="row" style="gap:6px;margin-top:5px;align-items:center"><button data-dz-act="uniAntwort" data-dz-arg="'+id+'" title="Senden ist HITL (verifiziert): erzeugt einen Vorschlag, nie ein autonomer Versand. Dormante Kanäle werden vorbereitet, aber fail-closed geblockt."><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#ic-send"/></svg> Senden (HITL)</button><span class="mut small" id="uni-antwort-status"></span></div>';
+  h+='</div>';
+  col.innerHTML=h;
+  // Aktiv-Markierung in der Liste nachziehen
+  document.querySelectorAll('#uni-liste .konvrow').forEach(el=>{ if(el.getAttribute('data-dz-arg')===id)el.classList.add('aktiv'); });
+}
+function uniKanalWechsel(){
+  const sel=document.getElementById('uni-kanal'), hint=document.getElementById('uni-kanal-hint'); if(!sel||!hint)return;
+  const kt=sel.value; if(!kt){hint.textContent='';return;}
+  const st=(KANAELE_STATUS||[]).find(k=>k.kanal_typ===kt);
+  hint.innerHTML=(st&&!st.verbunden)
+    ?'<span style="color:var(--warn)">— '+esc(kanalLabel(kt))+' noch nicht verbunden (Vorschlag wird vorbereitet, Freigabe fail-closed)</span>':'';
+}
+async function uniAntwort(id){
+  const text=(document.getElementById('uni-text').value||'').trim();
+  if(!text){alert('Bitte einen Text eingeben.');return;}
+  const kanal=document.getElementById('uni-kanal').value, betreff=(document.getElementById('uni-betreff').value||'').trim();
+  const body={text:text}; if(kanal)body.kanal_typ=kanal; if(betreff)body.betreff=betreff;
+  const st=document.getElementById('uni-antwort-status'); st.textContent='…';
+  let r;try{r=await api('/api/smartkontakte/'+encodeURIComponent(id)+'/antwort',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
+  catch(e){st.innerHTML='<span style="color:var(--mg)">Vorschlag fehlgeschlagen.</span>';return;}
+  if(r.gesperrt)st.innerHTML='<span style="color:var(--warn)">⚠ '+esc(kanalLabel(r.kanal_typ))+' noch nicht verbunden — HITL-Vorschlag liegt bereit, Freigabe scheitert fail-closed (Gesetz 5).</span>';
+  else st.innerHTML='<span style="color:var(--ok)">✓ HITL-Vorschlag angelegt ('+esc(kanalLabel(r.kanal_typ))+' → '+esc(r.an)+'). Freigabe im Konto-Fenster › „Vernetzung & KI-Aktivität".</span>';
+  ladeKanaele();
+}
+async function zeigeVorschlaege(){
+  const box=document.getElementById('kontakte-vorschlaege'); if(!box)return; box.hidden=false; box.innerHTML='<span class="mut small">suche Dubletten …</span>';
+  let vs;try{vs=await api('/api/smartkontakte/vorschlaege');}catch(e){box.innerHTML='<span class="mut small">Nicht ladbar.</span>';return;}
+  if(!vs.length){box.innerHTML='<span class="mut small">Keine Dubletten-Vorschläge (gleiche Namen / gleiche Handles über Kanäle).</span>';return;}
+  box.innerHTML='<div class="mut small" style="margin-bottom:4px">Mögliche gleiche Person über Kanäle (lokal erkannt) — Zusammenführen bleibt deine Entscheidung:</div>'
+    + vs.map(x=>'<div class="row" style="gap:8px;align-items:center;margin:3px 0;flex-wrap:wrap"><span class="lbl mg">'+esc(x.grund)+'</span>'
+      +'<span>'+esc(x.a_name||x.a)+' ↔ '+esc(x.b_name||x.b)+'</span>'
+      +'<button class="ghost" data-dz-act="uniMerge" data-a="'+x.a+'" data-b="'+x.b+'">zusammenführen</button></div>').join('');
+}
+async function uniMerge(ziel,anderer){
+  if(!confirm('Diese beiden Kontakte zusammenführen? Rückgängig per „trennen" am Alias.'))return;
+  try{await api('/api/smartkontakte/'+encodeURIComponent(ziel)+'/zusammenfuehren',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({anderer_id:anderer})});}
+  catch(e){alert('Zusammenführen fehlgeschlagen.');return;}
+  const box=document.getElementById('kontakte-vorschlaege'); if(box)box.hidden=true;
+  if(UNI_SEL===anderer)UNI_SEL=ziel;
+  await ladeKontakte(); await ladeSmartInbox(); if(UNI_SEL)oeffneUniKontakt(UNI_SEL);
+}
+async function uniSplit(id,adressId){
+  if(!confirm('Diese Kanal-Identität in einen eigenen Kontakt herauslösen?'))return;
+  try{await api('/api/smartkontakte/'+encodeURIComponent(id)+'/trennen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adress_id:adressId})});}
+  catch(e){alert('Trennen fehlgeschlagen.');return;}
+  await ladeKontakte(); await ladeSmartInbox();
+}
+async function uniAliasHinzu(id){
+  const kanal=(prompt('Kanal (telegram / whatsapp / instagram / snapchat / email):')||'').trim().toLowerCase(); if(!kanal)return;
+  const adr=(prompt('Identität auf '+kanalLabel(kanal)+' (Handle / Adresse / Telefon):')||'').trim(); if(!adr)return;
+  try{await api('/api/smartkontakte/'+encodeURIComponent(id)+'/aliasse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kanal_typ:kanal,adresse:adr})});}
+  catch(e){alert('Konnte den Kanal nicht verknüpfen (unbekannter Kanal?).');return;}
+  await ladeKontakte(); await ladeSmartInbox();
+}
+function toggleSimForm(){
+  const f=document.getElementById('kontakte-simform'); if(!f)return; f.hidden=!f.hidden;
+  if(f.hidden)return;
+  f.innerHTML='<div class="row" style="gap:6px;flex-wrap:wrap;align-items:center">'
+    +'<span class="dz-field"><select class="dz-select" id="sim-kanal"><option value="telegram">Telegram</option><option value="whatsapp">WhatsApp</option><option value="instagram">Instagram</option><option value="snapchat">Snapchat</option></select></span>'
+    +'<input id="sim-von" placeholder="Absender-Handle (z. B. @max / +49…)" style="min-width:170px">'
+    +'<input id="sim-text" placeholder="Nachrichtentext" style="min-width:200px;flex:1">'
+    +'<button data-dz-act="uniSimulieren" title="Demo-Ingest: lokale eingehende Nachricht — KEINE echte Plattform-Anbindung (Gesetz 5).">simulieren</button>'
+    +'<span class="mut small">Demo (Gesetz 5): rein lokal, keine Plattform-API.</span></div>';
+}
+async function uniSimulieren(){
+  const kanal=document.getElementById('sim-kanal').value, von=(document.getElementById('sim-von').value||'').trim(), text=(document.getElementById('sim-text').value||'').trim();
+  if(!von){alert('Absender-Handle fehlt.');return;}
+  try{await api('/api/kanaele/'+encodeURIComponent(kanal)+'/simulieren',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({von:von,text:text})});}
+  catch(e){alert('Simulation fehlgeschlagen.');return;}
+  document.getElementById('kontakte-simform').hidden=true; await ladeKontakte(); await ladeSmartInbox();
+}
+
+// ===== V5-Rücksync: vom Netzwerk empfangene Termine (read-only, docs/26 §4b) =====
+function _fmtTermin(s){ if(!s)return ''; const d=new Date(s); if(isNaN(d))return esc(s);
+  const opt=s.length>10?{dateStyle:'medium',timeStyle:'short'}:{dateStyle:'medium'};
+  try{return d.toLocaleString('de-DE',opt);}catch(e){return esc(s);} }
+async function ladeKalenderTermine(){
+  const h=document.getElementById('liste-termine'); if(!h)return;
+  let ts;try{ ts=await api('/api/kalender/termine');}catch(e){ h.innerHTML='<span class="mut small">Nicht ladbar.</span>'; return; }
+  const kurz=document.getElementById('termine-kurz');
+  if(kurz)kurz.textContent=ts.length?ts.length+' Termin(e) · read-only':'aus dem Netzwerk · read-only';
+  if(!ts.length){ h.innerHTML='<span class="mut small">Keine empfangenen Termine. Schick in Dizz Admin einen Termin mit „✉" hierher.</span>'; return; }
+  h.innerHTML=ts.map(t=>'<div class="kontakt"><svg class="ic" style="width:15px;height:15px" aria-hidden="true"><use href="#ic-calendar"/></svg>'
+    +'<b>'+esc(t.titel)+'</b>'
+    +'<span class="mut small">🕒 '+_fmtTermin(t.beginn)+(t.ganztags?' (ganztägig)':'')+(t.ort?' · 📍 '+esc(t.ort):'')+'</span>'
+    +'<span style="flex:1"></span><span class="tag cy">'+esc(t.quelle||'extern')+'</span>'
+    +'<button class="btn mini mg" title="Erinnerung entfernen" data-dz-act="kalenderTerminLoeschen" data-dz-arg="'+t.id+'">✕</button></div>').join('');
+}
+async function kalenderTerminLoeschen(id){
+  try{ await api('/api/kalender/termine/'+id,{method:'DELETE'}); }catch(e){}
+  ladeKalenderTermine();
+}
+
+// ===================== Senden = HITL-Aktion (sichtbar gemacht) =====================
+// Verfassen/Antworten erzeugt NICHTS Wirksames: es legt den Vorschlag mail_senden (Stufe
+// verifiziert) an. Die Freigabe passiert getrennt im Konto-Fenster › „Vernetzung & KI-Aktivität"
+// und verlangt eine Dizzi-ID-Anmeldung — standalone bleibt sie bewusst liegen (403, fail-closed).
+let THREAD_REPLY=null;
+function antwortenAufThread(){ verfassen(THREAD_REPLY||{}); }
+function composeSchliessen(){ const c=document.getElementById('compose'); if(c){c.hidden=true;c.innerHTML='';} }
+// P2a: lokaler KI-Antwort-Entwurf aus dem offenen Thread — füllt NUR das Textfeld; Senden bleibt HITL.
+async function kiEntwurf(){
+  const id=THREAD_OFFEN; const ta=document.getElementById('c-text'), st=document.getElementById('c-status');
+  if(!id){ if(st)st.textContent='KI-Entwurf braucht einen offenen Thread (über „Antworten").'; return; }
+  const hinweis=(ta&&ta.value||'').trim();
+  if(st)st.textContent='KI-Entwurf lokal … (10–60 s)';
+  let r;try{ r=await fetch('/api/konversationen/'+encodeURIComponent(id)+'/entwurf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hinweis:hinweis})}); }
+  catch(e){ if(st)st.textContent='KI-Entwurf nicht erreichbar.'; return; }
+  if(r.status===409){
+    if(!confirm('KI-Triage ist aus (opt-in). Jetzt aktivieren? Läuft NUR lokal (Ollama), Inhalte bleiben auf der Maschine.')){ if(st)st.textContent=''; return; }
+    await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'ki_triage_aktiv',value:true})});
+    try{ r=await fetch('/api/konversationen/'+encodeURIComponent(id)+'/entwurf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hinweis:hinweis})}); }catch(e){ if(st)st.textContent='KI-Entwurf nicht erreichbar.'; return; }
+  }
+  let j;try{ j=await r.json(); }catch(e){ j={}; }
+  if(j.error){ if(st)st.textContent='KI-Entwurf nicht verfügbar.'; return; }
+  if(ta)ta.value=j.entwurf||ta.value;
+  if(st)st.textContent='KI-Entwurf eingefügt — prüfen & als HITL-Vorschlag anlegen.';
+}
+function verfassen(prefill){
+  prefill=prefill||{};
+  const box=document.getElementById('compose'); if(!box)return;
+  if(!KONTEN.length){ alert('Erst ein Konto verbinden (mit SMTP-Host fürs Senden).'); return; }
+  const opts=KONTEN.map(k=>'<option value="'+k.id+'"'+(k.id===prefill.konto_id?' selected':'')+(k.smtp_host?'':' data-nosmtp="1"')+'>'+esc(k.name)+(k.smtp_host?'':' (kein SMTP)')+'</option>').join('');
+  box.hidden=false;
+  box.innerHTML=
+    '<div class="kmsec" style="margin-top:0;background:var(--bg-deep)">'
+    +'<div class="kmsech"><svg class="ic" style="width:13px;height:13px;vertical-align:-2px" aria-hidden="true"><use href="#ic-send"/></svg> Nachricht verfassen</div>'
+    +'<div class="small mut" style="margin-bottom:8px">Senden ist eine <b>HITL-Aktion</b> (Stufe verifiziert). „Vorschlag anlegen" erzeugt den Eintrag <b>mail_senden</b>; die <b>Freigabe</b> erfolgt im Konto-Fenster und verlangt eine Dizzi-ID-Anmeldung. Standalone bleibt der Versand bewusst liegen (403, fail-closed).</div>'
+    +'<div class="row" style="gap:8px;flex-wrap:wrap">'
+    +'<span class="dz-field"><select class="dz-select" id="c-konto" title="Absende-Konto (braucht SMTP-Host)">'+opts+'</select></span>'
+    +'<input id="c-an" placeholder="empfaenger@anbieter.de" value="'+esc(prefill.an||'')+'" style="flex:1;min-width:220px">'
+    +'</div>'
+    +'<input id="c-betreff" placeholder="Betreff" value="'+esc(prefill.betreff||'')+'" style="width:100%;margin-top:8px">'
+    +'<textarea id="c-text" placeholder="Dein Text …" style="margin-top:8px"></textarea>'
+    +'<div class="row" style="margin-top:8px"><button class="mg" data-dz-act="sendenVorschlag" id="c-send"><svg class="ic" style="width:14px;height:14px" aria-hidden="true"><use href="#ic-send"/></svg> Als HITL-Vorschlag anlegen</button>'
+    +(THREAD_OFFEN?'<button class="ghost" data-dz-act="kiEntwurf" title="Lokaler KI-Antwort-Entwurf aus dem Thread (Ollama, opt-in) — füllt nur das Textfeld; Senden bleibt HITL.">KI-Entwurf (lokal)</button>':'')
+    +'<button class="ghost" data-dz-act="composeSchliessen">Abbrechen</button>'
+    +'<span class="mut small" id="c-status"></span></div></div>';
+  setTimeout(()=>{const a=document.getElementById('c-an'); if(a&&!a.value)a.focus(); else {const t=document.getElementById('c-text'); if(t)t.focus();}},30);
+}
+async function sendenVorschlag(){
+  const kid=document.getElementById('c-konto').value, an=v('c-an');
+  const betreff=document.getElementById('c-betreff').value, text=document.getElementById('c-text').value;
+  const st=document.getElementById('c-status');
+  if(!kid){st.textContent='Konto wählen.';return;}
+  if(!an){st.textContent='Empfänger fehlt.';return;}
+  const opt=document.querySelector('#c-konto option:checked');
+  if(opt&&opt.dataset.nosmtp){ if(!confirm('Dieses Konto hat keinen SMTP-Host — die Freigabe würde später fehlschlagen. Trotzdem als Vorschlag anlegen?'))return; }
+  document.getElementById('c-send').disabled=true; st.textContent='lege Vorschlag an …';
+  try{
+    const r=await api('/api/actions/propose',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:'mail_senden',source:'user',params:{konto_id:kid,an:an,betreff:betreff,text:text}})});
+    st.innerHTML='✓ Vorschlag <b>'+esc(r.status||'pending')+'</b> (Stufe '+esc(r.level||'verifiziert')+') — Freigabe im Konto-Fenster › „Vernetzung &amp; KI-Aktivität".';
+    if(KM_OPEN)renderKiAktivitaet();
+  }catch(e){ const j=await (e.json?e.json():Promise.resolve({})).catch(()=>({})); st.textContent='Fehlgeschlagen: '+(j.error||(e.status||e)); }
+  document.getElementById('c-send').disabled=false;
+}
+// Freigabe/Ablehnung der HITL-Aktionen (aus renderAktion im Konto-Fenster aufgerufen).
+async function aktionFreigeben(id){
+  let r; try{ r=await fetch('/api/actions/'+encodeURIComponent(id)+'/approve',{method:'POST'}); }catch(e){ alert('Freigabe nicht erreichbar: '+e); return; }
+  const j=await r.json().catch(()=>({}));
+  if(r.status===403){ alert('Freigabe verweigert (fail-closed): '+(j.error||'Stufe verifiziert nötig')+'\n\nBitte über Dizzi-ID anmelden (verifiziert) — standalone bleibt Senden bewusst liegen.'); location.href='/auth/login'; return; }
+  if(!r.ok){ alert('Freigabe fehlgeschlagen (HTTP '+r.status+'): '+(j.error||'')); }
+  else if(j.status==='failed'){ alert('Ausgeführt, aber fehlgeschlagen: '+((j.error)||(j.result&&j.result.error)||'unbekannt')); }
+  renderKiAktivitaet(); ladePost();
+}
+async function aktionAblehnen(id){
+  try{ await fetch('/api/actions/'+encodeURIComponent(id)+'/reject',{method:'POST'}); }catch(e){}
+  renderKiAktivitaet();
+}
+
+// ===================== KI-Triage (lokal, Ollama) =====================
+// KI-Zusammenfassung ALLER Chats + Termin-Erkennung (Teil des Triage-Knopfs).
+let TERMIN_VORSCHLAEGE=[];
+async function chatTriage(){
+  const btn=document.getElementById('chat-triage-btn'),st=document.getElementById('chat-status'),out=document.getElementById('triageout');
+  if(!out)return; if(btn)btn.disabled=true; if(st)st.textContent='lokal … (10–60 s, je nach Modell)';
+  try{
+    let r=await fetch('/api/triage',{method:'POST'});
+    if(r.status===409){
+      if(!confirm('KI-Triage ist aus (bewusst opt-in). Jetzt aktivieren? Läuft NUR lokal über Ollama — Inhalte verlassen die Maschine nie.')){if(st)st.textContent='abgebrochen';if(btn)btn.disabled=false;return;}
+      await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'ki_triage_aktiv',value:true})});
+      if(st)st.textContent='aktiviert — läuft lokal …';
+      r=await fetch('/api/triage',{method:'POST'});
+    }
+    const j=await r.json();
+    if(j.error){if(st)st.textContent='';out.innerHTML='<div class="msg bad"><b>Fehler</b><div class="txt">'+esc(j.error)+'</div></div>';if(btn)btn.disabled=false;return;}
+    if(st)st.textContent='fertig ('+(j.nachrichten_betrachtet||0)+' Nachrichten, Modell '+esc(j.modell||'?')+')';
+    let h='<div class="msg"><b>Zusammenfassung (alle Chats)</b><div class="txt">'+esc(j.zusammenfassung||'')+'</div></div>';
+    if(j.wichtig&&j.wichtig.length) h+=j.wichtig.map(w=>'<div class="msg bad"><b>⚑ '+esc(w.betreff)+'</b><div class="txt">'+esc(w.grund||'')+'</div></div>').join('');
+    else h+='<div class="mut small">Nichts markiert, das dringend Reaktion braucht.</div>';
+    out.innerHTML=h;
+    TERMIN_VORSCHLAEGE=j.termine||[];
+    renderTermineVorschlaege();
+  }catch(e){if(st)st.textContent='';out.innerHTML='<div class="msg bad"><b>Fehler</b><div class="txt">'+esc(String(e))+'</div></div>';}
+  if(btn)btn.disabled=false;
+}
+function renderTermineVorschlaege(){
+  const tbox=document.getElementById('termine-vorschlaege'); if(!tbox)return;
+  const ts=TERMIN_VORSCHLAEGE;
+  if(!ts.length){tbox.innerHTML='';return;}
+  tbox.innerHTML='<div class="msg"><b>📅 '+ts.length+' Termin(e) erkannt — anlegen?</b>'
+    +ts.map(t=>'<div class="txt">• '+esc(t.titel)+' — '+esc(String(t.beginn||'').replace('T',' '))+(t.beleg?' <span class="mut small">('+esc(t.beleg)+')</span>':'')+'</div>').join('')
+    +'<div class="row" style="gap:6px;margin-top:6px"><button class="mg" data-dz-act="termineAnlegen" title="Alle erkannten Termine im Admin-Kalender anlegen (deine Bestätigung = HITL).">Alle anlegen</button>'
+    +'<button class="ghost" data-dz-act="termineVerwerfen">verwerfen</button><span class="mut small" id="termine-status"></span></div></div>';
+}
+async function termineAnlegen(){
+  const st=document.getElementById('termine-status'); if(st)st.textContent='lege an …';
+  let r;try{r=await api('/api/termine/anlegen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({termine:TERMIN_VORSCHLAEGE})});}
+  catch(e){if(st)st.textContent='fehlgeschlagen.';return;}
+  if(st)st.innerHTML='<span style="color:var(--ok)">✓ '+(r.angelegt||0)+' Termin(e) im Admin-Kalender angelegt.</span>';
+  TERMIN_VORSCHLAEGE=[]; ladeKalenderTermine();
+}
+function termineVerwerfen(){ TERMIN_VORSCHLAEGE=[]; renderTermineVorschlaege(); }
+function videoFuerKontakt(id){ videoFuerThread('k'+String(id||'')); }
+
+// ===================== Video-Call (Jitsi-Einbettung v1) =====================
+// On-demand: KEIN Runtime-CDN-Script, KEIN Auto-Load — die Verbindung zum (frei
+// wählbaren, self-host-fähigen) Jitsi-Server entsteht erst beim Klick auf „Beitreten".
+let JITSI_DOMAIN='meet.jit.si';
+function _sanitDomain(d){ return String(d||'').trim().replace(/[^A-Za-z0-9.\-:]/g,''); }
+async function ladeVideoKonfig(){
+  try{ const s=await api('/api/settings'); if(s.jitsi_domain)JITSI_DOMAIN=_sanitDomain(s.jitsi_domain)||'meet.jit.si'; }catch(e){}
+  const h=document.getElementById('jitsi-hint'); if(h)h.textContent='Server: '+JITSI_DOMAIN+' — Verbindung erst beim Beitreten.';
+}
+function videoBeitreten(){
+  const raum=(document.getElementById('jitsi-raum').value||'').trim().replace(/[^A-Za-z0-9_-]/g,'');
+  if(!raum){alert('Erst einen Raumnamen eingeben (Buchstaben/Ziffern/-/_).');return;}
+  if(!confirm('Video-Call über „'+JITSI_DOMAIN+'" beitreten?\n\nDer Anruf läuft über diesen Server (öffentlich, sofern nicht self-hosted). Die Verbindung wird JETZT aufgebaut.'))return;
+  const box=document.getElementById('jitsi-frame');
+  const f=document.createElement('iframe');           // Attribute setzen statt String-Bau (keine Injektion)
+  f.title='Jitsi Video-Call'; f.allow='camera; microphone; fullscreen; display-capture; autoplay';
+  f.style.cssText='width:100%;height:520px;border:1px solid var(--line);border-radius:10px';
+  f.src='https://'+JITSI_DOMAIN+'/'+encodeURIComponent(raum);
+  box.innerHTML=''; box.appendChild(f);
+  document.getElementById('jitsi-leave').hidden=false;
+}
+function videoVerlassen(){
+  document.getElementById('jitsi-frame').innerHTML='';   // iframe entfernen = Call verlassen
+  document.getElementById('jitsi-leave').hidden=true;
+}
+// P3: Video-Call direkt aus dem Thread — nutzt die Jitsi-v1-Infrastruktur mit einem
+// aus der Konversation abgeleiteten Raumnamen; klappt das Video-Panel auf + scrollt hin.
+function videoFuerThread(id){
+  const raum='komm-'+String(id||'').replace(/[^A-Za-z0-9]/g,'').slice(0,16);
+  const inp=document.getElementById('jitsi-raum'); if(inp)inp.value=raum;
+  const frame=document.getElementById('jitsi-frame'), panel=frame&&frame.closest('.dz-panel');
+  if(panel){ panel.removeAttribute('data-dz-collapsed'); const kopf=panel.querySelector('.dz-panel-kopf'); if(kopf)kopf.setAttribute('aria-expanded','true'); }
+  videoBeitreten();
+  if(frame)setTimeout(()=>frame.scrollIntoView({block:'center'}),60);
+}
+
+// ===================== Mini-Dizzi-Sprechblase (POST /api/ki/frage) =====================
+// Die KI-Stimme der App (Vertrag 1.5): reicht die Frage an die App-KI weiter; ohne registrierte
+// App-KI fällt sie auf den lokalen Ollama-Kontext zurück (alles 0 €, lokal — hoechst-App-konform).
+let DIZZI_OPEN=false;
+function openDizzi(){ const b=document.getElementById('dizziBubble'); if(!b)return; b.hidden=false; DIZZI_OPEN=true;
+  const i=document.getElementById('dizziFrage'); if(i)setTimeout(()=>i.focus(),30); }
+function closeDizzi(){ const b=document.getElementById('dizziBubble'); if(b)b.hidden=true; DIZZI_OPEN=false; }
+async function dizziFragen(){
+  const inp=document.getElementById('dizziFrage'), out=document.getElementById('dizziOut'), src=document.getElementById('dizziSrc'), btn=document.getElementById('dizziBtn');
+  const f=(inp.value||'').trim(); if(!f)return;
+  out.innerHTML='<div class="q">„'+esc(f)+'"</div><div class="mut small" style="margin-top:5px">denke lokal nach … (10–60 s)</div>';
+  src.textContent=''; btn.disabled=true;
+  try{
+    const j=await api('/api/ki/frage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({frage:f})});
+    out.innerHTML='<div class="q">„'+esc(f)+'"</div><div style="margin-top:6px">'+esc(j.antwort||'(keine Antwort)')+'</div>';
+    const qmap={app_ki:'Komm-KI (Posteingang, lokal)',fallback_ollama:'lokaler Ollama-Kontext',kein_ollama:'Ollama nicht erreichbar',aus:'Mini-Dizzi deaktiviert',leer:'—'};
+    src.innerHTML='Quelle: <b>'+esc(qmap[j.quelle]||j.quelle||'?')+'</b>';
+    inp.value='';
+  }catch(e){ out.innerHTML='<div class="mut">Mini-Dizzi ist gerade nicht erreichbar.</div>'; }
+  btn.disabled=false; inp.focus();
+}
+
+// ===================== Spin-Physik + Schwebe-Physik (geteiltes UI-Kit) =====================
+// Konvergiert 18.06.2026 aufs geteilte UI-Kit: window.DizzSpin (../ui-kit/spinfling.js)
+// + window.DizzFloats (../ui-kit/floats.js); Init unten im Start-IIFE. Spec docs/14 v4.3.
+
+// ===================== Einstellungs-/Konto-FENSTER (Norm docs/19 §2b) =====================
+const _CATLBL={konto:'Konto & Identität',sicherheit:'Sicherheit',ki:'KI',vernetzung:'Vernetzung & Dienste',darstellung:'Darstellung & Sprache',daten:'Daten & Backup'};
+let KM_OPEN=false;
+function openKontoModal(){ const m=document.getElementById('kontoModal'); if(!m)return; m.hidden=false; KM_OPEN=true; ladeAuth(); loadKonto(); renderKiAktivitaet(); ladeMetaStatus(); ladeTgStatus(); }
+// ============ Meta-Konnektor Config (docs/38) — CSP-strikt: data-dz-act (global fn, liest data-kanal + Felder) ============
+async function ladeMetaStatus(){
+  const host=document.getElementById('meta-status'); if(!host)return;
+  let st; try{ st=await api('/api/kanaele/meta/status'); }catch(e){ host.innerHTML='<span class="mut small">Nicht ladbar.</span>'; return; }
+  let h='<div class="small mut" style="margin-bottom:6px">Webhook-URL (Meta-Eingang, öffentliche HTTPS-URL nötig): <code>'+esc(location.origin)+'/api/kanaele/meta/webhook</code></div>';
+  h+='<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">'
+    +'<input id="meta-app-secret" type="password" placeholder="App-Secret'+(st.app_secret_gesetzt?' ✓ gesetzt':' (Webhook-Signatur)')+'" style="min-width:190px">'
+    +'<input id="meta-verify-token" type="password" placeholder="Verify-Token'+(st.verify_token_gesetzt?' ✓ gesetzt':' (Webhook)')+'" style="min-width:190px">'
+    +'<span class="mut small">Graph '+esc(st.graph_version||'')+'</span></div>';
+  for(const k of (st.kanaele||[])){
+    const kt=k.kanal_typ;
+    const badge=k.verbunden?'<span class="tag ok">verbunden</span>':'<span class="tag warn">dormant</span>';
+    const idLabel=kt==='whatsapp'?'phone_number_id':'ig_user_id';
+    const idVal=kt==='whatsapp'?(k.phone_number_id||''):(k.ig_user_id||'');
+    h+='<div class="kmdienst" style="flex-wrap:wrap;gap:6px"><b>'+esc(k.label||kt)+'</b> '+badge
+      +(k.token_gesetzt?'<span class="mut small">Token ✓</span>':'<span class="mut small">kein Token</span>')
+      +'<div class="small mut" style="flex-basis:100%;margin:2px 0">'+esc(k.aktivierung||'')+'</div>'
+      +'<input id="meta-'+kt+'-token" type="password" placeholder="Access-Token (→ Tresor)" style="min-width:190px">'
+      +'<input id="meta-'+kt+'-id" placeholder="'+idLabel+'" value="'+esc(idVal)+'" style="min-width:150px">'
+      +'<button class="mg" data-dz-act="metaVerbinden" data-kanal="'+kt+'">Verbinden</button>'
+      +'<button class="ghost" data-dz-act="metaTrennen" data-kanal="'+kt+'">Trennen</button>'
+      +'<span style="flex-basis:100%"></span>'
+      +'<input id="meta-'+kt+'-an" placeholder="Test-Empfänger ('+(kt==='whatsapp'?'Telefon':'IGSID')+')" style="min-width:150px">'
+      +'<input id="meta-'+kt+'-text" placeholder="Testtext" value="Test von Dizz Communication" style="min-width:170px">'
+      +(kt==='whatsapp'?'<input id="meta-'+kt+'-template" placeholder="Template optional (z. B. hello_world)" title="Außerhalb des 24-h-Fensters liefert WhatsApp nur genehmigte Templates aus — hier den Template-Namen eintragen. Leer = freier Text (kommt nur im offenen 24-h-Fenster an)." style="min-width:160px">':'')
+      +'<button class="ghost" data-dz-act="metaTest" data-kanal="'+kt+'" title="Test-Sende als HITL-Vorschlag — kein autonomer Versand.">Test senden (HITL)</button>'
+      +'<span class="mut small" id="meta-'+kt+'-status"></span></div>';
+  }
+  host.innerHTML=h;
+}
+async function metaVerbinden(_a, el){
+  const k=el.dataset.kanal, gv=id=>(document.getElementById(id)||{}).value||'';
+  const body={kanal:k, token:gv('meta-'+k+'-token').trim(),
+              app_secret:gv('meta-app-secret').trim(), verify_token:gv('meta-verify-token').trim()};
+  const idv=gv('meta-'+k+'-id').trim();
+  if(k==='whatsapp')body.phone_number_id=idv; else body.ig_user_id=idv;
+  try{ await api('/api/kanaele/meta/verbinden',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
+  catch(e){ alert('Verbinden fehlgeschlagen.'); return; }
+  ladeMetaStatus(); ladeKanaele();
+}
+async function metaTrennen(_a, el){
+  const k=el.dataset.kanal;
+  if(!confirm(k+'-Token aus dem Tresor löschen (Kanal wird wieder dormant)?'))return;
+  try{ await api('/api/kanaele/meta/verbinden?kanal='+encodeURIComponent(k),{method:'DELETE'}); }catch(e){}
+  ladeMetaStatus(); ladeKanaele();
+}
+async function metaTest(_a, el){
+  const k=el.dataset.kanal, sEl=document.getElementById('meta-'+k+'-status');
+  const an=((document.getElementById('meta-'+k+'-an')||{}).value||'').trim();
+  const text=((document.getElementById('meta-'+k+'-text')||{}).value||'').trim();
+  const template=((document.getElementById('meta-'+k+'-template')||{}).value||'').trim();
+  if(!an){ if(sEl)sEl.textContent='Empfänger fehlt.'; return; }
+  let r; try{ r=await api('/api/kanaele/meta/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kanal:k,an:an,text:text,template:template})}); }
+  catch(e){ if(sEl)sEl.textContent='Fehlgeschlagen.'; return; }
+  if(sEl)sEl.innerHTML = r.gesperrt
+    ? '<span style="color:var(--warn)">⚠ dormant — HITL-Vorschlag bereit, Freigabe fail-closed.</span>'
+    : '<span style="color:var(--ok)">✓ HITL-Vorschlag angelegt'+(template?' (Template „'+esc(template)+'")':'')+' — Freigabe unter „Vernetzung & KI-Aktivität".</span>';
+  if(KM_OPEN)renderKiAktivitaet();   // Vorschlagsliste sofort auffrischen (kein Reload nötig)
+}
+// ============ Telegram-Konnektor Config — CSP-strikt: data-dz-act (global fn) ============
+async function ladeTgStatus(){
+  const host=document.getElementById('tg-status'); if(!host)return;
+  let st; try{ st=await api('/api/kanaele/telegram/status'); }catch(e){ host.innerHTML='<span class="mut small">Nicht ladbar.</span>'; return; }
+  const badge=st.verbunden?'<span class="tag ok">verbunden</span>':'<span class="tag warn">dormant</span>';
+  host.innerHTML='<div class="kmdienst" style="flex-wrap:wrap;gap:6px"><b>'+esc(st.label||'Telegram')+'</b> '+badge
+    +(st.token_gesetzt?'<span class="mut small">Token ✓</span>':'<span class="mut small">kein Token</span>')
+    +'<span class="mut small" id="tg-pruef"></span>'
+    +'<div class="small mut" style="flex-basis:100%;margin:2px 0">'+esc(st.aktivierung||'')+'</div>'
+    +'<input id="tg-token" type="password" placeholder="Bot-Token von @BotFather (→ Tresor)" style="min-width:230px">'
+    +'<button class="mg" data-dz-act="tgVerbinden">Verbinden</button>'
+    +'<button class="ghost" data-dz-act="tgPruefen" title="Bot-Identität live prüfen (getMe) — bestätigt den Token.">Bot prüfen</button>'
+    +'<button class="ghost" data-dz-act="tgTrennen">Trennen</button>'
+    +'<span style="flex-basis:100%"></span>'
+    +'<input id="tg-an" placeholder="Test-Empfänger (chat_id)" style="min-width:150px">'
+    +'<input id="tg-text" placeholder="Testtext" value="Test von Dizz Communication" style="min-width:170px">'
+    +'<button class="ghost" data-dz-act="tgTest" title="Test-Sende als HITL-Vorschlag — kein autonomer Versand.">Test senden (HITL)</button>'
+    +'<button class="ghost" data-dz-act="tgSync" title="Eingehende Nachrichten lokal abrufen (Long-Polling, kein Tunnel).">Nachrichten abrufen</button>'
+    +'<span class="mut small" id="tg-stat"></span></div>';
+}
+async function tgVerbinden(_a, el){
+  const token=((document.getElementById('tg-token')||{}).value||'').trim();
+  const sEl=document.getElementById('tg-stat');
+  if(!token){ if(sEl)sEl.textContent='Bot-Token fehlt.'; return; }
+  try{ await api('/api/kanaele/telegram/verbinden',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})}); }
+  catch(e){ alert('Verbinden fehlgeschlagen.'); return; }
+  ladeTgStatus(); ladeKanaele();
+}
+async function tgTrennen(_a, el){
+  if(!confirm('Bot-Token aus dem Tresor löschen (Telegram wird wieder dormant)?'))return;
+  try{ await api('/api/kanaele/telegram/verbinden',{method:'DELETE'}); }catch(e){}
+  ladeTgStatus(); ladeKanaele();
+}
+async function tgPruefen(_a, el){
+  const p=document.getElementById('tg-pruef'); if(p)p.textContent='prüfe …';
+  let r; try{ r=await api('/api/kanaele/telegram/pruefen',{method:'POST'}); }
+  catch(e){ if(p)p.innerHTML='<span style="color:var(--warn)">✗ nicht prüfbar (Token/Netz)</span>'; return; }
+  if(p)p.innerHTML='<span style="color:var(--ok)">✓ @'+esc(r.bot_username||'')+'</span>';
+}
+async function tgTest(_a, el){
+  const sEl=document.getElementById('tg-stat');
+  const an=((document.getElementById('tg-an')||{}).value||'').trim();
+  const text=((document.getElementById('tg-text')||{}).value||'').trim();
+  if(!an){ if(sEl)sEl.textContent='Empfänger (chat_id) fehlt.'; return; }
+  let r; try{ r=await api('/api/kanaele/telegram/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({an:an,text:text})}); }
+  catch(e){ if(sEl)sEl.textContent='Fehlgeschlagen.'; return; }
+  if(sEl)sEl.innerHTML = r.gesperrt
+    ? '<span style="color:var(--warn)">⚠ dormant — HITL-Vorschlag bereit, Freigabe fail-closed.</span>'
+    : '<span style="color:var(--ok)">✓ HITL-Vorschlag angelegt — Freigabe unter „Vernetzung & KI-Aktivität".</span>';
+  if(KM_OPEN)renderKiAktivitaet();
+}
+async function tgSync(_a, el){
+  const sEl=document.getElementById('tg-stat'); if(sEl)sEl.textContent='rufe ab …';
+  let r; try{ r=await api('/api/kanaele/telegram/sync',{method:'POST'}); }
+  catch(e){ if(sEl)sEl.innerHTML='<span style="color:var(--warn)">⚠ nicht verbunden (Token fehlt).</span>'; return; }
+  if(sEl)sEl.innerHTML='<span style="color:var(--ok)">✓ '+r.geholt+' geholt, '+r.neu+' neu.</span>';
+  ladeKanaele(); if(typeof ladeKonversationen==='function')ladeKonversationen();
+}
+function closeKontoModal(){ const m=document.getElementById('kontoModal'); if(m)m.hidden=true; KM_OPEN=false; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeKontoModal();closeDizzi();} });
+document.addEventListener('click',e=>{ if(e.target&&e.target.id==='kontoModal')closeKontoModal(); });
+function renderKontoAuth(me){
+  const host=document.getElementById('konto-auth'); if(!host||!me)return;
+  if(me.angemeldet){
+    const hoch=me.level==='hochsicher';
+    host.innerHTML='<span class="pill on">✓ Angemeldet</span>'
+      +'<span class="small">via <b>'+(me.via||'?')+'</b> · Stufe <b>'+me.level+'</b>'+(me.amr&&me.amr.length?' ('+me.amr.join(', ')+')':'')+'</span>'
+      +'<span style="flex:1"></span>'
+      +(hoch?'<span class="pill on">✓ Hochsicher</span>'
+            :'<button class="ghost" data-dz-act="loginHochsicher" title="Per MFA-Code auf die Stufe hochsicher hochstufen.">Hochstufen (MFA)</button>')
+      +'<button class="ghost" data-dz-act="logoutDizzi">Abmelden</button>';
+  } else {
+    host.innerHTML='<span class="pill">Nicht angemeldet</span>'
+      +'<span class="small mut">Einmal über Dizzi-ID anmelden ⇒ in allen Dizz-Apps angemeldet (SSO). Senden bleibt fail-closed bis zur Anmeldung.</span>'
+      +'<span style="flex:1"></span>'
+      +'<button class="ghost" data-dz-act="loginDizzi">Mit Dizzi-ID anmelden</button>';
+  }
+}
+async function logoutDizzi(){ try{ await fetch('/auth/logout',{method:'POST',headers:{'Accept':'application/json'}}); }catch(e){} ladeAuth(); }
+async function loadKonto(){
+  let schema,vals,vault;
+  try{ schema=await api('/api/settings/schema'); vals=await api('/api/settings'); }catch(e){ return; }
+  try{ vault=await api('/api/vault'); }catch(e){ vault=[]; }
+  applyTheme(vals.design_vorlage||vals.x_design_vorlage,vals.farb_schema||vals.x_farb_schema);
+  const accHost=document.getElementById('konto-acc');
+  if(accHost){
+    const lvl=(AUTH&&AUTH.level)||'lokal', via=(AUTH&&AUTH.via)||'standalone';
+    accHost.innerHTML='Profil <b>'+esc(vals.anzeigename||'—')+'</b> · Identität '+esc((AUTH&&AUTH.sub)||'dizzi')
+      +' · Stufe <b>'+esc(lvl)+'</b> ('+esc(via)+') · Token-Tresor: '+((vault&&vault.length)||0)+' Eintrag(e) · Vertrag v'+(schema.version!=null?schema.version:'?');
+  }
+  renderKontoAktionen();
+  renderDienste();
+  const host=document.getElementById('konto-settings'); if(!host)return;
+  let h='<div class="small mut" style="margin:6px 0 2px">Einstellungen (App-Vertrag K2 · 6 Kategorien) — Änderungen werden sofort gespeichert.</div>';
+  for(const cat of Object.keys(schema.kategorien)){
+    const defs=schema.kategorien[cat]; if(!defs||!defs.length)continue;
+    h+='<div class="kmcat"><div class="kmcath">'+(_CATLBL[cat]||cat)+'</div>';
+    for(const d of defs){
+      if(d.key==='design_vorlage'||d.key==='farb_schema')continue; // eigenes Live-Vorschau-Panel oben
+      const val=(d.key in vals)?vals[d.key]:d.default;
+      const prep=/_vorbereitet$/.test(d.key)||/^matrix_/.test(d.key)||/^webview_/.test(d.key);
+      h+='<div class="kmrow'+(prep?' prep':'')+'"><label title="'+(d.description||'').replace(/"/g,'&quot;')+'">'+(d.label||d.key)+'</label>'+_settingInput(d,val)+'</div>';
+    }
+    h+='</div>';
+  }
+  host.innerHTML=h;
+  if(window.DzControls)DzControls.initControls(host);   // Stepper (▾/▴) der Zahlenfelder verdrahten
+}
+async function renderKiAktivitaet(){
+  const host=document.getElementById('konto-ki'); if(!host)return;
+  let a; try{ a=await api('/api/actions'); }catch(e){ host.textContent='KI-Aktivität nicht abrufbar.'; return; }
+  let h='';
+  if(a.katalog&&a.katalog.length){
+    h+='<div class="small mut" style="margin-bottom:4px">Registrierte Aktionen: '+a.katalog.map(k=>'<b>'+esc(k.name)+'</b> (Stufe '+esc(k.level)+')').join(' · ')+'</div>';
+  } else { h+='<div class="small mut">Diese App hat (noch) keine ausführbaren KI-Aktionen registriert — reine Lese-/Vorschlags-KI.</div>'; }
+  if(a.liste&&a.liste.length){
+    h+=a.liste.slice(0,10).map(renderAktion).join('');
+  } else { h+='<div class="small mut" style="margin-top:4px">Keine offenen KI-Vorschläge.</div>'; }
+  host.innerHTML=h;
+}
+// Teil C füllt den Freigabe-Fluss; hier schon der Render inkl. approve/reject-Knöpfe.
+function renderAktion(x){
+  const params=x.params||{};
+  const detail=x.name==='mail_senden'
+    ? ('an '+esc(params.an||'?')+(params.betreff?(' · „'+esc(params.betreff)+'"'):''))
+    : esc(JSON.stringify(params));
+  let knoepfe='';
+  if(x.status==='pending'){
+    knoepfe='<button class="mg" data-dz-act="aktionFreigeben" data-dz-arg="'+x.id+'" title="Freigeben = Wirkung. Verlangt die HITL-Stufe der Aktion (standalone fail-closed → 403).">Freigeben</button>'
+           +'<button class="ghost" data-dz-act="aktionAblehnen" data-dz-arg="'+x.id+'">Ablehnen</button>';
+  }
+  const stClass=x.status==='executed'?'ok':(x.status==='pending'?'warn':'');
+  return '<div class="kmdienst"><svg class="ic" style="width:15px;height:15px" aria-hidden="true"><use href="#ic-send"/></svg>'
+    +'<div style="flex:1"><b>'+esc(x.name)+'</b> <span class="mut small">'+detail+'</span>'
+    +'<div class="mut small">Stufe '+esc(x.level)+' · '+esc(x.created_at||'')+' · Quelle '+esc(x.source||'?')+'</div></div>'
+    +'<span class="tag '+stClass+'">'+esc(x.status)+'</span>'+knoepfe+'</div>';
+}
+function renderDienste(){
+  const host=document.getElementById('konto-dienste'); if(!host)return;
+  if(!KONTEN||!KONTEN.length){ host.innerHTML='<span class="mut small">Keine verbundenen Konten — Gmail verbinden oder IMAP anlegen. Geheimnisse landen im verschlüsselten Tresor (Wert nie sichtbar).</span>'; return; }
+  host.innerHTML=KONTEN.map(k=>'<div class="kmdienst"><svg class="ic" style="width:15px;height:15px" aria-hidden="true"><use href="#ic-lock"/></svg><b>'+esc(k.name)+'</b><span class="mut small">'+esc(k.art)+' · '+esc(k.benutzer||'')+' · Geheimnis im Tresor</span><span style="flex:1"></span><button class="ghost" data-dz-act="kontoEntfernen" data-dz-arg="'+k.id+'" title="Konto trennen: löscht das Geheimnis unwiderruflich aus dem Tresor. Bereits abgerufene Nachrichten bleiben lesbar.">Trennen</button></div>').join('');
+}
+async function kontoEntfernen(id){
+  const k=(KONTEN||[]).find(x=>x.id===id), name=k?k.name:'dieses Konto';   // Name intern (quote-sicher: nur die UUID steht im onclick)
+  if(!confirm('Konto „'+name+'" trennen? Das Geheimnis wird unwiderruflich aus dem Tresor gelöscht.'))return;
+  try{ await api('/api/konten/'+encodeURIComponent(id),{method:'DELETE'}); }catch(e){}
+  await ladeKonten(); renderDienste(); ladePost();
+}
+function renderKontoAktionen(){
+  const host=document.getElementById('konto-aktionen'); if(!host)return;
+  host.innerHTML=
+    '<a class="btn" href="http://localhost:8200/id/geraete" target="_blank" rel="noopener" title="Zentrale Dizzi-ID-Sitzungsverwaltung: aktive Anmeldungen sehen, einzeln widerrufen oder überall abmelden (H7).">Sitzungen &amp; Geräte</a>'
+    +'<button class="ghost" data-dz-act="kontoExport" title="DSGVO-Export aller App-Daten (Settings/Aktionen/Audit; Tresor nur Namen) als JSON. Verlangt eine FRISCHE Dizzi-ID-Anmeldung (max. 5 Min).">Daten-Export (JSON)</button>'
+    +'<button class="ghost" style="color:var(--mg);border-color:rgba(var(--mg-rgb),.5)" data-dz-act="kontoLoeschen" title="Soft-Delete aller App-Daten (Konten/Nachrichten) + Token-Tresor leeren. Verlangt eine FRISCHE Anmeldung.">Daten löschen</button>'
+    +'<span class="small mut">Export/Löschen = Re-Auth-Pflicht (Vertrag 1.3). Senden = HITL (Stufe verifiziert).</span>';
+}
+async function kontoExport(){
+  let r; try{ r=await fetch('/api/account/export',{method:'POST'}); }catch(e){ alert('Export fehlgeschlagen: '+e); return; }
+  if(r.status===403){ alert('Frische Verifikation nötig — bitte neu über Dizzi-ID anmelden.'); location.href='/auth/login'; return; }
+  if(!r.ok){ alert('Export fehlgeschlagen (HTTP '+r.status+')'); return; }
+  const blob=await r.blob(), a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='dizz-communication-export.json';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+}
+async function kontoLoeschen(){
+  if(!confirm('ALLE App-Daten löschen (Konten, Nachrichten; Tresor wird geleert)?'))return;
+  if(!confirm('Sicher? Soft-Delete, auditiert.'))return;
+  let r; try{ r=await fetch('/api/account/loeschen',{method:'POST'}); }catch(e){ alert('Löschen fehlgeschlagen: '+e); return; }
+  if(r.status===403){ alert('Frische Verifikation nötig — bitte neu über Dizzi-ID anmelden.'); location.href='/auth/login'; return; }
+  ladeKonten(); ladePost(); loadKonto();
+}
+function _settingInput(d,v){
+  const id='set_'+d.key, e=s=>String(s==null?'':s).replace(/"/g,'&quot;');
+  if(d.type==='bool') return '<label class="dz-check"><input type="checkbox" id="'+id+'" '+(v?'checked':'')+' data-dz-act="setBool" data-dz-on="change" data-key="'+e(d.key)+'"></label>';
+  if(d.type==='choice'){ const o=(d.choices||[]).map(c=>'<option '+(c===v?'selected':'')+'>'+e(c)+'</option>').join(''); return '<span class="dz-field"><select class="dz-select" id="'+id+'" data-dz-act="setVal" data-dz-on="change" data-key="'+e(d.key)+'">'+o+'</select></span>'; }
+  if(d.type==='int'||d.type==='float'){
+    const mm=(d.min!=null?' min="'+e(d.min)+'"':'')+(d.max!=null?' max="'+e(d.max)+'"':'')+(d.type==='float'?' step="any"':'');
+    return '<span class="dz-stepper"><button type="button" data-dz-step="-1" aria-label="weniger">▾</button>'
+      +'<input type="number" id="'+id+'" value="'+e(v)+'"'+mm+' data-dz-act="setNum" data-dz-on="change" data-key="'+e(d.key)+'" data-fl="'+(d.type==='float'?1:0)+'">'
+      +'<button type="button" data-dz-step="1" aria-label="mehr">▴</button></span>'; }
+  return '<input type="text" id="'+id+'" value="'+e(v)+'" style="width:180px" data-dz-act="setVal" data-dz-on="change" data-key="'+e(d.key)+'">';
+}
+async function saveSetting(key,value){
+  try{ await api('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,value:value})}); ladeAuth(); }
+  catch(e){ alert('Speichern fehlgeschlagen: '+key); }
+}
+
+// ===================== Command-Palette (Cmd/Strg+K) — tastatur-first =====================
+// Ein Eingang für Aktionen ohne Maus (Superhuman/Linear-Muster). Globale Befehle + Thread-Kontext
+// (Antworten/Memory/Kalender/als ungelesen). Cmd/Strg+K toggelt; ↑/↓ wählt, Enter führt aus, Esc schließt.
+let CMDK_OPEN=false, CMDK_ITEMS=[], CMDK_SEL=0;
+function paletteCommands(){
+  const C=[
+    {label:'Posteingang', hint:'zur Liste', run:()=>ladeKonversationen()},
+    {label:'Suchen …', hint:'im Posteingang', run:()=>{ const s=document.getElementById('f-suche'); if(s){ s.scrollIntoView({block:'center'}); s.focus(); } }},
+    {label:'Verfassen', hint:'neue Nachricht (HITL)', run:()=>verfassen()},
+    {label:'Jetzt abrufen', hint:'alle Konten synchronisieren', run:()=>syncAlle()},
+    {label:'KI-Zusammenfassung + Termine', hint:'alle Chats, lokal', run:()=>chatTriage()},
+    {label:'Einstellungen & Konto', hint:'Dizzi-ID', run:()=>openKontoModal()},
+    {label:'Mini-Dizzi fragen', hint:'lokale Komm-KI', run:()=>openDizzi()}
+  ];
+  if(THREAD_OFFEN){ const id=THREAD_OFFEN;
+    C.push({label:'Antworten', hint:'HITL-Vorschlag', ctx:true, run:()=>antwortenAufThread()});
+    C.push({label:'In Memory archivieren', hint:'Querverbindung V4', ctx:true, run:()=>threadArchivieren(id)});
+    C.push({label:'Termin → Plans', hint:'Querverbindung V5', ctx:true, run:()=>kalenderForm(id)});
+    C.push({label:'Schlummern', hint:'zurückstellen (Snooze)', ctx:true, run:()=>schlummernForm(id)});
+    C.push({label:'Als ungelesen markieren', hint:'Thread', ctx:true, run:()=>threadGelesen(id,false)});
+    C.push({label:'Zurück zur Liste', hint:'Thread schließen', ctx:true, run:()=>ladeKonversationen()});
+  }
+  return C;
+}
+function paletteRender(filter){
+  const list=document.getElementById('cmdk-list'); if(!list)return;
+  const f=(filter||'').toLowerCase().trim();
+  CMDK_ITEMS=paletteCommands().filter(c=> !f || (c.label+' '+(c.hint||'')).toLowerCase().includes(f));
+  CMDK_SEL=0;
+  if(!CMDK_ITEMS.length){ list.innerHTML='<div class="cmdk-leer">Kein Befehl gefunden.</div>'; return; }
+  list.innerHTML=CMDK_ITEMS.map((c,i)=>'<div class="cmdk-item'+(i===0?' active':'')+'" data-dz-act="paletteExec" data-dz-arg="'+i+'">'
+    +'<span>'+esc(c.label)+(c.hint?' <span class="hint">— '+esc(c.hint)+'</span>':'')+'</span>'
+    +(c.ctx?'<span class="kbd">THREAD</span>':'')+'</div>').join('');
+}
+function paletteHover(i){ if(i!==CMDK_SEL){ CMDK_SEL=i; paletteMark(); } }
+function paletteMark(){ document.querySelectorAll('.cmdk-item').forEach((el,i)=>el.classList.toggle('active',i===CMDK_SEL)); }
+function paletteNav(d){ if(!CMDK_ITEMS.length)return; CMDK_SEL=(CMDK_SEL+d+CMDK_ITEMS.length)%CMDK_ITEMS.length; paletteMark();
+  const el=document.querySelectorAll('.cmdk-item')[CMDK_SEL]; if(el)el.scrollIntoView({block:'nearest'}); }
+function paletteExec(i){ const c=CMDK_ITEMS[(i==null?CMDK_SEL:i)]; if(!c)return; closePalette(); try{ c.run(); }catch(e){} }
+function openPalette(){ const m=document.getElementById('cmdk'); if(!m)return; m.hidden=false; CMDK_OPEN=true;
+  const inp=document.getElementById('cmdk-input'); if(inp)inp.value=''; paletteRender(''); setTimeout(()=>{ if(inp)inp.focus(); },20); }
+function closePalette(){ const m=document.getElementById('cmdk'); if(m)m.hidden=true; CMDK_OPEN=false; }
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&(e.key==='k'||e.key==='K')){ e.preventDefault(); CMDK_OPEN?closePalette():openPalette(); return; }
+  if(!CMDK_OPEN)return;
+  if(e.key==='Escape'){ e.preventDefault(); closePalette(); }
+  else if(e.key==='ArrowDown'){ e.preventDefault(); paletteNav(1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); paletteNav(-1); }
+  else if(e.key==='Enter'){ e.preventDefault(); paletteExec(); }
+});
+
+// ============ CSP voll-strikt: Inline-Handler → Event-Delegation (docs/37) ============
+// Strikte Nonce-CSP blockt inline onclick=/onchange=. Klick/Change laufen über DzActions
+// (data-dz-act, Kit-Dispatcher, document-Ebene). Mehr-Argument-/Typ-Handler hier als
+// registrierte Wrapper (lesen data-*). Sondertasten (keydown/input/mousemove) + Backdrop
+// deckt DzActions NICHT ab ⇒ explizit (im nonce'd Script) per addEventListener gewirt.
+function gmailStart(){ location.href='/api/konten/gmail/start'; }
+function jmapHinweis(){ alert('JMAP-Konten (RFC 8620/8621) sind VORBEREITET (Adapter JmapQuelle, Gesetz 5), aber noch nicht aktiv — die Anbindung folgt in einer eigenen Session. Multi-Konto-Umschaltung läuft heute über den Konto-Filter im Posteingang.'); }
+function kalFormZu(){ const f=document.getElementById('kal-form'); if(f)f.hidden=true; }
+function loginDizzi(){ location.href='/auth/login'; }
+function loginHochsicher(){ location.href='/auth/login?level=hochsicher'; }
+let _KOMM_ACTS_OK=false;
+function _kommWireActions(){
+  if(_KOMM_ACTS_OK || !(window.DzControls && DzControls.registerAction)) return;
+  _KOMM_ACTS_OK=true;
+  const RA=DzControls.registerAction;
+  RA('schlummernBis',(a,el)=>schlummern(el.dataset.id, el.dataset.bis));
+  RA('wecken',(a,el)=>schlummern(el.dataset.id,''));
+  RA('threadUngelesen',(a)=>threadGelesen(a,false));
+  RA('labelEntfernen',(a,el)=>labelEntfernen(el.dataset.konv, el.dataset.label));
+  RA('zeigeNachricht',(a)=>zeigeNachricht(Number(a)));
+  RA('paletteExec',(a)=>paletteExec(Number(a)));
+  RA('uniSplit',(a,el)=>uniSplit(el.dataset.kont, el.dataset.alias));
+  RA('uniMerge',(a,el)=>uniMerge(el.dataset.a, el.dataset.b));
+  RA('setBool',(a,el)=>saveSetting(el.dataset.key, el.checked));
+  RA('setVal',(a,el)=>saveSetting(el.dataset.key, el.value));
+  RA('setNum',(a,el)=>saveSetting(el.dataset.key, el.dataset.fl==='1'?parseFloat(el.value):parseInt(el.value,10)));
+}
+function _kommWireEvents(){
+  const byId=id=>document.getElementById(id);
+  const onEnter=(id,fn)=>{ const el=byId(id); if(el)el.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); fn(); } }); };
+  onEnter('dizziFrage', ()=>dizziFragen());
+  onEnter('f-suche', ()=>ladeSuche());
+  onEnter('kontakte-suche', ()=>ladeKontakte());
+  onEnter('jitsi-raum', ()=>videoBeitreten());
+  const ci=byId('cmdk-input'); if(ci)ci.addEventListener('input',e=>paletteRender(e.target.value));
+  const cm=byId('cmdk'); if(cm)cm.addEventListener('click',e=>{ if(e.target.id==='cmdk')closePalette(); });
+  const cl=byId('cmdk-list'); if(cl)cl.addEventListener('mousemove',e=>{ const it=e.target.closest&&e.target.closest('.cmdk-item'); if(it&&it.dataset.dzArg!=null)paletteHover(Number(it.dataset.dzArg)); });
+}
+_kommWireEvents();
+_kommWireActions();   // greift, falls DzControls schon da ist; sonst in mountKit nachgezogen
+
+// ===================== Start =====================
+(async function(){
+  themeBoot();
+  ladeVideoKonfig();
+  try{ SPLIT_ON=localStorage.getItem('kommSplit')==='1'; const c=document.getElementById('f-split'); if(c)c.checked=SPLIT_ON; }catch(e){}
+  await ladeAuth(); await ladeKonten(); await ladePost();
+  // Standard-Mechanik (Spin/Floats/Collapse) erst mounten, wenn die deferred /ui-kit-Skripte geladen sind —
+  // sonst Race mit diesem async-Start. Panels sind statisches HTML.
+  function mountKit(){
+    if(window.DizzSpin) DizzSpin.initSpinFling({ gridSelector:'.wrap', panelSelector:'.card', floatSelector:'.floatacct,.floatdizzi', storageKey:'kommPanelOrder', layoutKey:'kommLayoutVer', layoutVer:'2026-06-26-dizzchat' });
+    if(window.DzControls){ DzControls.initControls(document); _kommWireActions(); }   // K2.4 Klapp-Panels/Stepper + CSP-Aktions-Wrapper (idempotent)
+    if(window.DizzFloats){
+      DizzFloats.initFloat('floatAcct', { regKey:'floatAcct', onTap:openKontoModal, paused:()=>KM_OPEN, panelSelector:'.wrap > .card' });
+      DizzFloats.initFloat('floatDizzi', { regKey:'floatDizzi', onTap:openDizzi, paused:()=>DIZZI_OPEN, panelSelector:'.wrap > .card' });
+    }
+  }
+  if(window.DizzSpin && window.DizzFloats) mountKit();
+  else window.addEventListener('DOMContentLoaded', mountKit, { once:true });
+  if(new URLSearchParams(location.search).get('gmail')==='ok'){document.getElementById('syncinfo').textContent='Gmail verbunden ✓ — jetzt abrufen.';}
+})();
+</script>
+</body>
+</html>

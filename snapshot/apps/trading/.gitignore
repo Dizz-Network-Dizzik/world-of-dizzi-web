@@ -1,0 +1,34 @@
+# Secrets — NIEMALS committen
+.env
+*.env
+**/.env
+
+# Python-venvs / Caches
+.venv/
+**/.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Laufzeit-Daten (regenerierbar / nutzer-/maschinenspezifisch)
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.log
+**/backtest_results/
+**/user_data/data/
+
+# Rollback-/Arbeits-Backups
+*.bak
+*.pre_*.bak
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.tmp
+_tmp_*
+programm/research/_volume_hist.json
+
+programm/research/_fng_hist.json
+programm/research/_btc_daily.json
+programm/research/_dvol_daily.json

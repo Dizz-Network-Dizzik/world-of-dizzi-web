@@ -1,0 +1,86 @@
+/* DzHalter — Float-Andock-Schale (begleitet float_dock.js). App-neutral,
+   STRENG token-only (docs/70 §2.1: keine Hex-Farben) — folgt --cy/--mg je
+   `farb_schema` und erbt data-design über die Panel-/Linien-Tokens.
+   Lage per CSS-Var übersteuerbar (App-Lane, falls oben rechts etwas Eigenes
+   wohnt): --dzh-top / --dzh-right auf :root oder body setzen. */
+
+/* ── Icon-Fix netzweit (docs/14 v4.5, 20.07.2026) ───────────────────────────
+   z-Leiter: die Schale sitzt EINE Stufe UNTER der Float-Schicht, damit die von
+   float_dock.js herausgehobenen Icons garantiert OBEN auf der Mulde liegen und
+   klickbar bleiben. Als Var, damit eine App-Lane die Ordnung bewusst mitziehen
+   kann — Invariante: --dzh-z-floats MUSS > --dzh-z-schale bleiben. */
+:root { --dzh-z-schale: 59; --dzh-z-floats: 60; }
+
+/* Body-fixe FLOAT-SCHICHT über der Schale: DzHalter hebt jedes angemeldete Float
+   per float_dock.js hier hinein und ERZWINGT so den Body-Ebene-Invariant
+   (floats.js), statt ihn pro App zu hoffen. MUSS „sauber" bleiben — KEIN
+   transform / filter / backdrop-filter / will-change / contain / perspective und
+   kein Hintergrund: sonst würde die Schicht selbst zum Containing-Block und die
+   position:fixed-Floats verrutschten (genau der Bug, den sie heilt). Sie ist ein
+   eigener Stapel-Kontext (z --dzh-z-floats) ⇒ hebt ALLE Floats über die Schale.
+   pointer-events:none, damit die bildschirmfüllende Schicht keine Klicks der App
+   darunter schluckt — nur die Floats selbst (> *) sind klickbar. */
+.dzh-floatlayer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--dzh-z-floats, 60);
+  pointer-events: none;
+}
+.dzh-floatlayer > * { pointer-events: auto; }
+
+.dz-halter {
+  position: fixed;
+  top: var(--dzh-top, 12px);
+  right: var(--dzh-right, 12px);
+  z-index: var(--dzh-z-schale, 59);   /* EINE Stufe UNTER der Float-Schicht (--dzh-z-floats): der Knopf sitzt IN der Mulde, das Icon fliegt drüber */
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px;
+  border-radius: var(--r-chip, 12px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh);
+}
+
+.dzh-slots { display: flex; align-items: center; gap: 6px; }
+
+/* Die Mulde: leer = gestrichelte Einladung, belegt = ruhiger Cyan-Rastring. */
+.dzh-slot {
+  border-radius: 50%;
+  border: 1.5px dashed rgba(var(--cy-rgb), 0.4);
+  background: rgba(var(--cy-rgb), 0.05);
+  pointer-events: none;   /* rein dekorativ: der herausgehobene Float überlagert die Mulde und trägt den Klick */
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+.dzh-slot[data-belegt="1"] {
+  border-style: solid;
+  border-color: rgba(var(--cy-rgb), 0.55);
+  box-shadow: 0 0 14px rgba(var(--cy-rgb), 0.25), inset 0 0 10px rgba(var(--cy-rgb), 0.12);
+}
+.dz-halter[data-modus="frei"] .dzh-slot {
+  border-color: rgba(var(--mg-rgb), 0.3);
+  background: rgba(var(--mg-rgb), 0.04);
+}
+
+/* Frei/Fix-Schalter — 30×30-Icon-Knopf-Norm (docs/14 v4.2); Schloss-SVG kommt
+   aus float_dock.js (currentColor): angedockt = Cyan zu, frei = Magenta auf. */
+.dzh-schalter {
+  width: 30px; height: 30px; border-radius: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--cy);
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  padding: 0;
+}
+.dzh-schalter:hover {
+  border-color: rgba(var(--cy-rgb), 0.5);
+  box-shadow: 0 0 12px rgba(var(--cy-rgb), 0.35);
+}
+.dz-halter[data-modus="frei"] .dzh-schalter { color: var(--mg); }
+.dz-halter[data-modus="frei"] .dzh-schalter:hover {
+  border-color: rgba(var(--mg-rgb), 0.5);
+  box-shadow: 0 0 12px rgba(var(--mg-rgb), 0.35);
+}
+
+/* reduced-motion: Floats sind statisch (floats.js inert) — keine Halterung zeigen. */
+@media (prefers-reduced-motion: reduce) { .dz-halter { display: none; } }

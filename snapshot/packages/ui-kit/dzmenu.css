@@ -1,0 +1,18 @@
+/* DzMenu — generisches Rechtsklick-„Dizzi"-Kontextmenü (netzweites ui-kit).
+   App-neutral: nutzt die geteilten Kit-Tokens aus tokens.css. Begleitet dzmenu.js. */
+.dzmenu { position: fixed; z-index: 90; min-width: 200px; max-width: 280px; padding: 5px;
+  background: var(--panel-solid); color: var(--fg); border: 1px solid var(--line);
+  border-top: 1px solid var(--edge-t); border-radius: var(--r); box-shadow: var(--sh);
+  display: flex; flex-direction: column; gap: 1px; }
+.dzmenu .dzm-kopf { font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--mut); padding: 3px 9px 5px; pointer-events: none;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dzmi { display: flex; align-items: center; gap: 9px; padding: 6px 9px; border: 0;
+  background: none; color: var(--fg); font: inherit; font-size: 13px; text-align: left;
+  cursor: pointer; border-radius: 6px; width: 100%; }
+.dzmi:hover, .dzmi.fokus { background: var(--control-hover); }
+.dzmi.gefahr { color: var(--mg); }
+.dzmi.gefahr:hover { background: rgba(var(--mg-rgb), .14); }
+.dzmi-ic { width: 16px; text-align: center; flex: 0 0 auto; }
+.dzmi-lab { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dzmi-sep { height: 1px; margin: 4px 6px; background: var(--line); }

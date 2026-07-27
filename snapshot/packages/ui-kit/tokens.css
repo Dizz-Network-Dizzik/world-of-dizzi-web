@@ -1,0 +1,225 @@
+/* ============================================================================
+   Dizz-Design-Tokens — K2.2 Token-MASTER (kanonische Single Source)
+   the world of dizzi/shared/dizz-tokens.css · Katalog v1 (Nutzer-Session 13.06.2026)
+
+   DIES ist die Quelle der Wahrheit für das übergreifende Design-System.
+   - Die gültigen Achsen-Werte sind im App-Vertrag typisiert: appkit
+     settings_core.base_schema → design_vorlage / farb_schema (appkit ≥ 1.4.0).
+   - Apps übernehmen DIESE Datei 1:1 (linken oder inlinen); news/ui-kit/tokens.css
+     ist eine abgeleitete Kopie und wird hieran abgeglichen.
+   - Token-WERTE ändern = NUR hier; danach in die Apps nachziehen (ui-kit-Sync).
+
+   ── ZWEI ACHSEN (per <html>-Attribut umgeschaltet) ──────────────────────────
+     html[data-design] = Design-Theme (Material/Form), 10 Stück:
+        metall (Default) · neon · flach · tag · carbon · pergament · synthwave ·
+        lagune · inferno · kobalt
+        (synthwave/lagune/inferno/kobalt tragen Farbe SCHON im Grunddesign)
+     html[data-farbe]  = Farbschema (Palette), 10 Stück, unabhängig vom Design:
+        cyan-magenta (Default) · smaragd-gold · violett-eis · bernstein · arktis ·
+        koralle · limette · feuer · toxic · voltage  (toxic/voltage = Maximal-Intensität)
+
+   ── TOKEN-VERTRAG (welche Tokens jede Achse belegen MUSS) ────────────────────
+     ACHSE "farbe":   --cy --mg --cy-rgb --mg-rgb  (semantisch global: --ok --warn --bad --ok-rgb --warn-rgb --bad-rgb)
+     ACHSE "design":  --bg --bg-deep --fg --mut --txt --line --panel --panel-solid
+                      --brush --satin --edge-t --edge-b --r --r-win --r-chip --sh --blur
+     (*-rgb = "r,g,b"-Tripel für rgba()-Glows · --panel-solid = Einzelfarbe ohne
+      Verlauf · --txt zeigt auf --fg.)
+
+   ── ANBINDUNG (in der App) ───────────────────────────────────────────────────
+     1) Datei laden/inlinen.  2) Default-Achsen am <html>:
+        <html data-design="metall" data-farbe="cyan-magenta">.
+     3) Anti-FOUC: zuletzt gewählte Achsen sofort aus localStorage anwenden.
+     4) Persistenz: typisierte Settings design_vorlage / farb_schema (appkit 1.4.0;
+        freier x_-Namensraum entfällt nach dem Umhängen).
+     5) Umschalt-UI: zwei Dropdowns + Live-Vorschau im Einstellungs-Fenster (docs/19 §2b).
+
+   ── EIN NEUES THEME/SCHEMA HINZUFÜGEN ────────────────────────────────────────
+     NUR einen weiteren html[data-design|farbe="…"]-Block + den Choice-Wert in
+     appkit base_schema ergänzen. KEINE App-Regel anfassen.
+   ============================================================================ */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  ACHSE 2 · FARBSCHEMA (Palette; --cy/--mg + RGB-Tripel für Glows)       ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+:root {                                     /* cyan-magenta = Marken-Default */
+  --cy: #2fe7ff; --mg: #ff3df0; --cy-rgb: 47,231,255; --mg-rgb: 255,61,240;
+  /* --ok/--warn/--bad sind GLOBAL semantisch (theme-/schema-unabhängig, einmal hier).
+     Die *-rgb-Tripel spiegeln exakt die obigen Hex (für rgba()-Glows/Flächen). */
+  --ok: #3dffb0; --warn: #ffd23d; --bad: #ff5470;
+  --ok-rgb: 61,255,176; --warn-rgb: 255,210,61; --bad-rgb: 255,84,112;
+}
+html[data-farbe="smaragd-gold"] { --cy: #3dffb0; --mg: #ffd23d; --cy-rgb: 61,255,176;  --mg-rgb: 255,210,61; }
+html[data-farbe="violett-eis"]  { --cy: #b49cff; --mg: #7df9ff; --cy-rgb: 180,156,255; --mg-rgb: 125,249,255; }
+html[data-farbe="bernstein"]    { --cy: #ffb547; --mg: #ff5470; --cy-rgb: 255,181,71;  --mg-rgb: 255,84,112; }
+html[data-farbe="arktis"]       { --cy: #5b9dff; --mg: #56e0ff; --cy-rgb: 91,157,255;  --mg-rgb: 86,224,255; }
+html[data-farbe="koralle"]      { --cy: #ff8a5b; --mg: #ff4d8d; --cy-rgb: 255,138,91;  --mg-rgb: 255,77,141; }  /* soft warm */
+html[data-farbe="limette"]      { --cy: #b6ff3d; --mg: #ff5ec7; --cy-rgb: 182,255,61;  --mg-rgb: 255,94,199; }
+html[data-farbe="feuer"]        { --cy: #ff8c00; --mg: #ff2400; --cy-rgb: 255,140,0;   --mg-rgb: 255,36,0; }   /* pures Feuer: Orange->Scharlach, KEIN Pink (klar von koralle getrennt) */
+/* ── Maximal-Intensität (stechend, voll gesättigt) ── */
+html[data-farbe="toxic"]        { --cy: #39ff14; --mg: #ff00ff; --cy-rgb: 57,255,20;   --mg-rgb: 255,0,255; }   /* Neon-Acid: Giftgrün + reines Magenta */
+html[data-farbe="voltage"]      { --cy: #faff00; --mg: #1f51ff; --cy-rgb: 250,255,0;   --mg-rgb: 31,81,255; }   /* Elektro: Volt-Gelb + Elektroblau */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  ACHSE 1 · DESIGN-THEME (Material/Form)                                 ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+:root { /* metall = Mattglanz-Metall (Default; the world of dizzi) */
+  --bg: #0b0d13; --bg-deep: #07080d; --fg: #eaeefb; --mut: #93a0b8; --txt: var(--fg);
+  --line: rgba(150,160,190,.18);
+  --panel: linear-gradient(180deg,#1e2430 0%,#161b25 55%,#11151d 100%); --panel-solid: #161b25;
+  --brush: repeating-linear-gradient(180deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px);
+  --satin: linear-gradient(180deg,#f2f5fc 0%,#aab3c8 38%,#98a1b6 52%,#dde2ee 100%);
+  --edge-t: rgba(255,255,255,.09); --edge-b: rgba(0,0,0,.55);
+  --r: 6px; --r-win: 8px; --r-chip: 9px;
+  --sh: 0 12px 32px -14px rgba(0,0,0,.85);
+  --blur: none; --t: 150ms ease-out;
+}
+
+html[data-design="neon"] {
+  /* neon = der ORIGINALE „Dizz Trading"-Look als erstklassige, netzwerkweit wählbare
+     Designoption (Nutzer-Wunsch 14.06.): Retro-Chrome-Arcade/Synthwave — violett-
+     schwarzes Glas, satte Cyan/Magenta-Akzente, reiche Chrom-Leiste, weiche 16px-Ecken.
+     Werte 1:1 aus dem echten TB-Frontend (backend/app/static/index.html :root). Die
+     STRUKTUR-Signatur (bewegtes Scanline-Grid `--grid-a`/`--grid-b`, Verlaufs-Knöpfe,
+     starker Glow) ist eine optionale „neon-extras"-CSS-Schicht des Frontends, KEIN Token
+     (docs/06 §3.x); reines Theme-Umschalten liefert die Farb-/Flächen-/Form-Optik. */
+  --bg: #070611; --bg-deep: #0d0a1c; --fg: #eef0ff; --mut: #9f93c6;
+  --line: rgba(150,120,210,.20);
+  --panel: linear-gradient(160deg,rgba(36,27,62,.56),rgba(24,18,44,.5)); --panel-solid: #1a1430;
+  --brush: none;
+  /* Chrom-Leiste 1:1 aus TB --chrome (Satin-Chrome-Verlauf der Titel/Großwerte). */
+  --satin: linear-gradient(180deg,#f7f9ff 0%,#aeb7d2 17%,#6a7193 39%,#d3d9ec 51%,#878fac 69%,#eef1fa 100%);
+  --edge-t: rgba(255,255,255,.08); --edge-b: rgba(0,0,0,.3);
+  --r: 16px; --r-win: 16px; --r-chip: 11px;
+  --sh: 0 14px 36px -12px rgba(4,2,16,.72),0 2px 8px rgba(4,2,16,.42);
+  --blur: blur(16px) saturate(1.15);
+  /* Optionale Struktur-Tokens (nur für die neon-extras-Schicht; Kern-Token-Vertrag
+     unberührt): das bewegte Synthwave-Grid des TB-Frontends. */
+  --grid-a: rgba(47,231,255,.45); --grid-b: rgba(255,61,240,.40);
+}
+
+html[data-design="flach"] { /* flach = minimal-dunkel, scharf, Solid-Flächen (seriös) */
+  --bg: #0d1117; --bg-deep: #090c10; --fg: #e6edf3; --mut: #8b949e;
+  --line: rgba(240,246,252,.12);
+  --panel: #161b22; --panel-solid: #161b22;
+  --brush: none;
+  --satin: linear-gradient(180deg,#e6edf3,#9aa4b2);
+  --edge-t: rgba(255,255,255,.04); --edge-b: rgba(0,0,0,.4);
+  --r: 8px; --r-win: 10px; --r-chip: 8px;
+  --sh: 0 8px 24px -16px rgba(0,0,0,.7);
+  --blur: none;
+}
+
+html[data-design="tag"] { /* tag = heller Modus, kühl (Tageslicht/Barrierefreiheit) */
+  --bg: #eef1f7; --bg-deep: #e3e8f1; --fg: #1b2333; --mut: #5b6473;
+  --line: rgba(20,30,50,.13);
+  --panel: #ffffff; --panel-solid: #ffffff;
+  --brush: none;
+  --satin: linear-gradient(180deg,#ffffff,#d7deec);
+  --edge-t: rgba(255,255,255,.9); --edge-b: rgba(20,30,50,.12);
+  --r: 10px; --r-win: 12px; --r-chip: 9px;
+  --sh: 0 10px 28px -18px rgba(20,30,50,.35);
+  --blur: none;
+}
+
+html[data-design="carbon"] { /* carbon = OLED-Schwarz, mattest, schärfste Kanten */
+  --bg: #050507; --bg-deep: #000000; --fg: #e8eaf0; --mut: #7e828f;
+  --line: rgba(255,255,255,.10);
+  --panel: #0c0d11; --panel-solid: #0c0d11;
+  --brush: none;
+  --satin: linear-gradient(180deg,#f2f3f7,#9498a4);
+  --edge-t: rgba(255,255,255,.05); --edge-b: rgba(0,0,0,.7);
+  --r: 4px; --r-win: 6px; --r-chip: 6px;
+  --sh: 0 14px 40px -18px rgba(0,0,0,.95);
+  --blur: none;
+}
+
+html[data-design="pergament"] { /* pergament = warmer Hell-Modus, „Lesepapier" */
+  --bg: #f3ead9; --bg-deep: #e9dcc4; --fg: #3a2f22; --mut: #8a7a62;
+  --line: rgba(90,70,40,.18);
+  --panel: #fbf5e9; --panel-solid: #fbf5e9;
+  --brush: none;
+  --satin: linear-gradient(180deg,#fffaf0,#d9c8a8);
+  --edge-t: rgba(255,255,255,.8); --edge-b: rgba(90,70,40,.15);
+  --r: 10px; --r-win: 12px; --r-chip: 9px;
+  --sh: 0 10px 26px -18px rgba(90,70,40,.3);
+  --blur: none;
+}
+
+html[data-design="synthwave"] { /* synthwave = Neon-Sunset, FARBE im Grunddesign (violett/magenta) */
+  --bg: radial-gradient(120% 90% at 50% 0%, #3b1566 0%, #1a0a3a 48%, #0d0524 100%);
+  --bg-deep: #0d0524; --fg: #f6ecff; --mut: #c39be8;
+  --line: rgba(255,110,230,.22);
+  --panel: linear-gradient(160deg,rgba(86,28,140,.55),rgba(40,12,80,.5)); --panel-solid: #241046;
+  --brush: none;
+  --satin: linear-gradient(180deg,#ffd9ff,#b06cff 60%,#ffd9ff);
+  --edge-t: rgba(255,255,255,.10); --edge-b: rgba(20,4,40,.6);
+  --r: 14px; --r-win: 16px; --r-chip: 12px;
+  --sh: 0 16px 44px -16px rgba(120,20,180,.55);
+  --blur: blur(8px) saturate(1.2);
+}
+
+html[data-design="lagune"] { /* lagune = Tropical-Aqua, FARBE im Grunddesign (türkis/grün) */
+  --bg: radial-gradient(120% 90% at 50% 0%, #0a4a52 0%, #06303a 46%, #04202a 100%);
+  --bg-deep: #04202a; --fg: #e6fbff; --mut: #8fd6d2;
+  --line: rgba(80,230,220,.22);
+  --panel: linear-gradient(160deg,rgba(14,90,96,.55),rgba(8,50,60,.5)); --panel-solid: #0c3a42;
+  --brush: none;
+  --satin: linear-gradient(180deg,#d6fffb,#4fd6c8 60%,#d6fffb);
+  --edge-t: rgba(255,255,255,.10); --edge-b: rgba(2,20,28,.6);
+  --r: 14px; --r-win: 16px; --r-chip: 12px;
+  --sh: 0 16px 44px -16px rgba(10,140,140,.5);
+  --blur: blur(8px) saturate(1.2);
+}
+
+html[data-design="inferno"] { /* inferno = Magma, FARBE im Grunddesign (rot/orange, warm) */
+  --bg: radial-gradient(120% 90% at 50% 0%, #6a1410 0%, #340a0c 46%, #1c0608 100%);
+  --bg-deep: #1c0608; --fg: #fff0ea; --mut: #e0a78f;
+  --line: rgba(255,120,60,.24);
+  --panel: linear-gradient(160deg,rgba(140,40,20,.58),rgba(70,18,12,.52)); --panel-solid: #3a120c;
+  --brush: none;
+  --satin: linear-gradient(180deg,#ffe2d0,#ff9a5c 60%,#ffe2d0);
+  --edge-t: rgba(255,255,255,.10); --edge-b: rgba(28,6,8,.6);
+  --r: 14px; --r-win: 16px; --r-chip: 12px;
+  --sh: 0 16px 44px -16px rgba(200,50,20,.55);
+  --blur: blur(8px) saturate(1.2);
+}
+
+html[data-design="kobalt"] { /* kobalt = elektrisches Royalblau, FARBE im Grunddesign (kühl) */
+  --bg: radial-gradient(120% 90% at 50% 0%, #14318f 0%, #0a1a52 46%, #050e30 100%);
+  --bg-deep: #050e30; --fg: #eaf0ff; --mut: #9fb4ef;
+  --line: rgba(80,130,255,.26);
+  --panel: linear-gradient(160deg,rgba(28,60,150,.58),rgba(12,28,80,.52)); --panel-solid: #13265e;
+  --brush: none;
+  --satin: linear-gradient(180deg,#dce8ff,#6c93ff 60%,#dce8ff);
+  --edge-t: rgba(255,255,255,.10); --edge-b: rgba(5,14,48,.6);
+  --r: 14px; --r-win: 16px; --r-chip: 12px;
+  --sh: 0 16px 44px -16px rgba(30,80,220,.55);
+  --blur: blur(8px) saturate(1.2);
+}
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  K2.4 · KOMPONENTEN-TOKENS — Controls & Collapse (13.06.2026)           ║
+   ║  Zeigen NUR auf die semantischen Achsen-Tokens oben ⇒ jedes Theme/      ║
+   ║  Schema erbt Bedien-Elemente + Panel-Köpfe AUTOMATISCH (docs/06 §6;     ║
+   ║  Drei-Schichten-Idee docs/23 §3). EIN :root-Block, NICHT je Theme.      ║
+   ║  Verbraucht von ui-kit/controls.css (+ React-Äquivalent shell/theme).   ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+:root {
+  /* ── Bedien-Elemente (Checkbox/Radio/Select/Stepper/Toggle) ── */
+  --control-bg:         var(--panel-solid);
+  --control-rand:       var(--line);
+  --control-fg:         var(--fg);
+  --control-akzent:     var(--cy);               /* aktiv / checked / Hover-Kante */
+  --control-akzent-rgb: var(--cy-rgb);
+  --control-haken:      #0a0c12;                 /* Häkchen/Punkt auf der Akzent-Füllung (dunkel; kontrastiert die hellen Akzente) */
+  --control-hover:      rgba(var(--cy-rgb), .12);
+  --control-ring:       rgba(var(--cy-rgb), .55); /* :focus-visible-Ring */
+  --control-r:          var(--r-chip);
+  --control-size:       18px;                    /* Box/Kreis-Kantenlänge */
+  /* ── Einklappbare Panels (Progressive Disclosure) ── */
+  --panel-kopf-bg:      var(--panel);
+  --panel-kopf-fg:      var(--fg);
+  --panel-kopf-mut:     var(--mut);
+  --panel-kurz:         var(--mut);              /* High-Level-Kurzanzeige im eingeklappten Zustand */
+}

@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="de" data-design="metall" data-farbe="cyan-magenta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dizz Admin — Verwaltung</title>
+<link rel="stylesheet" href="/ui-kit/tokens.css">
+<link rel="stylesheet" href="/ui-kit/controls.css">
+<!-- UX-5a · AI-Act Art. 50(1): KI-Offenlegungs-Chip (DzUx.agentchip{ki:true}) an der Mini-Dizzi-Fläche (docs/70). -->
+<link rel="stylesheet" href="/ui-kit/ux-kit.css">
+<script defer src="/ui-kit/ux-kit.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var slot = document.getElementById("dizziKiChip");
+    if (slot && window.DzUx && DzUx.agentchip) slot.innerHTML = DzUx.agentchip({ ki: true });
+  });
+</script>
+<!-- Klick-Wellen-Effekt (DzWave, netzweit · token-/design-abhängig) -->
+<link rel="stylesheet" href="/ui-kit/clickwave.css">
+<script defer src="/ui-kit/clickwave.js"></script>
+<!-- DzHalter — Float-Andock-Schale + Frei/Fix-Schalter (Spin-Physik v4.4, netzweit · tokenbasiert); VOR floats.js laden -->
+<link rel="stylesheet" href="/ui-kit/float_dock.css">
+<script defer src="/ui-kit/float_dock.js"></script>
+<link rel="stylesheet" href="/ui-kit/background.css">
+<link rel="stylesheet" href="/ui-kit/charts.css">
+<link rel="stylesheet" href="/ui-kit/netkit.css">
+<script defer src="/ui-kit/collapse.js"></script>
+<script defer src="/ui-kit/background.js"></script>
+<script>
+  try { var d=localStorage.getItem('admin_design'), f=localStorage.getItem('admin_farbe');
+    if(d)document.documentElement.setAttribute('data-design',d);
+    if(f)document.documentElement.setAttribute('data-farbe',f); } catch(e){}
+</script>
+<style>
+  *{box-sizing:border-box} [hidden]{display:none!important}
+  html{overflow-x:clip} html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:"Chakra Petch","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.45;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  h1,h2,h3{font-family:"Orbitron","Chakra Petch",sans-serif;margin:0}
+  a{color:var(--cy)}
+  .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  .mut{color:var(--mut)} .small{font-size:11.5px}
+  .spacer{flex:1 1 auto;min-width:6px}
+
+  /* ===== Kopf ===== */
+  /* Kopf — kanonische Kopf-Norm aus dem Kit (.dz-appkopf, docs/39 §1b). Voll-breit (18px) wie die
+     Oberregister-Leisten (.kontextbar/.modulbar); der Inhalt darunter ist via .wrap bereits zentriert. */
+  header.dz-appkopf{flex:0 0 auto;padding:18px 18px 9px;z-index:5}
+  #authpill{flex:none;cursor:pointer;white-space:nowrap}
+  .pill.on{color:var(--cy);border-color:rgba(var(--cy-rgb),.5);background:rgba(var(--cy-rgb),.08)}
+
+  /* ===== Bereichs-Chips (in Cockpit/Listen; die Filterzeile entfiel mit docs/49) ===== */
+  .berchip{--acc:var(--cy);--acc-rgb:var(--cy-rgb);display:inline-flex;align-items:center;gap:7px;flex:none;padding:5px 12px;border-radius:999px;cursor:pointer;font-size:12.5px;white-space:nowrap;border:1px solid var(--line);background:var(--panel-solid,rgba(0,0,0,.2));color:var(--fg);transition:border-color var(--t),box-shadow var(--t),background var(--t)}
+  .berchip .bc-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc);box-shadow:0 0 7px rgba(var(--acc-rgb),.7)}
+  .berchip .bc-ic{font-size:13px;line-height:1;filter:saturate(1.1)}
+  .berchip:hover{border-color:rgba(var(--acc-rgb),.6)}
+  .berchip.on{border-color:var(--acc);background:rgba(var(--acc-rgb),.13)}  /* Glow aus dem Kit: .dz-berchip.on (docs/41) */
+  .berchip.add{color:var(--mut);border-style:dashed}
+  .berchip.add:hover{color:var(--cy);border-color:rgba(var(--cy-rgb),.6)}
+
+  /* ===== Modul-Navigation ===== */
+  .modulbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 18px;background:var(--panel);border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:thin;position:relative;z-index:3}
+  .mtab{appearance:none;font:inherit;cursor:pointer;flex:none;display:inline-flex;align-items:center;gap:7px;color:var(--mut);background:transparent;border:1px solid transparent;border-radius:10px;padding:6px 13px;letter-spacing:.02em;transition:color var(--t),background var(--t),border-color var(--t)}
+  .mtab .mt-ic{width:1.05em;height:1.05em;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .mtab:hover{color:var(--fg);background:var(--control-hover,rgba(255,255,255,.04))}
+  .mtab.on{color:var(--cy);border-color:rgba(var(--cy-rgb),.45);background:rgba(var(--cy-rgb),.1)}  /* Glow aus dem Kit: .dz-navtab.on (docs/41) */
+  /* Bereich-first (docs/49): „← Alle Bereiche" + aktiver Bereich links in der Modul-Leiste */
+  .mtab.mb-back{color:var(--mut)} .mtab.mb-back:hover{color:var(--fg)}
+  .mb-aktiv{--acc:var(--cy);--acc-rgb:var(--cy-rgb);flex:none;display:inline-flex;align-items:center;gap:6px;font-family:"Orbitron",sans-serif;font-size:12.5px;font-weight:700;color:var(--fg);padding:5px 12px;border-radius:999px;border:1px solid var(--acc);background:rgba(var(--acc-rgb),.13);box-shadow:0 0 12px -4px rgba(var(--acc-rgb),.6);white-space:nowrap;margin-right:3px}
+  .mb-aktiv .bc-ic{font-size:14px;line-height:1}
+  /* Typ-Picker bei der Bereichs-Anlage (docs/49) */
+  .typ-picker{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 2px}
+  .typ-card{--acc:var(--cy);--acc-rgb:var(--cy-rgb);appearance:none;font:inherit;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1 1 150px;max-width:210px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel-solid,rgba(0,0,0,.2));color:var(--fg);transition:border-color var(--t),box-shadow var(--t),background var(--t),transform var(--t)}
+  .typ-card:hover{border-color:rgba(var(--acc-rgb),.6);transform:translateY(-1px)}
+  .typ-card.on{border-color:var(--acc);background:rgba(var(--acc-rgb),.13);box-shadow:0 0 20px -6px rgba(var(--acc-rgb),.6)}
+  .typ-card .typ-ic{font-size:20px;line-height:1}
+  .typ-card .typ-lbl{font-family:"Orbitron",sans-serif;font-weight:700;font-size:13.5px}
+  .typ-card .typ-mod{font-size:11px;line-height:1.25}
+  .bcard.allg::before{background:linear-gradient(180deg,var(--mut),var(--mut))}
+
+  /* ===== Bühne ===== */
+  main{flex:1 1 auto;overflow:auto;padding:16px 18px 28px;align-content:start}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:15px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-win);box-shadow:var(--sh);border-top:1px solid var(--edge-t);position:relative;overflow:hidden}
+  /* .card::before (linker Akzentstreifen) jetzt kanonisch in /ui-kit/controls.css (V2, De-Fork 24.06.) */
+  .card.acc::before{background:linear-gradient(180deg,var(--acc,var(--mg)),var(--cy));box-shadow:0 0 12px rgba(var(--acc-rgb,var(--mg-rgb)),.5)}
+  .card-kopf{display:flex;align-items:center;gap:11px;padding:13px 16px 11px;border-bottom:1px solid var(--line)}
+  .card-kopf h2{font-size:14px;letter-spacing:.05em;text-transform:uppercase;background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+  .card-kopf .kp-ic,.dz-panel-kopf .kp-ic{width:20px;height:20px;flex:none;color:var(--cy);fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(var(--cy-rgb),.5))}
+  .card-koerper{padding:13px 16px 16px}
+  .card-koerper > p:first-child{margin-top:0}
+
+  /* ===== Bereichs-Navigator ===== */
+  .bnav{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:13px}
+  .bcard{--acc:var(--cy);--acc-rgb:var(--cy-rgb);position:relative;border:1px solid var(--line);border-radius:14px;background:var(--panel-solid,rgba(0,0,0,.18));padding:14px 15px;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;gap:9px;transition:border-color var(--t),box-shadow var(--t),transform var(--t)}
+  .bcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--acc),var(--cy));box-shadow:0 0 14px rgba(var(--acc-rgb),.5)}
+  .bcard:hover{border-color:rgba(var(--acc-rgb),.6);box-shadow:0 0 26px -8px rgba(var(--acc-rgb),.6);transform:translateY(-2px)}
+  .bcard .bk{display:flex;align-items:center;gap:10px}
+  .bcard .bk-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex:none;background:rgba(var(--acc-rgb),.12);border:1px solid rgba(var(--acc-rgb),.4);box-shadow:inset 0 0 14px rgba(var(--acc-rgb),.12)}
+  .bcard .bk-tt{min-width:0}
+  .bcard .bk-name{font-family:"Orbitron",sans-serif;font-size:15px;font-weight:700;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bcard .bk-art{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  .bcard .bk-desc{font-size:12px;color:var(--mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:0}
+  .bcard .bk-zaehler{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+  .zchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:7px;padding:2px 8px;background:var(--bg-deep,rgba(0,0,0,.18))}
+  .zchip b{font-family:"Orbitron",sans-serif;color:var(--fg)}
+  .bcard.gesamt{cursor:default} .bcard.gesamt:hover{transform:none}
+  .bcard.add{cursor:pointer;align-items:center;justify-content:center;border-style:dashed;color:var(--mut);min-height:120px;text-align:center;gap:6px}
+  .bcard.add:hover{color:var(--cy);border-color:rgba(var(--cy-rgb),.6);box-shadow:none;transform:none}
+  .bcard.add .plus{font-size:30px;line-height:1;font-family:"Orbitron",sans-serif}
+  .b-status{font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+  .b-status.aktiv{color:#7CFFB0;border-color:rgba(124,255,176,.45)}
+  .b-status.ruhend{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+  .b-status.abgeschlossen,.b-status.archiviert{color:var(--mut);opacity:.8}
+  .bcard .bk-sub{display:flex;flex-wrap:wrap;gap:6px}
+  .subbadge{font-size:10.5px;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+
+  /* ===== Bereich-Cockpit ===== */
+  .cock-kopf{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:4px}
+  .cock-ic{width:50px;height:50px;border-radius:13px;display:grid;place-items:center;font-size:26px;flex:none;background:rgba(var(--acc-rgb),.12);border:1px solid rgba(var(--acc-rgb),.42);box-shadow:inset 0 0 18px rgba(var(--acc-rgb),.14),0 0 18px -6px rgba(var(--acc-rgb),.5)}
+  .cock-tt h1{font-family:"Orbitron",sans-serif;font-size:23px;letter-spacing:.02em;color:var(--fg)}
+  .cock-tt .ct-sub{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+  .cock-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:13px}
+  .cock-mod{border:1px solid var(--line);border-radius:12px;background:var(--panel-solid,rgba(0,0,0,.16));padding:12px 13px;display:flex;flex-direction:column;gap:8px}
+  .cock-mod .cm-kopf{display:flex;align-items:center;gap:8px}
+  .cock-mod .cm-ic{width:18px;height:18px;color:var(--cy);fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .cock-mod .cm-tt{font-weight:700;font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--fg)}
+  .cock-mod .cm-n{margin-left:auto;font-family:"Orbitron",sans-serif;color:var(--cy);font-size:16px}
+  .cock-mod .cm-list{display:flex;flex-direction:column;gap:4px;font-size:12px}
+  .cock-mod .cm-list .li{display:flex;gap:7px;align-items:baseline;color:var(--mut)}
+  .cock-mod .cm-list .li b{color:var(--fg);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cock-mod .cm-go{align-self:flex-start;margin-top:2px}
+
+  /* ===== Bereich-Sektionen in den Modulen ===== */
+  .ber-grp{--acc:var(--mut);--acc-rgb:150,160,175;border:1px solid var(--line);border-radius:12px;background:var(--bg-deep,rgba(0,0,0,.12));margin-bottom:11px;overflow:hidden}
+  .ber-grp > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:9px 13px;user-select:none;position:relative;background:rgba(var(--acc-rgb),.06)}
+  .ber-grp > summary::-webkit-details-marker{display:none}
+  .ber-grp > summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(-45deg);transition:transform var(--t);flex:none;margin-right:2px}
+  .ber-grp[open] > summary::before{transform:rotate(45deg)}
+  .ber-grp > summary .sg-dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 7px rgba(var(--acc-rgb),.7);flex:none}
+  .ber-grp > summary .sg-ic{font-size:14px;flex:none}
+  .ber-grp > summary .sg-name{font-weight:700;color:var(--fg)}
+  .ber-grp > summary .sg-art{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+  .ber-grp > summary .sg-n{margin-left:auto;font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+  .ber-grp > summary .sg-open{flex:none}
+  .ber-grp .sg-body{padding:11px 13px 13px}
+
+  /* ===== Modul-Toolbar ===== */
+  .modtool{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:13px}
+  .modtool h1{font-family:"Orbitron",sans-serif;font-size:19px;letter-spacing:.03em}
+  .modtool .mt-hint{font-size:11.5px;color:var(--mut)}
+  .scope-pill{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:3px 11px;background:var(--bg-deep,rgba(0,0,0,.18))}
+  .scope-pill b{color:var(--cy)}
+
+  /* ===== Listen / Zeilen ===== */
+  .liste{display:flex;flex-direction:column;gap:7px}
+  .zeile{display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel-solid,rgba(0,0,0,.16))}
+  .zeile:hover{border-color:rgba(var(--cy-rgb),.3)}
+  .zeile .z-ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px;flex:none;background:var(--bg-deep,rgba(0,0,0,.25));border:1px solid var(--line)}
+  .zeile .z-mit{min-width:0;flex:1}
+  .zeile .z-titel{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .zeile .z-meta{font-size:11px;color:var(--mut);display:flex;gap:9px;flex-wrap:wrap;margin-top:1px}
+  .zeile .z-akt{display:flex;align-items:center;gap:6px;flex:none}
+  .zeile .z-akt .dz-field select{font-size:11px;padding:.25em 1.6em .25em .55em}
+
+  .pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:var(--mut)}
+  .pill.entwurf{color:var(--mut)} .pill.offen{color:var(--cy);border-color:rgba(var(--cy-rgb),.5)} .pill.bezahlt{color:#7CFFB0;border-color:rgba(124,255,176,.5)} .pill.storniert{color:var(--mut);opacity:.7} .pill.faellig{color:var(--mg);border-color:rgba(var(--mg-rgb),.55)} .pill.aktiv{color:#7CFFB0;border-color:rgba(124,255,176,.5)}
+  .tagchip{font-size:10px;color:var(--cy);border:1px solid rgba(var(--cy-rgb),.35);border-radius:6px;padding:0 6px;background:rgba(var(--cy-rgb),.07)}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px} th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)} th{color:var(--mut);font-weight:600;text-transform:uppercase;font-size:10.5px;letter-spacing:.05em}
+  .row-form{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:11px}
+  .row-form input[type=text],.row-form input:not([type]),.row-form input[type=number],.row-form input[type=date],.row-form input[type=search]{font-family:inherit;background:var(--control-bg,rgba(0,0,0,.22));color:var(--fg);border:1px solid var(--control-rand,var(--line));border-radius:7px;padding:6px 9px;font-size:12.5px}
+  .row-form input::placeholder{color:var(--mut)}
+  .btn{font-family:inherit;background:var(--panel-kopf-bg,#1b2230);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:border-color var(--t),box-shadow var(--t)}
+  .btn:hover{border-color:rgba(var(--cy-rgb),.5)}
+  .btn.mini{padding:3px 9px;font-size:12px}
+  .btn.prim{background:rgba(var(--cy-rgb),.14);border-color:rgba(var(--cy-rgb),.5);color:var(--cy)}
+  .btn.prim:hover{box-shadow:0 0 14px -3px rgba(var(--cy-rgb),.6)}
+  .btn.danger{color:var(--mg);border-color:rgba(var(--mg-rgb),.45)}
+  .leer{color:var(--mut);font-size:12.5px;padding:9px 2px}
+
+  /* Inline-Anlege-Formular (aufklappbar) */
+  .anlege{border:1px solid var(--line);border-radius:11px;background:var(--bg-deep,rgba(0,0,0,.16));padding:12px 13px;margin-bottom:13px}
+  .anlege .an-kopf{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--cy);font-weight:700;margin-bottom:8px}
+
+  /* KPI-Mini (Bereich-Cockpit-Zähler) */
+  .minikpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin:4px 0 4px}
+
+  /* ===== Floats / Modal / Bubble (Vertrags-Standard) ===== */
+  .ic{width:1.4em;height:1.4em;display:inline-block;vertical-align:-0.25em;flex:none;color:var(--cy);fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px currentColor)}
+  .floatacct{--charge:0;position:fixed;top:96px;right:24px;z-index:41;width:92px;height:92px;border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;background:var(--panel);background-image:var(--brush),var(--panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--line);color:var(--cy);box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),0 0 calc(var(--charge)*110px) calc(var(--charge)*17px) rgba(var(--cy-rgb),calc(var(--charge)*.82)),0 0 calc(var(--charge)*165px) calc(var(--charge)*13px) rgba(var(--mg-rgb),calc(var(--charge)*.72));transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatacct:hover{border-color:rgba(var(--cy-rgb),.45)}
+  .floatacct .duo{position:relative;width:56px;height:50px;pointer-events:none}
+  .floatacct .duo .ic{position:absolute;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.7))}
+  .floatacct .duo .ic.fg{width:42px;height:42px;left:0;top:0}
+  .floatacct .duo .ic.fa{width:27px;height:27px;right:-2px;bottom:-2px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.65))}
+  .floatdizzi{--charge:0;position:fixed;top:200px;right:32px;z-index:41;width:78px;height:78px;border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;background:var(--panel);background-image:var(--brush),var(--panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--line);color:var(--mg);box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),0 0 calc(var(--charge)*110px) calc(var(--charge)*15px) rgba(var(--mg-rgb),calc(var(--charge)*.8));transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatdizzi:hover{border-color:rgba(var(--mg-rgb),.45)}
+  .floatdizzi .ic{width:38px;height:38px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.6))}
+  .floatdizzi .spark{position:absolute;top:9px;right:11px;width:15px;height:15px;color:var(--cy);filter:drop-shadow(0 0 5px rgba(var(--cy-rgb),.8))}
+  .floatacct.lgshoot,.floatdizzi.lgshoot{animation:lgshoot .36s ease-out}
+  @keyframes lgshoot{0%{box-shadow:var(--sh),0 0 120px 26px rgba(var(--cy-rgb),.9),0 0 180px 18px rgba(var(--mg-rgb),.8);transform:scale(1.16)}100%{transform:scale(1)}}
+  .kmwrap{position:fixed;inset:0;z-index:60;background:rgba(4,6,10,.6)}
+  .km{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(900px,94vw);height:min(82vh,780px);display:flex;flex-direction:column;background:var(--panel-solid,var(--panel));background-image:var(--brush),var(--panel);border:1px solid rgba(var(--cy-rgb),.3);border-radius:var(--r-win);box-shadow:var(--sh),0 0 70px -16px rgba(var(--cy-rgb),.5),0 0 110px -28px rgba(var(--mg-rgb),.34),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b)}
+  .km-kopf{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .km-kopf h2{margin:0;font-size:14px;letter-spacing:.06em;text-transform:uppercase;background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .km-koerper{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px 16px 16px}
+  .kmsec{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:11px;background:var(--bg-deep,rgba(0,0,0,.18))}
+  .kmsech{font-family:"Orbitron",sans-serif;font-weight:700;color:var(--cy);font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:8px;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.4))}
+  .kmrow{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:4px 0}
+  .kmrow>label{font-size:12.5px}
+  .kmdienst{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:5px 0;font-size:12.5px}
+  .kmcat{margin:10px 0 2px;border-top:1px solid var(--line);padding-top:8px}
+  .kmcat .kmcath{font-weight:700;color:var(--cy);font-size:11px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
+  .km .km-aktion{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .dizzibubble{position:fixed;right:28px;top:292px;z-index:55;width:min(360px,90vw);padding:11px;background:var(--panel-solid,var(--panel));border:1px solid var(--line);border-top:1px solid var(--edge-t);border-radius:var(--r-win);box-shadow:var(--sh)}
+  .db-kopf{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+
+  @media (max-width:720px){
+    main{padding:12px 11px 26px}
+    .floatacct{width:74px;height:74px;top:auto;bottom:18px;right:16px}
+    .floatdizzi{width:64px;height:64px;top:auto;bottom:104px;right:22px}
+    .lockup .brand{font-size:18px}
+  }
+  @media (prefers-reduced-motion: reduce){.floatacct,.floatdizzi{position:fixed!important}}
+</style>
+</head>
+<body>
+<header class="dz-appkopf">
+  <span class="dz-kopf-brand" id="brandName">Dizz Admin</span>
+  <span class="dz-kopf-sub">Bereiche-zentriert · jeder Bereich hat seinen Typ</span>
+  <span class="dz-kopf-spacer"></span>
+  <span class="pill" id="authpill" data-dz-act="oeffneKm" title="Einstellungen &amp; Konto (Dizzi-ID)">…</span>
+</header>
+
+<nav class="modulbar" id="modulbar" aria-label="Module"></nav>
+
+<div id="bg-stage" aria-hidden="true"></div>
+<div class="bgfx" aria-hidden="true"></div>
+<div class="bgbrush" aria-hidden="true"></div>
+
+<main><div class="wrap" id="view"></div></main>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
+  <symbol id="ic-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.4v2.3M12 18.3v2.3M5.4 5.4 7 7M17 17l1.6 1.6M3.4 12h2.3M18.3 12h2.3M5.4 18.6 7 17M17 7l1.6-1.6"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3.5 5.5 6v5c0 4.2 2.7 7.4 6.5 9 3.8-1.6 6.5-4.8 6.5-9V6Z"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-8.6 8 8.2 8.2 0 0 1-3.7-.85L3.5 20l1.4-4.5A8 8 0 0 1 12 3.5a8 8 0 0 1 8.5 8Z"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.6 9 19 10.6 13.6 12.2 12 17.6 10.4 12.2 5 10.6 10.4 9Z"/></symbol>
+  <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="ic-vault" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="10.5" cy="12" r="3.2"/><path d="M10.5 12h6M16.5 10.5v3"/></symbol>
+  <symbol id="ic-proj" viewBox="0 0 24 24"><path d="M4 5.5h6l1.5 2H20v11H4Z"/><path d="M8 13.5h8"/></symbol>
+  <symbol id="ic-invoice" viewBox="0 0 24 24"><path d="M6 3.5h9l3 3v14l-2-1.2-2 1.2-2-1.2-2 1.2-2-1.2L6 20.5Z"/><path d="M9 8.5h6M9 12h6M9 15.5h4"/></symbol>
+  <symbol id="ic-study" viewBox="0 0 24 24"><path d="M12 4 2.5 8.5 12 13l9.5-4.5Z"/><path d="M6 10.5v4.5c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6v-4.5M21.5 8.5v5"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.3"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></symbol>
+  <symbol id="ic-go" viewBox="0 0 24 24"><path d="M5 12h13M12.5 6 19 12l-6.5 6"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.5-3 2.8-4.5 5.5-4.5S14 16 14.5 19"/><path d="M16 5.6A3 3 0 0 1 16 11M17 14.6c2.2.4 3.8 1.8 4.2 4.4"/></symbol>
+  <symbol id="ic-net" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.3"/><circle cx="5" cy="18" r="2.3"/><circle cx="19" cy="18" r="2.3"/><path d="M12 7.3 6.4 15.9M12 7.3l5.6 8.6M7.3 18h9.4"/></symbol>
+</defs></svg>
+
+<button class="floatacct" id="floatAcct" title="Konto &amp; Einstellungen — greifen &amp; schleudern, Tipp = öffnen" aria-label="Konto &amp; Einstellungen"><span class="duo"><svg class="ic fg" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic fa" aria-hidden="true"><use href="#ic-shield"/></svg></span></button>
+<button class="floatdizzi" id="floatDizzi" title="Mini-Dizzi fragen — greifen &amp; schleudern, Tipp = Sprechblase" aria-label="Mini-Dizzi fragen"><svg class="ic" aria-hidden="true"><use href="#ic-chat"/></svg><svg class="spark ic" aria-hidden="true"><use href="#ic-sparkle"/></svg></button>
+
+<div class="kmwrap" id="kmWrap" hidden>
+  <div class="km" role="dialog" aria-modal="true" aria-label="Einstellungen &amp; Konto">
+    <div class="km-kopf">
+      <span class="duo" style="width:30px;height:28px;position:relative;display:inline-block;flex:none"><svg class="ic" style="width:24px;height:24px;position:absolute;left:0;top:0" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic" style="width:16px;height:16px;position:absolute;right:-2px;bottom:-2px;color:var(--mg)" aria-hidden="true"><use href="#ic-shield"/></svg></span>
+      <h2>Einstellungen &amp; Konto</h2>
+      <span class="pill">Dizzi-ID</span>
+      <span class="spacer"></span>
+      <button class="btn mini" id="kmZu" aria-label="Schließen">✕</button>
+    </div>
+    <div class="km-koerper">
+      <div class="kmsec"><div class="kmsech">Identität &amp; Sicherheit</div><div id="konto-auth" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="mut small">lädt …</span></div><div id="konto-acc" class="small mut" style="margin:9px 0 4px"></div><div id="konto-aktionen" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 2px"></div></div>
+      <div class="kmsec"><div class="kmsech">Design</div>
+        <div class="mut small" style="margin-bottom:6px">Design-Theme und Farbschema getrennt wählbar — die Vorschau ist sofort live.</div>
+        <div class="kmrow"><label>Design-Theme</label><span class="dz-field"><select id="designSel" class="dz-select" data-dz-act="themeWahl" data-dz-on="change"></select></span></div>
+        <div class="kmrow"><label>Farbschema</label><span class="dz-field"><select id="farbeSel" class="dz-select" data-dz-act="themeWahl" data-dz-on="change"></select></span></div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Verbundene Dienste</div><div id="konto-dienste" class="mut small">lädt …</div></div>
+      <div class="kmsec"><div class="kmsech">Vernetzung &amp; KI-Aktivität</div>
+        <div class="mut small" style="margin-bottom:6px">Was die KI im Hintergrund vorschlägt — Wirkung gibt es NUR nach deiner Freigabe (HITL).</div>
+        <div id="konto-ki" class="mut small">lädt …</div></div>
+      <div class="kmsec"><div class="kmsech">Einstellungen</div><div id="konto-settings"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="dizzibubble" id="dizziBubble" hidden>
+  <div class="db-kopf"><span>Mini-Dizzi · Verwaltung</span><span id="dizziKiChip"></span><span style="flex:1"></span><button class="btn mini" id="dizziZu">✕</button></div>
+  <div class="row-form" style="margin-top:0"><input id="dz-frage" placeholder="Frag die Verwaltungs-KI …" style="flex:1" data-dz-enter="dizziFrage"><button class="btn mini" data-dz-act="dizziFrage">↵</button></div>
+  <div id="dz-antwort" class="mut small" style="margin-top:9px">Lokale Verwaltungs-KI über alle Module (Geschäft · Studium · Projekte · Tresor) — Beobachtung &amp; Erinnerung, nie eigenmächtig.</div>
+</div>
+
+<script defer src="/ui-kit/charts.js"></script>
+<script defer src="/ui-kit/netkit.js"></script>
+<script defer src="/ui-kit/floats.js"></script>
+<script defer src="/ui-kit/spinfling.js"></script>
+<script>
+// ============================ Basis ============================
+const api = (p,o)=>fetch(p,Object.assign({headers:{'Content-Type':'application/json'}},o)).then(async r=>{ if(!r.ok){let e={};try{e=await r.json()}catch(_){}throw new Error(e.error||e.detail||('HTTP '+r.status))} return r.status===204?null:r.json(); });
+const esc = s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const eur = c=>((c||0)/100).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const el = id=>document.getElementById(id);
+const _heuteISO = ()=>new Date().toISOString().slice(0,10);
+const _opt=(arr,sel)=>arr.map(([v,l])=>'<option value="'+v+'"'+(String(v)===String(sel)?' selected':'')+'>'+esc(l)+'</option>').join('');
+function svgUse(id,cls){ return '<svg class="'+(cls||'')+'" aria-hidden="true"><use href="#'+id+'"/></svg>'; }
+
+// ============================ Bereichs-Vokabular ============================
+const FARBE_CSS={cyan:'var(--cy)',magenta:'var(--mg)',gruen:'#7CFFB0',amber:'var(--warn)',violett:'#b18cff'};
+const FARBE_RGB={cyan:'var(--cy-rgb)',magenta:'var(--mg-rgb)',gruen:'124,255,176',amber:'var(--warn-rgb)',violett:'177,140,255'};
+const ART_ICON={geschaeft:'💼',studium:'🎓',mandant:'🤝',fortbildung:'📚',persoenlich:'🏠',sonstiges:'📁'};
+const ART_LABEL={geschaeft:'Geschäft',studium:'Studium',mandant:'Mandant',fortbildung:'Fortbildung',persoenlich:'Persönlich Allgemein',sonstiges:'Sonstiges'};
+const ART_OPT=[['geschaeft','Geschäft'],['studium','Studium'],['mandant','Mandant'],['fortbildung','Fortbildung'],['persoenlich','Persönlich Allgemein'],['sonstiges','Sonstiges']];
+const FARBE_OPT=[['cyan','Cyan'],['magenta','Magenta'],['gruen','Grün'],['amber','Amber'],['violett','Violett']];
+const STATUS_OPT=[['aktiv','aktiv'],['ruhend','ruhend'],['abgeschlossen','abgeschlossen'],['archiviert','archiviert']];
+const DESIGN_OPT=[['metall','Mattglanz-Metall (Standard)'],['neon','Neon / Retro-Chrome'],['flach','Flach (minimal-dunkel)'],['tag','Tag / Hell'],['carbon','Carbon (OLED-Schwarz)'],['pergament','Pergament (hell-warm)'],['synthwave','Synthwave (Neon-Sunset)'],['lagune','Lagune (Tropical-Aqua)'],['inferno','Inferno (Magma-Rot)'],['kobalt','Kobalt (Royalblau)']];
+const FARBSCH_OPT=[['cyan-magenta','Cyan–Magenta (Standard)'],['smaragd-gold','Smaragd–Gold'],['violett-eis','Violett–Eis'],['bernstein','Bernstein'],['arktis','Arktis'],['koralle','Koralle'],['limette','Limette'],['feuer','Feuer'],['toxic','Toxic (Neon-Acid)'],['voltage','Voltage (Elektro)']];
+
+function accVars(b){ const f=(b&&b.farbe)||'cyan'; return '--acc:'+(FARBE_CSS[f]||'var(--cy)')+';--acc-rgb:'+(FARBE_RGB[f]||'var(--cy-rgb)'); }
+function bIcon(b){ return (b&&ART_ICON[b.art])||'📁'; }
+
+// ============================ Zustand ============================
+const S={modul:'uebersicht',bereich:null,bereiche:[],bmap:{},auth:null,_tok:0};
+const MODULE=[['uebersicht','Übersicht','ic-grid'],['tresor','Tresor','ic-vault'],['projekte','Projekte','ic-proj'],['geschaeft','Geschäft','ic-invoice'],['studium','Studium','ic-study'],['fristen','Fristen','ic-clock']];
+const MODUL_META={}; MODULE.forEach(([id,label,ic])=>MODUL_META[id]=[label,ic]);  // id → [Label, Icon]
+// General-Module (typ-unabhängig) — Spiegel des Backends (docs/49); der Bereich liefert
+// sein typ-gesteuertes `module`-Set selbst, dies ist der Fallback (Allgemein/unbekannt).
+const ALLGEMEINE_MODULE=['uebersicht','tresor','projekte','fristen'];
+
+function withBereich(path){ if(S.bereich==null) return path; const sep=path.includes('?')?'&':'?'; return path+sep+'bereich_id='+encodeURIComponent(S.bereich); }
+function bereichName(bid){ if(bid===''||bid==null) return 'Allgemein'; const b=S.bmap[bid]; return b?b.name:'Allgemein'; }
+// Aktiver Bereich: null=Home (kein Bereich) · ''=Allgemein (unzugeordnet, nur General-Module) · id=getypter Bereich.
+function aktiverBereich(){ return S.bereich==null?null:(S.bmap[S.bereich]||(S.bereich===''?{name:'Allgemein',farbe:'cyan',art:'sonstiges',module:ALLGEMEINE_MODULE.slice()}:null)); }
+// Die im aktiven Bereich sichtbaren Module (typ-gesteuert vom Backend; Fallback General).
+function sichtbareModule(){ const b=aktiverBereich(); if(b==null) return []; return (b.module&&b.module.length)?b.module:ALLGEMEINE_MODULE; }
+// Aktives Modul, auf ein im Bereich sichtbares geklemmt (stale localStorage/Typ-Wechsel).
+function aktivesModul(){ const sm=sichtbareModule(); if(!sm.length) return 'uebersicht'; return sm.includes(S.modul)?S.modul:'uebersicht'; }
+
+// Items nach Bereich gruppieren (bekannte Bereiche in Reihenfolge, Rest → Allgemein).
+function gruppiere(items){
+  const map=new Map();
+  for(const it of items){ const b=it.bereich_id||''; if(!map.has(b))map.set(b,[]); map.get(b).push(it); }
+  const out=[];
+  for(const b of S.bereiche){ if(map.has(b.id)){ out.push({bid:b.id,ber:b,items:map.get(b.id)}); map.delete(b.id);} }
+  let allg=[]; for(const [,arr] of map) allg=allg.concat(arr);
+  if(allg.length) out.push({bid:'',ber:null,items:allg});
+  return out;
+}
+// Eine Bereich-Sektion (offenes <details> mit kleinem Fold).
+function sektion(grp,innerHtml){
+  const b=grp.ber, vars=accVars(b||{farbe:'cyan'}), ic=b?bIcon(b):'📁';
+  const art=b?(ART_LABEL[b.art]||b.art):'unzugeordnet';
+  const offen = (S.bereich!=null) ? true : true;  // standardmäßig offen (alles sehen)
+  return '<details class="ber-grp"'+(offen?' open':'')+' style="'+(b?vars:'--acc:var(--mut);--acc-rgb:150,160,175')+'">'
+    +'<summary><span class="sg-ic">'+ic+'</span><span class="sg-dot"></span>'
+    +'<span class="sg-name">'+esc(b?b.name:'Allgemein')+'</span><span class="sg-art">'+esc(art)+'</span>'
+    +'<span class="sg-n">'+grp.items.length+'</span>'
+    +(b?'<span class="dz-chip sg-open" role="button" tabindex="0" data-dz-act="setBereich" data-dz-arg="'+b.id+'" title="diesen Bereich öffnen">öffnen '+svgUse('ic-go','dz-chip-ic')+'</span>':'')
+    +'</summary><div class="sg-body">'+innerHtml+'</div></details>';
+}
+// Komplette gruppierte Liste rendern (renderRow(item) -> html).
+function gruppenHtml(items,renderRow,leer){
+  if(!items.length) return '<div class="leer">'+esc(leer||'Noch keine Einträge.')+'</div>';
+  return gruppiere(items).map(g=>sektion(g,'<div class="liste">'+g.items.map(renderRow).join('')+'</div>')).join('');
+}
+// Bereich-Auswahl für Anlege-/Zuordnungs-Formulare.
+function bereichSelect(sel,extraAttr){
+  const v=(sel===undefined)?(S.bereich==null?'':S.bereich):sel;
+  return '<span class="dz-field"><select class="dz-select" '+(extraAttr||'')+'>'
+    +'<option value="">— Allgemein —</option>'
+    +S.bereiche.map(b=>'<option value="'+b.id+'"'+(String(b.id)===String(v)?' selected':'')+'>'+esc(ART_ICON[b.art]||'•')+' '+esc(b.name)+'</option>').join('')
+    +'</select></span>';
+}
+async function zuordne(tabelle,id,bid){ if(bid==null) return; try{ await api('/api/bereiche/zuordnung',{method:'PUT',body:JSON.stringify({tabelle,id,bereich_id:bid})}); }catch(e){} }
+// Zahlenfeld als Kit-Stepper (.dz-stepper) — umhüllt ein <input type=number …>-Markup;
+// die ▾/▴-Knöpfe verdrahtet DzControls.initControls (über nachRender). Kit-Adoption (docs/36 W1).
+function stepper(inputHtml){ return '<span class="dz-stepper"><button type="button" data-dz-step="-1" aria-label="weniger">▾</button>'+inputHtml+'<button type="button" data-dz-step="1" aria-label="mehr">▴</button></span>'; }
+
+// ============================ Shell ============================
+async function ladeBereiche(){
+  try{ S.bereiche=await api('/api/bereiche'); }catch(e){ S.bereiche=[]; }
+  S.bmap={}; S.bereiche.forEach(b=>S.bmap[b.id]=b);
+  if(S.bereich!=null && S.bereich!=='' && !S.bmap[S.bereich]) S.bereich=null;
+  renderModulbar();
+}
+// Modul-Leiste = BEREICH-SCOPED (docs/49): ohne aktiven Bereich (Home) leer — navigiert
+// wird über die Übersicht. Im Bereich: „← Alle Bereiche" + Bereichsname + die typ-
+// gesteuerten Module (General + typ-spezifisch; Geschäft/Studium nur im passenden Typ).
+function renderModulbar(){
+  const host=el('modulbar'); const b=aktiverBereich();
+  if(b==null){ host.innerHTML=''; host.hidden=true; return; }
+  host.hidden=false;
+  const akt=aktivesModul();
+  let h='<button class="mtab dz-navtab mb-back" data-dz-act="setBereich" title="Zur Bereichs-Übersicht">'+svgUse('ic-back','mt-ic')+'Alle Bereiche</button>';
+  h+='<span class="mb-aktiv" style="'+accVars(b)+'" title="'+esc(ART_LABEL[b.art]||'')+'"><span class="bc-ic">'+(S.bereich?bIcon(b):'📁')+'</span>'+esc(b.name)+'</span>';
+  h+=sichtbareModule().map(id=>{ const m=MODUL_META[id]; if(!m) return '';
+    return '<button class="mtab dz-navtab'+(akt===id?' on':'')+'" data-dz-act="setModul" data-dz-arg="'+id+'">'+svgUse(m[1],'mt-ic')+esc(m[0])+'</button>'; }).join('');
+  host.innerHTML=h;
+}
+function setModul(m){ S.modul=m; try{localStorage.setItem('admin_modul',m)}catch(e){} renderModulbar(); renderView(); }
+function setBereich(b){ S.bereich=b; try{localStorage.setItem('admin_bereich',b==null?'':b)}catch(e){}
+  // Modul auf ein im (neuen) Bereich sichtbares klemmen — Typ-Wechsel/Home-Rückkehr.
+  S.modul=(b==null)?'uebersicht':aktivesModul();
+  try{localStorage.setItem('admin_modul',S.modul)}catch(e){}
+  renderModulbar(); renderView(); }
+
+// ============================ View-Router ============================
+function renderView(){
+  const v=el('view');
+  // Bereich-Farbe als Grid-Akzent ⇒ die Panel-Streifen (.card::before) glühen in der
+  // aktiven Bereich-Farbe statt im Standard-Magenta→Cyan (Glow je Bereich). Home/keine
+  // Auswahl: zurücksetzen, damit die Bereich-Karten ihre eigene Farbe behalten.
+  const _ab=aktiverBereich(), _af=(_ab&&_ab.farbe)||'';
+  if(_af){ v.style.setProperty('--acc',FARBE_CSS[_af]||'var(--cy)'); v.style.setProperty('--acc-rgb',FARBE_RGB[_af]||'var(--cy-rgb)'); }
+  else { v.style.removeProperty('--acc'); v.style.removeProperty('--acc-rgb'); }
+  v.innerHTML='<div class="leer">lädt …</div>';
+  // aktivesModul() klemmt auf ein im Bereich sichtbares Modul (typ-gesteuert) ⇒ ein im
+  // falschen Typ „hängengebliebenes" Geschäft/Studium fällt sauber auf die Übersicht.
+  const fn={uebersicht:viewUebersicht,tresor:viewTresor,projekte:viewProjekte,geschaeft:viewGeschaeft,studium:viewStudium,fristen:viewFristen}[aktivesModul()]||viewUebersicht;
+  try{ fn(v); }catch(e){ v.innerHTML='<div class="leer">Ansicht-Fehler: '+esc(e.message)+'</div>'; }
+}
+function nachRender(host){ if(window.DzControls)DzControls.initControls(host||el('view'));
+  // WP-B (docs/39): die Modul-Inhalte sind offizielle dz-panel ⇒ greifbar/schwingbar (DizzSpin)
+  // + klappbar (collapse.js via initControls). Re-init nach jedem dynamischen Render (Grid #view
+  // bleibt, Panels werden neu entdeckt; grid._spin-Guard verhindert Doppel-Binding). storageKey als
+  // FUNKTION ⇒ Reihenfolge PRO MODUL persistent: die Funktion liest S.modul beim Speichern frisch,
+  // trotz 1x gebundenem Listener (spinfling.js wertet storageKey je Speichern/Restore neu aus).
+  if(window.DizzSpin)DizzSpin.initSpinFling({gridSelector:'.wrap',panelSelector:'.dz-panel',floatSelector:'.floatacct,.floatdizzi',storageKey:function(){return 'adminPanelOrder_'+S.modul;},layoutKey:'adminLayoutVer',layoutVer:'2026-06-23-a'}); }
+function scopePill(){ const b=aktiverBereich();
+  return b? '<span class="scope-pill" title="Filter aktiv — Klick = aufheben" data-dz-act="setBereich" style="cursor:pointer">gefiltert: <b>'+esc(b.name)+'</b> ✕</span>'
+          : '<span class="scope-pill">alle Bereiche · gruppiert</span>'; }
+
+// ============================ ÜBERSICHT ============================
+async function viewUebersicht(v){
+  if(S.bereich==null){ await navigator(v); }
+  else{ await bereichCockpit(v); }
+}
+
+async function navigator(v){
+  const tok=++S._tok;
+  let inhalte={};
+  try{ const paare=await Promise.all(S.bereiche.map(b=>api('/api/bereiche/'+b.id+'/inhalt').then(r=>[b.id,r]).catch(()=>[b.id,null]))); paare.forEach(([id,r])=>inhalte[id]=r); }catch(e){}
+  if(tok!==S._tok) return;   // Ansicht inzwischen gewechselt ⇒ nicht überschreiben
+  const wurzeln=S.bereiche.filter(b=>!b.parent_id);
+  const kinder=id=>S.bereiche.filter(b=>b.parent_id===id);
+  let cards=wurzeln.map(b=>bereichCard(b,inhalte[b.id],kinder(b.id))).join('');
+  // „Allgemein" (unzugeordnete Einträge) als betretbare Karte — ersetzt die alte Filterzeile.
+  cards+='<div class="bcard allg" style="--acc:var(--mut);--acc-rgb:150,160,175" data-dz-act="setBereich" data-dz-arg="">'
+    +'<div class="bk"><div class="bk-ic">📁</div><div class="bk-tt"><div class="bk-name">Allgemein</div>'
+    +'<div class="bk-art">unzugeordnete Einträge</div></div></div>'
+    +'<div class="bk-desc small">Alles, was (noch) keinem Bereich zugeordnet ist.</div></div>';
+  cards+='<div class="bcard add" data-dz-act="neuerBereichForm"><span class="plus">+</span><span>Neuer Bereich</span><span class="small">Typ wählen → passende Module</span></div>';
+  const anzahl=S.bereiche.length;
+  v.innerHTML=
+    '<div class="modtool"><h1>Deine Bereiche</h1><span class="mt-hint">Wähle einen Bereich — sein Typ schaltet die passenden Module frei</span><span class="spacer"></span><span class="scope-pill">'+anzahl+' Bereich'+(anzahl===1?'':'e')+'</span></div>'
+    +'<div id="bereich-form"></div>'
+    +'<div class="bnav">'+cards+(anzahl?'':'')+'</div>'
+    +(anzahl?'':'<div class="leer" style="margin-top:10px">Noch keine Bereiche. Lege deinen ersten an (z. B. „Studium Informatik" oder „Agentur für hübsche Models") — danach hängt jedes Modul kategorisiert daran.</div>');
+  nachRender(v);
+}
+
+function bereichCard(b,inh,kinder){
+  const z=(inh&&inh.zaehler)||{};
+  const LB={dokumente:'📄',projekte:'🗂',aufgaben:'✓',termine:'📅',rechnungen:'🧾',kunden:'👤',produkte:'📦',fristen:'⏰',bildungsweg:'🎓',support:'🎧'};
+  const chips=Object.keys(z).filter(k=>z[k]).map(k=>'<span class="zchip">'+(LB[k]||'•')+' <b>'+z[k]+'</b></span>').join('');
+  const sub=kinder&&kinder.length?'<div class="bk-sub">'+kinder.map(c=>'<span class="subbadge">'+esc(ART_ICON[c.art]||'•')+' '+esc(c.name)+'</span>').join('')+'</div>':'';
+  return '<div class="bcard" style="'+accVars(b)+'" data-dz-act="setBereich" data-dz-arg="'+b.id+'">'
+    +'<div class="bk"><div class="bk-ic">'+bIcon(b)+'</div><div class="bk-tt"><div class="bk-name">'+esc(b.name)+'</div>'
+    +'<div class="bk-art">'+esc(ART_LABEL[b.art]||b.art)+' <span class="b-status '+esc(b.status)+'">'+esc(b.status)+'</span></div></div></div>'
+    +(b.beschreibung?'<div class="bk-desc">'+esc(b.beschreibung)+'</div>':'')
+    +sub
+    +'<div class="bk-zaehler">'+(chips||'<span class="zchip mut">noch leer</span>')+'</div></div>';
+}
+
+// Typ-Karte im Anlage-Picker: zeigt Icon, Label + welche Spezial-Module der Typ freischaltet.
+function typCard(t){
+  const on=(S._neuTyp===t.id);
+  const spez=(t.module||[]).filter(m=>!ALLGEMEINE_MODULE.includes(m)).map(m=>MODUL_META[m]?MODUL_META[m][0]:m);
+  const extra=spez.length?('+ '+spez.join(' · ')):'nur Grund-Module';
+  return '<button class="typ-card'+(on?' on':'')+'" style="'+accVars({farbe:t.farbe})+'" data-dz-act="bereichTypWahl" data-dz-arg="'+t.id+'">'
+    +'<span class="typ-ic" aria-hidden="true">'+t.icon+'</span><span class="typ-lbl">'+esc(t.label)+'</span>'
+    +'<span class="typ-mod mut small">'+esc(extra)+'</span></button>';
+}
+function neuerBereichForm(parent){
+  const host=el('bereich-form'); if(!host){ setModul('uebersicht'); setTimeout(()=>neuerBereichForm(parent),60); return; }
+  if(!S._neuTyp) S._neuTyp='persoenlich';   // Default-Heimat
+  const typen=S.typen||[];
+  host.innerHTML='<div class="anlege"><div class="an-kopf">Neuer Bereich — welcher Typ?</div>'
+    +'<div class="typ-picker">'+typen.map(typCard).join('')+'</div>'
+    +'<div class="row-form" style="margin-top:9px"><input id="nb-name" placeholder="Name (z. B. „Agentur Nord" oder „Bachelor Informatik")" style="flex:1;min-width:220px">'
+    +'<span class="small mut">Über-Bereich:</span><span class="dz-field"><select id="nb-parent" class="dz-select"><option value="">— keiner —</option>'+S.bereiche.map(b=>'<option value="'+b.id+'"'+(b.id===parent?' selected':'')+'>'+esc(ART_ICON[b.art]||'•')+' '+esc(b.name)+'</option>').join('')+'</select></span></div>'
+    +'<div class="row-form"><input id="nb-desc" placeholder="Beschreibung (optional)" style="flex:1"><button class="btn prim" data-dz-act="bereichAnlegen">Bereich anlegen</button><button class="btn mini" data-dz-act="clearHost" data-dz-arg="bereich-form">Abbrechen</button></div></div>';
+  nachRender(host); const f=el('nb-name'); if(f)f.focus();
+}
+async function bereichAnlegen(){
+  const name=(el('nb-name').value||'').trim(); if(!name){ alert('Name angeben.'); return; }
+  const art=S._neuTyp||'persoenlich'; const meta=(S.typen||[]).find(t=>t.id===art)||{};
+  const body={name,art,farbe:meta.farbe||'cyan',icon:meta.icon||'folder',parent_id:(el('nb-parent')||{}).value||'',beschreibung:(el('nb-desc').value||'').trim()};
+  let res; try{ res=await api('/api/bereiche',{method:'POST',body:JSON.stringify(body)}); }catch(e){ alert(e.message); return; }
+  el('bereich-form').innerHTML=''; await ladeBereiche(); setBereich(res.id);
+}
+
+async function bereichCockpit(v){
+  const tok=++S._tok;
+  const b=aktiverBereich();
+  if(b===null){ setBereich(null); return; }
+  const istAllg=(S.bereich==='');
+  let inh=null; if(!istAllg){ try{ inh=await api('/api/bereiche/'+S.bereich+'/inhalt'); }catch(e){} }
+  const vars=accVars(b);
+  // Modul-Auszüge (best-effort, parallel)
+  const [docs,projs,rechn,studien,frist]=await Promise.all([
+    api(withBereich('/api/dokumente')).catch(()=>[]),
+    api(withBereich('/api/projekte')).catch(()=>[]),
+    api(withBereich('/api/rechnungen')).catch(()=>[]),
+    api(withBereich('/api/studien')).catch(()=>[]),
+    api(withBereich('/api/fristen-cockpit?horizont_tage=60')).catch(()=>null),
+  ]);
+  const kinder=istAllg?[]:S.bereiche.filter(x=>x.parent_id===S.bereich);
+  function modBox(ic,titel,n,modul,listHtml){
+    return '<div class="cock-mod"><div class="cm-kopf">'+svgUse(ic,'cm-ic')+'<span class="cm-tt">'+esc(titel)+'</span><span class="cm-n">'+n+'</span></div>'
+      +'<div class="cm-list">'+(listHtml||'<span class="mut small">—</span>')+'</div>'
+      +'<button class="btn mini cock-go" data-dz-act="setModul" data-dz-arg="'+modul+'">öffnen →</button></div>';
+  }
+  const liDoc=docs.slice(0,4).map(d=>'<div class="li">'+esc(ART_ICON_TYP(d.typ))+' <b>'+esc(d.titel)+'</b></div>').join('');
+  const liProj=projs.slice(0,4).map(p=>'<div class="li">• <b>'+esc(p.name)+'</b> <span class="mut">'+p.fortschritt+'%</span></div>').join('');
+  const liRech=rechn.slice(0,4).map(r=>'<div class="li">• <b>'+esc(r.titel||('Rechnung '+(r.nummer||'')))+'</b> <span class="mut">'+eur(r.brutto_cent)+'</span></div>').join('');
+  const liStud=studien.slice(0,4).map(s=>'<div class="li">🎓 <b>'+esc(s.studiengang||s.institution||'Bildungsweg')+'</b> <span class="mut">'+esc(s.ects_erreicht)+'/'+esc(s.ects_gesamt||'?')+' ECTS</span></div>').join('');
+  const fristItems=frist?[].concat(frist.gruppen.ueberfaellig,frist.gruppen.heute,frist.gruppen.woche):[];
+  const liFrist=fristItems.slice(0,4).map(f=>'<div class="li">⏰ <b>'+esc(f.titel)+'</b> <span class="mut">'+esc(f.faellig)+'</span></div>').join('');
+
+  let h='<div class="modtool"><button class="btn mini" data-dz-act="setBereich">'+svgUse('ic-back','ic')+' Alle Bereiche</button><span class="spacer"></span>'
+    +(istAllg?'':'<button class="btn mini" data-dz-act="bereichBearbeiten">Bearbeiten</button><button class="btn mini danger" data-dz-act="bereichLoeschen">Löschen</button>')+'</div>';
+  h+='<div class="card acc" style="'+vars+'"><div class="card-koerper">'
+    +'<div class="cock-kopf"><div class="cock-ic">'+(istAllg?'📁':bIcon(b))+'</div>'
+    +'<div class="cock-tt"><h1>'+esc(b.name)+'</h1><div class="ct-sub">'+esc(istAllg?'unzugeordnete Einträge':(ART_LABEL[b.art]||b.art))+(istAllg?'':' · '+esc(b.status))+(inh?(' · '+inh.gesamt+' Einträge'):'')+'</div></div></div>'
+    +(b.beschreibung?'<p class="mut" style="margin:4px 0 0">'+esc(b.beschreibung)+'</p>':'')
+    +'</div></div>';
+  h+='<div id="bereich-edit"></div>';
+  if(!istAllg) h+='<section class="card dz-panel" data-dz-collapsible style="'+vars+'"><button class="dz-panel-kopf" type="button">'+svgUse('ic-net','kp-ic')+'<span class="dz-panel-titel">Querverbindungen</span><span class="dz-panel-kurz">Money · Management · Memory</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper" id="a5-cockpit"><div class="mut small">lädt …</div></div></section>';
+  if(kinder.length) h+='<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button"><span class="dz-panel-titel">Unter-Bereiche</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper"><div class="bk-sub">'+kinder.map(c=>'<span class="berchip" style="'+accVars(c)+';cursor:pointer" data-dz-act="setBereich" data-dz-arg="'+c.id+'"><span class="bc-ic">'+bIcon(c)+'</span>'+esc(c.name)+'</span>').join('')+'</div></div></section>';
+  // Modul-Boxen TYP-GESTEUERT (docs/49): Geschäft/Studium nur, wenn der Bereichs-Typ sie freischaltet.
+  const mods=sichtbareModule();
+  let grid='';
+  if(mods.includes('tresor'))   grid+=modBox('ic-vault','Tresor',docs.length,'tresor',liDoc);
+  if(mods.includes('projekte')) grid+=modBox('ic-proj','Projekte',projs.length,'projekte',liProj);
+  if(mods.includes('geschaeft'))grid+=modBox('ic-invoice','Geschäft',rechn.length,'geschaeft',liRech);
+  if(mods.includes('studium'))  grid+=modBox('ic-study','Studium',studien.length,'studium',liStud);
+  if(mods.includes('fristen'))  grid+=modBox('ic-clock','Fristen',fristItems.length,'fristen',liFrist);
+  h+='<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-grid','kp-ic')+'<span class="dz-panel-titel">Modul-Übersicht</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper"><div class="cock-grid">'
+    +grid+'</div></div></section>';
+  if(tok!==S._tok) return;
+  v.innerHTML=h; nachRender(v);
+  // A5/V17–V19: Querverbindungs-Spuren (Money·Management·Memory) best-effort nachladen,
+  // damit die (ggf. langsamen) Core-Relay-Calls die Cockpit-Anzeige nicht blockieren.
+  if(!istAllg){ (async()=>{
+    let d=null; try{ d=await api('/api/bereiche/'+S.bereich+'/cockpit'); }catch(e){}
+    if(tok!==S._tok) return; const host=el('a5-cockpit'); if(host) host.innerHTML=renderA5Cockpit(d);
+  })(); }
+}
+function renderA5Cockpit(d){
+  const sec='<div class="kmsech">Querverbindungen <span class="mut" style="font-weight:400;text-transform:none;letter-spacing:0;font-family:inherit;font-size:11px">— diese Kategorie in Money · Management · Memory</span></div>';
+  if(!d) return '<div class="mut small">Cockpit nicht erreichbar</div>';
+  const SALDO=v=>v<0?'var(--bad,#ff6b6b)':'var(--ok,#7CFFB0)';
+  function box(emoji,titel,head,headColor,list){
+    return '<div class="cock-mod"><div class="cm-kopf"><span style="font-size:15px" aria-hidden="true">'+emoji+'</span><span class="cm-tt">'+esc(titel)+'</span>'
+      +'<span class="cm-n"'+(headColor?' style="color:'+headColor+'"':'')+'>'+head+'</span></div>'
+      +'<div class="cm-list">'+(list||'<span class="mut small">—</span>')+'</div></div>';
+  }
+  // Finanzspur (Dizz Money) — je Währung getrennt
+  let fHead='—', fColor='', fList='';
+  const F=d.finanzspur||{};
+  if(F.ok){ const jw=(F.finanzspur||{}).je_waehrung||[];
+    if(jw.length){ fHead=esc(jw[0].saldo_text||(''+jw[0].saldo)); fColor=SALDO(jw[0].saldo);
+      fList=jw.map(w=>'<div class="li"><b style="color:'+SALDO(w.saldo)+'">'+esc(w.saldo_text||(''+w.saldo))+'</b><span class="mut">'+esc(w.waehrung)+' · E '+esc(w.einnahmen_text||(''+w.einnahmen))+' / A '+esc(w.ausgaben_text||(''+w.ausgaben))+'</span></div>').join('');
+    } else { fHead='0'; fList='<span class="mut small">keine Buchungen</span>'; }
+  } else { fList='<span class="mut small">'+esc(F.fehler||'Money offline')+'</span>'; }
+  // Social (Dizz Management)
+  let sHead='—', sList='';
+  const SO=d.social||{};
+  if(SO.ok){ const so=SO.social||{}; const st=(so.posts||{}).je_status||{}; const n=(so.naechste_posts||[])[0];
+    sHead=(st.geplant||0)+' geplant';
+    sList='<div class="li"><b>'+(so.anzahl_kanaele||0)+'</b><span class="mut">Kanäle · '+(so.anzahl_posts||0)+' Posts</span></div>'
+      +(n?'<div class="li mut">nächster: '+esc(n.titel||'—')+(n.plattform?' · '+esc(n.plattform):'')+'</div>':'');
+  } else { sList='<span class="mut small">'+esc(SO.fehler||'Management offline')+'</span>'; }
+  // Wissen (Dizz Memory)
+  let wHead='—', wList='';
+  const W=d.wissen||{};
+  if(W.ok){ const ns=W.notizen||[]; wHead=(W.anzahl!=null?W.anzahl:ns.length)+' Notizen';
+    wList=ns.slice(0,4).map(n=>'<div class="li">• <b>'+esc(n.titel||'(ohne Titel)')+'</b>'+(n.sensibel?' <span class="mut" title="sensibel">🔒</span>':'')+'</div>').join('')||'<span class="mut small">leer</span>';
+  } else { wList='<span class="mut small">'+esc(W.fehler||'Memory offline')+'</span>'; }
+  // Externe Tools (Konnektoren, docs/35 §3) — dormant; in diesem Bereich angedockt
+  const K=d.konnektoren||[]; let kHead=K.length?(''+K.length):'—', kList='';
+  if(K.length){ kList=K.map(k=>'<div class="li">• <b>'+esc(k.name||k.typ)+'</b> <span class="mut">'+esc(k.art)+'</span> — <span class="'+(k.verbunden?'':'mut ')+'small">'+(k.verbunden?'verbunden':'dormant')+'</span> <span class="dz-chip" role="button" tabindex="0" title="entfernen" data-dz-act="konnektorWeg" data-dz-arg="'+k.id+'">✕</span></div>').join('');
+  } else { kList='<span class="mut small">noch kein externes Tool angebunden</span>'; }
+  kList+='<div style="margin-top:5px"><span class="dz-chip" role="button" tabindex="0" data-dz-act="konnektorForm">+ Tool anbinden</span></div><div id="a5-konn-form"></div>';
+  return '<div class="cock-grid">'
+    +box('💶','Finanzspur',fHead,fColor,fList)
+    +box('📣','Social',sHead,'',sList)
+    +box('🧠','Wissen',wHead,'',wList)
+    +box('🔌','Externe Tools',kHead,'',kList)
+    +'</div>';
+}
+// Externe-Tool-Konnektoren am Bereich (docs/35 §3): dormant anbinden/entfernen (HITL).
+async function konnektorForm(){ const host=el('a5-konn-form'); if(!host) return;
+  if(host._open){ host.innerHTML=''; host._open=false; return; } host._open=true;
+  let typen=[]; try{ typen=(await api('/api/konnektoren/typen')).typen||[]; }catch(e){}
+  const opts=typen.map(t=>'<option value="'+t.typ+'">'+esc(t.name)+' ('+esc(t.art)+')</option>').join('');
+  host.innerHTML='<div class="anlege" style="margin-top:6px"><div class="row-form">'
+    +'<span class="dz-field"><select id="kn-typ" class="dz-select">'+opts+'</select></span>'
+    +'<input id="kn-name" placeholder="Anzeigename (optional)" style="flex:1;min-width:130px">'
+    +'<input id="kn-ref" placeholder="externe Kennung (opt.)" style="width:160px">'
+    +'<button class="btn prim" data-dz-act="konnektorAnlegen">Anbinden</button>'
+    +'<button class="btn mini" data-dz-act="konnektorFormClose">Abbrechen</button></div>'
+    +'<div class="small mut">Dormant — wird aktiv, sobald ein Zugriffs-Token im Tresor liegt + Freigabe (Gesetz 5).</div></div>';
+  nachRender(host);
+}
+async function konnektorAnlegen(){ const typ=(el('kn-typ')||{}).value; if(!typ) return;
+  try{ await api('/api/konnektoren',{method:'POST',body:JSON.stringify({typ,name:el('kn-name').value.trim(),extern_ref:el('kn-ref').value.trim(),bereich_id:S.bereich})}); }catch(e){ alert(e.message); return; }
+  reloadA5Cockpit(); }
+async function konnektorWeg(id){ if(!confirm('Externes Tool entfernen?')) return;
+  try{ await api('/api/konnektoren/'+id,{method:'DELETE'}); }catch(e){ alert(e.message); return; }
+  reloadA5Cockpit(); }
+function reloadA5Cockpit(){ (async()=>{ let d=null; try{ d=await api('/api/bereiche/'+S.bereich+'/cockpit'); }catch(e){} const host=el('a5-cockpit'); if(host) host.innerHTML=renderA5Cockpit(d); })(); }
+function ART_ICON_TYP(t){ return ({Rechnung:'🧾',Vertrag:'📑',Steuer:'🏛'}[t])||'📄'; }
+
+function bereichBearbeiten(){
+  const b=S.bmap[S.bereich]; if(!b) return; const host=el('bereich-edit');
+  host.innerHTML='<div class="anlege"><div class="an-kopf">Bereich bearbeiten</div>'
+    +'<div class="row-form"><input id="eb-name" value="'+esc(b.name)+'" style="flex:1;min-width:180px">'
+    +'<span class="dz-field"><select id="eb-art" class="dz-select">'+_opt(ART_OPT,b.art)+'</select></span>'
+    +'<span class="dz-field"><select id="eb-farbe" class="dz-select">'+_opt(FARBE_OPT,b.farbe)+'</select></span>'
+    +'<span class="dz-field"><select id="eb-status" class="dz-select">'+_opt(STATUS_OPT,b.status)+'</select></span></div>'
+    +'<div class="row-form"><input id="eb-desc" value="'+esc(b.beschreibung||'')+'" placeholder="Beschreibung" style="flex:1"><button class="btn prim" data-dz-act="bereichSpeichern">Speichern</button><button class="btn mini" data-dz-act="clearHost" data-dz-arg="bereich-edit">Abbrechen</button></div></div>';
+  nachRender(host);
+}
+async function bereichSpeichern(){
+  const body={name:el('eb-name').value.trim(),art:el('eb-art').value,farbe:el('eb-farbe').value,status:el('eb-status').value,beschreibung:el('eb-desc').value.trim()};
+  try{ await api('/api/bereiche/'+S.bereich,{method:'PUT',body:JSON.stringify(body)}); }catch(e){ alert(e.message); return; }
+  await ladeBereiche(); renderView();
+}
+async function bereichLoeschen(){
+  const b=S.bmap[S.bereich]; if(!b) return;
+  if(!confirm('Bereich „'+b.name+'" löschen?\nZugeordnete Einträge bleiben erhalten (werden „Allgemein"). Unter-Bereiche rücken zur Wurzel.')) return;
+  try{ await api('/api/bereiche/'+S.bereich,{method:'DELETE'}); }catch(e){ alert(e.message); return; }
+  S.bereich=null; await ladeBereiche(); renderView();
+}
+
+// ============================ TRESOR ============================
+async function viewTresor(v){
+  const tok=++S._tok;
+  let docs; try{ docs=await api(withBereich('/api/dokumente')); }catch(e){ if(tok!==S._tok)return; v.innerHTML='<div class="leer">Tresor nicht abrufbar.</div>'; return; }
+  if(tok!==S._tok) return;
+  v.innerHTML=
+    '<div class="modtool"><h1>'+svgUse('ic-vault','ic')+' Tresor</h1><span class="mt-hint">Dokumente — nach Bereich kategorisiert</span><span class="spacer"></span>'+scopePill()+'</div>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-vault','kp-ic')+'<span class="dz-panel-titel">Dokumente</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper">'
+    +'<div class="row-form" style="margin:0 0 11px"><input id="tr-such" type="search" placeholder="Volltext durchsuchen …" style="flex:1;min-width:200px" data-dz-enter="tresorSuche"><button class="btn mini" data-dz-act="tresorSuche">Suchen</button><span class="spacer"></span><button class="btn prim" data-dz-act="tresorUploadForm">+ Dokument</button></div>'
+    +'<div id="tr-form"></div>'
+    +'<div id="tr-liste">'+gruppenHtml(docs,docRow,'Noch keine Dokumente — lade oben das erste hoch.')+'</div>'
+    +'</div></section>';
+  nachRender(v);
+}
+function docRow(d){
+  const tags=(d.tags||[]).slice(0,3).map(t=>'<span class="tagchip">'+esc(t)+'</span>').join('');
+  const kb=Math.round((d.groesse||0)/1024);
+  return '<div class="zeile"><div class="z-ic">'+(d.verschluesselt?'🔒':ART_ICON_TYP(d.typ))+'</div>'
+    +'<div class="z-mit"><div class="z-titel">'+esc(d.titel||d.datei_name)+'</div>'
+    +'<div class="z-meta"><span>'+esc(d.typ)+'</span><span>'+kb+' KB</span><span>'+esc(d.erstellt_am||'')+'</span>'+(d.korrespondent?'<span>'+esc(d.korrespondent)+'</span>':'')+tags+'</div></div>'
+    +'<div class="z-akt">'+bereichSelect(d.bereich_id,'data-dz-act="zuordneReload" data-dz-on="change" data-tabelle="dokumente" data-id="'+d.id+'"')
+    +'<a class="btn mini" href="/api/dokumente/'+d.id+'/datei" target="_blank" rel="noopener">Öffnen</a>'
+    +'<button class="btn mini danger" data-dz-act="docWeg" data-dz-arg="'+d.id+'">✕</button></div></div>';
+}
+async function tresorSuche(){ const q=(el('tr-such').value||'').trim(); let docs;
+  try{ docs=await api(withBereich('/api/dokumente'+(q?('?suche='+encodeURIComponent(q)):''))); }catch(e){ return; }
+  el('tr-liste').innerHTML=gruppenHtml(docs,docRow,q?'Keine Treffer für „'+esc(q)+'".':'Noch keine Dokumente.'); nachRender(el('tr-liste'));
+}
+function tresorUploadForm(){
+  // .dz-upload-VORBEREITUNG (docs/36 W1/D2): Das Kit liefert künftig die Komponente
+  // `.dz-upload` (tokenierte Datei-/Drop-Zone + initUpload). Bis zum Vendor bleibt der
+  // native <input type=file>, ist aber schon change-event-getrieben (uploadGewaehlt =
+  // Dateiname/Größe-Vorschau) + accept-gefiltert + im Mount-Slot `.dz-upload-slot`
+  // gekapselt. Umstellung = NUR diesen Slot durch das Kit-Markup ersetzen; der innere
+  // Input behält id="up-datei", docUpload() liest weiter über uploadDatei(). FÜR WORLD-CHAT.
+  el('tr-form').innerHTML='<div class="anlege"><div class="an-kopf">Dokument hochladen</div>'
+    +'<div class="row-form"><span class="dz-upload-slot" style="flex:1;min-width:200px;display:inline-flex;gap:8px;align-items:center">'
+    +'<input type="file" id="up-datei" accept=".pdf,.jpg,.jpeg,.png,.docx" data-dz-act="uploadGewaehlt" data-dz-on="change" style="flex:1;color:var(--mut)">'
+    +'<span id="up-datei-info" class="small mut" aria-live="polite"></span></span>'
+    +'<input id="up-titel" placeholder="Titel (optional)" style="flex:1">'
+    +'<span class="dz-field"><select id="up-typ" class="dz-select">'+_opt([['Rechnung','Rechnung'],['Vertrag','Vertrag'],['Steuer','Steuer'],['Sonstiges','Sonstiges']],'Sonstiges')+'</select></span></div>'
+    +'<div class="row-form"><span class="small mut">Bereich:</span>'+bereichSelect(undefined,'id="up-bereich"')
+    +'<input id="up-tags" placeholder="Tags (Komma)" style="flex:1"><button class="btn prim" data-dz-act="docUpload">Hochladen</button>'
+    +'<button class="btn mini" data-dz-act="clearHost" data-dz-arg="tr-form">Abbrechen</button></div></div>';
+  nachRender(el('tr-form'));
+}
+// Einzige Datei-Auswahl liest über diesen Accessor — funktioniert für den nativen
+// Input UND die künftige .dz-upload-Komponente (beide tragen den inneren <input
+// type=file id="up-datei"> und feuern 'change'). So bleibt die Kit-Umstellung lokal.
+function uploadDatei(){ const i=el('up-datei'); return (i&&i.files&&i.files[0])||null; }
+function uploadGewaehlt(inp){ const info=el('up-datei-info'); const f=inp&&inp.files&&inp.files[0];
+  if(info) info.textContent=f?(f.name+' · '+Math.round(f.size/1024)+' KB'):''; }
+async function docUpload(){
+  const f=uploadDatei(); if(!f){ alert('Datei wählen.'); return; }
+  const fd=new FormData(); fd.append('datei',f); fd.append('titel',el('up-titel').value.trim()); fd.append('typ',el('up-typ').value); fd.append('tags',el('up-tags').value.trim());
+  let res; try{ res=await fetch('/api/dokumente/upload',{method:'POST',body:fd}); }catch(e){ alert('Upload fehlgeschlagen'); return; }
+  if(!res.ok){ let m='HTTP '+res.status; try{ m=(await res.json()).detail||m; }catch(_){} alert('Upload abgelehnt: '+m); return; }
+  const dok=await res.json(); await zuordne('dokumente',dok.id,el('up-bereich').value);
+  el('tr-form').innerHTML=''; viewTresor(el('view'));
+}
+async function docWeg(id){ if(!confirm('Dokument löschen?'))return; try{ await api('/api/dokumente/'+id,{method:'DELETE'}); }catch(e){} viewTresor(el('view')); }
+
+// ============================ PROJEKTE ============================
+async function viewProjekte(v){
+  const tok=++S._tok;
+  let projs; try{ projs=await api(withBereich('/api/projekte')); }catch(e){ if(tok!==S._tok)return; v.innerHTML='<div class="leer">Projekte nicht abrufbar.</div>'; return; }
+  if(tok!==S._tok) return;
+  v.innerHTML=
+    '<div class="modtool"><h1>'+svgUse('ic-proj','ic')+' Projekte</h1><span class="mt-hint">Projekte &amp; Aufgaben — nach Bereich</span><span class="spacer"></span>'+scopePill()+'</div>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-proj','kp-ic')+'<span class="dz-panel-titel">Projekte &amp; Aufgaben</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper">'
+    +'<div class="row-form" style="margin:0 0 11px"><span class="spacer"></span><button class="btn prim" data-dz-act="projektForm">+ Projekt</button></div>'
+    +'<div id="pr-form"></div>'
+    +'<div id="pr-liste">'+gruppenHtml(projs,projRow,'Noch keine Projekte.')+'</div>'
+    +'</div></section>';
+  nachRender(v);
+}
+function projRow(p){
+  return '<details class="ber-grp" style="--acc:var(--cy);--acc-rgb:var(--cy-rgb);margin-bottom:7px">'
+    +'<summary><span class="sg-dot"></span><span class="sg-name">'+esc(p.name)+'</span>'
+    +'<span class="pill '+esc(p.status)+'">'+esc(p.status)+'</span>'
+    +'<span class="sg-n">'+p.fortschritt+'%</span></summary>'
+    +'<div class="sg-body"><div class="dz-progress" style="margin-bottom:9px"><i style="width:'+p.fortschritt+'%"></i></div>'
+    +(p.beschreibung?'<p class="mut small" style="margin:0 0 9px">'+esc(p.beschreibung)+'</p>':'')
+    +'<div class="z-akt" style="margin-bottom:9px"><span class="small mut">Bereich:</span>'+bereichSelect(p.bereich_id,'data-dz-act="zuordneReload" data-dz-on="change" data-tabelle="projekte" data-id="'+p.id+'"')
+    +'<span class="spacer"></span><button class="btn mini danger" data-dz-act="projWeg" data-dz-arg="'+p.id+'">Projekt löschen</button></div>'
+    +'<div id="pa-'+p.id+'"><span class="mut small">Aufgaben lädt …</span></div></div></details>';
+}
+async function projektForm(){
+  el('pr-form').innerHTML='<div class="anlege"><div class="an-kopf">Neues Projekt</div>'
+    +'<div class="row-form"><input id="np-name" placeholder="Projektname" style="flex:1;min-width:200px"><span class="small mut">Bereich:</span>'+bereichSelect(undefined,'id="np-bereich"')
+    +'<button class="btn prim" data-dz-act="projektAnlegen">Anlegen</button><button class="btn mini" data-dz-act="clearHost" data-dz-arg="pr-form">Abbrechen</button></div>'
+    +'<div class="row-form"><input id="np-desc" placeholder="Beschreibung (optional)" style="flex:1"></div></div>';
+  nachRender(el('pr-form')); el('np-name').focus();
+}
+async function projektAnlegen(){
+  const name=(el('np-name').value||'').trim(); if(!name){ alert('Name angeben.'); return; }
+  let res; try{ res=await api('/api/projekte',{method:'POST',body:JSON.stringify({name,beschreibung:el('np-desc').value.trim()})}); }catch(e){ alert(e.message); return; }
+  await zuordne('projekte',res.id,el('np-bereich').value); el('pr-form').innerHTML=''; viewProjekte(el('view'));
+}
+async function projWeg(id){ if(!confirm('Projekt samt Aufgaben löschen?'))return; try{ await api('/api/projekte/'+id,{method:'DELETE'}); }catch(e){} viewProjekte(el('view')); }
+// Aufgaben werden beim Aufklappen eines Projekts nachgeladen.
+document.addEventListener('toggle',async e=>{
+  const d=e.target; if(!(d instanceof HTMLDetailsElement)||!d.open) return;
+  const box=d.querySelector('[id^="pa-"]'); if(!box||box.dataset.geladen) return;
+  const pid=box.id.slice(3); box.dataset.geladen='1';
+  let det; try{ det=await api('/api/projekte/'+pid); }catch(e){ box.innerHTML='<span class="mut small">Aufgaben nicht abrufbar.</span>'; return; }
+  box.innerHTML=aufgabenHtml(pid,det.aufgaben||[]);
+},true);
+function aufgabenHtml(pid,auf){
+  let h='<div class="liste">';
+  if(auf.length) h+=auf.map(a=>'<div class="zeile"><div class="z-ic" style="cursor:pointer" data-dz-act="aufgabeToggle" data-dz-arg="'+a.id+'" data-status="'+(a.status==='erledigt'?'offen':'erledigt')+'">'+(a.status==='erledigt'?'✅':'⬜')+'</div>'
+    +'<div class="z-mit"><div class="z-titel" style="'+(a.status==='erledigt'?'text-decoration:line-through;color:var(--mut)':'')+'">'+(a.meilenstein?'🏁 ':'')+esc(a.titel)+'</div>'
+    +'<div class="z-meta"><span class="pill '+(a.prioritaet==='hoch'?'faellig':'')+'">'+esc(a.prioritaet)+'</span>'+(a.faellig?'<span>fällig '+esc(a.faellig)+'</span>':'')+'</div></div>'
+    +'<div class="z-akt"><button class="btn mini danger" data-dz-act="aufgabeWeg" data-dz-arg="'+a.id+'" data-pid="'+pid+'">✕</button></div></div>').join('');
+  else h+='<div class="leer">Noch keine Aufgaben.</div>';
+  h+='</div><div class="row-form"><input id="na-'+pid+'" placeholder="Neue Aufgabe …" style="flex:1" data-dz-enter="aufgabeAnlegen" data-dz-arg="'+pid+'"><input type="date" id="naf-'+pid+'" style="width:150px"><button class="btn mini" data-dz-act="aufgabeAnlegen" data-dz-arg="'+pid+'">+ Aufgabe</button></div>';
+  return h;
+}
+async function aufgabeAnlegen(pid){ const t=(el('na-'+pid).value||'').trim(); if(!t)return;
+  try{ await api('/api/aufgaben',{method:'POST',body:JSON.stringify({titel:t,projekt_id:pid,faellig:el('naf-'+pid).value})}); }catch(e){ alert(e.message); return; }
+  reloadAufgaben(pid); }
+async function aufgabeToggle(aid,neu){ try{ await api('/api/aufgaben/'+aid,{method:'PATCH',body:JSON.stringify({status:neu})}); }catch(e){} reloadAufgabenByAid(aid); }
+async function aufgabeWeg(aid,pid){ if(!confirm('Aufgabe löschen?'))return; try{ await api('/api/aufgaben/'+aid,{method:'DELETE'}); }catch(e){} reloadAufgaben(pid); }
+async function reloadAufgaben(pid){ const box=el('pa-'+pid); if(!box)return; box.dataset.geladen='1';
+  let det; try{ det=await api('/api/projekte/'+pid); }catch(e){ return; } box.innerHTML=aufgabenHtml(pid,det.aufgaben||[]); }
+function reloadAufgabenByAid(aid){ // finde das offene Projekt-Panel neu
+  document.querySelectorAll('[id^="pa-"]').forEach(box=>{ if(box.dataset.geladen) reloadAufgaben(box.id.slice(3)); }); }
+
+// ============================ GESCHÄFT ============================
+async function viewGeschaeft(v){
+  ++S._tok;   // synchroner Aufbau ⇒ invalidiert nur in-flight-Renders anderer Ansichten
+  v.innerHTML=
+    '<div class="modtool"><h1>'+svgUse('ic-invoice','ic')+' Geschäft</h1><span class="mt-hint">Kennzahlen netzwerkweit · Rechnungen &amp; Kunden nach Bereich</span><span class="spacer"></span>'+scopePill()+'</div>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-grid','kp-ic')+'<span class="dz-panel-titel">Geschäfts-KPIs</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper"><div id="g-kpibar"><span class="mut">lädt …</span></div><div id="g-kpineben" class="dz-kpi-neben"></div><div id="g-mrr" class="dz-mrr"></div></div></section>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-net','kp-ic')+'<span class="dz-panel-titel">Executive-Cockpit</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper"><p class="mut small" style="margin:0 0 9px">Je Domäne die führungsrelevante Kennzahl aus dem Netzwerk — Klick öffnet die Quell-App.</p><div id="g-cockpit" class="dz-cockpit"><span class="mut">lädt …</span></div></div></section>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-invoice','kp-ic')+'<span class="dz-panel-titel">Rechnungen</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper">'
+    +'<div id="g-board" class="dz-board"></div><div class="dz-aging"><div class="ag-kopf">Aging — offene Forderungen nach Fälligkeit</div><div id="g-aging"></div><div id="g-aging-leg" class="dz-aging-leg"></div></div>'
+    +'<div class="row-form"><input id="gr-titel" placeholder="Titel" style="flex:1"><span class="small mut">Betrag €:</span>'+stepper('<input id="gr-betrag" type="number" min="0" step="1" placeholder="0" style="inline-size:8ch">')+'<span class="small mut">Bereich:</span>'+bereichSelect(undefined,'id="gr-bereich"')+'<button class="btn prim" data-dz-act="rechnungAnlegen">+ Entwurf</button></div>'
+    +'<div id="g-rechnungen" style="margin-top:12px"><span class="mut">lädt …</span></div></div></section>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-people','kp-ic')+'<span class="dz-panel-titel">Kunden</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper">'
+    +'<div class="row-form" style="margin:0 0 11px"><input id="gk-name" placeholder="Name" style="flex:1"><input id="gk-firma" placeholder="Firma" style="width:150px"><span class="small mut">Bereich:</span>'+bereichSelect(undefined,'id="gk-bereich"')+'<button class="btn prim" data-dz-act="kundeAnlegen">+ Kunde</button></div>'
+    +'<div id="g-kunden"><span class="mut">lädt …</span></div></div></section>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-net','kp-ic')+'<span class="dz-panel-titel">Netzwerk-Übersicht</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper"><p class="mut small" style="margin:0 0 8px">Aggregator: die Schwester-Apps read-only über den Core — keine Doppelung.</p><div id="g-netzwerk"><span class="mut">lädt …</span></div></div></section>';
+  nachRender(v);
+  ladeKpiLeiste(); ladeCockpit(); ladeRechnungen(); ladeKunden(); ladeNetzwerk();
+}
+const TREND_GUT={umsatz_cent:'up',mrr_cent:'up',offen_cent:'down',ueberfaellig_n:'down',kunden:'up'};
+function fmtDelta(key,delta){ const abs=Math.abs(delta),vz=delta>0?'+':'−'; return (key==='ueberfaellig_n'||key==='kunden')?vz+abs:vz+eur(abs); }
+function trendBadge(t,key){ if(!t||t.delta==null) return '<span class="dz-trend t-flat" title="Noch keine Verlaufs-Historie">· aufbauend</span>';
+  if(t.richtung==='flat'||t.delta===0) return '<span class="dz-trend t-flat">→ 0</span>';
+  const gut=(t.richtung===TREND_GUT[key]),pfeil=t.richtung==='up'?'▲':'▼';
+  return '<span class="dz-trend '+(gut?'t-gut':'t-schlecht')+'" title="seit '+esc(t.basis_datum||'')+'">'+pfeil+' '+esc(fmtDelta(key,t.delta))+'</span>'; }
+async function ladeKpiLeiste(){
+  const bar=el('g-kpibar'),neben=el('g-kpineben'),mz=el('g-mrr'); if(!bar)return; let d;
+  try{ d=await api('/api/kpi/verlauf?tage=30'); }catch(e){ bar.innerHTML='<span class="mut">KPIs nicht abrufbar.</span>'; return; }
+  const ist=d.ist||{},t=d.trend||{},vv=d.verlauf||[],reihe=k=>vv.map(p=>p[k]);
+  const tiles=[{key:'umsatz_cent',l:'Umsatz (bezahlt)',val:eur(ist.umsatz_bezahlt_cent),spark:reihe('umsatz_cent'),cls:''},
+    {key:'mrr_cent',l:'MRR',val:eur(ist.mrr_cent),spark:reihe('mrr_cent'),cls:''},
+    {key:'offen_cent',l:'Offene Forderungen',val:eur(ist.offene_rechnungen_cent)+' · '+ist.offene_rechnungen,warn:ist.offene_rechnungen>0,spark:reihe('offen_cent'),cls:'mg'},
+    {key:'ueberfaellig_n',l:'Überfällig',val:ist.ueberfaellige_rechnungen,warn:ist.ueberfaellige_rechnungen>0,spark:reihe('ueberfaellig_n'),cls:'mg'}];
+  bar.className='dz-kpibar';
+  bar.innerHTML=tiles.map((ti,i)=>'<div class="dz-kpi-t'+(ti.warn?' warn':'')+'"><div class="kt-kopf"><span class="kt-l">'+esc(ti.l)+'</span>'+trendBadge(t[ti.key],ti.key)+'</div><div class="kt-v">'+esc(ti.val)+'</div><div class="kt-spark" id="g-spark-'+i+'"></div></div>').join('');
+  if(window.DzCharts) tiles.forEach((ti,i)=>{const h=el('g-spark-'+i); if(h) h.innerHTML=DzCharts.sparkline(ti.spark,{cls:ti.cls});});
+  neben.innerHTML='<span class="nb">Kunden <b>'+esc(ist.kunden)+'</b></span><span class="nb'+(ist.support_offen>0?' warn':'')+'">Support offen <b>'+esc(ist.support_offen)+'</b></span><span class="nb'+(ist.fristen_faellig>0?' warn':'')+'">Fristen fällig <b>'+esc(ist.fristen_faellig)+'</b></span>';
+  const z=d.mrr_zerlegung||{};
+  if(z.status==='ok') mz.innerHTML='<span class="mz-titel">MRR-Zerlegung (30T)</span><span class="mz neu">neu <b>+'+eur(z.neu_cent)+'</b></span><span class="mz expansion">Expansion <b>+'+eur(z.expansion_cent)+'</b></span><span class="mz contraction">Contraction <b>−'+eur(z.contraction_cent)+'</b></span><span class="mz churn">Churn <b>−'+eur(z.churn_cent)+'</b></span><span class="mz netto">Netto <b>'+(z.netto_cent>=0?'+':'−')+eur(Math.abs(z.netto_cent))+'</b></span>';
+  else mz.innerHTML='<span class="mz-titel">MRR-Zerlegung</span><span class="mz-hint">baut sich auf, sobald Verlaufs-Historie existiert.</span>';
+}
+async function ladeCockpit(){
+  const h=el('g-cockpit'); if(!h)return; let d;
+  try{ d=await api('/api/cockpit'); }catch(e){ h.innerHTML='<span class="mut">Cockpit nicht abrufbar.</span>'; return; }
+  const kacheln=(d.kacheln||[]).map(k=>{ const online=!!(k.online&&k.kpi);
+    const wert=online?esc(String(k.kpi.value))+(k.kpi.unit?(' '+esc(k.kpi.unit)):''):'—';
+    const label=online?'<span class="kk-titel">'+esc(k.titel)+'</span>'+(k.kpi.label?(' · '+esc(k.kpi.label)):''):'<span class="kk-titel">'+esc(k.titel)+'</span> · offline';
+    const inner='<div class="kk-kopf"><span class="kk-dot'+(online?' on':'')+'"></span><span class="kk-brand">'+esc(k.brand)+'</span>'+(online&&k.url?'<span class="kk-link">↗</span>':'')+'</div><div class="kk-wert">'+wert+'</div><div class="kk-label">'+label+'</div>';
+    return (online&&k.url)?'<a class="dz-cockpit-kachel" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+inner+'</a>':'<div class="dz-cockpit-kachel'+(online?'':' offline')+'">'+inner+'</div>'; });
+  h.innerHTML=kacheln.join('')||'<span class="mut">Keine Domänen-Kacheln.</span>';
+}
+async function ladeRechnungen(){
+  const board=el('g-board'),list=el('g-rechnungen'); if(!list)return; let rs;
+  try{ rs=await api(withBereich('/api/rechnungen')); }catch(e){ list.innerHTML='<span class="mut">Rechnungen nicht abrufbar.</span>'; return; }
+  const heute=_heuteISO(); const grp={entwurf:{n:0,c:0},offen:{n:0,c:0},bezahlt:{n:0,c:0},faellig:{n:0,c:0}}; const ag={nf:0,b30:0,b60:0,b90:0,b90p:0};
+  for(const r of rs){ const c=r.brutto_cent||0;
+    if(r.status==='entwurf'){grp.entwurf.n++;grp.entwurf.c+=c;}
+    else if(r.status==='bezahlt'){grp.bezahlt.n++;grp.bezahlt.c+=c;}
+    else if(r.status==='offen'){grp.offen.n++;grp.offen.c+=c; if(r.faellig_am&&r.faellig_am<heute){grp.faellig.n++;grp.faellig.c+=c;}
+      const ref=r.faellig_am||r.datum||''; const age=ref?Math.round((new Date(heute+'T00:00:00')-new Date(ref+'T00:00:00'))/86400000):null;
+      if(age==null||age<=0)ag.nf+=c; else if(age<=30)ag.b30+=c; else if(age<=60)ag.b60+=c; else if(age<=90)ag.b90+=c; else ag.b90p+=c; } }
+  const sp=(cls,n,l,c)=>'<div class="dz-board-sp '+cls+'"><div class="bs-n">'+n+'</div><div class="bs-l"><span class="bs-dot"></span>'+l+'</div><div class="bs-eur">'+eur(c)+'</div></div>';
+  if(board) board.innerHTML=sp('bs-entwurf',grp.entwurf.n,'Entwurf',grp.entwurf.c)+sp('bs-offen',grp.offen.n,'Gestellt / offen',grp.offen.c)+sp('bs-faellig',grp.faellig.n,'Überfällig',grp.faellig.c)+sp('bs-bezahlt',grp.bezahlt.n,'Bezahlt',grp.bezahlt.c);
+  if(window.DzCharts&&el('g-aging')) el('g-aging').innerHTML=DzCharts.segments([{wert:ag.nf,cls:'ag-nf'},{wert:ag.b30,cls:'ag-30'},{wert:ag.b60,cls:'ag-60'},{wert:ag.b90,cls:'ag-90'},{wert:ag.b90p,cls:'ag-90p'}]);
+  if(el('g-aging-leg')) el('g-aging-leg').innerHTML=[['ag-nf','nicht fällig',ag.nf],['ag-30','1–30 T',ag.b30],['ag-60','31–60 T',ag.b60],['ag-90','61–90 T',ag.b90],['ag-90p','90+ T',ag.b90p]].map(([c,l,vv])=>'<span class="lg"><span class="sw '+c+'"></span>'+l+' · '+eur(vv)+'</span>').join('');
+  list.innerHTML=gruppenHtml(rs,rechnungRow,'Noch keine Rechnungen.'); nachRender(list);
+}
+function rechnungRow(r){ const heute=_heuteISO(); const ueber=(r.status==='offen'&&r.faellig_am&&r.faellig_am<heute); const pill=ueber?'faellig':r.status,lbl=ueber?'überfällig':r.status;
+  let act=''; if(r.status==='entwurf')act='<button class="btn mini" data-dz-act="rAktion" data-rid="'+r.id+'" data-aktion="stellen">stellen</button>'; else if(r.status==='offen')act='<button class="btn mini" data-dz-act="rAktion" data-rid="'+r.id+'" data-aktion="bezahlt">bezahlt</button>';
+  return '<div class="zeile"><div class="z-ic">🧾</div><div class="z-mit"><div class="z-titel">'+esc(r.titel||('Rechnung '+(r.nummer||'')))+'</div><div class="z-meta"><span>'+esc(r.nummer||'–')+'</span><span>'+eur(r.brutto_cent)+'</span><span class="pill '+esc(pill)+'">'+esc(lbl)+'</span></div></div><div class="z-akt">'+bereichSelect(r.bereich_id,'data-dz-act="zuordneReload" data-dz-on="change" data-tabelle="rechnungen" data-id="'+r.id+'"')+act+'</div></div>'; }
+async function rechnungAnlegen(){ const titel=(el('gr-titel').value||'').trim(); const betrag=parseFloat(el('gr-betrag').value);
+  if(!betrag||betrag<=0){ alert('Betrag (€) angeben.'); return; }
+  let res; try{ res=await api('/api/rechnungen',{method:'POST',body:JSON.stringify({titel:titel||'Rechnung',positionen:[{beschreibung:titel||'Leistung',menge:1,einzelpreis_cent:Math.round(betrag*100),ust_satz:19}]})}); }catch(e){ alert(e.message); return; }
+  await zuordne('rechnungen',res.id,el('gr-bereich').value); el('gr-titel').value='';el('gr-betrag').value=''; ladeRechnungen(); ladeKpiLeiste(); }
+async function rAktion(id,was){ try{ await api('/api/rechnungen/'+id+'/'+was,{method:'POST'}); }catch(e){ alert(e.message); } ladeRechnungen(); ladeKpiLeiste(); }
+async function ladeKunden(){ const h=el('g-kunden'); if(!h)return; let ks;
+  try{ ks=await api(withBereich('/api/kunden')); }catch(e){ h.innerHTML='<span class="mut">Kunden nicht abrufbar.</span>'; return; }
+  h.innerHTML=gruppenHtml(ks,kundeRow,'Noch keine Kunden.'); nachRender(h); }
+function kundeRow(k){ return '<div class="zeile"><div class="z-ic">👤</div><div class="z-mit"><div class="z-titel">'+esc(k.name)+'</div>'+(k.firma?'<div class="z-meta"><span>'+esc(k.firma)+'</span></div>':'')+'</div><div class="z-akt">'+bereichSelect(k.bereich_id,'data-dz-act="zuordneReload" data-dz-on="change" data-tabelle="kunden" data-id="'+k.id+'"')+'<button class="btn mini danger" data-dz-act="kundeWeg" data-dz-arg="'+k.id+'">✕</button></div></div>'; }
+async function kundeAnlegen(){ const name=(el('gk-name').value||'').trim(); if(!name){ alert('Name angeben.'); return; }
+  let res; try{ res=await api('/api/kunden',{method:'POST',body:JSON.stringify({name,firma:el('gk-firma').value.trim()})}); }catch(e){ alert(e.message); return; }
+  await zuordne('kunden',res.id,el('gk-bereich').value); el('gk-name').value='';el('gk-firma').value=''; ladeKunden(); ladeKpiLeiste(); }
+async function kundeWeg(id){ if(!confirm('Kunde löschen?'))return; try{ await api('/api/kunden/'+id,{method:'DELETE'}); }catch(e){} ladeKunden(); }
+async function ladeNetzwerk(){ const h=el('g-netzwerk'); if(!h)return; let n;
+  try{ n=await api('/api/netzwerk'); }catch(e){ h.innerHTML='<span class="mut">Netzwerk nicht abrufbar.</span>'; return; }
+  if(!n.ok){ h.innerHTML='<span class="mut">Core nicht erreichbar – Übersicht offline.</span>'; return; }
+  h.innerHTML='<div class="mut small" style="margin-bottom:6px">'+n.online+' / '+n.anzahl+' Schwester-Apps online</div><table>'+n.apps.map(a=>'<tr><td>'+esc(a.brand)+'</td><td><span class="pill '+(a.status==='aktiv'?'offen':'entwurf')+'">'+esc(a.status)+'</span></td></tr>').join('')+'</table>'; }
+
+// ============================ STUDIUM ============================
+const BW_ART=[['universitaet','Universität'],['fachhochschule','Fachhochschule'],['ausbildung','Ausbildung'],['dual','Duales Studium'],['promotion','Promotion'],['sonstiges','Sonstiges']];
+const ABSCHLUSS=[['','— Abschluss —'],['bachelor','Bachelor'],['master','Master'],['staatsexamen','Staatsexamen'],['diplom','Diplom'],['ausbildungsberuf','Ausbildungsberuf'],['sonstiges','Sonstiges']];
+const MOD_TYP=[['pflicht','Pflicht'],['wahlpflicht','Wahlpflicht'],['wahl','Wahl']];
+const MOD_BEREICH=[['hauptfach','Hauptfach'],['nebenfach','Nebenfach'],['schluesselqual','Schlüsselqual.'],['thesis','Thesis'],['sonstiges','Sonstiges']];
+const SFRIST_ART=[['anmeldung','Anmeldung'],['abgabe','Abgabe'],['rueckmeldung','Rückmeldung'],['orientierung','Orientierung'],['pruefung','Prüfung'],['sonstiges','Sonstiges']];
+const MOD_STATUS_LBL={offen:'offen',geplant:'geplant',angemeldet:'angemeldet',bestanden:'bestanden',nicht_bestanden:'nicht bestanden',endgueltig:'endgültig nicht bestanden',anerkannt:'anerkannt'};
+const MOD_STATUS_PILL={offen:'entwurf',geplant:'entwurf',angemeldet:'offen',bestanden:'bezahlt',nicht_bestanden:'faellig',endgueltig:'faellig',anerkannt:'bezahlt'};
+let BW_AKTIV=null;
+async function viewStudium(v){
+  const tok=++S._tok;
+  let liste; try{ liste=await api(withBereich('/api/studien')); }catch(e){ if(tok!==S._tok)return; v.innerHTML='<div class="leer">Studien nicht abrufbar.</div>'; return; }
+  if(tok!==S._tok) return;
+  v.innerHTML=
+    '<div class="modtool"><h1>'+svgUse('ic-study','ic')+' Studium</h1><span class="mt-hint">Bildungswege — nach Bereich</span><span class="spacer"></span>'+scopePill()+'</div>'
+    +'<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-study','kp-ic')+'<span class="dz-panel-titel">Bildungswege</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper"><p class="mut small" style="margin:0 0 9px">Hilfsmittel zur Studien-/Ausbildungs-Verwaltung — keine Studien-/Rechtsberatung. Verbindlich ist allein die im Prüfungsamt veröffentlichte Prüfungsordnung. Daten bleiben lokal.</p>'
+    +'<div class="row-form" style="margin:0 0 11px"><span class="spacer"></span><button class="btn prim" data-dz-act="bwForm">+ Bildungsweg</button></div>'
+    +'<div id="bw-form"></div>'
+    +'<div id="st-liste">'+gruppenHtml(liste,bwRow,'Noch kein Bildungsweg — lege oben einen an.')+'</div>'
+    +'<div id="st-detail" style="margin-top:13px"></div></div></section>';
+  nachRender(v);
+}
+function bwRow(b){ return '<div class="zeile" data-dz-act="waehleBw" data-dz-arg="'+b.id+'" style="cursor:pointer"><div class="z-ic">🎓</div><div class="z-mit"><div class="z-titel">'+esc(b.studiengang||b.institution||'Bildungsweg')+'</div><div class="z-meta"><span>'+esc(b.institution||'')+'</span><span>'+esc(b.ects_erreicht)+'/'+esc(b.ects_gesamt||'?')+' ECTS</span><span>'+esc(b.module_n||0)+' Module</span></div></div><div class="z-akt">'+bereichSelect(b.bereich_id,'data-dz-act="zuordneReload" data-dz-on="change" data-tabelle="bildungsweg" data-id="'+b.id+'"')+'<button class="btn mini" data-dz-act="waehleBw" data-dz-arg="'+b.id+'">öffnen →</button></div></div>'; }
+async function waehleBw(id){ BW_AKTIV=id; const host=el('st-detail'); host.innerHTML='<div class="leer">lädt …</div>'; let co,mods,fr;
+  try{ co=await api('/api/studien/'+id+'/cockpit'); mods=await api('/api/studien/'+id+'/module'); fr=await api('/api/studien/'+id+'/fristen?offen=1'); }
+  catch(e){ host.innerHTML='<div class="leer">Bildungsweg nicht abrufbar.</div>'; return; }
+  host.innerHTML='<div class="card acc" style="--acc:#b18cff;--acc-rgb:177,140,255"><div class="card-koerper">'+studienCockpitHtml(co)+studienModulplanHtml(id,mods)+studienFristenHtml(id,fr)+'</div></div>';
+  if(window.DzCharts&&el('st-ects-bar')) el('st-ects-bar').innerHTML=DzCharts.segments([{wert:co.ects.erreicht,cls:'ag-30',label:'erreicht'},{wert:Math.max(0,(co.ects.gesamt||0)-co.ects.erreicht),cls:'ag-nf',label:'offen'}]);
+  el('st-detail').scrollIntoView({behavior:'smooth',block:'nearest'}); nachRender(host);
+}
+function studienCockpitHtml(co){ const e=co.ects,risiko=co.versuch_risiko||[],m=co.module||{};
+  const tiles=[['ECTS',e.erreicht+' / '+(e.gesamt||'?'),e.prozent+'%',false],['Notenschnitt',co.note_schnitt!=null?co.note_schnitt:'—','Ø gewichtet',false],['Fachsemester',co.fachsemester||'—',(co.regelstudienzeit?('Regel '+co.regelstudienzeit):''),!!(co.regelstudienzeit&&co.fachsemester>co.regelstudienzeit)],['Module bestanden',m.bestanden||0,(m.offen||0)+' offen',false]];
+  let h='<div class="dz-kpibar">'+tiles.map(([l,vv,sub,warn])=>'<div class="dz-kpi-t'+(warn?' warn':'')+'"><div class="kt-kopf"><span class="kt-l">'+esc(l)+'</span></div><div class="kt-v">'+esc(String(vv))+'</div><div class="kt-l" style="text-transform:none">'+esc(sub)+'</div></div>').join('')+'</div>';
+  h+='<div style="margin-top:10px"><div class="ag-kopf">ECTS-Fortschritt</div><div id="st-ects-bar"></div>';
+  if(e.je_bereich&&e.je_bereich.length) h+='<div class="dz-aging-leg" style="margin-top:6px">'+e.je_bereich.map(b=>'<span class="lg"><span class="sw ag-30"></span>'+esc(b.bereich)+' · '+esc(b.erreicht)+' ECTS</span>').join('')+'</div>';
+  h+='</div>';
+  if(risiko.length) h+='<div class="dz-mrr" style="margin-top:11px"><span class="mz-titel" style="color:var(--mg)">⚠ Prüfungsversuch-Risiko</span>'+risiko.map(r=>'<span class="mz '+(r.stufe==='endgueltig'?'churn':'contraction')+'"><b>'+esc(r.modul)+'</b> '+(r.stufe==='endgueltig'?'endgültig nicht bestanden':('Versuch '+r.versuch_nr+'/'+r.max+' — letzter!'))+'</span>').join('')+'</div>';
+  return h;
+}
+function studienModulplanHtml(bwId,mods){ let h='<div class="ag-kopf" style="margin:14px 0 6px">Modulplan</div>';
+  if(mods.length){ const grp={}; mods.forEach(m=>{ const k=m.empf_semester||0; (grp[k]=grp[k]||[]).push(m); });
+    for(const k of Object.keys(grp).map(Number).sort((a,b)=>a-b)){
+      h+='<div class="mut" style="font-size:11px;margin:8px 0 3px">'+(k?('Semester '+k):'ohne Semester')+'</div><table><tr><th>Modul</th><th>Typ</th><th>ECTS</th><th>Status</th><th></th></tr>';
+      for(const m of grp[k]){ const pill=MOD_STATUS_PILL[m.status]||'entwurf',lbl=MOD_STATUS_LBL[m.status]||m.status; let act='';
+        if(['offen','geplant','angemeldet','nicht_bestanden'].includes(m.status)) act='<button class="btn mini" title="bestanden" data-dz-act="modulErgebnis" data-dz-arg="'+m.id+'" data-ok="1">✓</button> <button class="btn mini" title="nicht bestanden" data-dz-act="modulErgebnis" data-dz-arg="'+m.id+'" data-ok="0">✗</button> ';
+        act+='<button class="btn mini" title="löschen" data-dz-act="modulWeg" data-dz-arg="'+m.id+'">🗑</button>';
+        h+='<tr><td>'+esc(m.name)+(m.note!=null?(' <span class="mut" style="font-size:10px">Note '+esc(m.note)+'</span>'):'')+(m.versuch_nr?(' <span class="mut" style="font-size:10px">V'+esc(m.versuch_nr)+'</span>'):'')+'</td><td class="mut">'+esc(m.typ)+'</td><td>'+esc(m.ects)+'</td><td><span class="pill '+pill+'">'+esc(lbl)+'</span></td><td style="white-space:nowrap">'+act+'</td></tr>'; }
+      h+='</table>'; }
+  } else h+='<span class="mut">Noch keine Module — füge unten welche hinzu.</span>';
+  h+='<div class="row-form"><input id="nm-name" placeholder="Modulname" style="flex:1"><span class="small mut">ECTS:</span>'+stepper('<input id="nm-ects" type="number" min="0" step="1" placeholder="0" style="inline-size:6ch">')+'<span class="small mut">Sem.:</span>'+stepper('<input id="nm-sem" type="number" min="0" step="1" placeholder="0" style="inline-size:6ch">')+'<span class="dz-field"><select id="nm-typ" class="dz-select">'+_opt(MOD_TYP,'pflicht')+'</select></span><span class="dz-field"><select id="nm-bereich" class="dz-select">'+_opt(MOD_BEREICH,'hauptfach')+'</select></span><button class="btn mini" data-dz-act="modulAnlegen" data-dz-arg="'+bwId+'">+ Modul</button></div>';
+  return h;
+}
+function studienFristenHtml(bwId,fr){ let h='<div class="ag-kopf" style="margin:14px 0 6px">Studien-Fristen</div>'; const heute=_heuteISO();
+  if(fr.length) h+='<table><tr><th>Frist</th><th>Art</th><th>fällig</th><th></th></tr>'+fr.map(f=>{ const ueber=f.faellig_am&&f.faellig_am<=heute; return '<tr><td>'+esc(f.titel)+'</td><td class="mut">'+esc(f.art)+'</td><td>'+(ueber?'<span class="pill faellig">'+esc(f.faellig_am)+'</span>':esc(f.faellig_am||'—'))+'</td><td><button class="btn mini" data-dz-act="studienfristErledigt" data-dz-arg="'+f.id+'">✓</button></td></tr>'; }).join('')+'</table>';
+  else h+='<span class="mut">Keine offenen Studien-Fristen.</span>';
+  h+='<div class="row-form"><input id="nf-titel" placeholder="Frist (z. B. Klausuranmeldung)" style="flex:1"><span class="dz-field"><select id="nf-art" class="dz-select">'+_opt(SFRIST_ART,'anmeldung')+'</select></span><input id="nf-datum" type="date" style="width:150px"><button class="btn mini" data-dz-act="studienfristAnlegen" data-dz-arg="'+bwId+'">+ Frist</button></div>';
+  return h;
+}
+function bwForm(){ const host=el('bw-form');
+  host.innerHTML='<div class="anlege"><div class="an-kopf">Neuer Bildungsweg</div>'
+    +'<div class="row-form"><span class="dz-field"><select id="nbw-art" class="dz-select">'+_opt(BW_ART,'universitaet')+'</select></span><input id="nbw-inst" placeholder="Institution (z. B. Universität Bayreuth)" style="flex:1;min-width:200px"><span class="dz-field"><select id="nbw-abschluss" class="dz-select">'+_opt(ABSCHLUSS,'')+'</select></span></div>'
+    +'<div class="row-form"><input id="nbw-sg" placeholder="Studiengang / Beruf" style="flex:1"><input id="nbw-hf" placeholder="Hauptfach" style="width:150px"><input id="nbw-nf" placeholder="Nebenfach" style="width:150px"></div>'
+    +'<div class="row-form"><input id="nbw-po" placeholder="PO-Jahrgang" style="width:120px"><input id="nbw-sem" placeholder="Start (z. B. WS2024)" style="width:150px"><span class="small mut">Regelstud. (Sem.):</span>'+stepper('<input id="nbw-rsz" type="number" min="0" step="1" placeholder="0" style="inline-size:6ch">')+'<span class="small mut">ECTS ges.:</span>'+stepper('<input id="nbw-ects" type="number" min="0" step="1" placeholder="0" style="inline-size:7ch">')+'<span class="small mut">Versuche:</span>'+stepper('<input id="nbw-mv" type="number" min="1" step="1" value="3" style="inline-size:6ch">')+'</div>'
+    +'<div class="row-form"><input id="nbw-matr" placeholder="Matrikelnr. (optional, sensibel)" style="width:220px"><span class="small mut">Bereich:</span>'+bereichSelect(undefined,'id="nbw-bereich"')+'<button class="btn prim" data-dz-act="bwAnlegen">Anlegen</button><button class="btn mini" data-dz-act="clearHost" data-dz-arg="bw-form">Abbrechen</button></div></div>';
+  nachRender(host);
+}
+async function bwAnlegen(){ const v=id=>(el(id)||{value:''}).value;
+  const body={art:v('nbw-art'),institution:v('nbw-inst').trim(),abschluss:v('nbw-abschluss'),studiengang:v('nbw-sg').trim(),hauptfach:v('nbw-hf').trim(),nebenfach:v('nbw-nf').trim(),po_version:v('nbw-po').trim(),start_semester:v('nbw-sem').trim(),regelstudienzeit:parseInt(v('nbw-rsz'))||0,ects_gesamt:parseInt(v('nbw-ects'))||0,max_versuche:parseInt(v('nbw-mv'))||3,matrikelnr:v('nbw-matr').trim()};
+  if(!body.institution&&!body.studiengang){ alert('Institution oder Studiengang angeben.'); return; }
+  let res; try{ res=await api('/api/studien',{method:'POST',body:JSON.stringify(body)}); }catch(e){ alert(e.message); return; }
+  await zuordne('bildungsweg',res.id,v('nbw-bereich')); el('bw-form').innerHTML=''; viewStudium(el('view')); }
+async function modulAnlegen(bwId){ const name=(el('nm-name').value||'').trim(); if(!name){ alert('Modulname angeben.'); return; }
+  await api('/api/studien/'+bwId+'/module',{method:'POST',body:JSON.stringify({name,ects:parseInt(el('nm-ects').value)||0,empf_semester:parseInt(el('nm-sem').value)||0,typ:el('nm-typ').value,bereich:el('nm-bereich').value})}); waehleBw(bwId); }
+async function modulErgebnis(mid,bestanden){ let note=null;
+  if(bestanden){ const n=prompt('Note (z. B. 1.7) — leer = ohne Note:',''); if(n===null)return; if(n.trim()!=='')note=parseFloat(n.replace(',','.')); }
+  else if(!confirm('Versuch als NICHT bestanden verbuchen?'))return;
+  try{ const r=await api('/api/module/'+mid+'/ergebnis',{method:'POST',body:JSON.stringify({bestanden,note})}); if(r.endgueltig)alert('⚠ Modul endgültig nicht bestanden — Exmatrikulations-Risiko. Bitte Prüfungsamt/Beratung kontaktieren.'); }catch(e){ alert(e.message); }
+  if(BW_AKTIV)waehleBw(BW_AKTIV); }
+async function modulWeg(mid){ if(!confirm('Modul löschen?'))return; await api('/api/module/'+mid,{method:'DELETE'}); if(BW_AKTIV)waehleBw(BW_AKTIV); }
+async function studienfristAnlegen(bwId){ const titel=(el('nf-titel').value||'').trim(); if(!titel){ alert('Frist angeben.'); return; }
+  await api('/api/studien/'+bwId+'/fristen',{method:'POST',body:JSON.stringify({titel,art:el('nf-art').value,faellig_am:el('nf-datum').value})}); waehleBw(bwId); }
+async function studienfristErledigt(fid){ await api('/api/studienfristen/'+fid,{method:'PUT',body:JSON.stringify({erledigt:true})}); if(BW_AKTIV)waehleBw(BW_AKTIV); }
+
+// ============================ FRISTEN ============================
+const DRING=[['ueberfaellig','Überfällig','faellig'],['heute','Heute','offen'],['woche','Diese Woche',''],['monat','Dieser Monat',''],['spaeter','Später','']];
+const QUELLE_IC={projekte:'🗂',geschaeft:'🧾',studium:'🎓',tresor:'📄'};
+const ZIEL_MODUL={projekte:'projekte',geschaeft:'geschaeft',studium:'studium',tresor:'tresor'};
+async function viewFristen(v){
+  const tok=++S._tok;
+  let d; try{ d=await api(withBereich('/api/fristen-cockpit?horizont_tage=90')); }catch(e){ if(tok!==S._tok)return; v.innerHTML='<div class="leer">Fristen-Cockpit nicht abrufbar.</div>'; return; }
+  if(tok!==S._tok) return;
+  const jb=d.je_bereich||{};
+  const jbChips=Object.keys(jb).sort((a,b)=>jb[b]-jb[a]).map(bid=>{ const b=S.bmap[bid]; return '<span class="berchip" style="'+(b?accVars(b):'--acc:var(--mut);--acc-rgb:150,160,175')+';cursor:pointer" data-dz-act="setBereich" data-dz-arg="'+(bid||'')+'"><span class="bc-dot"></span>'+(b?bIcon(b)+' ':'')+esc(bereichName(bid))+' <b style="font-family:Orbitron">'+jb[bid]+'</b></span>'; }).join('');
+  let h='<div class="modtool"><h1>'+svgUse('ic-clock','ic')+' Fristen</h1><span class="mt-hint">Ein Cockpit über alle Module — nach Dringlichkeit</span><span class="spacer"></span>'+scopePill()+'</div>';
+  h+='<section class="card dz-panel" data-dz-collapsible><button class="dz-panel-kopf" type="button">'+svgUse('ic-clock','kp-ic')+'<span class="dz-panel-titel">Fristen-Cockpit</span><span class="dz-chevron" aria-hidden="true"></span></button><div class="dz-panel-koerper">'
+    +'<div class="row-form" style="margin:0 0 11px"><span class="small mut">Neue freistehende Frist:</span><input id="fr-titel" placeholder="Frist" style="flex:1"><input id="fr-datum" type="date" style="width:150px"><span class="small mut">Bereich:</span>'+bereichSelect(undefined,'id="fr-bereich"')+'<button class="btn prim" data-dz-act="fristAnlegen">+ Frist</button></div>';
+  if(jbChips) h+='<div class="bk-sub" style="margin-bottom:12px">'+jbChips+'</div>';
+  if(!d.gesamt) h+='<div class="leer">Keine anstehenden Fristen im Horizont (90 Tage). 🎉</div>';
+  else for(const [key,label,pillcls] of DRING){ const items=d.gruppen[key]||[]; if(!items.length)continue;
+    h+='<div class="ag-kopf" style="margin:13px 0 7px;font-size:12px">'+esc(label)+' <span class="pill '+pillcls+'" style="margin-left:6px">'+items.length+'</span></div><div class="liste">'
+      +items.map(fristRow).join('')+'</div>'; }
+  h+='</div></section>';
+  v.innerHTML=h; nachRender(v);
+}
+function fristRow(f){ const b=S.bmap[f.bereich_id]; const vars=b?accVars(b):'--acc:var(--mut);--acc-rgb:150,160,175';
+  const modul=ZIEL_MODUL[f.quelle];
+  return '<div class="zeile" style="'+vars+'"><div class="z-ic" style="background:rgba(var(--acc-rgb),.1);border-color:rgba(var(--acc-rgb),.4)">'+(QUELLE_IC[f.quelle]||'⏰')+'</div>'
+    +'<div class="z-mit"><div class="z-titel">'+esc(f.titel)+'</div><div class="z-meta"><span style="color:var(--acc)">'+esc(bereichName(f.bereich_id))+'</span><span>'+esc(f.art)+'</span><span>'+esc(f.quelle)+'</span></div></div>'
+    +'<div class="z-akt"><span class="pill faellig">'+esc(f.faellig)+'</span>'+(modul?'<button class="btn mini" data-dz-act="setModul" data-dz-arg="'+modul+'">→</button>':'')+'</div></div>'; }
+async function fristAnlegen(){ const titel=(el('fr-titel').value||'').trim(); if(!titel){ alert('Frist angeben.'); return; }
+  let res; try{ res=await api('/api/fristen',{method:'POST',body:JSON.stringify({titel,faellig_am:el('fr-datum').value})}); }catch(e){ alert(e.message); return; }
+  await zuordne('fristen',res.id,el('fr-bereich').value); el('fr-titel').value='';el('fr-datum').value=''; viewFristen(el('view')); }
+
+// ============================ Reload-Helfer ============================
+async function zuordneReload(tabelle,id,bid){ await zuordne(tabelle,id,bid); await ladeBereiche();
+  // sanftes Reload des aktuellen Moduls
+  ({tresor:()=>viewTresor(el('view')),projekte:()=>viewProjekte(el('view')),geschaeft:()=>{ladeRechnungen();ladeKunden();},studium:()=>viewStudium(el('view'))}[S.modul]||(()=>renderView()))(); }
+
+// ============================ Mini-Dizzi ============================
+async function dizziFrage(){ const q=(el('dz-frage').value||'').trim(); if(!q)return; const a=el('dz-antwort'); a.textContent='denkt …';
+  try{ const out=await api('/api/ki/frage',{method:'POST',body:JSON.stringify({frage:q})}); a.textContent=out.antwort||'(keine Antwort)'; }
+  catch(e){ a.textContent='KI gerade nicht erreichbar.'; } }
+function toggleDizzi(){ const b=el('dizziBubble'); b.hidden=!b.hidden; if(!b.hidden)el('dz-frage').focus(); }
+
+// ============================ Konto-/Einstellungs-Fenster (Vertrags-Norm docs/19 §2b) ============================
+const _CATLBL={konto:'Konto & Identität',sicherheit:'Sicherheit',ki:'KI',vernetzung:'Vernetzung & Dienste',darstellung:'Darstellung & Sprache',daten:'Daten & Backup'};
+function applyTheme(d,f){ const h=document.documentElement;
+  if(d){h.dataset.design=d; try{localStorage.setItem('admin_design',d)}catch(e){}}
+  if(f){h.dataset.farbe=f; try{localStorage.setItem('admin_farbe',f)}catch(e){}}
+  const ds=el('designSel'),fs=el('farbeSel'); if(ds&&d)ds.value=d; if(fs&&f)fs.value=f; }
+function themeWahl(){ const d=el('designSel').value,f=el('farbeSel').value; applyTheme(d,f); saveSetting('design_vorlage',d); saveSetting('farb_schema',f); }
+function fuelleSelect(id,opt){ const e=el(id); if(e&&!e.options.length) e.innerHTML=opt.map(([v,l])=>'<option value="'+v+'">'+esc(l)+'</option>').join(''); }
+function oeffneKm(){ el('kmWrap').hidden=false; fuelleSelect('designSel',DESIGN_OPT); fuelleSelect('farbeSel',FARBSCH_OPT); ladeAuth(); loadKonto(); renderKiAktivitaet(); }
+function schliesseKm(){ el('kmWrap').hidden=true; }
+async function ladeAuth(){
+  try{ S.auth=await api('/auth/me'); }catch(e){ S.auth={angemeldet:false,level:'lokal'}; }
+  const me=S.auth||{},pill=el('authpill');
+  if(pill){ if(me.angemeldet){ pill.className='pill on'; pill.textContent='✓ '+(me.level||'lokal'); pill.title='Angemeldet via Dizzi-ID — Klick = Einstellungen & Konto'; }
+    else{ pill.className='pill'; pill.textContent='Anmelden (Dizzi-ID)'; pill.title='Einmal anmelden ⇒ überall angemeldet (SSO) — Klick = Konto-Fenster'; } }
+  renderKontoAuth(me);
+}
+function renderKontoAuth(me){ const host=el('konto-auth'); if(!host||!me)return;
+  if(me.angemeldet){ const hoch=me.level==='hochsicher';
+    host.innerHTML='<span class="pill on">✓ Angemeldet</span><span class="small">via <b>'+esc(me.via||'?')+'</b> · Stufe <b>'+esc(me.level)+'</b>'+(me.amr&&me.amr.length?' ('+esc(me.amr.join(', '))+')':'')+'</span><span class="spacer"></span>'+(hoch?'<span class="pill on">✓ Echtgeld-Stufe</span>':'<a class="btn mini" href="/auth/login?level=hochsicher" title="Per MFA-Code auf die Stufe hochsicher hochstufen.">Hochstufen (MFA)</a>')+'<button class="btn mini" data-dz-act="logoutDizzi">Abmelden</button>';
+  } else host.innerHTML='<span class="pill">Nicht angemeldet</span><span class="small mut">Einmal über Dizzi-ID anmelden ⇒ in allen Dizz-Apps angemeldet (SSO).</span><span class="spacer"></span><a class="btn mini" href="/auth/login">Mit Dizzi-ID anmelden</a>';
+}
+async function logoutDizzi(){ try{ await fetch('/auth/logout',{method:'POST',headers:{'Accept':'application/json'}}); }catch(e){} ladeAuth(); }
+async function loadKonto(){ let schema,vals,vault;
+  try{ schema=await api('/api/settings/schema'); vals=await api('/api/settings'); }catch(e){ return; }
+  try{ vault=await api('/api/vault'); }catch(e){ vault=[]; }
+  applyTheme(vals.design_vorlage||vals.x_design_vorlage, vals.farb_schema||vals.x_farb_schema);
+  const accHost=el('konto-acc');
+  if(accHost){ const lvl=(S.auth&&S.auth.level)||'lokal',via=(S.auth&&S.auth.via)||'standalone';
+    accHost.innerHTML='Profil <b>'+esc(vals.anzeigename||'—')+'</b> · Identität '+esc((S.auth&&S.auth.sub)||'dizzi')+' · Stufe <b>'+esc(lvl)+'</b> ('+esc(via)+') · Token-Tresor: '+((vault&&vault.length)||0)+' Eintrag(e) · Vertrag v'+(schema.version!=null?schema.version:'?'); }
+  renderKontoAktionen(); renderDienste(vault);
+  const host=el('konto-settings'); if(!host)return;
+  let h='<div class="mut small" style="margin:2px 0 6px">6 Kategorien — Änderungen werden sofort gespeichert.</div>';
+  for(const cat of Object.keys(schema.kategorien||{})){ const defs=schema.kategorien[cat]; if(!defs||!defs.length)continue; let rows='';
+    for(const d of defs){ if(d.key==='design_vorlage'||d.key==='farb_schema')continue; const val=(d.key in vals)?vals[d.key]:d.default;
+      rows+='<div class="kmrow"><label title="'+esc(d.description||'')+'">'+esc(d.label||d.key)+'</label>'+_settingInput(d,val)+'</div>'; }
+    if(!rows)continue; h+='<div class="kmcat"><div class="kmcath">'+esc(_CATLBL[cat]||cat)+'</div>'+rows+'</div>'; }
+  host.innerHTML=h; if(window.DzControls)DzControls.initControls(host);
+}
+async function renderKiAktivitaet(){ const host=el('konto-ki'); if(!host)return; let a;
+  try{ a=await api('/api/actions'); }catch(e){ host.textContent='KI-Aktivität nicht abrufbar.'; return; } let h='';
+  if(a.katalog&&a.katalog.length) h+='<div class="mut small" style="margin-bottom:4px">Registrierte Aktionen: '+a.katalog.map(k=>'<b>'+esc(k.name)+'</b> (Stufe '+esc(k.level)+')').join(' · ')+'</div>';
+  else h+='<div class="mut small">Keine ausführbaren KI-Aktionen registriert — reine Lese-/Vorschlags-KI.</div>';
+  if(a.liste&&a.liste.length) h+=a.liste.slice(0,8).map(x=>'<div class="kmdienst"><b>'+esc(x.name)+'</b><span class="mut small">'+esc(x.status||'')+' · Quelle: '+esc(x.source||'?')+'</span></div>').join('');
+  else h+='<div class="mut small" style="margin-top:4px">Keine offenen KI-Vorschläge.</div>'; host.innerHTML=h;
+}
+function renderDienste(vault){ const host=el('konto-dienste'); if(!host)return;
+  if(!vault||!vault.length){ host.innerHTML='<span class="mut small">Keine verbundenen Dienste — Tokens/Keys landen hier (verschlüsselter Tresor).</span>'; return; }
+  host.innerHTML=vault.map(n=>'<div class="kmdienst"><b>'+esc(n)+'</b><span class="mut small">im Tresor (verschlüsselt)</span><span class="spacer"></span><button class="btn mini" data-dz-act="dienstTrennen" data-dz-arg="'+esc(n).replace(/\x27/g,'')+'">Trennen</button></div>').join('');
+}
+function renderKontoAktionen(){ const host=el('konto-aktionen'); if(!host)return;
+  host.innerHTML='<a class="btn mini" href="http://localhost:8200/id/geraete" target="_blank" rel="noopener">Sitzungen &amp; Geräte</a><button class="btn mini" data-dz-act="kontoExport">Daten-Export (JSON)</button><button class="btn mini danger" data-dz-act="kontoLoeschen">Daten löschen</button><span class="mut small">Export/Löschen = Re-Auth-Pflicht.</span>';
+}
+function _settingInput(d,v){ const id='set_'+d.key;
+  if(d.type==='bool') return '<label class="dz-check"><input type="checkbox" id="'+id+'" '+(v?'checked':'')+' data-dz-act="saveSettingBool" data-dz-on="change" data-key="'+esc(d.key)+'"></label>';
+  if(d.type==='choice'){ const o=(d.choices||[]).map(c=>'<option '+(String(c)===String(v)?'selected':'')+'>'+esc(c)+'</option>').join(''); return '<span class="dz-field"><select class="dz-select" id="'+id+'" data-dz-act="saveSettingVal" data-dz-on="change" data-key="'+esc(d.key)+'">'+o+'</select></span>'; }
+  if(d.type==='int'||d.type==='float'){ const g=(d.min!=null?' min="'+esc(d.min)+'"':'')+(d.max!=null?' max="'+esc(d.max)+'"':'')+(d.step!=null?' step="'+esc(d.step)+'"':'');
+    return '<span class="dz-stepper"><button type="button" data-dz-step="-1" aria-label="weniger">▾</button><input type="number" id="'+id+'" value="'+esc(v)+'"'+g+' data-dz-act="saveSettingNum" data-dz-on="change" data-key="'+esc(d.key)+'" data-conv="'+d.type+'"><button type="button" data-dz-step="1" aria-label="mehr">▴</button></span>'; }
+  return '<input type="text" id="'+id+'" value="'+esc(v)+'" style="width:180px" data-dz-act="saveSettingVal" data-dz-on="change" data-key="'+esc(d.key)+'">';
+}
+async function saveSetting(key,value){ try{ await api('/api/settings',{method:'PUT',body:JSON.stringify({key,value})}); }catch(e){ alert('Speichern fehlgeschlagen: '+key); } }
+async function dienstTrennen(name){ if(!confirm('Dienst „'+name+'" trennen?'))return; try{ await api('/api/vault/'+encodeURIComponent(name),{method:'DELETE'}); }catch(e){} loadKonto(); }
+async function kontoExport(){ let r; try{ r=await fetch('/api/account/export',{method:'POST'}); }catch(e){ alert('Export fehlgeschlagen'); return; } if(r.status===403){ alert('Frische Anmeldung nötig'); location.href='/auth/login'; return; } if(!r.ok){ alert('Export HTTP '+r.status); return; } const b=await r.blob(),a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='dizz-admin-export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); }
+async function kontoLoeschen(){ if(!confirm('ALLE Verwaltungsdaten löschen?'))return; if(!confirm('Sicher? Soft-Delete, auditiert.'))return; let r; try{ r=await fetch('/api/account/loeschen',{method:'POST'}); }catch(e){ return; } if(r.status===403){ alert('Frische Anmeldung nötig'); location.href='/auth/login'; return; } location.reload(); }
+
+// ============================ Lockup aus Manifest (K2.3 §5) ============================
+async function ladeLockup(){ try{ const m=await api('/api/manifest'); if(m&&m.brand){ el('brandName').textContent=m.brand; document.title=m.brand+' — '+(m.name||''); } }catch(e){} }
+
+// ============================ Init ============================
+el('kmZu').onclick=schliesseKm;
+el('dizziZu').onclick=()=>{ el('dizziBubble').hidden=true; };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ schliesseKm(); el('dizziBubble').hidden=true; } });
+document.addEventListener('click',e=>{ if(e.target&&e.target.id==='kmWrap')schliesseKm(); });
+
+// CSP voll-strikt (docs/37): inline onclick=/onchange= sind verboten ⇒ Event-Delegation
+// über das Kit (DzControls/DzActions, data-dz-act). Mehr-Argument-/this-basierte Handler
+// werden hier als benannte Aktionen registriert (lesen data-* vom Element). Einfache
+// Handler nutzen direkt window[fn] über data-dz-act.
+function setupAktionen(){
+  if(!window.DzControls||!DzControls.registerAction) return;
+  const RA=DzControls.registerAction;
+  RA('setBereich',(arg)=>setBereich(arg===undefined?null:arg));           // kein Arg ⇒ „Alle" (null)
+  RA('clearHost',(arg)=>{ const h=el(arg); if(h)h.innerHTML=''; });        // Abbrechen-Buttons (Form leeren)
+  RA('bereichNeuStart',()=>{ setModul('uebersicht'); neuerBereichForm(); });
+  RA('konnektorFormClose',()=>{ const h=el('a5-konn-form'); if(h){ h.innerHTML=''; h._open=false; } });
+  RA('zuordneReload',(arg,e)=>zuordneReload(e.dataset.tabelle,e.dataset.id,e.value));
+  RA('uploadGewaehlt',(arg,e)=>uploadGewaehlt(e));
+  RA('saveSettingBool',(arg,e)=>saveSetting(e.dataset.key,e.checked));
+  RA('saveSettingVal',(arg,e)=>saveSetting(e.dataset.key,e.value));
+  RA('saveSettingNum',(arg,e)=>saveSetting(e.dataset.key, e.dataset.conv==='float'?parseFloat(e.value):parseInt(e.value)));
+  RA('rAktion',(arg,e)=>rAktion(e.dataset.rid,e.dataset.aktion));
+  RA('aufgabeToggle',(arg,e)=>aufgabeToggle(arg,e.dataset.status));
+  RA('aufgabeWeg',(arg,e)=>aufgabeWeg(arg,e.dataset.pid));
+  RA('modulErgebnis',(arg,e)=>modulErgebnis(arg,e.dataset.ok==='1'));
+  // Typ-Picker bei der Bereichs-Anlage (docs/49): Auswahl merken + Karten-Highlight (ohne Re-Render,
+  // damit der getippte Name erhalten bleibt).
+  RA('bereichTypWahl',(arg)=>{ S._neuTyp=arg;
+    document.querySelectorAll('#bereich-form .typ-card').forEach(c=>c.classList.toggle('on', c.getAttribute('data-dz-arg')===arg)); });
+}
+// Enter-zum-Absenden: der Kit-Dispatcher bindet nur click+change ⇒ keydown hier delegieren
+// (data-dz-enter="fn" [+ data-dz-arg]); CSP-safe (im Nonce-Skript, kein inline onkeydown).
+document.addEventListener('keydown',function(ev){
+  if(ev.key!=='Enter') return;
+  const e=ev.target&&ev.target.closest?ev.target.closest('[data-dz-enter]'):null; if(!e) return;
+  const fn=window[e.getAttribute('data-dz-enter')]; if(typeof fn!=='function') return;
+  ev.preventDefault(); fn(e.getAttribute('data-dz-arg')||undefined,e,ev);
+});
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+  setupAktionen();
+  // gespeicherten Zustand wiederherstellen
+  try{ const m=localStorage.getItem('admin_modul'); if(m)S.modul=m; }catch(e){}
+  try{ const b=localStorage.getItem('admin_bereich'); if(b!=null)S.bereich=(b===''?null:b); }catch(e){}
+  ladeLockup(); ladeAuth();
+  try{ S.typen=(await api('/api/bereich-typen')).typen||[]; }catch(e){ S.typen=[]; }  // Typ-Katalog (docs/49)
+  renderModulbar();
+  await ladeBereiche();
+  renderView();
+  if(window.DizzFloats){
+    DizzFloats.initFloat('floatAcct',{ regKey:'floatAcct', onTap:oeffneKm, paused:()=>!el('kmWrap').hidden, panelSelector:'main .card' });
+    DizzFloats.initFloat('floatDizzi',{ regKey:'floatDizzi', onTap:toggleDizzi, paused:()=>!el('dizziBubble').hidden, panelSelector:'main .card' });
+  }
+});
+</script>
+</body>
+</html>

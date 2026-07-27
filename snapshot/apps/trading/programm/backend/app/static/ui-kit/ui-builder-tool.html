@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dizz UI Builder Tool</title>
+<style>html,body{margin:0;background:#07080d}</style>
+</head>
+<body>
+<div class="pbroot" id="pbroot">
+<style>
+.pbroot{--bg:#0b0d13;--bgd:#07080d;--panel:#161b25;--panel2:#1e2430;--fg:#eaeefb;--mut:#93a0b8;--line:rgba(150,160,190,.18);--cy:#2fe7ff;--mg:#ff3df0;--cyr:47,231,255;--mgr:255,61,240;--r:10px;
+  background:var(--bg);color:var(--fg);font-family:"Chakra Petch","Segoe UI",system-ui,sans-serif;font-size:13px;line-height:1.4;padding:12px;border-radius:14px;border:1px solid var(--line);box-sizing:border-box;position:relative}
+.pbroot *{box-sizing:border-box}
+.pbtop{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.pbtop .ttl{font-weight:500;letter-spacing:.04em;color:transparent;background:linear-gradient(180deg,#f2f5fc,#aab3c8 55%,#dde2ee);-webkit-background-clip:text;background-clip:text;margin-right:4px}
+.pbroot input,.pbroot select,.pbroot textarea{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.pbroot input:focus,.pbroot textarea:focus,.pbroot select:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 2px rgba(var(--cyr),.25)}
+.pbroot .app{flex:1;min-width:160px}
+.pbbtn{font:inherit;color:var(--cy);background:rgba(var(--cyr),.08);border:1px solid rgba(var(--cyr),.35);border-radius:9px;padding:5px 11px;cursor:pointer}
+.pbbtn:hover{border-color:var(--cy);box-shadow:0 0 12px -3px rgba(var(--cyr),.6)}
+.pbbtn.mg{color:var(--mg);background:rgba(var(--mgr),.10);border-color:rgba(var(--mgr),.45)}
+.pbbtn.mg:hover{border-color:var(--mg);box-shadow:0 0 12px -3px rgba(var(--mgr),.6)}
+.pbpal{background:var(--bgd);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:10px}
+.pbcat{margin:4px 0}
+.pbcat>span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:6px 0 4px}
+.pbchip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:12px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 9px;margin:0 5px 5px 0;cursor:pointer}
+.pbchip:hover{border-color:var(--cy);color:var(--cy)}
+.pbchip.sd{border-color:rgba(var(--mgr),.4)}
+.pbchip.sd:hover{border-color:var(--mg);color:var(--mg)}
+.pbhint{font-size:11px;color:var(--mut);margin:0 2px 8px}
+.pbcanvas{position:relative;border:1px solid var(--line);border-radius:12px;background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 40px,
+  linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/calc(100%/12) 100%,var(--bgd);
+  min-height:360px;overflow:hidden}
+.pbpanel{position:absolute;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 32px -14px rgba(0,0,0,.85);overflow:hidden}
+.pbpanel.act{border-color:rgba(var(--cyr),.7);box-shadow:0 0 0 1px rgba(var(--cyr),.45),0 14px 34px -12px rgba(0,0,0,.8)}
+.pbpanel::before{content:"";position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--mg),var(--cy));box-shadow:0 0 10px rgba(var(--mgr),.5)}
+.phead{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;cursor:move;user-select:none;background:rgba(255,255,255,.02);border-bottom:1px solid var(--line)}
+.phead .cv{cursor:pointer;color:var(--cy);font-size:11px;width:16px;text-align:center}
+.phead .pt{flex:1;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phead .pt[contenteditable]{cursor:text;outline:none}
+.phead .pt[contenteditable]:focus{color:var(--cy)}
+.phead .wd{font-size:10px;color:var(--mut);padding:1px 5px;border:1px solid var(--line);border-radius:6px}
+.phead .xx{cursor:pointer;color:var(--mut);font-size:14px;width:18px;text-align:center}
+.phead .xx:hover{color:var(--mg)}
+.pbody{padding:7px 8px 10px;display:flex;flex-wrap:wrap;align-items:flex-start;gap:2px}
+.pbel{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;margin:3px 5px 3px 0;padding:4px 7px;background:var(--bg);max-width:100%;vertical-align:top;cursor:pointer}
+.pbel:hover{border-color:rgba(var(--cyr),.6)}
+.pbel .pvw{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fg)}
+.pbel .gp{cursor:grab;color:var(--mut);letter-spacing:-2px;font-size:12px;opacity:.45}
+.pbel:hover .gp{opacity:.8}
+.pbel .xe{cursor:pointer;color:var(--mut);font-size:12px;opacity:0}
+.pbel:hover .xe{opacity:.65}
+.pbel .xe:hover{color:var(--mg);opacity:1}
+.pbel .dsc{font-size:10px;color:var(--mut);font-style:italic;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbel.cont{display:block;width:100%;padding:6px 8px;cursor:default}
+.pbel.cont .conthead{display:flex;align-items:center;gap:7px}
+.pbel.cont.activecont{border-color:var(--mg);box-shadow:0 0 0 1px rgba(var(--mgr),.4)}
+.contadd{font-size:10px;color:var(--mg);border:1px dashed rgba(var(--mgr),.5);border-radius:5px;padding:1px 6px;cursor:pointer;margin-left:auto}
+.contadd:hover{background:rgba(var(--mgr),.12)}
+.pbbackdrop{position:absolute;inset:0;background:rgba(3,4,8,.5);z-index:40;border-radius:14px}
+.pbmodal{position:absolute;left:50%;top:26px;transform:translateX(-50%);width:330px;max-width:92%;max-height:84%;overflow:auto;z-index:41;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid rgba(var(--cyr),.45);border-radius:12px;box-shadow:0 22px 54px -16px rgba(0,0,0,.9)}
+.pbmhead{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel2)}
+.pbmhead .pbmt{flex:1;font-weight:500}
+.pbmhead .pbmx{cursor:pointer;color:var(--mut);font-size:16px}
+.pbmhead .pbmx:hover{color:var(--mg)}
+.pbmprev{padding:8px 12px;border-bottom:1px dashed var(--line);min-height:26px}
+.pbmhelp{padding:7px 12px;font-size:11px;color:var(--mut);line-height:1.5;border-bottom:1px dashed var(--line)}
+.pbmbody{padding:2px 12px 12px}
+.pbmbody label{display:block;font-size:11px;color:var(--mut);margin:8px 0 3px}
+.pbmbody input,.pbmbody select,.pbmbody textarea{width:100%}
+.pbmbody textarea{min-height:64px;line-height:1.5;resize:vertical}
+.pbmbody .rw{display:flex;gap:8px}.pbmbody .rw>div{flex:1}
+.pbtip{position:absolute;z-index:50;width:244px;background:var(--panel2);border:1px solid rgba(var(--cyr),.45);border-radius:10px;box-shadow:0 16px 38px -12px rgba(0,0,0,.85);padding:9px 11px;pointer-events:none;display:none}
+.pbtip .tname{font-weight:500;margin-bottom:4px}
+.pbtip .tprev{padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:var(--bg);margin-bottom:6px;min-height:22px;overflow:hidden}
+.pbtip .twas{font-size:11px;color:var(--fg);line-height:1.5}
+.pbtip .tpar{font-size:11px;color:var(--mut);line-height:1.5;margin-top:5px}
+.pbtip .tframe{border:1px solid var(--line);border-radius:7px;background:var(--bg);margin-bottom:7px;overflow:hidden}
+.pbtip .tfhead{font-size:9px;color:var(--mut);padding:2px 7px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.pbtip .tfbody{padding:7px}
+.pbel{overflow:visible}
+.eresize{position:absolute;right:-3px;bottom:-3px;width:13px;height:13px;cursor:nwse-resize;opacity:0;color:var(--cy);z-index:3}
+.pbel:hover .eresize{opacity:.7}
+.eresize::after{content:"⤡";position:absolute;right:0;bottom:-4px;font-size:12px}
+.pbpanel.kopfzone{border-color:rgba(var(--mgr),.55)}
+.pbpanel.kopfzone::before{background:var(--mg)}
+.zbadge{font-size:9px;color:var(--mg);border:1px solid rgba(var(--mgr),.5);border-radius:5px;padding:0 5px;margin-right:4px;white-space:nowrap}
+.pbpanel.kopfzone{background:transparent;border:1px dashed rgba(var(--mgr),.3);box-shadow:none}
+.pbpanel.kopfzone::before{display:none}
+.pbpanel.kopfzone.act{border-color:rgba(var(--mgr),.7)}
+.khdr{padding:9px 14px;display:block}
+.khdr .pbel{display:block;width:100%;border:1px solid transparent;background:transparent;padding:6px 22px 6px 4px;margin:2px 0;border-radius:8px}
+.khdr .pbel:hover{background:rgba(255,255,255,.03)}
+.khdr .pbel .gp,.khdr .pbel .eresize{display:none}
+.khdr .pbel .pvw{white-space:normal;overflow:visible;width:100%;display:block}
+.khdr .pbel .xe{position:absolute;right:5px;top:6px}
+.addhint{font:inherit;font-size:11px;color:var(--mg);background:rgba(var(--mgr),.08);border:1px dashed rgba(var(--mgr),.45);border-radius:7px;padding:4px 10px;cursor:pointer}
+.addhint:hover{background:rgba(var(--mgr),.16)}
+.pbadd{width:384px}
+.pbabody{padding:6px 12px 4px;display:flex;flex-direction:column;gap:6px}
+.addopt{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:7px 9px;cursor:pointer}
+.addopt:hover{border-color:var(--cy);box-shadow:0 0 11px -3px rgba(var(--cyr),.55)}
+.addopt .aoprev{flex:0 0 auto;min-width:96px;max-width:150px;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:4px 6px}
+.addopt .aotx{display:flex;flex-direction:column;min-width:0}
+.addopt .aon{font-weight:500}
+.addopt .aod{font-size:11px;color:var(--mut);line-height:1.4}
+.addopt.mini{padding:4px 8px;gap:6px}
+.addopt.mini .aoprev{min-width:60px;max-width:120px;padding:2px 5px}
+.aocat{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:9px 2px 2px}
+.addopt.glow{border-color:rgba(var(--mgr),.7);box-shadow:0 0 13px -2px rgba(var(--mgr),.6)}
+.sugbadge{font-size:9px;color:var(--mg);border:1px solid rgba(var(--mgr),.5);border-radius:5px;padding:0 5px;margin-left:5px;white-space:nowrap}
+.pbody{display:block}
+.pbpanel{border-style:dashed}
+.pgrid{position:relative;width:100%;border-radius:8px;min-height:60px}
+.pgrid.gridon{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:100% 26px,calc(100%/12) 100%}
+.gel{position:absolute;box-sizing:border-box;border:1px dashed var(--line);border-radius:7px;padding:4px 8px;overflow:hidden;cursor:grab;display:flex;align-items:center;gap:6px;background:transparent}
+.gel:hover{border-color:rgba(var(--cyr),.6)}
+.gel.sel{border-color:var(--cy);border-style:solid;box-shadow:0 0 0 1px rgba(var(--cyr),.4)}
+.gel .gpv{flex:1;min-width:0;overflow:hidden}
+.gel .gpv>*{max-width:100%}
+.gel .xe{position:absolute;right:3px;top:2px;cursor:pointer;color:var(--mut);font-size:12px;opacity:0;background:var(--panel);border-radius:4px;line-height:1.1;padding:0 3px}
+.gel:hover .xe{opacity:.85}
+.gel .xe:hover{color:var(--mg);opacity:1}
+.gel .eresize{position:absolute;right:-2px;bottom:-3px;width:14px;height:14px;cursor:nwse-resize;opacity:0;color:var(--cy)}
+.gel:hover .eresize{opacity:.75}
+.gel .eresize::after{content:"⤡";position:absolute;right:0;bottom:-3px;font-size:12px}
+.gel .gdsc{font-size:10px;color:var(--mut);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 0 auto}
+.gel .gdsc.below{position:absolute;left:8px;right:8px;bottom:3px;white-space:normal;flex:none}
+.pbtip{width:288px}
+.pbtip .tfbody{padding:11px;min-height:44px}
+.gel{align-items:stretch}
+.gel .gpv{display:flex;align-items:center;height:100%;width:100%}
+.gel .gpv>*{max-width:100%}
+.gel .gpv svg{width:100%;height:100%;max-height:100%}
+.phead .pe-add{cursor:pointer;color:var(--cy);font-size:14px;width:18px;text-align:center;opacity:.7}
+.phead .pe-add:hover{opacity:1;text-shadow:0 0 8px rgba(var(--cyr),.7)}
+.pbtip{width:322px}
+.pbtip .twas{font-size:12px}
+.pbtip .tname{font-size:13px}
+.gact{color:var(--mg);font-size:12px;flex:0 0 auto}
+.pbtip{width:362px}
+.pbtip .tpanelmock{border:1px dashed var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel2),var(--panel));margin:5px 0 9px;overflow:hidden}
+.pbtip .tpm-head{font-size:10px;color:var(--mut);padding:5px 9px;border-bottom:1px dashed var(--line);background:rgba(255,255,255,.02)}
+.pbtip .tpm-body{padding:13px;min-height:42px;display:flex;align-items:center}
+.pbtip .tpm-body>*{max-width:100%}
+.pbtip .th-row{font-size:11.5px;color:var(--fg);line-height:1.55;margin-top:6px}
+.pbtip .th-row b{color:var(--cy);font-weight:500}
+.pbtip .th-row.tlink b{color:var(--mg)}
+.pbel:not(.cont){border-color:transparent;background:transparent}
+.pbel:not(.cont):hover{border-color:rgba(var(--cyr),.55);background:var(--bg)}
+.pbel.cont{border:1px dashed var(--line)}
+.pbel.cont:hover{border-color:rgba(var(--mgr),.5)}
+.presize{position:absolute;right:0;bottom:0;width:16px;height:16px;cursor:nwse-resize;color:var(--mut)}
+.presize::after{content:"⤡";position:absolute;right:1px;bottom:-3px;font-size:13px}
+.pvbtn{display:inline-block;padding:1px 9px;border-radius:7px;font-size:12px;background:rgba(var(--cyr),.12);border:1px solid rgba(var(--cyr),.4);color:var(--cy)}
+.pvbadge{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;background:rgba(var(--cyr),.14);color:var(--cy)}
+.pvbar{display:inline-block;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--cy),var(--mg))}
+.pvchip{display:inline-flex;gap:4px;align-items:center;padding:1px 8px;border-radius:9px;font-size:11px;background:rgba(var(--mgr),.12);border:1px solid rgba(var(--mgr),.4);color:var(--mg)}
+.pvfld{display:inline-block;height:18px;border:1px solid var(--line);border-radius:6px;background:var(--panel);vertical-align:middle}
+/* ===== Maßstabsgetreuer Übernahme-Modus (1:1 zur echten Seite) ===== */
+.pbcanvas.maszstab{background:var(--bgd)}
+.pagewrap{position:relative;width:100%}
+.kopfflow{position:relative;width:100%;margin-bottom:6px}
+.pbpanel.scaled{background:rgba(255,255,255,.018);border:1px dashed var(--line);box-shadow:none;border-radius:7px;overflow:visible}
+.pbpanel.scaled::before{display:none}
+.pbpanel.scaled.act{border-color:rgba(var(--cyr),.7);box-shadow:0 0 0 1px rgba(var(--cyr),.35)}
+.pbpanel.scaled:hover{border-color:rgba(var(--cyr),.42)}
+.pscaledtag{position:absolute;left:-1px;top:-14px;font-size:10px;line-height:1.3;color:var(--mut);background:var(--bgd);padding:0 6px;border-radius:5px 5px 0 0;border:1px dashed var(--line);border-bottom:none;cursor:pointer;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis;z-index:3}
+.pscaledtag:hover{color:var(--cy);border-color:rgba(var(--cyr),.5)}
+.pbpanel.scaled>.xx{opacity:0;z-index:4}
+.pbpanel.scaled:hover>.xx{opacity:.75}
+.gel.cont-scaled{border-style:dashed;border-color:rgba(var(--mgr),.4)}
+.gel.hdr-scaled{border-color:transparent}
+.gel.hdr-scaled:hover{border-color:rgba(var(--cyr),.45)}
+/* ===== v19 PIXEL-MIRROR — echtes DOM + echte App-CSS als Anzeige-Ebene, transparente Overlay-Ebene ===== */
+.pbroot.mirror #pbPal{display:none}
+.pbroot.mirror #pbHint{margin:0 2px 6px}
+.mirbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px;font-size:11px;color:var(--mut)}
+.mirbar .mtitle{color:var(--cy)}
+.mirbar .mpg{cursor:pointer;padding:2px 9px;border-radius:7px;border:1px solid var(--line);color:var(--mut)}
+.mirbar .mpg.on{color:var(--mg);border-color:rgba(var(--mgr),.6);background:rgba(var(--mgr),.12)}
+.mirbar .mpg:hover{color:var(--cy);border-color:rgba(var(--cyr),.5)}
+.mirstage{position:absolute;left:0;top:0;width:100%;z-index:1;overflow:hidden;pointer-events:none}
+.pbov{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2}
+/* Overlay-Boxen sind transparent: nur Hover/Auswahl zeigt einen feinen Rahmen (kein Dauer-Geklotze) */
+.mir .pbpanel.scaled{background:transparent;border:1px solid transparent;box-shadow:none;border-radius:8px}
+.mir .pbpanel.scaled:hover{border-color:rgba(var(--cyr),.40)}
+.mir .pbpanel.scaled.act{border-color:rgba(var(--cyr),.8);box-shadow:0 0 0 1px rgba(var(--cyr),.4)}
+.mir .pbpanel.scaled>.pscaledtag{opacity:0;background:var(--panel2);z-index:5}
+.mir .pbpanel.scaled:hover>.pscaledtag,.mir .pbpanel.scaled.act>.pscaledtag{opacity:.96}
+.mir .pbpanel.scaled>.xx{opacity:0}
+.mir .pbpanel.scaled:hover>.xx,.mir .pbpanel.scaled.act>.xx{opacity:.7}
+.mir .gel{background:transparent;border:1px solid transparent;border-radius:6px}
+.mir .gel:hover{border-color:rgba(var(--cyr),.55);background:rgba(var(--cyr),.05)}
+.mir .gel.sel{border-color:var(--cy);background:rgba(var(--cyr),.07);box-shadow:0 0 0 1px rgba(var(--cyr),.35)}
+.mir .gel.mreal .gpv{display:none}          /* echtes Element liegt als Klon darunter — kein pv()-Doppelbild */
+.mir .gel .gpv{pointer-events:none}
+.mir .gel .xe,.mir .gel .eresize{opacity:0}
+.mir .gel:hover .xe,.mir .gel.sel .xe{opacity:.85}
+.mir .gel:hover .eresize,.mir .gel.sel .eresize{opacity:.8}
+.mir .gel .gact{position:absolute;left:2px;top:1px;background:var(--panel2);border-radius:4px;padding:0 2px}
+/* v19: kompakter Einfüge-Dialog (2 Spalten, kein endloses Scrollen) */
+.pbadd{width:520px;max-width:94%}
+.pbabody{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pbabody .aocat{grid-column:1/-1;margin:7px 2px 0}
+.pbabody .addopt{padding:5px 7px;gap:7px}
+.pbabody .addopt .aoprev{min-width:54px;max-width:96px;padding:2px 5px}
+.pbabody .addopt .aod{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:10.5px}
+/* v19 Runde 2: Bearbeiten-Ebene über dem 1:1-Mirror — gestrichelte Rahmen, greifen/verschieben/größen, einfügen */
+.pbbtn.editon{color:var(--mg);background:rgba(var(--mgr),.16);border-color:var(--mg)}
+.pbroot.mirror #pbPal{display:none}
+.pbroot.mirror.editmode #pbPal{display:block;background:var(--bgd);padding:6px 9px}
+.pbroot.mirror.editmode .pbcat{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:4px;margin:2px 0}
+.pbroot.mirror.editmode .pbcat>span{display:inline;font-size:9px;margin:0 4px 0 2px;opacity:.7}
+.pbroot.mirror.editmode .pbchip{padding:2px 7px;font-size:11px;margin:0 3px 3px 0}
+.pbroot.mirror.editmode .mirstage{pointer-events:none}
+.movlayer{position:absolute;left:0;top:0;width:100%;height:100%;z-index:3;pointer-events:none}
+.mov{position:absolute;border:1px dashed rgba(var(--cyr),.5);border-radius:5px;cursor:grab;box-sizing:border-box;touch-action:none;pointer-events:auto}
+.mov:hover{background:rgba(255,255,255,.04)}
+/* Ebenen-Farben der gestrichelten Rahmen (welche Ebene liegt wo) */
+.mov.lv-panel{border-color:rgba(var(--mgr),.6)}.mov.lv-panel:hover{border-color:var(--mg);background:rgba(var(--mgr),.05)}
+.mov.lv-sub{border-color:#ffb86b}.mov.lv-sub:hover{border-color:#ffd29a;background:rgba(255,184,107,.07)}
+.mov.lv-e1{border-color:var(--cy)}.mov.lv-e1:hover{background:rgba(var(--cyr),.07)}
+.mov.lv-e2{border-color:#42e896}.mov.lv-e2:hover{background:rgba(66,232,150,.08)}
+.mov.lv-e3{border-color:#b49cff}.mov.lv-e3:hover{background:rgba(180,156,255,.08)}
+.mov.movs{cursor:pointer}
+.mov.sel{border-style:solid;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+.mov.syn{border-style:solid;background:var(--bg);display:flex;align-items:center;padding:0 6px;overflow:hidden}
+.mlegend{display:inline-flex;flex-wrap:wrap;gap:10px;margin-left:8px;font-size:10px;vertical-align:middle}
+.mlegend i{display:inline-flex;align-items:center;gap:4px;font-style:normal;color:var(--mut)}
+.mlegend i b{display:inline-block;width:13px;border-top:2px dashed;height:0}
+.mov .mh{position:absolute;right:-5px;bottom:-5px;width:14px;height:14px;cursor:nwse-resize;color:var(--cy);opacity:0}
+.mov:hover .mh,.mov.sel .mh{opacity:.95}
+.mov .mh::after{content:"⤡";position:absolute;right:0;bottom:-4px;font-size:13px}
+.mov .mx{position:absolute;right:1px;top:0;cursor:pointer;color:var(--mut);font-size:12px;opacity:0;background:var(--panel2);border-radius:3px;line-height:1.15;padding:0 3px}
+.mov:hover .mx,.mov.sel .mx{opacity:.85}.mov .mx:hover{color:var(--mg);opacity:1}
+.editmode .pbhint b,.editmode .pbhint .ed{color:var(--mg)}
+</style>
+
+<div class="pbtop">
+  <span class="ttl">UI BUILDER v19</span>
+  <input class="app" id="pbApp" placeholder="App / Ansicht — z. B. Dizz Money · Übersicht">
+  <select id="pbTheme" title="Design"><option value="metall">metall</option><option value="neon">neon</option><option value="carbon">carbon</option><option value="tag">tag (hell)</option></select>
+  <select id="pbFarbe" title="Farbschema"><option value="cm">cyan-magenta</option><option value="feuer">feuer</option><option value="toxic">toxic</option><option value="smgd">smaragd-gold</option></select>
+  <button class="pbbtn mg" data-act="loadapp">App-UI laden</button>
+  <button class="pbbtn" data-act="editmode" id="pbEditBtn" style="display:none">✎ Bearbeiten</button>
+  <button class="pbbtn" data-act="io">Import/Export</button>
+  <button class="pbbtn" data-act="tpl">Beispiel</button>
+  <button class="pbbtn" data-act="reset">Reset</button>
+  <button class="pbbtn mg" data-act="export">An die KI senden ↗</button>
+</div>
+<div id="pbIO" style="display:none;background:var(--bgd);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:10px">
+  <div id="pbIOinfo" style="font-size:11px;color:var(--mut);margin-bottom:7px"></div>
+  <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:7px">
+    <button class="pbbtn" data-act="copyx">Extraktor-Snippet kopieren</button>
+    <button class="pbbtn" data-act="expjson">Layout als JSON</button>
+    <button class="pbbtn" data-act="doimp">JSON laden</button>
+  </div>
+  <textarea id="pbImp" placeholder="UI-JSON hier einfügen (vom Extraktor-Snippet auf der App-Seite) und „JSON laden"…" style="width:100%;min-height:72px"></textarea>
+</div>
+<div class="pbpal" id="pbPal"></div>
+<p class="pbhint" id="pbHint"></p>
+<div class="pbcanvas" id="pbCanvas"></div>
+<textarea id="pbOut" readonly style="display:none;width:100%;min-height:120px;margin-top:8px"></textarea>
+<div id="pbBackdrop" class="pbbackdrop" style="display:none"></div>
+<div id="pbModal" class="pbmodal" style="display:none">
+  <div class="pbmhead"><span class="pbmt" id="pbmTitle"></span><span class="pbmx" data-mclose>✕</span></div>
+  <div class="pbmprev" id="pbmPrev"></div>
+  <div class="pbmhelp" id="pbmHelp"></div>
+  <div class="pbmbody" id="pbmBody"></div>
+</div>
+<div id="pbAdd" class="pbmodal pbadd" style="display:none">
+  <div class="pbmhead"><span class="pbmt" id="pbAddTitle"></span><span class="pbmx" data-mclose>✕</span></div>
+  <div class="pbmhelp">Klick ein Element — es wird sofort eingefügt. Mehrere möglich; „Fertig" schließt.</div>
+  <div class="pbabody" id="pbAddBody"></div>
+  <div style="padding:6px 12px 12px;text-align:right"><button class="pbbtn" data-mclose>Fertig</button></div>
+</div>
+<div id="pbTip" class="pbtip"></div>
+
+<script src="ui-builder-tool.js"></script>
+</div>
+</body>
+</html>

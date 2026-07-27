@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="de" data-design="metall" data-farbe="cyan-magenta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dizz Healthy — Gesundheit</title>
+<!-- ============================================================================
+   Dizz Healthy [HE] — Frontend (aus templates/refapp + Dizz Plans abgeleitet).
+   - Tokens VERLINKT (Single-Source shared/dizz-tokens.css → /ui-kit/tokens.css);
+     KEINE hartkodierten Farben (alles über var(--…), K2.2-Token-Vertrag).
+   - Standard-Kit UNVERÄNDERT: einklappbare Panels (K2.4), Spin-Physik, schwebende
+     Knöpfe (⚙ Konto/Einstellungen · 💬 Mini-Dizzi), Hintergrund-Slot, das
+     vollständige Einstellungs-/Konto-Fenster (Norm docs/19 §2b, generisch).
+   - Domäne: Messwerte · Supplements · Verletzungen · Training · Termine · KI-
+     Auswertung · Wearable-Quellen (vorbereitet, Gesetz 5). Mini-Dizzi an /api/ki/frage.
+   - HOCHSENSIBEL: KI strikt lokal; KEINE Diagnose (Disclaimer sichtbar).
+   ============================================================================ -->
+<link rel="stylesheet" href="/ui-kit/tokens.css">
+<link rel="stylesheet" href="/ui-kit/controls.css">
+<!-- UX-5a · AI-Act Art. 50(1): KI-Offenlegungs-Chip (DzUx.agentchip{ki:true}) an der Mini-Dizzi-Fläche (docs/70). -->
+<link rel="stylesheet" href="/ui-kit/ux-kit.css">
+<script defer src="/ui-kit/ux-kit.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var slot = document.getElementById("dizziKiChip");
+    if (slot && window.DzUx && DzUx.agentchip) slot.innerHTML = DzUx.agentchip({ ki: true });
+  });
+</script>
+<!-- Klick-Wellen-Effekt (DzWave, netzweit · token-/design-abhängig) -->
+<link rel="stylesheet" href="/ui-kit/clickwave.css">
+<script defer src="/ui-kit/clickwave.js"></script>
+<!-- DzHalter — Float-Andock-Schale + Frei/Fix-Schalter (Spin-Physik v4.4, netzweit · tokenbasiert); VOR floats.js laden -->
+<link rel="stylesheet" href="/ui-kit/float_dock.css">
+<script defer src="/ui-kit/float_dock.js"></script>
+<link rel="stylesheet" href="/ui-kit/background.css">
+<link rel="stylesheet" href="/ui-kit/charts.css">
+<script defer src="/ui-kit/collapse.js"></script>
+<script defer src="/ui-kit/background.js"></script>
+<script defer src="/ui-kit/charts.js"></script>
+<script>
+  try { var d=localStorage.getItem('health_design'), f=localStorage.getItem('health_farbe');
+    if(d)document.documentElement.setAttribute('data-design',d);
+    if(f)document.documentElement.setAttribute('data-farbe',f); } catch(e){}
+</script>
+<style>
+  *{box-sizing:border-box} [hidden]{display:none!important}
+  /* Shell-Norm (News-Muster, docs/14 v4.3 Float-Regel 1): clip statt hidden, KEIN Scroll-
+     Container im Spin-Grid. body scrollt natürlich; seitlicher Float-Überstand beim
+     Screen-Wrap erzeugt so keine Scrollbar. */
+  html,body{overflow-x:clip}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:"Chakra Petch","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.45;min-height:100vh;padding-bottom:60px}
+  h1,h2{font-family:"Orbitron","Chakra Petch",sans-serif;margin:0}
+  a{color:var(--cy)}
+  .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  /* Kopf — kanonische Kopf-Norm aus dem Kit (.dz-appkopf, docs/39 §1b). 🛡 Hochsicher (hoechst) + Pille rechts; KPI-Leiste darunter. */
+  header{padding:2px 0 8px}
+  /* B-Schritt (docs/39): zentriert statt vollgepfropft. .wrap (overflow:visible, zentriert) trägt
+     Kopf + Arbeitsbereich und IST das Spin-Grid-Umfeld — Karten als Block-Fluss, KEIN Scroll-
+     Container, KEINE Breitenkappung auf <main> ⇒ geschleuderte Panels schwingen über den GANZEN
+     Viewport (kein Clip an schmaler Kante) und untereinander geöffnete Panels stapeln ohne Überlapp. */
+  .wrap{width:100%;max-width:1500px;margin:0 auto;padding:16px}
+  main{display:block}
+  main>.card{margin-bottom:14px}
+  #authpill{flex:none;cursor:pointer;white-space:nowrap}
+  .pill.on{color:var(--cy);border-color:rgba(var(--cy-rgb),.5);background:rgba(var(--cy-rgb),.08)}
+  .kpibar{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--mut)}
+  .kpibar b{color:var(--fg);font-family:"Orbitron",sans-serif}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-win);box-shadow:var(--sh);border-top:1px solid var(--edge-t);position:relative;overflow:hidden}
+  /* .card::before (linker Akzentstreifen) jetzt kanonisch in /ui-kit/controls.css (V2, De-Fork 24.06.) */
+  /* Greif-/Schleuder-Glow (das ganze Panel glüht beim Greifen, docs/06 §6.3) jetzt
+     kanonisch in /ui-kit/controls.css (.card.spinlift/.dz-panel.spinlift, De-Fork). */
+  .card .dz-panel-koerper{padding:11px 14px 14px}
+  .card .dz-panel-koerper p{margin:0 0 10px;color:var(--mut)}
+  /* === UI-Systematisierung: Gruppen-Panels + Unter-Panels + Dashboard (docs/33) === */
+  .dz-subpanel-list{display:flex;flex-direction:column;gap:10px}
+  .dz-subpanel{background:var(--bg-deep,rgba(0,0,0,.16));border:1px solid var(--line);border-radius:11px;position:relative;overflow:hidden}
+  .dz-subpanel::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:2px;border-radius:0 2px 2px 0;background:linear-gradient(180deg,var(--mg),var(--cy));opacity:.55;pointer-events:none}
+  .dz-subpanel>.dz-panel-kopf{padding-left:12px}
+  .card .dz-subpanel .dz-panel-koerper{padding:6px 12px 12px}
+  .card .dz-panel:not([data-dz-collapsed])>.dz-panel-kopf>.dz-panel-titel{color:var(--cy)}
+  /* Übersicht-Dashboard (konfigurierbarer KPI-Slot) */
+  .dz-uebersicht-kopf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px 2px}
+  .dz-uebersicht-kopf .dz-panel-titel{font-family:"Orbitron","Chakra Petch",sans-serif;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .dz-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:9px 14px 14px}
+  .dz-kpi{border:1px solid var(--line);border-radius:11px;padding:10px 11px;background:var(--bg-deep,rgba(0,0,0,.16));position:relative;overflow:hidden}
+  .dz-kpi::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:2px;border-radius:0 2px 2px 0;background:linear-gradient(180deg,var(--cy),var(--mg));opacity:.5}
+  .dz-kpi-val{font-family:"Orbitron",sans-serif;font-size:21px;color:var(--cy);line-height:1.1}
+  .dz-kpi-val.warn{color:var(--mg)} .dz-kpi-val.ok{color:var(--ok,#49d49a)}
+  .dz-kpi-unit{font-size:11px;color:var(--mut);margin-left:3px}
+  .dz-kpi-label{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+  .dz-dash-konfig{padding:8px 14px 6px;font-size:12px}
+  /* Ankreuzpanel = kanonisches Kit-Muster (.dz-check im Auto-Raster). Netzweit identisch. */
+  .dz-ankreuz{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:6px 14px;margin-top:4px}
+  .dz-ankreuz .dz-check{font-size:12.5px;color:var(--fg)}
+  /* dz-field-Selects auch in den Flex-Reihen voll mitwachsen lassen (grow-Wrapper) */
+  .dz-field{vertical-align:middle} .dz-field.grow{display:flex;flex:1 1 auto;min-width:0}
+  .dz-field.grow>.dz-select{width:100%}
+  /* Übersicht: großes visualisiertes Dashboard (Hero · Vital-Puls · Vorschläge) — dezent, tokenbasiert */
+  .dz-ueber-hero{display:flex;flex-wrap:wrap;gap:22px;padding:8px 14px 6px;align-items:center}
+  .dz-ueber-block{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:150px}
+  .dz-ueber-cap{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);display:flex;align-items:center;gap:6px}
+  .dz-ueber-ring,.dz-ueber-gauge{filter:drop-shadow(0 3px 12px rgba(0,0,0,.28))}
+  .dz-ueber-leg{max-width:250px}
+  .dz-ueber-vital{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:10px;padding:4px 14px 8px}
+  .dz-vorschlaege{display:flex;flex-direction:column;gap:7px;padding:8px 14px 4px}
+  .dz-vorschlag{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-left:2px solid var(--cy);border-radius:10px;padding:8px 11px;background:var(--bg-deep,rgba(0,0,0,.16));font-size:13px}
+  .dz-vorschlag .vem{font-size:15px;line-height:1.25;flex:none}
+  .dz-vorschlag.warn{border-left-color:var(--mg)}
+  .dz-vorschlag.ki{border-left-color:var(--mg)} .dz-vorschlag .vq{color:var(--mut);font-size:10.5px;margin-left:auto;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+  .dz-vmini{border:1px solid var(--line);border-radius:11px;padding:9px 10px;background:var(--bg-deep,rgba(0,0,0,.16));position:relative;overflow:hidden}
+  .dz-vmini.warn{border-color:rgba(var(--mg-rgb),.4)}
+  .dz-vmini-top{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut)}
+  .dz-vmini-val{font-family:"Orbitron",sans-serif;font-size:18px;color:var(--cy)} .dz-vmini.warn .dz-vmini-val{color:var(--mg)}
+  .dz-vmini-unit{font-size:10px;color:var(--mut);margin-left:2px}
+  /* Domänen-Bausteine (tokenbasiert) */
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .row.tight{gap:6px}
+  .grow{flex:1 1 auto;min-width:0}
+  .mut{color:var(--mut)} .small{font-size:12px}
+  input,select,textarea{font-family:inherit;font-size:13px;background:var(--bg-deep,rgba(0,0,0,.22));color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(var(--cy-rgb),.5)}
+  input[type=number]{width:92px}
+  textarea{width:100%;resize:vertical;min-height:54px}
+  .btn{font-family:inherit;background:var(--panel-kopf-bg,#1b2230);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;text-decoration:none;white-space:nowrap}
+  .btn:hover{border-color:rgba(var(--cy-rgb),.45)}
+  .btn.mini{padding:3px 9px;font-size:12px}
+  .btn.cy{border-color:rgba(var(--cy-rgb),.5);color:var(--cy)}
+  .btn.mg{border-color:rgba(var(--mg-rgb),.5);color:var(--mg)}
+  .liste{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+  .item{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg-deep,rgba(0,0,0,.16))}
+  .item .titel{font-weight:600}
+  .item .wert{font-family:"Orbitron",sans-serif;font-size:15px;color:var(--cy)}
+  .item .meta{font-size:11.5px;color:var(--mut);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .pill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--mut)}
+  .pill.warn{color:var(--mg);border-color:rgba(var(--mg-rgb),.5)}
+  .pill.ok{color:var(--ok,#49d49a);border-color:rgba(73,212,154,.45)}
+  .pill.aktiv{color:var(--cy);border-color:rgba(var(--cy-rgb),.5)}
+  .trendpfeil{font-family:"Orbitron",sans-serif}
+  .trendpfeil.up{color:var(--mg)} .trendpfeil.down{color:var(--cy)} .trendpfeil.flat{color:var(--mut)}
+  .leer{color:var(--mut);font-size:12.5px;padding:6px 0}
+  .disclaimer{font-size:11.5px;color:var(--mut);border:1px dashed var(--line);border-radius:8px;padding:7px 9px;margin-top:10px;background:rgba(0,0,0,.12)}
+  .disclaimer b{color:var(--mg)}
+  .hinweis{border-left:2px solid var(--cy);padding:5px 0 5px 9px;margin:6px 0;font-size:13px}
+  /* Basis-Icon (Geometrie aus dem Sprite, Look via CSS) */
+  .ic{width:1.4em;height:1.4em;display:inline-block;vertical-align:-0.25em;flex:none;color:var(--cy);fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px currentColor)}
+  /* Schwebende Knöpfe = einheitliches Kit (SVG-Doppelicon, Charge-Glow, lgshoot) */
+  .floatacct{--charge:0;position:fixed;top:84px;right:26px;z-index:41;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;background:var(--panel);background-image:var(--brush),var(--panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--line);color:var(--cy);box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),0 0 calc(var(--charge)*110px) calc(var(--charge)*17px) rgba(var(--cy-rgb),calc(var(--charge)*.82)),0 0 calc(var(--charge)*165px) calc(var(--charge)*13px) rgba(var(--mg-rgb),calc(var(--charge)*.72));transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatacct:hover{border-color:rgba(var(--cy-rgb),.45)}
+  .floatacct .duo{position:relative;width:58px;height:52px;pointer-events:none}
+  .floatacct .duo .ic{position:absolute;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.7))}
+  .floatacct .duo .ic.fg{width:44px;height:44px;left:0;top:0}
+  .floatacct .duo .ic.fa{width:28px;height:28px;right:-2px;bottom:-2px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.65))}
+  .floatdizzi{--charge:0;position:fixed;top:196px;right:34px;z-index:41;width:80px;height:80px;border-radius:50%;display:grid;place-items:center;cursor:grab;touch-action:none;background:var(--panel);background-image:var(--brush),var(--panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--line);color:var(--mg);box-shadow:var(--sh),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b),0 0 calc(var(--charge)*110px) calc(var(--charge)*15px) rgba(var(--mg-rgb),calc(var(--charge)*.8));transform:scale(calc(1 + var(--charge)*.14));transition:box-shadow .15s}
+  .floatdizzi:hover{border-color:rgba(var(--mg-rgb),.45)}
+  .floatdizzi .ic{width:40px;height:40px;color:var(--mg);filter:drop-shadow(0 0 6px rgba(var(--mg-rgb),.6))}
+  .floatdizzi .spark{position:absolute;top:9px;right:11px;width:16px;height:16px;color:var(--cy);filter:drop-shadow(0 0 5px rgba(var(--cy-rgb),.8))}
+  .floatacct.lgshoot,.floatdizzi.lgshoot{animation:lgshoot .36s ease-out}
+  @keyframes lgshoot{0%{box-shadow:var(--sh),0 0 120px 26px rgba(var(--cy-rgb),.9),0 0 180px 18px rgba(var(--mg-rgb),.8);transform:scale(1.16)}100%{transform:scale(1)}}
+  /* --- Einstellungs-/Konto-FENSTER (Norm docs/19 §2b) = STANDARD-KIT-ELEMENT ---- */
+  .kmwrap{position:fixed;inset:0;z-index:60;background:rgba(4,6,10,.6)}
+  .km{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(900px,94vw);height:min(82vh,780px);display:flex;flex-direction:column;
+    background:var(--panel-solid,var(--panel));background-image:var(--brush),var(--panel);
+    border:1px solid rgba(var(--cy-rgb),.3);border-radius:var(--r-win);
+    box-shadow:var(--sh),0 0 70px -16px rgba(var(--cy-rgb),.5),0 0 110px -28px rgba(var(--mg-rgb),.34),inset 0 1px 0 var(--edge-t),inset 0 -1px 0 var(--edge-b)}
+  .km-kopf{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .km-kopf h2{margin:0;font-size:14px;letter-spacing:.06em;text-transform:uppercase;background:var(--satin);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .km-koerper{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px 16px 16px}
+  .kmsec{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:11px;background:var(--bg-deep,rgba(0,0,0,.18))}
+  .kmsech{font-family:"Orbitron",sans-serif;font-weight:700;color:var(--cy);font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:8px;filter:drop-shadow(0 0 6px rgba(var(--cy-rgb),.4))}
+  .kmrow{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:4px 0}
+  .kmrow>label{font-size:12.5px}
+  .kmdienst{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:5px 0;font-size:12.5px}
+  .kmcat{margin:10px 0 2px;border-top:1px solid var(--line);padding-top:8px}
+  .kmcat .kmcath{font-weight:700;color:var(--cy);font-size:11px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
+  .km .mut{color:var(--mut)} .km .small{font-size:11.5px} .km .spacer{flex:1}
+  .km-aktion{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .dizzibubble{position:fixed;right:30px;top:288px;z-index:55;width:min(340px,90vw);padding:10px;
+    background:var(--panel-solid,var(--panel));border:1px solid var(--line);border-top:1px solid var(--edge-t);border-radius:var(--r-win);box-shadow:var(--sh)}
+  .db-kopf{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  .db-out{min-height:42px;font-size:13px}
+  .db-q{color:var(--cy)} .db-src{font-size:11px;color:var(--mut);margin-top:6px}
+  .db-eingabe{display:flex;gap:6px;margin-top:8px}
+  @media (prefers-reduced-motion: reduce){.floatacct,.floatdizzi{position:fixed!important}}
+</style>
+</head>
+<body>
+<div id="bg-stage" aria-hidden="true"></div>
+<div class="bgfx" aria-hidden="true"></div>
+<div class="bgbrush" aria-hidden="true"></div>
+
+<div class="wrap">
+<header>
+  <div class="dz-appkopf">
+    <span class="dz-kopf-brand">Dizz Healthy</span>
+    <span class="dz-kopf-sub">Messwerte · Training · keine Diagnose</span>
+    <span class="dz-kopf-spacer"></span>
+    <span class="dz-kopf-hochsicher" title="Höchst sensibel — lokal-only">🛡</span>
+    <span class="pill" id="authpill" data-dz-act="oeffneKm" title="Einstellungen &amp; Konto (Dizzi-ID)">…</span>
+  </div>
+  <div class="kpibar" id="kpibar"><span class="mut">lädt …</span></div>
+</header>
+
+<main>
+  <!-- ===================================================================
+       UI-Systematisierung (docs/33 §health): 1 fettes Übersichts-Dashboard
+       (oben, konfigurierbarer KPI-Slot) + 3 GRUPPEN-Panels mit Unter-Panels.
+       Top-Panels = .card (Spin-Ziel, volle Breite); Unter-Panels = .dz-subpanel
+       (.dz-panel-Collapse-Muster, KEIN .card ⇒ stören Spin/Grid nicht).
+       =================================================================== -->
+
+  <!-- ===== ÜBERSICHT (großes, visualisiertes Dashboard) =====================
+       Hero (Tagesringe + Readiness-Gauge) · lokale KI-Vorschläge/Erinnerungen ·
+       Vital-Puls (auffällige zuerst, mit Sparkline) · konfigurierbare KPI-Kacheln.
+       Alles aus bestehenden Endpunkten (stats/scores/aktivitaet·tag/trends), token-
+       basiert (DzCharts), HÖCHST SENSIBEL ⇒ lokal, NIE Diagnose. =============== -->
+  <section class="card" data-pkey="uebersicht" id="panel-uebersicht">
+    <div class="dz-uebersicht-kopf">
+      <span class="dz-panel-titel" style="font-size:16px">Übersicht</span>
+      <span class="small mut" id="uebersicht-stand"></span>
+      <span style="flex:1"></span>
+      <button class="btn mini" id="dash-erinnerung-btn" data-dz-act="erinnerungToggle" title="Erinnerungen einstellen (Training/Supplements/Termine — lokal, in-App)">⏰ Erinnerungen</button>
+      <button class="btn mini" id="dash-konfig-btn" data-dz-act="dashKonfigToggle" title="Welche Kennzahlen hier oben erscheinen">⚙ Kennzahlen wählen</button>
+    </div>
+    <div class="dz-dash-konfig" id="dash-konfig" hidden></div>
+    <div class="dz-dash-konfig" id="erinnerung-konfig" hidden></div>
+
+    <!-- (d) Lokale KI-Vorschläge & Erinnerungen (deterministisch + optionale lokale KI) -->
+    <div id="ueber-vorschlaege" class="dz-vorschlaege" hidden></div>
+
+    <!-- (a) Hero: Tages-Aktivitätsringe + Readiness-Gauge -->
+    <div class="dz-ueber-hero">
+      <div class="dz-ueber-block">
+        <div class="dz-ueber-cap">Heute in Bewegung</div>
+        <div class="dz-ueber-ring" id="ueber-ringe" aria-hidden="true"></div>
+        <div class="dz-ring-legend dz-ueber-leg" id="ueber-ring-legende"><span class="leer">lädt …</span></div>
+      </div>
+      <div class="dz-ueber-block">
+        <div class="dz-ueber-cap">Readiness <span class="dz-lokal" title="nicht-medizinisch, lokal">lokal</span></div>
+        <div class="dz-ueber-gauge" id="ueber-gauge"></div>
+        <div class="small mut" id="ueber-gauge-sub" style="text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- (b) Vital-Puls: auffällige Werte zuerst, mit Sparkline (aus /api/trends) -->
+    <div class="dz-ueber-cap" id="ueber-vital-cap" style="padding:2px 14px 0" hidden>Vital-Puls — Auffällige zuerst</div>
+    <div class="dz-ueber-vital" id="ueber-vital"></div>
+
+    <!-- (c) Kennzahlen-Kacheln (Auswahl oben über das Ankreuzpanel) -->
+    <div class="dz-ueber-cap" style="padding:4px 14px 0">Kennzahlen</div>
+    <div class="dz-kpi-grid" id="dash-kpis"><span class="leer">lädt …</span></div>
+  </section>
+
+  <!-- ===== GRUPPE 1 — TAGEBUCH / RECORDS ===== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="grp-tagebuch">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Tagebuch &amp; Records</span>
+      <span class="dz-panel-kurz" id="kurz-grp-tagebuch">Messwerte · Supplements · Verletzungen · Training · Termine</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+     <div class="dz-subpanel-list">
+
+      <!-- Messwerte (Vitalwerte — Metrik-Karten, P1a/b) -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="messwerte">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Messwerte</span>
+          <span class="dz-panel-kurz" id="kurz-messwerte"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="row tight">
+            <span class="dz-field grow"><select id="mf-art" class="dz-select small" data-dz-act="mwEinheit" data-dz-on="change"></select></span>
+            <input id="mf-wert" type="number" step="any" placeholder="Wert" data-dz-enter="messwertAnlegen">
+            <input id="mf-einheit" class="small" style="width:70px" placeholder="Einheit">
+            <button class="btn cy mini" data-dz-act="messwertAnlegen">+ Wert</button>
+          </div>
+          <div class="row tight" style="margin-top:7px">
+            <input id="mf-zeit" type="datetime-local" class="small" title="gemessen am">
+            <span class="small mut">Auffällige zuerst.</span>
+          </div>
+          <div class="dz-metric-list" id="liste-messwerte"><span class="leer">lädt …</span></div>
+        </div>
+      </div>
+
+      <!-- Supplements -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="supplements">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Supplements</span>
+          <span class="dz-panel-kurz" id="kurz-supplements"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="row tight">
+            <input id="sf-name" class="grow" placeholder="Supplement (z. B. Vitamin D3) …" data-dz-enter="supplementAnlegen">
+            <input id="sf-dosis" class="small" style="width:64px" placeholder="Dosis">
+            <input id="sf-einheit" class="small" style="width:58px" placeholder="mg/IE">
+            <button class="btn cy mini" data-dz-act="supplementAnlegen">+ Supp</button>
+          </div>
+          <div class="row tight" style="margin-top:7px">
+            <span class="dz-field"><select id="sf-freq" class="dz-select small" title="Frequenz">
+              <option value="taeglich">täglich</option><option value="2x_taeglich">2× täglich</option>
+              <option value="woechentlich">wöchentlich</option><option value="bei_bedarf">bei Bedarf</option>
+            </select></span>
+            <span class="dz-field"><select id="sf-zeit" class="dz-select small" title="Zeitpunkt">
+              <option value="egal">egal</option><option value="morgens">morgens</option>
+              <option value="mittags">mittags</option><option value="abends">abends</option><option value="nacht">nachts</option>
+            </select></span>
+            <span class="small mut">Filter:</span>
+            <span class="dz-field"><select id="sf-filter" class="dz-select small" data-dz-act="ladeSupplements" data-dz-on="change">
+              <option value="1" selected>aktiv</option><option value="">alle</option><option value="0">pausiert</option>
+            </select></span>
+          </div>
+          <div class="liste" id="liste-supplements"><span class="leer">lädt …</span></div>
+        </div>
+      </div>
+
+      <!-- Verletzungen -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="verletzungen">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Verletzungen</span>
+          <span class="dz-panel-kurz" id="kurz-verletzungen"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="row tight">
+            <input id="vf-region" class="grow" placeholder="Körperregion (z. B. Knie links) …" data-dz-enter="verletzungAnlegen">
+            <span class="dz-field"><select id="vf-schwere" class="dz-select small" title="Schweregrad">
+              <option value="leicht">leicht</option><option value="mittel">mittel</option><option value="schwer">schwer</option>
+            </select></span>
+            <button class="btn cy mini" data-dz-act="verletzungAnlegen">+ Eintrag</button>
+          </div>
+          <div class="row tight" style="margin-top:7px">
+            <input id="vf-beschr" class="grow small" placeholder="Beschreibung (optional)">
+            <span class="small mut">Filter:</span>
+            <span class="dz-field"><select id="vf-filter" class="dz-select small" data-dz-act="ladeVerletzungen" data-dz-on="change">
+              <option value="">offen + verheilt</option><option value="akut">akut</option>
+              <option value="heilend">heilend</option><option value="verheilt">verheilt</option>
+            </select></span>
+          </div>
+          <div class="liste" id="liste-verletzungen"><span class="leer">lädt …</span></div>
+        </div>
+      </div>
+
+      <!-- Training -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="training">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Training</span>
+          <span class="dz-panel-kurz" id="kurz-training"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="row tight">
+            <input id="tf-art" class="grow" placeholder="Trainingsart (z. B. Laufen) …" data-dz-enter="trainingAnlegen">
+            <input id="tf-dauer" type="number" min="0" placeholder="min" style="width:64px" title="Dauer (min)">
+            <span class="dz-field"><select id="tf-int" class="dz-select small" title="Intensität">
+              <option value="locker">locker</option><option value="moderat" selected>moderat</option><option value="intensiv">intensiv</option>
+            </select></span>
+            <button class="btn cy mini" data-dz-act="trainingAnlegen">+ Training</button>
+          </div>
+          <div class="row tight" style="margin-top:7px">
+            <input id="tf-kname" class="small" style="width:96px" placeholder="Kennzahl" title="z. B. Distanz/Gewicht">
+            <input id="tf-kwert" type="number" step="any" placeholder="Wert" style="width:80px">
+            <input id="tf-keinheit" class="small" style="width:58px" placeholder="km/kg">
+            <input id="tf-datum" type="date" class="small" title="trainiert am">
+          </div>
+          <div class="liste" id="liste-training"><span class="leer">lädt …</span></div>
+        </div>
+      </div>
+
+      <!-- Termine -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="termine">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Termine</span>
+          <span class="dz-panel-kurz" id="kurz-termine"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="row tight">
+            <input id="zf-titel" class="grow" placeholder="Arzt/Vorsorge-Termin …">
+            <span class="dz-field"><select id="zf-kat" class="dz-select small" title="Kategorie">
+              <option value="arzt">Arzt</option><option value="vorsorge">Vorsorge</option>
+              <option value="impfung">Impfung</option><option value="therapie">Therapie</option>
+              <option value="labor">Labor</option><option value="sonstiges">Sonstiges</option>
+            </select></span>
+            <button class="btn cy mini" data-dz-act="terminAnlegen">+ Termin</button>
+          </div>
+          <div class="row tight" style="margin-top:7px">
+            <input id="zf-beginn" type="datetime-local" class="small" title="Beginn">
+            <input id="zf-ort" class="small grow" placeholder="Ort/Praxis (optional)">
+            <label class="dz-check small" title="Erinnerung an Dizzi-Meldungen (vorbereitet)"><input type="checkbox" id="zf-erinnerung" checked> Erinnerung</label>
+          </div>
+          <div class="liste" id="liste-termine"><span class="leer">lädt …</span></div>
+        </div>
+      </div>
+
+     </div>
+    </div>
+  </section>
+
+  <!-- ===== GRUPPE 2 — AUSWERTUNG ===== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="grp-auswertung">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Auswertung</span>
+      <span class="dz-panel-kurz" id="kurz-grp-auswertung">Aktivität · Scores · Timeline · Korrelation · KI-Hinweise</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+     <div class="dz-subpanel-list">
+
+      <!-- Aktivität (Tracker — Tagesringe + Kacheln + Verlauf, P1d) -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="aktivitaet">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Aktivität</span>
+          <span class="dz-panel-kurz" id="kurz-aktivitaet"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="dz-ring-wrap">
+            <div id="akt-ringe" aria-hidden="true"></div>
+            <div class="dz-ring-legend" id="akt-legende"><span class="leer">lädt …</span></div>
+          </div>
+          <div class="dz-akt-grid" id="akt-kacheln"></div>
+          <details style="margin-top:11px">
+            <summary class="small mut" style="cursor:pointer">Heute eintragen (Schritte/Distanz/… — manuell, bis die Handy-App live ist)</summary>
+            <div class="row tight" style="margin-top:8px">
+              <input id="ak-schritte" type="number" min="0" placeholder="Schritte" title="Schritte" style="width:96px">
+              <input id="ak-distanz" type="number" step="any" min="0" placeholder="km" title="Distanz (km)" style="width:72px">
+              <input id="ak-etagen" type="number" min="0" placeholder="Etagen" title="Etagen" style="width:80px">
+              <input id="ak-aktive_minuten" type="number" min="0" placeholder="aktive Min" title="aktive Minuten" style="width:92px">
+            </div>
+            <div class="row tight" style="margin-top:6px">
+              <input id="ak-kalorien" type="number" min="0" placeholder="kcal" title="Kalorien" style="width:80px">
+              <input id="ak-stehstunden" type="number" min="0" max="24" placeholder="Steh-h" title="Stehstunden" style="width:80px">
+              <input id="ak-schlaf" type="number" step="any" min="0" max="24" placeholder="Schlaf h" title="Schlaf (h)" style="width:84px">
+              <input id="ak-datum" type="date" class="small" title="Tag (leer = heute)">
+              <button class="btn cy mini" data-dz-act="aktivitaetEintragen">Speichern</button>
+            </div>
+            <div class="small mut" id="ak-status" style="margin-top:5px"></div>
+          </details>
+          <div class="row tight" style="margin-top:11px">
+            <span class="small mut">Verlauf:</span>
+            <span class="dz-field"><select id="akv-art" class="dz-select small" data-dz-act="ladeAktVerlauf" data-dz-on="change"></select></span>
+            <span class="dz-field"><select id="akv-tage" class="dz-select small" data-dz-act="ladeAktVerlauf" data-dz-on="change">
+              <option value="7">Woche</option><option value="30" selected>Monat</option><option value="90">3 Monate</option>
+            </select></span>
+          </div>
+          <div id="akv-chart" class="dz-metric-chart" style="height:140px"></div>
+          <div class="small mut" style="margin-top:8px">Quelle: manuell · vorbereitet für Handy-Pedometer/GPS &amp; HealthConnect/Apple Health
+            (HealthSource-Adapter, Gesetz 5) — siehe Gruppe „Quellen &amp; Geräte".</div>
+        </div>
+      </div>
+
+      <!-- Scores (Readiness + Fitness-Alter, P3 — nicht-medizinisch) -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="scores">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Scores</span>
+          <span class="dz-panel-kurz" id="kurz-scores"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <p class="small">Transparente Wellness-Schätzungen aus deinen eigenen Werten — jede Komponente offengelegt.</p>
+          <div class="dz-score-grid" id="scores-grid"><span class="leer">lädt …</span></div>
+          <div class="dz-disclaimer" style="margin-top:10px"><b>Keine medizinische Aussage:</b>
+            Readiness und Fitness-Alter sind grobe Orientierung — kein Befund, keine Diagnose,
+            kein klinisches „biologisches Alter".
+            <span style="flex:1"></span><span class="dz-lokal">lokal</span></div>
+        </div>
+      </div>
+
+      <!-- Timeline (Unified, 5 Domänen, P2) -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="timeline">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Timeline</span>
+          <span class="dz-panel-kurz" id="kurz-timeline"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <p class="small">Alles auf einer Zeitachse — Messwerte · Training · Verletzungen · Termine · Supplements · Aktivität.</p>
+          <div class="dz-timeline" id="liste-timeline"><span class="leer">lädt …</span></div>
+        </div>
+      </div>
+
+      <!-- Korrelation (Belastung ↔ Erholung, P2) -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="korrelation">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">Korrelation</span>
+          <span class="dz-panel-kurz" id="kurz-korrelation"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <p class="small">Hängt deine Erholung mit der Belastung zusammen? Wähle zwei Größen — je Tag gepaart.</p>
+          <div class="row tight">
+            <span class="small mut">Belastung (X):</span>
+            <span class="dz-field"><select id="kf-x" class="dz-select small" data-dz-act="ladeKorrelation" data-dz-on="change"></select></span>
+            <span class="small mut">Erholung (Y):</span>
+            <span class="dz-field"><select id="kf-y" class="dz-select small" data-dz-act="ladeKorrelation" data-dz-on="change"></select></span>
+            <span class="dz-field"><select id="kf-tage" class="dz-select small" data-dz-act="ladeKorrelation" data-dz-on="change"><option value="30">30 T</option><option value="90" selected>90 T</option><option value="180">180 T</option></select></span>
+            <span class="dz-field"><select id="kf-lag" class="dz-select small" title="Zeitversatz (Vortag↔Folgetag)" data-dz-act="ladeKorrelation" data-dz-on="change"><option value="0" selected>gleicher Tag</option><option value="1">Folgetag (+1)</option><option value="2">+2 Tage</option></select></span>
+          </div>
+          <div class="row tight" style="margin-top:8px">
+            <span class="small">Zusammenhang (Pearson r):</span>
+            <span class="dz-korr-r zero" id="korr-r">—</span>
+            <span class="small mut" id="korr-n"></span>
+          </div>
+          <div id="korr-chart" class="dz-metric-chart" style="height:180px"></div>
+          <div class="dz-disclaimer" style="margin-top:9px"><b>Kein Kausalzusammenhang:</b>
+            Korrelation ist keine Ursache und keine Diagnose — nur ein Muster zum Nachdenken.
+            <span style="flex:1"></span><span class="dz-lokal">lokal</span></div>
+        </div>
+      </div>
+
+      <!-- KI-Auswertung (Trends & Hinweise, lokal) -->
+      <div class="dz-panel dz-subpanel" data-dz-collapsible data-pkey="ki-auswertung">
+        <button class="dz-panel-kopf" type="button">
+          <span class="dz-panel-titel">KI-Auswertung</span>
+          <span class="dz-panel-kurz" id="kurz-auswertung"></span>
+          <span class="dz-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="dz-panel-koerper">
+          <div class="dz-disclaimer">
+            <b>Keine Diagnose:</b> Dizz Healthy beobachtet und gibt Anregungen — es ersetzt keine ärztliche Beratung.
+            <span style="flex:1"></span>
+            <span class="dz-lokal" id="ki-lokal-badge" title="Hochsensibel: KI-Routing lokal_only — Inhalte gehen nie an Cloud-/Boost-Modelle.">lokal_only</span>
+          </div>
+          <div class="row tight" style="margin-top:9px">
+            <button class="btn cy mini" data-dz-act="ladeTrends">Trends aktualisieren</button>
+            <button class="btn mg mini" data-dz-act="kiAuswerten">KI-Hinweise (lokal, 10–60 s)</button>
+          </div>
+          <div id="hinweis-out"></div>
+          <div id="trend-out" class="liste"><span class="leer">Noch keine Messwerte — oben Werte eintragen.</span></div>
+        </div>
+      </div>
+
+     </div>
+    </div>
+  </section>
+
+  <!-- ===== GRUPPE 3 — QUELLEN & GERÄTE (vorbereitet, Gesetz 5) ===== -->
+  <section class="card dz-panel" data-dz-collapsible data-pkey="quellen">
+    <button class="dz-panel-kopf" type="button">
+      <span class="dz-panel-titel">Quellen &amp; Geräte</span>
+      <span class="dz-panel-kurz">vorbereitet</span>
+      <span class="dz-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="dz-panel-koerper">
+      <p class="small">v1 ist Desktop-first (manuelle Eingabe). Smartwatch/Wearable ist
+        <b>vorbereitet</b>: jede Quelle ist ein Stecker (HealthSource-Adapter), kein Umbau.
+        Details: <code>docs/04_WEARABLE_VORBEREITUNG.md</code>.</p>
+      <div class="liste" id="liste-quellen"><span class="leer">lädt …</span></div>
+    </div>
+  </section>
+</main>
+</div><!-- /.wrap -->
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
+  <symbol id="ic-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.4v2.3M12 18.3v2.3M5.4 5.4 7 7M17 17l1.6 1.6M3.4 12h2.3M18.3 12h2.3M5.4 18.6 7 17M17 7l1.6-1.6"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3.5 5.5 6v5c0 4.2 2.7 7.4 6.5 9 3.8-1.6 6.5-4.8 6.5-9V6Z"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-8.6 8 8.2 8.2 0 0 1-3.7-.85L3.5 20l1.4-4.5A8 8 0 0 1 12 3.5a8 8 0 0 1 8.5 8Z"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.6 9 19 10.6 13.6 12.2 12 17.6 10.4 12.2 5 10.6 10.4 9Z"/></symbol>
+  <symbol id="ic-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-2.5-6.5L4 12Z"/></symbol>
+</defs></svg>
+
+<button class="floatacct" id="floatAcct" title="Konto &amp; Einstellungen — greifen &amp; schleudern, Tipp = öffnen" aria-label="Konto &amp; Einstellungen"><span class="duo"><svg class="ic fg" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic fa" aria-hidden="true"><use href="#ic-shield"/></svg></span></button>
+<button class="floatdizzi" id="floatDizzi" title="Mini-Dizzi fragen — greifen &amp; schleudern, Tipp = Sprechblase" aria-label="Mini-Dizzi fragen"><svg class="ic" aria-hidden="true"><use href="#ic-chat"/></svg><svg class="spark ic" aria-hidden="true"><use href="#ic-sparkle"/></svg></button>
+
+<!-- STANDARD-KIT: Einstellungs-/Konto-Fenster (Norm docs/19 §2b). Generisch aus den
+     appkit-Endpunkten gefüllt — UNVERÄNDERT übernommen. Auf BODY-Ebene (Gotcha 4). -->
+<div class="kmwrap" id="kmWrap" hidden>
+  <div class="km" role="dialog" aria-modal="true" aria-label="Einstellungen &amp; Konto">
+    <div class="km-kopf">
+      <span class="duo" style="width:30px;height:28px;position:relative;display:inline-block;flex:none"><svg class="ic" style="width:24px;height:24px;position:absolute;left:0;top:0" aria-hidden="true"><use href="#ic-gear"/></svg><svg class="ic" style="width:16px;height:16px;position:absolute;right:-2px;bottom:-2px;color:var(--mg)" aria-hidden="true"><use href="#ic-shield"/></svg></span>
+      <h2>Einstellungen &amp; Konto</h2>
+      <span class="pill">Dizzi-ID</span>
+      <span class="spacer"></span>
+      <button class="btn mini" id="kmZu" aria-label="Schließen">✕</button>
+    </div>
+    <div class="km-koerper">
+      <div class="kmsec"><div class="kmsech">Identität &amp; Sicherheit</div>
+        <div id="konto-auth" class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><span class="mut small">lädt …</span></div>
+        <div id="konto-acc" class="small mut" style="margin:9px 0 4px"></div>
+        <div id="konto-aktionen" class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 2px"></div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Design</div>
+        <div class="mut small" style="margin-bottom:6px">Design-Theme und Farbschema getrennt wählbar — die Vorschau ist sofort live.</div>
+        <div class="kmrow"><label>Design-Theme</label><span class="dz-field"><select id="designSel" class="dz-select" data-dz-act="themeWahl" data-dz-on="change"></select></span></div>
+        <div class="kmrow"><label>Farbschema</label><span class="dz-field"><select id="farbeSel" class="dz-select" data-dz-act="themeWahl" data-dz-on="change"></select></span></div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Verbundene Dienste</div><div id="konto-dienste" class="mut small">lädt …</div></div>
+      <div class="kmsec"><div class="kmsech">Vernetzung &amp; KI-Aktivität</div>
+        <div class="mut small" style="margin-bottom:6px">Was die KI im Hintergrund vorschlägt — Wirkung gibt es NUR nach deiner Freigabe (HITL).</div>
+        <div id="konto-ki" class="mut small">lädt …</div>
+      </div>
+      <div class="kmsec"><div class="kmsech">Einstellungen</div><div id="konto-settings"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Mini-Dizzi-Sprechblase (Vertrag 1.5) — fragt die Gesundheits-KI über POST /api/ki/frage. -->
+<div class="dizzibubble" id="dizziBubble" hidden>
+  <div class="db-kopf"><svg class="ic" style="width:16px;height:16px;color:var(--mg)" aria-hidden="true"><use href="#ic-chat"/></svg>
+    <span>Mini-Dizzi</span><span class="mut small">— fragt die Gesundheits-KI (lokal)</span><span id="dizziKiChip"></span><span style="flex:1"></span><button class="btn mini" id="dizziZu">✕</button></div>
+  <div class="db-out" id="dizziOut"><span class="mut small">Frag mich zu deinen Werten, Supplements, Verletzungen, Training und Terminen — ich antworte nur aus dem App-Bestand (lokal, keine Diagnose).</span></div>
+  <div class="db-eingabe">
+    <input id="dizziFrage" class="grow" placeholder="… deine Frage zur Gesundheit" data-dz-enter="dizziFragen">
+    <button class="btn mg mini" id="dizziBtn" data-dz-act="dizziFragen" aria-label="Fragen"><svg class="ic" style="width:14px;height:14px" aria-hidden="true"><use href="#ic-send"/></svg></button>
+  </div>
+  <div class="db-src" id="dizziSrc"></div>
+</div>
+
+<script defer src="/ui-kit/floats.js"></script>
+<script defer src="/ui-kit/spinfling.js"></script>
+<script>
+  // ===== Gemeinsame Helfer =====
+  const api = (p,o)=>fetch(p,Object.assign({headers:{'Content-Type':'application/json'}},o)).then(async r=>{ if(!r.ok){let e={};try{e=await r.json()}catch(_){}throw new Error(e.error||e.detail||('HTTP '+r.status))} return r.status===204?null:r.json(); });
+  const esc = s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const v = id=>{const el=document.getElementById(id);return el?(el.value||'').trim():'';};
+  const heute = ()=>new Date().toISOString().slice(0,10);
+  const jetztLokal = ()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
+  const fmtZeit = s=>(s||'').replace('T',' ').slice(0,16);
+  let ARTEN=[];        // voller Messwert-Katalog (vital + aktivitaet)
+  let ARTEN_BY={};     // art -> info
+
+  // ===== Katalog (FHIR/LOINC) =====
+  function mwEinheit(){ const art=v('mf-art'); const a=ARTEN_BY[art]; const el=document.getElementById('mf-einheit'); if(el&&a)el.value=a.einheit; }
+  async function ladeArten(){
+    try{ const d=await api('/api/messwerte/arten'); ARTEN=d.arten||[]; }catch(e){ ARTEN=[]; }
+    ARTEN_BY={}; ARTEN.forEach(a=>ARTEN_BY[a.art]=a);
+    const sel=document.getElementById('mf-art');   // Eingabe: nur Vitalwerte (Aktivität hat eigenes Panel)
+    if(sel)sel.innerHTML=ARTEN.filter(a=>a.kategorie!=='aktivitaet').map(a=>'<option value="'+a.art+'">'+esc(a.label)+(a.einheit?' ('+esc(a.einheit)+')':'')+'</option>').join('');
+    const akv=document.getElementById('akv-art'); // Aktivitäts-Verlaufs-Auswahl (Default = Schritte)
+    if(akv){ akv.innerHTML=ARTEN.filter(a=>a.kategorie==='aktivitaet').map(a=>'<option value="'+a.art+'"'+(a.art==='schritte'?' selected':'')+'>'+esc(a.label)+'</option>').join(''); }
+    mwEinheit();
+  }
+
+  // ===== Messwerte als Metrik-Karten (P1a/b): Out-of-Range zuerst · Sparkline · Klick = Linienchart =====
+  function _arrow(r){ const m={steigend:['up','↑'],fallend:['down','↓'],stabil:['flat','→']}[r]||['flat','·']; return '<span class="dz-arrow '+m[0]+'">'+m[1]+'</span>'; }
+  async function ladeMesswerte(){
+    const host=document.getElementById('liste-messwerte'); if(!host)return;
+    let d; try{ d=await api('/api/trends?tage=90'); }catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    let t=(d.trends||[]).filter(x=>x.kategorie!=='aktivitaet');
+    t.sort((a,b)=>((a.im_referenzbereich===false?0:1)-(b.im_referenzbereich===false?0:1))||(a.letzter_am<b.letzter_am?1:-1));
+    document.getElementById('kurz-messwerte').textContent=t.length?t.length+' Werte':'';
+    if(!t.length){ host.innerHTML='<span class="leer">Noch keine Vitalwerte — oben eintragen.</span>'; return; }
+    host.innerHTML=t.map(x=>{
+      const out=x.im_referenzbereich===false;
+      const ref=(x.ref_min!=null||x.ref_max!=null)?('Normbereich '+(x.ref_min!=null?x.ref_min:'–')+'–'+(x.ref_max!=null?x.ref_max:'–')+' '+esc(x.einheit||'')):'';
+      const spark=window.DzCharts?DzCharts.sparkline(x.verlauf,{refMin:x.ref_min,refMax:x.ref_max}):'';
+      return '<div class="dz-metric'+(out?' warn':'')+'" data-dz-act="metrikDetail" data-dz-arg="'+x.art+'" title="'+esc(x.label)+' — klicken für Verlauf">'
+        +'<div class="dz-metric-top"><span class="dz-metric-label">'+esc(x.label)+'</span>'+_arrow(x.richtung)+'</div>'
+        +'<div class="dz-metric-valrow"><span class="dz-metric-val">'+esc(x.letzter_wert)+'</span><span class="dz-metric-unit">'+esc(x.einheit||'')+'</span>'
+        +(out?'<span class="dz-badge-out" style="margin-left:auto" title="außerhalb des üblichen Bereichs — orientierend, keine Diagnose">außerhalb</span>':(x.im_referenzbereich===true?'<span class="dz-badge-in" style="margin-left:auto">ok</span>':''))+'</div>'
+        +spark
+        +'<div class="dz-metric-foot"><span>Ø '+esc(x.mittel)+'</span><span>n='+esc(x.anzahl)+'</span>'+(ref?'<span class="dz-metric-ref" title="orientierend, keine Diagnose">'+ref+'</span>':'')+'</div>'
+        +'<div class="dz-metric-chart" hidden></div></div>';
+    }).join('');
+  }
+  // Progressive Disclosure: Klick auf eine Karte klappt das Einzweck-Trend-Chart auf/zu.
+  async function metrikDetail(art,card){   // CSP: Dispatcher ruft (arg, el) ⇒ (art, Karte)
+    const box=card.querySelector('.dz-metric-chart'); if(!box)return;
+    if(!box.hidden){ box.hidden=true; box.innerHTML=''; return; }
+    box.hidden=false; box.innerHTML='<div class="dz-chart-leer">lädt …</div>';
+    let liste; try{ liste=await api('/api/messwerte?art='+encodeURIComponent(art)+'&limit=60'); }catch(e){ box.innerHTML='<div class="dz-chart-leer">Nicht ladbar.</div>'; return; }
+    liste=(liste||[]).slice().reverse();   // älteste → neueste
+    const a=ARTEN_BY[art]||{};
+    if(window.DzCharts)DzCharts.mountLine(box,{werte:liste.map(m=>m.wert),labels:liste.map(m=>(m.gemessen_am||'').slice(0,10)),einheit:a.einheit,refMin:a.ref_min,refMax:a.ref_max});
+    const neuest=liste[liste.length-1];
+    if(neuest){ const f=document.createElement('div'); f.className='small mut'; f.style.marginTop='6px';
+      f.innerHTML='Neuester: '+esc((neuest.gemessen_am||'').slice(0,16).replace('T',' '))+' · <a href="#" data-dz-act="messwertLoeschen" data-dz-arg="'+neuest.id+'">löschen</a>'; box.appendChild(f); }
+  }
+  async function messwertAnlegen(){
+    const art=v('mf-art'); const wert=v('mf-wert');
+    if(!art){alert('Bitte eine Messwert-Art wählen.');return;} if(wert===''){alert('Bitte einen Wert eintragen.');return;}
+    const body={art,wert:parseFloat(wert),einheit:v('mf-einheit'),gemessen_am:v('mf-zeit')||''};
+    try{ await api('/api/messwerte',{method:'POST',body:JSON.stringify(body)}); }
+    catch(e){ alert('Anlegen fehlgeschlagen: '+e.message); return; }
+    document.getElementById('mf-wert').value=''; await ladeMesswerte(); ladeStats(); ladeTrends(); ladeAktivitaet();
+  }
+  async function messwertLoeschen(id){ try{ await api('/api/messwerte/'+id,{method:'DELETE'}); }catch(e){} ladeMesswerte(); ladeStats(); ladeTrends(); ladeAktivitaet(); }
+
+  // ===== Aktivität (P1d): Tagesringe + Kacheln + Schnell-Eingabe + Verlauf =====
+  const AKT_TILES=[['schritte','Schritte','Stk'],['distanz','Distanz','km'],['etagen','Etagen','Etg'],['kalorien','Kalorien','kcal'],['stehstunden','Stehen','h'],['schlaf','Schlaf','h']];
+  async function ladeAktivitaet(){
+    const legende=document.getElementById('akt-legende'), ringHost=document.getElementById('akt-ringe'), kachelHost=document.getElementById('akt-kacheln');
+    let d; try{ d=await api('/api/aktivitaet/tag'); }catch(e){ if(legende)legende.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    const ringe=d.ringe||[], werte=d.werte||{}; const F=window.DzCharts?DzCharts.fmt:(x=>x);
+    if(ringHost&&window.DzCharts)ringHost.innerHTML=DzCharts.activityRings(ringe,{size:128,stroke:11});
+    const erreicht=ringe.filter(r=>r.erreicht).length;
+    document.getElementById('kurz-aktivitaet').textContent=ringe.length?(erreicht+'/'+ringe.length+' Ringe'):'';
+    if(legende)legende.innerHTML=ringe.map((r,i)=>'<div class="lg"><span class="dot r'+(i+1)+'"></span><span><b>'+(r.wert!=null?F(r.wert):'—')+'</b>'+(r.ziel?' / '+F(r.ziel):'')+' '+esc(r.einheit||'')+' · '+esc(r.label)+(r.erreicht?' <span class="done">✓</span>':' · '+r.prozent+'%')+'</span></div>').join('')||'<span class="leer">Noch keine Aktivität heute.</span>';
+    if(kachelHost)kachelHost.innerHTML=AKT_TILES.map(([k,l,u])=>'<div class="dz-akt-tile"><span class="v">'+(werte[k]!=null?F(werte[k]):'—')+'</span><span class="u"> '+esc(u||'')+'</span><div class="l">'+esc(l)+'</div></div>').join('');
+    ladeAktVerlauf();
+  }
+  async function aktivitaetEintragen(){
+    const keys=['schritte','distanz','etagen','aktive_minuten','kalorien','stehstunden','schlaf'];
+    const body={datum:v('ak-datum')||''}; let any=false;
+    keys.forEach(k=>{ const val=v('ak-'+k); if(val!==''){ body[k]=parseFloat(val); any=true; } });
+    const st=document.getElementById('ak-status');
+    if(!any){ if(st)st.textContent='Mindestens einen Wert eintragen.'; return; }
+    if(st)st.textContent='speichere …';
+    try{ const r=await api('/api/aktivitaet',{method:'POST',body:JSON.stringify(body)}); if(st)st.textContent='✓ gespeichert ('+((r.geschrieben||[]).length)+' Werte).'; }
+    catch(e){ if(st)st.textContent='Fehler: '+e.message; return; }
+    keys.forEach(k=>{const el=document.getElementById('ak-'+k);if(el)el.value='';});
+    ladeAktivitaet(); ladeStats(); ladeMesswerte();
+  }
+  async function ladeAktVerlauf(){
+    const box=document.getElementById('akv-chart'); if(!box)return;
+    const art=v('akv-art'), tage=v('akv-tage')||'30';
+    if(!art){ box.innerHTML=''; return; }
+    let d; try{ d=await api('/api/aktivitaet/verlauf?art='+encodeURIComponent(art)+'&tage='+tage); }catch(e){ box.innerHTML='<div class="dz-chart-leer">Nicht ladbar.</div>'; return; }
+    const p=d.punkte||[]; const a=ARTEN_BY[art]||{};
+    if(!p.length){ box.innerHTML='<div class="dz-chart-leer">Noch keine Tagesdaten — oben eintragen.</div>'; return; }
+    if(window.DzCharts)DzCharts.mountLine(box,{werte:p.map(x=>x.wert),labels:p.map(x=>x.datum),einheit:a.einheit});
+  }
+
+  // ===== KI-UI: lokal_only-Badge (P1c) — liest Sensibilität + Routing =====
+  async function ladeLokalBadge(){
+    const b=document.getElementById('ki-lokal-badge'); if(!b)return;
+    let routing='lokal_only', sens='hoechst';
+    try{ const m=await api('/api/manifest'); sens=m.sensitivity||sens; }catch(e){}
+    try{ const s=await api('/api/settings'); routing=s.ki_routing||routing; }catch(e){}
+    b.textContent=routing;
+    b.title='Sensibilität '+sens+' · KI-Routing '+routing+' — Inhalte gehen nie an Cloud-/Boost-Modelle.';
+    if(routing!=='lokal_only'){ b.style.borderColor='var(--mg)'; b.style.color='var(--mg)'; }
+  }
+
+  // ===== Domäne: Supplements =====
+  async function ladeSupplements(){
+    const host=document.getElementById('liste-supplements'); if(!host)return;
+    const f=v('sf-filter');
+    let liste; try{ liste=await api('/api/supplements'+(f!==''?'?aktiv='+f:'')); }
+    catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    document.getElementById('kurz-supplements').textContent=liste.length?liste.length+'':'';
+    if(!liste.length){ host.innerHTML='<span class="leer">Keine Supplements im Filter.</span>'; return; }
+    host.innerHTML=liste.map(s=>'<div class="item"><label class="dz-check" style="margin-top:2px" title="aktiv/pausiert"><input type="checkbox" '+(s.aktiv?'checked':'')+' data-dz-act="supplementToggle" data-dz-arg="'+s.id+'" data-dz-on="change"></label>'
+      +'<div class="grow"><div class="titel" style="'+(s.aktiv?'':'color:var(--mut)')+'">'+esc(s.name)+'</div>'
+      +'<div class="meta">'+(s.dosis?'<span>'+esc(s.dosis)+' '+esc(s.einheit||'')+'</span>':'')+'<span class="pill">'+esc(s.frequenz)+'</span>'+(s.zeitpunkt!=='egal'?'<span class="pill">'+esc(s.zeitpunkt)+'</span>':'')+(s.aktiv?'':'<span class="pill">pausiert</span>')+'</div></div>'
+      +'<button class="btn mini mg" title="Löschen" data-dz-act="supplementLoeschen" data-dz-arg="'+s.id+'">✕</button></div>').join('');
+  }
+  async function supplementAnlegen(){
+    const name=v('sf-name'); if(!name){alert('Erst einen Namen eintippen.');return;}
+    const body={name,dosis:v('sf-dosis'),einheit:v('sf-einheit'),frequenz:v('sf-freq'),zeitpunkt:v('sf-zeit')};
+    try{ await api('/api/supplements',{method:'POST',body:JSON.stringify(body)}); }
+    catch(e){ alert('Anlegen fehlgeschlagen: '+e.message); return; }
+    for(const id of ['sf-name','sf-dosis','sf-einheit']) document.getElementById(id).value='';
+    await ladeSupplements(); ladeStats();
+  }
+  async function supplementToggle(id,el){ const aktiv=!!(el&&el.checked); try{ await api('/api/supplements/'+id,{method:'PATCH',body:JSON.stringify({aktiv})}); }catch(e){} ladeSupplements(); ladeStats(); }
+  async function supplementLoeschen(id){ try{ await api('/api/supplements/'+id,{method:'DELETE'}); }catch(e){} ladeSupplements(); ladeStats(); }
+
+  // ===== Domäne: Verletzungen =====
+  async function ladeVerletzungen(){
+    const host=document.getElementById('liste-verletzungen'); if(!host)return;
+    let liste; try{ liste=await api('/api/verletzungen'+(v('vf-filter')?'?status='+encodeURIComponent(v('vf-filter')):'')); }
+    catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    document.getElementById('kurz-verletzungen').textContent=liste.length?liste.length+'':'';
+    if(!liste.length){ host.innerHTML='<span class="leer">Keine Einträge im Filter.</span>'; return; }
+    const STATUS=['akut','heilend','verheilt'];
+    host.innerHTML=liste.map(x=>{ const verh=x.status==='verheilt';
+      return '<div class="item"><div class="grow"><div class="titel" style="'+(verh?'color:var(--mut)':'')+'">'+esc(x.koerperregion)+'</div>'
+      +'<div class="meta"><span class="pill '+(x.schweregrad==='schwer'?'warn':'')+'">'+esc(x.schweregrad)+'</span>'+(x.beschreibung?'<span>'+esc(x.beschreibung)+'</span>':'')+(verh?'<span class="pill ok">verheilt</span>':'')+'</div></div>'
+      +'<div class="row tight"><span class="dz-field"><select class="dz-select small" data-dz-act="verletzungStatus" data-dz-arg="'+x.id+'" data-dz-on="change">'+STATUS.map(s=>'<option '+(s===x.status?'selected':'')+'>'+s+'</option>').join('')+'</select></span>'
+      +'<button class="btn mini" title="In Dizz Memory archivieren (höchst sensibel — bewusste Freigabe)" data-dz-act="verletzungArchivieren" data-dz-arg="'+x.id+'">⇲</button>'
+      +'<button class="btn mini mg" title="Löschen" data-dz-act="verletzungLoeschen" data-dz-arg="'+x.id+'">✕</button></div></div>';
+    }).join('');
+  }
+  async function verletzungAnlegen(){
+    const region=v('vf-region'); if(!region){alert('Erst eine Körperregion eintippen.');return;}
+    const body={koerperregion:region,schweregrad:v('vf-schwere'),beschreibung:v('vf-beschr')};
+    try{ await api('/api/verletzungen',{method:'POST',body:JSON.stringify(body)}); }
+    catch(e){ alert('Anlegen fehlgeschlagen: '+e.message); return; }
+    document.getElementById('vf-region').value=''; document.getElementById('vf-beschr').value='';
+    await ladeVerletzungen(); ladeStats();
+  }
+  async function verletzungStatus(id,el){ const status=el&&el.value; try{ await api('/api/verletzungen/'+id,{method:'PATCH',body:JSON.stringify({status})}); }catch(e){} ladeVerletzungen(); ladeStats(); }
+  async function verletzungLoeschen(id){ try{ await api('/api/verletzungen/'+id,{method:'DELETE'}); }catch(e){} ladeVerletzungen(); ladeStats(); }
+  async function verletzungArchivieren(id){
+    if(!confirm('Höchst sensible Gesundheitsdaten in Dizz Memory archivieren?\n\nDie Notiz wird als „sensibel" markiert (Memory-KI nur lokal). Nur bewusst freigeben.'))return;
+    let r;try{r=await api('/api/verletzungen/'+id+'/archivieren',{method:'POST'});}
+    catch(e){alert('Archivieren fehlgeschlagen: '+(e.message||''));return;}
+    const s=r&&r.status;
+    if(s==='archiviert')alert('✓ In Dizz Memory archiviert (sensibel).');
+    else if(s==='vorhanden')alert('✓ War bereits in Dizz Memory.');
+    else if(r&&r.ok===false)alert('Dizz Memory nicht erreichbar: '+(r.fehler||'?'));
+    else if(s==='uebersprungen')alert('Übersprungen (Archiv-Regel: '+(r.modus||r.grund||'manuell')+').');
+    else alert('✓ An Dizz Memory gesendet.');
+  }
+
+  // ===== Domäne: Training =====
+  async function ladeTraining(){
+    const host=document.getElementById('liste-training'); if(!host)return;
+    let liste; try{ liste=await api('/api/trainings?limit=40'); }
+    catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    document.getElementById('kurz-training').textContent=liste.length?liste.length+'':'';
+    if(!liste.length){ host.innerHTML='<span class="leer">Noch kein Training erfasst.</span>'; return; }
+    host.innerHTML=liste.map(t=>'<div class="item"><div class="grow"><div class="titel">'+esc(t.art)+'</div>'
+      +'<div class="meta"><span>🗓 '+esc((t.trainiert_am||'').slice(0,10))+'</span>'+(t.dauer_min?'<span>⏱ '+esc(t.dauer_min)+' min</span>':'')+'<span class="pill">'+esc(t.intensitaet)+'</span>'
+      +(t.kennzahl_name&&t.kennzahl_wert!=null?'<span>'+esc(t.kennzahl_name)+': '+esc(t.kennzahl_wert)+' '+esc(t.kennzahl_einheit||'')+'</span>':'')+'</div></div>'
+      +'<button class="btn mini mg" title="Löschen" data-dz-act="trainingLoeschen" data-dz-arg="'+t.id+'">✕</button></div>').join('');
+  }
+  async function trainingAnlegen(){
+    const art=v('tf-art'); if(!art){alert('Erst eine Trainingsart eintippen.');return;}
+    const body={art,dauer_min:parseInt(v('tf-dauer')||'0')||0,intensitaet:v('tf-int'),
+      kennzahl_name:v('tf-kname'),kennzahl_einheit:v('tf-keinheit'),trainiert_am:v('tf-datum')||''};
+    const kw=v('tf-kwert'); if(kw!=='')body.kennzahl_wert=parseFloat(kw);
+    try{ await api('/api/trainings',{method:'POST',body:JSON.stringify(body)}); }
+    catch(e){ alert('Anlegen fehlgeschlagen: '+e.message); return; }
+    for(const id of ['tf-art','tf-dauer','tf-kname','tf-kwert','tf-keinheit']) document.getElementById(id).value='';
+    await ladeTraining(); ladeStats();
+  }
+  async function trainingLoeschen(id){ try{ await api('/api/trainings/'+id,{method:'DELETE'}); }catch(e){} ladeTraining(); ladeStats(); }
+
+  // ===== Domäne: Termine =====
+  async function ladeTermine(){
+    const host=document.getElementById('liste-termine'); if(!host)return;
+    let liste; try{ liste=await api('/api/termine?kommend=1'); }
+    catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    document.getElementById('kurz-termine').textContent=liste.length?liste.length+'':'';
+    if(!liste.length){ host.innerHTML='<span class="leer">Keine kommenden Termine.</span>'; return; }
+    host.innerHTML=liste.map(t=>'<div class="item"><div class="grow"><div class="titel">'+esc(t.titel)+'</div>'
+      +'<div class="meta"><span>🕒 '+esc(fmtZeit(t.beginn))+'</span><span class="pill">'+esc(t.kategorie)+'</span>'+(t.ort?'<span>📍 '+esc(t.ort)+'</span>':'')+(t.erinnerung?'<span class="pill aktiv">🔔 Erinnerung</span>':'')+'</div></div>'
+      +'<button class="btn mini mg" title="Löschen" data-dz-act="terminLoeschen" data-dz-arg="'+t.id+'">✕</button></div>').join('');
+  }
+  async function terminAnlegen(){
+    const titel=v('zf-titel'); const beginn=v('zf-beginn');
+    if(!titel){alert('Erst einen Titel eintippen.');return;} if(!beginn){alert('Bitte einen Beginn wählen.');return;}
+    const body={titel,kategorie:v('zf-kat'),beginn,ort:v('zf-ort'),erinnerung:document.getElementById('zf-erinnerung').checked};
+    try{ await api('/api/termine',{method:'POST',body:JSON.stringify(body)}); }
+    catch(e){ alert('Anlegen fehlgeschlagen: '+e.message); return; }
+    document.getElementById('zf-titel').value=''; document.getElementById('zf-ort').value='';
+    await ladeTermine(); ladeStats();
+  }
+  async function terminLoeschen(id){ try{ await api('/api/termine/'+id,{method:'DELETE'}); }catch(e){} ladeTermine(); ladeStats(); }
+
+  // ===== KI-Auswertung: Trends (deterministisch) + Hinweise (lokale KI) =====
+  function _pfeil(richtung){ if(richtung==='steigend')return '<span class="trendpfeil up">↑</span>'; if(richtung==='fallend')return '<span class="trendpfeil down">↓</span>'; if(richtung==='stabil')return '<span class="trendpfeil flat">→</span>'; return '<span class="trendpfeil flat">·</span>'; }
+  async function ladeTrends(){
+    const host=document.getElementById('trend-out'); if(!host)return;
+    let d; try{ d=await api('/api/trends?tage=30'); }catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    const t=d.trends||[];
+    document.getElementById('kurz-auswertung').textContent=t.length?t.length+' Trends':'';
+    if(!t.length){ host.innerHTML='<span class="leer">Noch keine Messwerte — oben Werte eintragen.</span>'; return; }
+    host.innerHTML=t.map(x=>'<div class="item"><div class="grow"><div class="row tight"><span class="titel small">'+esc(x.label)+'</span> '+_pfeil(x.richtung)
+      +'<span class="wert">'+esc(x.letzter_wert)+'</span><span class="small mut">'+esc(x.einheit||'')+'</span>'
+      +(x.im_referenzbereich===false?'<span class="pill warn">⚠ außerhalb</span>':'')+'</div>'
+      +'<div class="meta"><span>'+esc(x.richtung)+'</span><span>Ø '+esc(x.mittel)+'</span><span>n='+esc(x.anzahl)+'</span><span>Δ '+esc(x.delta)+'</span></div></div></div>').join('');
+  }
+  async function kiAuswerten(){
+    const host=document.getElementById('hinweis-out'); if(!host)return;
+    host.innerHTML='<div class="mut small" style="margin-top:8px">Die lokale KI denkt nach … (10–60 s)</div>';
+    let d; try{ d=await api('/api/analyse',{method:'POST'}); }catch(e){ host.innerHTML='<div class="mut small" style="margin-top:8px">KI gerade nicht erreichbar.</div>'; return; }
+    if(d.trends) ladeTrends();
+    if(!d.hinweise||!d.hinweise.length){ host.innerHTML='<div class="mut small" style="margin-top:8px">'+(d.quelle==='kein_ollama'?'Lokale KI (Ollama) nicht erreichbar — Trends oben sind trotzdem aktuell.':'Keine Hinweise — alles ruhig.')+'</div>'; return; }
+    host.innerHTML='<div style="margin-top:8px">'+d.hinweise.map(h=>'<div class="dz-ki-hinweis">'+esc(h)+'</div>').join('')+'</div>';
+  }
+
+  // ===== Quellen & Geräte (vorbereitet, Gesetz 5 — P2-Ansicht) =====
+  const QUELLE_LABEL={manuell:'Manuelle Eingabe',apple_health:'Apple Health (HealthKit)',health_connect:'Android Health Connect',terra:'Terra / Spike (Unified-API)',ble:'Bluetooth-LE Geräte (GATT)'};
+  async function ladeQuellen(){
+    const host=document.getElementById('liste-quellen'); if(!host)return;
+    let d; try{ d=await api('/api/quellen'); }catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    host.innerHTML=(d.quellen||[]).map(q=>{
+      let extra='';
+      if(q.profile){ extra='<div class="dz-akt-grid" style="margin-top:7px">'+Object.entries(q.profile).map(([k,p])=>'<div class="dz-akt-tile"><span class="v" style="font-size:12px">'+esc(p.service)+'</span><div class="l">'+esc(k)+(p.art?' → '+esc(p.art):'')+'</div></div>').join('')+'</div>'; }
+      if(q.name==='ble'){ extra += q.aktivierbar
+        ? '<div class="row tight" style="margin-top:8px"><button class="btn cy mini" data-dz-act="bleScannen">🔌 BLE-Gerät koppeln</button><span class="small mut">scannt lokal — Werte bleiben auf dem Gerät</span></div><div id="ble-out" class="liste" style="margin-top:6px"></div>'
+        : '<div class="small mut" style="margin-top:6px">BLE-Stack nicht installiert (<code>pip install bleak</code>) — Slot bleibt vorbereitet (Gesetz 5).</div>'; }
+      const pill=q.verbunden?'<span class="pill ok">verbunden</span>':(q.aktivierbar?'<span class="pill aktiv">aktivierbar</span>':'<span class="pill">vorbereitet</span>');
+      return '<div class="item"><div class="grow"><div class="titel small">'+esc(QUELLE_LABEL[q.name]||q.name)+' '+pill+'</div>'
+        +'<div class="meta">'+esc(q.hinweis||'')+'</div>'+extra+'</div></div>';
+    }).join('');
+  }
+  // BLE lokal scharf (bleak): scannen + Herzfrequenz lesen → lokal ingesten (nichts verlässt das Gerät)
+  async function bleScannen(_a,btn){
+    const out=document.getElementById('ble-out'); if(!out)return;
+    if(btn)btn.disabled=true; out.innerHTML='<span class="leer">scanne lokal … (bis ~6 s)</span>';
+    let d; try{ d=await api('/api/ble/scan?timeout=6'); }catch(e){ out.innerHTML='<span class="leer">Scan fehlgeschlagen: '+esc(e.message)+'</span>'; if(btn)btn.disabled=false; return; }
+    if(btn)btn.disabled=false;
+    if(!d.verfuegbar){ out.innerHTML='<span class="leer">'+esc(d.hinweis||'BLE nicht verfügbar.')+'</span>'; return; }
+    const g=d.geraete||[];
+    if(!g.length){ out.innerHTML='<span class="leer">Kein Gerät gefunden — Gerät einschalten/koppelbar machen, dann erneut scannen.</span>'; return; }
+    out.innerHTML=g.map(x=>'<div class="item"><div class="grow"><div class="titel small">'+esc(x.name||'(unbenannt)')+'</div>'
+      +'<div class="meta"><span>'+esc(x.address||'')+'</span>'+(x.rssi!=null?'<span class="pill">'+esc(x.rssi)+' dBm</span>':'')+'</div></div>'
+      +'<button class="btn cy mini" data-dz-act="bleLesen" data-dz-arg="'+esc(x.address||'')+'" title="Herzfrequenz lokal lesen (ca. 8 s)">❤ Puls lesen</button></div>').join('');
+  }
+  async function bleLesen(address,btn){
+    if(btn){btn.disabled=true;btn.textContent='liest …';}
+    let d; try{ d=await api('/api/ble/lesen',{method:'POST',body:JSON.stringify({address,profil:'heart_rate',dauer:8})}); }
+    catch(e){ if(btn){btn.disabled=false;btn.textContent='❤ Puls lesen';} alert('BLE-Lesen fehlgeschlagen: '+e.message); return; }
+    if(btn){btn.disabled=false;btn.textContent='❤ Puls lesen';}
+    alert('✓ '+(d.geschrieben||0)+' Puls-Messwert(e) lokal gespeichert'+(d.uebersprungen?' ('+d.uebersprungen+' übersprungen)':'')+'.');
+    ladeMesswerte(); ladeStats();
+  }
+
+  // ===== Timeline (Unified, 5 Domänen, P2) =====
+  const DOM_LABEL={messwert:'Messwert',training:'Training',verletzung:'Verletzung',termin:'Termin',supplement:'Supplement',aktivitaet:'Aktivität'};
+  async function ladeTimeline(){
+    const host=document.getElementById('liste-timeline'); if(!host)return;
+    let d; try{ d=await api('/api/timeline?limit=80'); }catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    const ev=d.events||[];
+    document.getElementById('kurz-timeline').textContent=ev.length?ev.length+' Ereignisse':'';
+    if(!ev.length){ host.innerHTML='<span class="leer">Noch keine Ereignisse — trag Werte/Termine ein.</span>'; return; }
+    host.innerHTML=ev.map(e=>'<div class="dz-tl-ev"><span class="dz-tl-dot '+esc(e.farbe||'cy')+'"></span>'
+      +'<div class="dz-tl-body"><div class="dz-tl-titel">'+esc(e.titel)+'<span class="dom">'+esc(DOM_LABEL[e.domaene]||e.domaene)+'</span></div>'
+      +'<div class="dz-tl-meta"><span class="dz-tl-datum">'+esc(fmtZeit(e.datum))+'</span>'+(e.detail?'<span>'+esc(e.detail)+'</span>':'')+'</div></div></div>').join('');
+  }
+
+  // ===== Korrelation Belastung↔Erholung (P2, deterministisch, nicht-medizinisch) =====
+  async function ladeKorrMetriken(){
+    let d; try{ d=await api('/api/korrelation/metriken'); }catch(e){ return; }
+    const bel=(d.metriken||[]).filter(m=>m.gruppe==='belastung'), erh=(d.metriken||[]).filter(m=>m.gruppe==='erholung');
+    const x=document.getElementById('kf-x'), y=document.getElementById('kf-y');
+    if(x)x.innerHTML=bel.map(m=>'<option value="'+m.key+'">'+esc(m.label)+'</option>').join('');
+    if(y)y.innerHTML=erh.map(m=>'<option value="'+m.key+'">'+esc(m.label)+'</option>').join('');
+  }
+  async function ladeKorrelation(){
+    const box=document.getElementById('korr-chart'); if(!box)return;
+    const x=v('kf-x')||'aktive_minuten', y=v('kf-y')||'ruhepuls', tage=v('kf-tage')||'90', lag=v('kf-lag')||'0';
+    let d; try{ d=await api('/api/korrelation?x='+x+'&y='+y+'&tage='+tage+'&lag='+lag); }catch(e){ box.innerHTML='<div class="dz-chart-leer">Nicht ladbar.</div>'; return; }
+    const rEl=document.getElementById('korr-r'), nEl=document.getElementById('korr-n');
+    document.getElementById('kurz-korrelation').textContent=d.n?('n='+d.n):'';
+    if(d.r==null){ rEl.textContent='—'; rEl.className='dz-korr-r zero'; }
+    else{ rEl.textContent=(d.r>0?'+':'')+d.r; rEl.className='dz-korr-r '+(d.r>0.15?'pos':(d.r<-0.15?'neg':'zero')); }
+    nEl.textContent=d.n?('aus '+d.n+' gemeinsamen Tagen'+(d.lag?' · Y um '+d.lag+' Tag(e) versetzt':'')+(d.r==null?' · zu wenige für eine Aussage':'')):'keine gemeinsamen Tage — mehr eintragen';
+    if(window.DzCharts)DzCharts.mountScatter(box,d.punkte,{xLabel:d.x_label,yLabel:d.y_label});
+  }
+
+  // ===== Composite-Scores (P3, STRIKT nicht-medizinisch) =====
+  function _konfBadge(k){ return '<span class="dz-konf '+(k==='hoch'?'hoch':((k==='niedrig'||k==='keine')?'niedrig':''))+'">Konfidenz '+esc(k)+'</span>'; }
+  async function ladeScores(){
+    const host=document.getElementById('scores-grid'); if(!host)return;
+    let d; try{ d=await api('/api/scores'); }catch(e){ host.innerHTML='<span class="leer">Nicht ladbar.</span>'; return; }
+    const F=window.DzCharts?DzCharts.fmt:(x=>x); let cards='';
+    const rd=d.readiness||{};
+    if(rd.verfuegbar){
+      const band=rd.score>=70?'gut':(rd.score>=45?'mittel':'schwach');
+      const g=window.DzCharts?DzCharts.gauge(rd.score,{band:band,sub:rd.stufe||''}):rd.score;
+      cards+='<div class="dz-score-card"><div class="dz-score-head">'+g
+        +'<div class="grow"><div class="dz-score-titel">Readiness</div><div class="dz-score-stufe">'+esc(rd.stufe||'')+'</div>'+_konfBadge(rd.konfidenz)+'</div></div>'
+        +'<div class="dz-komp">'+(rd.komponenten||[]).map(k=>'<div class="dz-komp-row"><span>'+esc(k.label)+'</span><span class="dz-komp-bar"><span style="width:'+k.score+'%"></span></span><span class="dz-komp-val">'+k.score+'</span></div>').join('')+'</div></div>';
+    } else cards+='<div class="dz-score-card"><div class="dz-score-titel">Readiness</div><div class="dz-score-stufe" style="margin-top:8px">'+esc(rd.hinweis||'Noch zu wenige Werte.')+'</div></div>';
+    const ba=d.bio_alter||{};
+    if(ba.verfuegbar){ const juenger=ba.differenz<0;
+      cards+='<div class="dz-score-card"><div class="dz-score-titel">Fitness-Alter</div>'
+        +'<div style="margin-top:8px"><span class="dz-bioalter">'+F(ba.bio_alter)+'<span class="d '+(juenger?'juenger':'aelter')+'">'+(ba.differenz>0?'+':'')+ba.differenz+' J '+(juenger?'jünger':(ba.differenz>0?'älter':''))+'</span></span></div>'
+        +'<div class="dz-score-stufe" style="margin-top:4px">chronologisch '+esc(ba.chrono_alter)+' J · '+_konfBadge(ba.konfidenz)+'</div>'
+        +'<div class="dz-komp">'+(ba.komponenten||[]).map(k=>'<div class="dz-komp-row"><span>'+esc(k.label)+'</span><span class="dz-komp-val">'+F(k.wert)+'</span><span class="dz-komp-eff '+(k.effekt_jahre>0?'plus':'minus')+'">'+(k.effekt_jahre>0?'+':'')+k.effekt_jahre+' J</span></div>').join('')+'</div></div>';
+    } else cards+='<div class="dz-score-card"><div class="dz-score-titel">Fitness-Alter</div><div class="dz-score-stufe" style="margin-top:8px">'+esc(ba.hinweis||'Geburtsjahr in den Einstellungen hinterlegen.')+'</div></div>';
+    host.innerHTML=cards;
+    document.getElementById('kurz-scores').textContent=rd.verfuegbar?('Readiness '+rd.score):'';
+  }
+
+  // ===== Kopf-KPIs =====
+  async function ladeStats(){ const host=document.getElementById('kpibar'); if(!host)return;
+    let s; try{ s=await api('/api/stats'); }catch(e){ host.innerHTML='<span class="mut">Status nicht abrufbar.</span>'; return; }
+    const gewicht=(s.gewicht_letzt!=null)?('<span><b>'+s.gewicht_letzt+'</b> '+esc(s.gewicht_einheit||'kg')+' Gewicht</span>'):'';
+    host.innerHTML=gewicht+'<span><b>'+s.messwerte_30t+'</b> Messwerte (30 T)</span><span><b>'+s.supplements_aktiv+'</b> Supplements</span>'
+      +'<span><b>'+s.verletzungen_offen+'</b> Verletzungen offen</span><span><b>'+s.trainings_7t+'</b> Training (7 T)</span>'
+      +(s.naechster_termin?'<span>🩺 nächster Termin <b>'+esc((s.naechster_termin||'').slice(0,10))+'</b></span>':'');
+    if(window.ladeTimeline)ladeTimeline();   // Timeline/Scores/Übersicht folgen jeder Datenänderung (jeder Mutator ruft ladeStats)
+    if(window.ladeScores)ladeScores();
+    if(window.ladeUebersicht)ladeUebersicht();
+  }
+
+  // ===== Übersicht-Dashboard (konfigurierbarer KPI-Slot, docs/33 §5d-Gerüst) =====
+  // Katalog ALLER verfügbaren Kennzahlen über die drei Gruppen. Der Nutzer gestaltet
+  // die FINALE Auswahl später im UI Builder Tool — hier ist der Slot + ein arbeits-
+  // fähiges Auswahl-Gerüst (localStorage), bewusst NICHT hart vorweggenommen.
+  const DASH_KATALOG=[
+    {id:'readiness',label:'Readiness',get:S=>{const r=S.scores&&S.scores.readiness;return (r&&r.verfuegbar)?{value:r.score,status:r.score>=70?'ok':(r.score<45?'warn':'')}:{value:'—'};}},
+    {id:'fitness_alter',label:'Fitness-Alter',get:S=>{const b=S.scores&&S.scores.bio_alter;return (b&&b.verfuegbar)?{value:b.bio_alter,unit:'J'}:{value:'—'};}},
+    {id:'schritte_heute',label:'Schritte heute',get:S=>({value:(S.stats&&S.stats.schritte_heute!=null)?S.stats.schritte_heute:'—'})},
+    {id:'aktive_minuten',label:'Aktive Min heute',get:S=>{const w=S.tag&&S.tag.werte;return {value:(w&&w.aktive_minuten!=null)?w.aktive_minuten:'—',unit:'min'};}},
+    {id:'ringe',label:'Ringe erreicht',get:S=>{const rg=(S.tag&&S.tag.ringe)||[];const n=rg.filter(r=>r.erreicht).length;return {value:rg.length?n:'—',unit:rg.length?'/3':'',status:(rg.length&&n>=3)?'ok':''};}},
+    {id:'gewicht',label:'Gewicht',get:S=>({value:(S.stats&&S.stats.gewicht_letzt!=null)?S.stats.gewicht_letzt:'—',unit:(S.stats&&S.stats.gewicht_einheit)||'kg'})},
+    {id:'auffaellig',label:'Auffällige Werte',get:S=>{const n=_auffaellig(S);return {value:n,status:n>0?'warn':'ok'};}},
+    {id:'supplements',label:'Supplements aktiv',get:S=>({value:(S.stats&&S.stats.supplements_aktiv!=null)?S.stats.supplements_aktiv:'—'})},
+    {id:'verletzungen',label:'Verletzungen offen',get:S=>{const n=S.stats&&S.stats.verletzungen_offen;return {value:(n!=null)?n:'—',status:n>0?'warn':'ok'};}},
+    {id:'trainings_7t',label:'Training (7 T)',get:S=>({value:(S.stats&&S.stats.trainings_7t!=null)?S.stats.trainings_7t:'—'})},
+    {id:'naechster_termin',label:'Nächster Termin',get:S=>({value:(S.stats&&S.stats.naechster_termin)?S.stats.naechster_termin.slice(0,10):'—'})},
+    // feinere Kennzahlen (aus denselben Endpunkten — Vital-Trends + Aktivitäts-Tageswerte)
+    {id:'ruhepuls',label:'Ruhepuls',get:S=>{const t=_trendOf(S,'ruhepuls');return t?{value:t.letzter_wert,unit:t.einheit||'bpm',status:t.im_referenzbereich===false?'warn':''}:{value:'—'};}},
+    {id:'hrv',label:'HRV',get:S=>{const t=_trendOf(S,'hrv');return t?{value:t.letzter_wert,unit:t.einheit||'ms',status:t.im_referenzbereich===false?'warn':''}:{value:'—'};}},
+    {id:'schlaf_heute',label:'Schlaf',get:S=>{const w=S.tag&&S.tag.werte;return {value:(w&&w.schlaf!=null)?w.schlaf:'—',unit:'h'};}},
+    {id:'distanz_heute',label:'Distanz heute',get:S=>{const w=S.tag&&S.tag.werte;return {value:(w&&w.distanz!=null)?w.distanz:'—',unit:'km'};}},
+    {id:'kalorien_heute',label:'Kalorien heute',get:S=>{const w=S.tag&&S.tag.werte;return {value:(w&&w.kalorien!=null)?w.kalorien:'—',unit:'kcal'};}},
+    {id:'stehstunden',label:'Stehstunden',get:S=>{const w=S.tag&&S.tag.werte;return {value:(w&&w.stehstunden!=null)?w.stehstunden:'—',unit:'h'};}},
+    {id:'messwerte_30t',label:'Messwerte (30 T)',get:S=>({value:(S.stats&&S.stats.messwerte_30t!=null)?S.stats.messwerte_30t:'—'})},
+  ];
+  const DASH_DEFAULT=['readiness','schritte_heute','auffaellig','gewicht','verletzungen','naechster_termin'];
+  function _auffaellig(S){ return ((S.trends&&S.trends.trends)||[]).filter(t=>t.kategorie!=='aktivitaet'&&t.im_referenzbereich===false).length; }
+  function _trendOf(S,art){ return ((S.trends&&S.trends.trends)||[]).find(t=>t.art===art)||null; }
+  function dashAuswahl(){ try{ const s=JSON.parse(localStorage.getItem('health_dash_kpis')); if(Array.isArray(s)&&s.length)return s; }catch(e){} return DASH_DEFAULT.slice(); }
+  let DASH_SNAP={};
+  async function ladeUebersicht(){
+    const host=document.getElementById('dash-kpis'); if(!host)return;
+    const [stats,scores,tag,trends]=await Promise.all([
+      api('/api/stats').catch(()=>null), api('/api/scores').catch(()=>null),
+      api('/api/aktivitaet/tag').catch(()=>null), api('/api/trends?tage=90').catch(()=>null)]);
+    DASH_SNAP={stats,scores,tag,trends};
+    dashRender(); ueberHeroRender(); ueberVitalRender(); if(window.ladeVorschlaege)ladeVorschlaege();
+    const auf=_auffaellig(DASH_SNAP), vo=(stats&&stats.verletzungen_offen)||0;
+    const kt=document.getElementById('kurz-grp-tagebuch');
+    if(kt&&stats)kt.textContent=(auf?'⚠ '+auf+' auffällig · ':'')+vo+' Verletzung(en) offen · '+(stats.supplements_aktiv||0)+' Supp aktiv';
+    const ka=document.getElementById('kurz-grp-auswertung'), rd=scores&&scores.readiness;
+    if(ka)ka.textContent=(rd&&rd.verfuegbar)?('Readiness '+rd.score+' · Trends · Korrelation'):'Aktivität · Scores · Timeline · Korrelation · KI';
+    const us=document.getElementById('uebersicht-stand');
+    if(us){ const d=new Date(); us.textContent='Stand '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+  }
+  // ===== Übersicht-Hero (Tagesringe + Readiness-Gauge) + Vital-Puls =====
+  function ueberHeroRender(){
+    const S=DASH_SNAP, F=window.DzCharts?DzCharts.fmt:(x=>x);
+    const ringHost=document.getElementById('ueber-ringe'), legHost=document.getElementById('ueber-ring-legende');
+    const ringe=(S.tag&&S.tag.ringe)||[];
+    if(ringHost)ringHost.innerHTML=(ringe.length&&window.DzCharts)?DzCharts.activityRings(ringe,{size:142,stroke:13}):'';
+    if(legHost)legHost.innerHTML=ringe.length?ringe.map((r,i)=>'<div class="lg"><span class="dot r'+(i+1)+'"></span><span><b>'+(r.wert!=null?F(r.wert):'—')+'</b>'+(r.ziel?' / '+F(r.ziel):'')+' '+esc(r.einheit||'')+' · '+esc(r.label)+(r.erreicht?' <span class="done">✓</span>':' · '+r.prozent+'%')+'</span></div>').join(''):'<span class="leer">Noch keine Aktivität heute — unter „Auswertung › Aktivität" eintragen.</span>';
+    const gHost=document.getElementById('ueber-gauge'), gSub=document.getElementById('ueber-gauge-sub');
+    const rd=(S.scores&&S.scores.readiness)||{};
+    if(gHost&&window.DzCharts){
+      if(rd.verfuegbar){ const band=rd.score>=70?'gut':(rd.score>=45?'mittel':'schwach');
+        gHost.innerHTML=DzCharts.gauge(rd.score,{size:132,band:band}); if(gSub)gSub.textContent=rd.stufe||''; }
+      else { gHost.innerHTML=DzCharts.gauge(0,{size:132,label:'—'}); if(gSub)gSub.textContent=rd.hinweis||'Noch zu wenige Werte für Readiness.'; }
+    }
+  }
+  function ueberVitalRender(){
+    const host=document.getElementById('ueber-vital'), cap=document.getElementById('ueber-vital-cap'); if(!host)return;
+    let t=(((DASH_SNAP.trends&&DASH_SNAP.trends.trends)||[]).filter(x=>x.kategorie!=='aktivitaet'));
+    t.sort((a,b)=>((a.im_referenzbereich===false?0:1)-(b.im_referenzbereich===false?0:1))||(a.letzter_am<b.letzter_am?1:-1));
+    t=t.slice(0,6);
+    if(cap)cap.hidden=!t.length;
+    if(!t.length){ host.innerHTML=''; return; }
+    host.innerHTML=t.map(x=>{ const out=x.im_referenzbereich===false;
+      const spark=window.DzCharts?DzCharts.sparkline(x.verlauf,{refMin:x.ref_min,refMax:x.ref_max}):'';
+      return '<div class="dz-vmini'+(out?' warn':'')+'" title="'+esc(x.label)+' — Details in „Tagebuch › Messwerte"">'
+        +'<div class="dz-vmini-top">'+_arrow(x.richtung)+'<span class="grow">'+esc(x.label)+'</span>'+(out?'<span class="dz-badge-out" title="außerhalb des üblichen Bereichs — orientierend, keine Diagnose">!</span>':'')+'</div>'
+        +'<div><span class="dz-vmini-val">'+esc(x.letzter_wert)+'</span><span class="dz-vmini-unit">'+esc(x.einheit||'')+'</span></div>'+spark+'</div>';
+    }).join('');
+  }
+
+  // ===== Lokale Vorschläge & Erinnerungen (in-App, deterministisch + opt. lokale KI) =====
+  async function ladeVorschlaege(){
+    const host=document.getElementById('ueber-vorschlaege'); if(!host)return;
+    let d; try{ d=await api('/api/vorschlaege'); }catch(e){ host.hidden=true; return; }
+    const v=d.vorschlaege||[];
+    let h=v.map(x=>'<div class="dz-vorschlag'+(x.prio==='warn'?' warn':'')+'"><span class="vem">'+esc(x.emoji||'•')+'</span><span class="grow">'+esc(x.text)+'</span></div>').join('');
+    h+='<div class="dz-vorschlag" id="ki-vorschlag-zeile" style="border-left-color:var(--mut);border-style:dashed">'
+      +'<span class="vem">✨</span><span class="grow small mut">Mehr? Lokale KI liest deine heutige Datenlage (10–60 s, NIE Diagnose).</span>'
+      +'<button class="btn mini mg" data-dz-act="vorschlaegeKi">KI fragen</button></div>';
+    host.innerHTML=h; host.hidden=false;
+  }
+  async function vorschlaegeKi(_arg,btn){
+    if(btn){btn.disabled=true;btn.textContent='denkt …';}
+    let d; try{ d=await api('/api/vorschlaege/ki',{method:'POST'}); }catch(e){ if(btn){btn.disabled=false;btn.textContent='KI fragen';} return; }
+    const v=d.vorschlaege||[];
+    const add=v.length
+      ? v.map(x=>'<div class="dz-vorschlag ki"><span class="vem">✨</span><span class="grow">'+esc(x)+'</span><span class="vq">lokale KI</span></div>').join('')
+      : '<div class="dz-vorschlag ki"><span class="vem">✨</span><span class="grow small mut">'+(d.quelle==='kein_ollama'?'Lokale KI (Ollama) gerade nicht erreichbar — die Erinnerungen oben gelten weiter.':'Aktuell kein zusätzlicher Vorschlag.')+'</span></div>';
+    const zeile=document.getElementById('ki-vorschlag-zeile');
+    if(zeile)zeile.outerHTML=add;
+  }
+  // Erinnerungs-Konfig (Kit: dz-toggle + dz-stepper) — speichert sofort, lokal
+  function _erinTog(k,l,s){ const off=(s[k]===false||s[k]===0||s[k]==='0'||s[k]==='false'||s[k]==='aus');
+    return '<label class="dz-toggle"><input type="checkbox" '+(off?'':'checked')+' data-dz-act="erinnerungSet" data-dz-arg="'+k+'" data-dz-on="change" data-typ="bool"> '+esc(l)+'</label>'; }
+  function _erinStp(k,val,mn,mx){ return '<span class="dz-stepper"><button type="button" data-dz-step="-1" aria-label="weniger">▾</button>'
+    +'<input type="number" value="'+esc(val)+'" min="'+mn+'" max="'+mx+'" style="width:64px" data-dz-act="erinnerungSet" data-dz-arg="'+k+'" data-dz-on="change" data-typ="int"><button type="button" data-dz-step="1" aria-label="mehr">▴</button></span>'; }
+  async function erinnerungToggle(){
+    const box=document.getElementById('erinnerung-konfig'); if(!box)return;
+    if(!box.hidden){ box.hidden=true; return; }
+    let s={}; try{ s=await api('/api/settings'); }catch(e){}
+    box.innerHTML='<div class="mut small" style="margin-bottom:6px">Erinnerungen &amp; Vorschläge — rein lokal, nur in der App (nichts verlässt das Gerät, keine Diagnose).</div>'
+      +'<div style="display:flex;flex-direction:column;gap:6px">'
+      +_erinTog('erinnerung_termine','Anstehende Termine',s)
+      +_erinTog('erinnerung_training','Training nicht vergessen',s)
+      +_erinTog('erinnerung_supplements','Tägliche Supplements',s)
+      +_erinTog('erinnerung_bewegung','Offene Tagesziele (abends)',s)
+      +_erinTog('vorschlag_mahlzeit','Mahlzeiten-Hinweis nach Training',s)
+      +'</div>'
+      +'<div class="row tight" style="margin-top:9px"><span class="small mut">Training-Erinnerung ab</span>'+_erinStp('erinnerung_training_tage',(s.erinnerung_training_tage!=null?s.erinnerung_training_tage:4),1,60)+'<span class="small mut">Tagen · Termin-Vorlauf</span>'+_erinStp('erinnerung_vorlauf_tage',(s.erinnerung_vorlauf_tage!=null?s.erinnerung_vorlauf_tage:3),0,90)+'<span class="small mut">Tage</span></div>';
+    box.hidden=false;
+    if(window.DzControls)DzControls.initControls(box);   // dz-stepper verdrahten
+  }
+  async function erinnerungSet(key,el){
+    if(!el)return; const typ=el.getAttribute('data-typ');
+    let val = (el.type==='checkbox')?el.checked:el.value;
+    if(typ==='int') val=parseInt(val,10)||0;
+    await saveSetting(key,val);
+    ladeVorschlaege();
+  }
+  function dashRender(){
+    const host=document.getElementById('dash-kpis'); if(!host)return;
+    const kpis=dashAuswahl().map(id=>DASH_KATALOG.find(k=>k.id===id)).filter(Boolean);
+    if(!kpis.length){ host.innerHTML='<span class="leer">Keine Kennzahlen gewählt — über „⚙ Kennzahlen wählen".</span>'; return; }
+    host.innerHTML=kpis.map(k=>{ let r; try{ r=k.get(DASH_SNAP)||{}; }catch(e){ r={value:'—'}; }
+      const cls=r.status==='warn'?' warn':(r.status==='ok'?' ok':'');
+      return '<div class="dz-kpi"><div class="dz-kpi-val'+cls+'">'+esc(r.value)+(r.unit?'<span class="dz-kpi-unit">'+esc(r.unit)+'</span>':'')+'</div><div class="dz-kpi-label">'+esc(k.label)+'</div></div>';
+    }).join('');
+  }
+  function dashKonfigToggle(){
+    const box=document.getElementById('dash-konfig'); if(!box)return;
+    if(!box.hidden){ box.hidden=true; return; }
+    const sel=dashAuswahl();
+    box.innerHTML='<div class="mut small" style="margin-bottom:6px">Welche Kennzahlen oben in der Übersicht erscheinen — anhaken (Mehrfachauswahl).</div>'
+      +'<div class="dz-ankreuz">'+DASH_KATALOG.map(k=>'<label class="dz-check"><input type="checkbox" data-kpi="'+k.id+'" '+(sel.indexOf(k.id)>=0?'checked':'')+' data-dz-act="dashKonfigAendern" data-dz-on="change"> '+esc(k.label)+'</label>').join('')+'</div>';
+    box.hidden=false;
+  }
+  function dashKonfigAendern(){
+    const ids=[].slice.call(document.querySelectorAll('#dash-konfig input[data-kpi]')).filter(c=>c.checked).map(c=>c.getAttribute('data-kpi'));
+    try{ localStorage.setItem('health_dash_kpis',JSON.stringify(ids)); }catch(e){}
+    dashRender();
+  }
+
+  // ===== Mini-Dizzi (POST /api/ki/frage) =====
+  const _QMAP={app_ki:'Gesundheits-KI (lokal)',fallback_ollama:'lokaler Ollama-Kontext',kein_ollama:'Ollama nicht erreichbar',aus:'Mini-Dizzi deaktiviert',leer:'—'};
+  let DIZZI_OPEN=false;
+  function openDizzi(){ const b=document.getElementById('dizziBubble'); if(!b)return; b.hidden=false; DIZZI_OPEN=true; const i=document.getElementById('dizziFrage'); if(i)setTimeout(()=>i.focus(),30); }
+  function closeDizzi(){ const b=document.getElementById('dizziBubble'); if(b)b.hidden=true; DIZZI_OPEN=false; }
+  async function dizziFragen(){
+    const inp=document.getElementById('dizziFrage'), out=document.getElementById('dizziOut'), src=document.getElementById('dizziSrc'), btn=document.getElementById('dizziBtn');
+    const f=(inp.value||'').trim(); if(!f)return;
+    out.innerHTML='<div class="db-q">„'+esc(f)+'"</div><div class="mut small" style="margin-top:5px">denke lokal nach … (10–60 s)</div>'; src.textContent=''; btn.disabled=true;
+    try{ const j=await api('/api/ki/frage',{method:'POST',body:JSON.stringify({frage:f})});
+      out.innerHTML='<div class="db-q">„'+esc(f)+'"</div><div style="margin-top:6px">'+esc(j.antwort||'(keine Antwort)')+'</div>';
+      src.innerHTML='Quelle: <b>'+esc(_QMAP[j.quelle]||j.quelle||'?')+'</b> · keine Diagnose'; inp.value='';
+    }catch(e){ out.innerHTML='<div class="mut">Mini-Dizzi ist gerade nicht erreichbar.</div>'; }
+    btn.disabled=false; inp.focus();
+  }
+
+  // ===== STANDARD-KIT: Konto-/Einstellungs-Fenster (Norm docs/19 §2b) =====
+  // Generisch aus den appkit-Endpunkten — UNVERÄNDERT aus dem Template übernommen.
+  const _CATLBL={konto:'Konto & Identität',sicherheit:'Sicherheit',ki:'KI',vernetzung:'Vernetzung & Dienste',darstellung:'Darstellung & Sprache',daten:'Daten & Backup'};
+  const DESIGN_OPT=[['metall','Mattglanz-Metall (Standard)'],['neon','Neon / Retro-Chrome'],['flach','Flach (minimal-dunkel)'],['tag','Tag / Hell'],['carbon','Carbon (OLED-Schwarz)'],['pergament','Pergament (hell-warm)'],['synthwave','Synthwave (Neon-Sunset)'],['lagune','Lagune (Tropical-Aqua)'],['inferno','Inferno (Magma-Rot)'],['kobalt','Kobalt (Royalblau)']];
+  const FARBE_OPT=[['cyan-magenta','Cyan–Magenta (Standard)'],['smaragd-gold','Smaragd–Gold'],['violett-eis','Violett–Eis'],['bernstein','Bernstein'],['arktis','Arktis'],['koralle','Koralle'],['limette','Limette'],['feuer','Feuer'],['toxic','Toxic (Neon-Acid)'],['voltage','Voltage (Elektro)']];
+  let AUTH=null;
+  function applyTheme(d,f){ const h=document.documentElement;
+    if(d){h.dataset.design=d; try{localStorage.setItem('health_design',d)}catch(e){}}
+    if(f){h.dataset.farbe=f; try{localStorage.setItem('health_farbe',f)}catch(e){}}
+    const ds=document.getElementById('designSel'),fs=document.getElementById('farbeSel');
+    if(ds&&d)ds.value=d; if(fs&&f)fs.value=f; }
+  function themeWahl(){ const d=document.getElementById('designSel').value,f=document.getElementById('farbeSel').value; applyTheme(d,f); saveSetting('design_vorlage',d); saveSetting('farb_schema',f); }
+  function fuelleSelect(id,opt){ const el=document.getElementById(id); if(el&&!el.options.length) el.innerHTML=opt.map(([val,l])=>'<option value="'+val+'">'+esc(l)+'</option>').join(''); }
+  function oeffneKm(){ document.getElementById('kmWrap').hidden=false; fuelleSelect('designSel',DESIGN_OPT); fuelleSelect('farbeSel',FARBE_OPT); ladeAuth(); loadKonto(); renderKiAktivitaet(); }
+  function schliesseKm(){ document.getElementById('kmWrap').hidden=true; }
+  async function ladeAuth(){
+    try{ AUTH=await api('/auth/me'); }catch(e){ AUTH={angemeldet:false,level:'lokal'}; }
+    const me=AUTH||{};
+    const pill=document.getElementById('authpill');
+    if(pill){ if(me.angemeldet){ pill.className='pill on'; pill.textContent='✓ '+(me.level||'lokal'); pill.title='Angemeldet via Dizzi-ID — Klick = Einstellungen & Konto'; }
+      else{ pill.className='pill'; pill.textContent='Anmelden (Dizzi-ID)'; pill.title='Einmal anmelden ⇒ überall angemeldet (SSO) — Klick = Konto-Fenster'; } }
+    renderKontoAuth(me);
+  }
+  // Identität & Sicherheit (Chips + amr + Hochstufen/Abmelden) — 1:1 abgesegnetes Schema (News/Money/Komm/Admin).
+  function renderKontoAuth(me){
+    const host=document.getElementById('konto-auth'); if(!host||!me)return;
+    if(me.angemeldet){ const hoch=me.level==='hochsicher';
+      host.innerHTML='<span class="pill on">✓ Angemeldet</span>'
+        +'<span class="small">via <b>'+esc(me.via||'?')+'</b> · Stufe <b>'+esc(me.level)+'</b>'+(me.amr&&me.amr.length?' ('+esc(me.amr.join(', '))+')':'')+'</span>'
+        +'<span class="spacer"></span>'
+        +(hoch?'<span class="pill on">✓ Echtgeld-Stufe</span>':'<a class="btn mini" href="/auth/login?level=hochsicher" title="Per MFA-Code auf die Stufe hochsicher hochstufen.">Hochstufen (MFA)</a>')
+        +'<button class="btn mini" data-dz-act="logoutDizzi">Abmelden</button>';
+    } else {
+      host.innerHTML='<span class="pill">Nicht angemeldet</span>'
+        +'<span class="small mut">Einmal über Dizzi-ID anmelden ⇒ in allen Dizz-Apps angemeldet (SSO).</span>'
+        +'<span class="spacer"></span>'
+        +'<a class="btn mini" href="/auth/login">Mit Dizzi-ID anmelden</a>';
+    }
+  }
+  async function logoutDizzi(){ try{ await fetch('/auth/logout',{method:'POST',headers:{'Accept':'application/json'}}); }catch(e){} ladeAuth(); }
+  async function loadKonto(){ let schema,vals,vault;
+    try{ schema=await api('/api/settings/schema'); vals=await api('/api/settings'); }catch(e){ return; }
+    try{ vault=await api('/api/vault'); }catch(e){ vault=[]; }
+    applyTheme(vals.design_vorlage||vals.x_design_vorlage, vals.farb_schema||vals.x_farb_schema);
+    const accHost=document.getElementById('konto-acc');
+    if(accHost){ const lvl=(AUTH&&AUTH.level)||'lokal', via=(AUTH&&AUTH.via)||'standalone';
+      accHost.innerHTML='Profil <b>'+esc(vals.anzeigename||'—')+'</b> · Identität '+esc((AUTH&&AUTH.sub)||'dizzi')
+        +' · Stufe <b>'+esc(lvl)+'</b> ('+esc(via)+') · Token-Tresor: '+((vault&&vault.length)||0)+' Eintrag(e) · Vertrag v'+(schema.version!=null?schema.version:'?'); }
+    renderKontoAktionen(); renderDienste(vault);
+    const host=document.getElementById('konto-settings'); if(!host)return;
+    let h='<div class="mut small" style="margin:2px 0 6px">6 Kategorien — Änderungen werden sofort gespeichert.</div>';
+    for(const cat of Object.keys(schema.kategorien||{})){
+      const defs=schema.kategorien[cat]; if(!defs||!defs.length)continue;
+      let rows='';
+      for(const d of defs){ if(d.key==='design_vorlage'||d.key==='farb_schema')continue;
+        const val=(d.key in vals)?vals[d.key]:d.default;
+        rows+='<div class="kmrow"><label title="'+esc(d.description||'')+'">'+esc(d.label||d.key)+'</label>'+_settingInput(d,val)+'</div>'; }
+      if(!rows)continue;
+      h+='<div class="kmcat"><div class="kmcath">'+esc(_CATLBL[cat]||cat)+'</div>'+rows+'</div>';
+    }
+    host.innerHTML=h;
+    if(window.DzControls)DzControls.initControls(host);
+  }
+  async function renderKiAktivitaet(){ const host=document.getElementById('konto-ki'); if(!host)return;
+    let a; try{ a=await api('/api/actions'); }catch(e){ host.textContent='KI-Aktivität nicht abrufbar.'; return; }
+    let h='';
+    if(a.katalog&&a.katalog.length) h+='<div class="mut small" style="margin-bottom:4px">Registrierte Aktionen: '+a.katalog.map(k=>'<b>'+esc(k.name)+'</b> (Stufe '+esc(k.level)+')').join(' · ')+'</div>';
+    else h+='<div class="mut small">Keine ausführbaren KI-Aktionen registriert — reine Lese-/Vorschlags-KI (beobachten + Hinweise, keine Diagnose).</div>';
+    if(a.liste&&a.liste.length) h+=a.liste.slice(0,8).map(x=>'<div class="kmdienst"><b>'+esc(x.name)+'</b><span class="mut small">'+esc(x.status||'')+' · '+esc(x.created_at||'')+' · Quelle: '+esc(x.source||'?')+'</span></div>').join('');
+    else h+='<div class="mut small" style="margin-top:4px">Keine offenen KI-Vorschläge.</div>';
+    host.innerHTML=h;
+  }
+  function renderDienste(vault){ const host=document.getElementById('konto-dienste'); if(!host)return;
+    if(!vault||!vault.length){ host.innerHTML='<span class="mut small">Keine verbundenen Dienste — Wearable-Tokens (z. B. Terra) landen hier (verschlüsselter Tresor). v1 ist Desktop-first.</span>'; return; }
+    host.innerHTML=vault.map(n=>'<div class="kmdienst"><b>'+esc(n)+'</b><span class="mut small">im Tresor (verschlüsselt)</span><span class="spacer"></span><button class="btn mini" data-dz-act="dienstTrennen" data-dz-arg="'+esc(n).replace(/\x27/g,'')+'">Trennen</button></div>').join('');
+  }
+  function renderKontoAktionen(){ const host=document.getElementById('konto-aktionen'); if(!host)return;
+    host.innerHTML='<a class="btn mini" href="http://localhost:8200/id/geraete" target="_blank" rel="noopener">Sitzungen &amp; Geräte</a>'
+      +'<button class="btn mini" data-dz-act="kontoExport">Daten-Export (JSON)</button>'
+      +'<button class="btn mini" style="color:var(--mg);border-color:var(--mg)" data-dz-act="kontoLoeschen">Daten löschen</button>'
+      +'<span class="mut small">Export/Löschen = Re-Auth-Pflicht.</span>';
+  }
+  function _settingInput(d,val){ const id='set_'+d.key;
+    // CSP-strikt: kein inline onchange ⇒ data-dz-act="setSetting" (Dispatcher, change),
+    // Wert+Typ liest die registrierte setSetting-Aktion am Element (data-dz-typ).
+    const act='data-dz-act="setSetting" data-dz-arg="'+d.key+'" data-dz-on="change"';
+    if(d.type==='bool') return '<label class="dz-check"><input type="checkbox" id="'+id+'" '+(val?'checked':'')+' '+act+' data-dz-typ="bool"></label>';
+    if(d.type==='choice'){ const o=(d.choices||[]).map(c=>'<option '+(String(c)===String(val)?'selected':'')+'>'+esc(c)+'</option>').join(''); return '<span class="dz-field"><select class="dz-select" id="'+id+'" '+act+' data-dz-typ="str">'+o+'</select></span>'; }
+    if(d.type==='int'||d.type==='float'){
+      const g=(d.min!=null?' min="'+esc(d.min)+'"':'')+(d.max!=null?' max="'+esc(d.max)+'"':'');
+      return '<span class="dz-stepper"><button type="button" data-dz-step="-1" aria-label="weniger">▾</button><input type="number" id="'+id+'" value="'+esc(val)+'"'+g+' '+act+' data-dz-typ="'+d.type+'"><button type="button" data-dz-step="1" aria-label="mehr">▴</button></span>'; }
+    return '<input type="text" id="'+id+'" value="'+esc(val)+'" style="width:180px" '+act+' data-dz-typ="str">';
+  }
+  async function saveSetting(key,value){ try{ await api('/api/settings',{method:'PUT',body:JSON.stringify({key,value})}); }catch(e){ alert('Speichern fehlgeschlagen: '+key); } }
+  async function dienstTrennen(name){ if(!confirm('Dienst „'+name+'" trennen?'))return; try{ await api('/api/vault/'+encodeURIComponent(name),{method:'DELETE'}); }catch(e){} loadKonto(); }
+  async function kontoExport(){ let r; try{ r=await fetch('/api/account/export',{method:'POST'}); }catch(e){ alert('Export fehlgeschlagen'); return; } if(r.status===403){ alert('Frische Anmeldung nötig'); location.href='/auth/login'; return; } if(!r.ok){ alert('Export HTTP '+r.status); return; } const b=await r.blob(),a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='dizz-healthy-export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); }
+  async function kontoLoeschen(){ if(!confirm('ALLE Gesundheitsdaten löschen?'))return; if(!confirm('Sicher? Soft-Delete, auditiert.'))return; let r; try{ r=await fetch('/api/account/loeschen',{method:'POST'}); }catch(e){ return; } if(r.status===403){ alert('Frische Anmeldung nötig'); location.href='/auth/login'; return; } location.reload(); }
+
+  document.getElementById('kmZu').onclick=schliesseKm;
+  document.getElementById('dizziZu').onclick=closeDizzi;
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ schliesseKm(); closeDizzi(); } });
+  document.addEventListener('click',e=>{ if(e.target&&e.target.id==='kmWrap')schliesseKm(); });
+
+  // ===== Start: Daten laden + Standard-Mechanik (Spin/Floats, docs/14) =====
+  // CSP-strikt: setSetting-Aktion registrieren (Einstellungs-Fenster) + Enter-Delegation
+  // (DzActions deckt nur click/change ab; Enter-Absenden über data-dz-enter).
+  function _setSetting(key,el){ if(!el)return; const t=el.getAttribute('data-dz-typ');
+    let val=(el.type==='checkbox')?el.checked:el.value;
+    if(t==='int')val=parseInt(val,10); else if(t==='float')val=parseFloat(val);
+    saveSetting(key,val); }
+  document.addEventListener('keydown', function(e){ if(e.key!=='Enter')return;
+    const el=e.target&&e.target.closest?e.target.closest('[data-dz-enter]'):null; if(!el)return;
+    const fn=window[el.getAttribute('data-dz-enter')]; if(typeof fn==='function')fn(); });
+  window.addEventListener('DOMContentLoaded', async ()=>{
+    if(window.DzControls&&DzControls.registerAction)DzControls.registerAction('setSetting',_setSetting);
+    const z=document.getElementById('mf-zeit'); if(z)z.value=jetztLokal();
+    await ladeArten();
+    ladeAktivitaet(); ladeMesswerte(); ladeSupplements(); ladeVerletzungen(); ladeTraining(); ladeTermine();
+    ladeTrends(); ladeQuellen(); ladeStats(); ladeLokalBadge(); ladeTimeline(); ladeScores();
+    await ladeKorrMetriken(); ladeKorrelation();
+    ladeAuth();                // Header-Anmeldestatus-Pill sofort fuellen (Stufe/hochsicher), netzwerkweit identisch
+    if(window.DizzSpin) DizzSpin.initSpinFling({ gridSelector:'main', panelSelector:'.card',
+      floatSelector:'.floatacct,.floatdizzi', storageKey:'healthPanelOrder', layoutKey:'healthLayoutVer', layoutVer:'2026-06-19-health-grp' });
+    if(window.DizzFloats){
+      DizzFloats.initFloat('floatAcct', { regKey:'floatAcct', onTap:oeffneKm, paused:()=>!document.getElementById('kmWrap').hidden, panelSelector:'main > .card' });
+      DizzFloats.initFloat('floatDizzi', { regKey:'floatDizzi', onTap:()=>{ DIZZI_OPEN?closeDizzi():openDizzi(); }, paused:()=>!document.getElementById('dizziBubble').hidden, panelSelector:'main > .card' });
+    }
+  });
+</script>
+</body>
+</html>

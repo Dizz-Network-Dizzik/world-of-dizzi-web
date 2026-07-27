@@ -1,0 +1,20 @@
+# Dizz Healthy [HE] — Laufzeit-Abhängigkeiten (direkt).
+# Geteilte Vertrags-Bibliothek = das VENDIERTE appkit/ (kein PyPI-Paket).
+# Lokal-first/0 €: KI läuft über lokales Ollama (kein Client-SDK nötig).
+# HOCHSENSIBEL: keine Cloud-/Boost-Abhängigkeit — die KI bleibt strikt lokal.
+# FHIR-Mapping + Wearable-Adapter (sources.py) sind abhängigkeitsfreie Gerüste.
+
+fastapi              # App-Vertrag (create_app, Router, Dependencies)
+uvicorn[standard]    # ASGI-Server (Entwicklung/Betrieb)
+pydantic             # Schemata (Manifest, Settings, Request-Modelle)
+httpx                # Ollama-/Dizzi-ID-HTTP (Test-injizierbar)
+joserfc              # Dizzi-ID-Token-Prüfung (EdDSA/JWKS, RP)
+cryptography         # Token-Tresor (Fernet) + Secret-Hygiene
+fastmcp              # MCP-Server (read-only, stdio)
+
+# --- OPTIONAL (Wearables, Gesetz 5) -------------------------------------------
+# BLE/GATT lokal scharf: nur installieren, wenn ein Bluetooth-LE-Gerät (z. B.
+# Pulsgurt) lokal gekoppelt werden soll. Fehlt das Paket, bleibt der Slot ehrlich
+# dormant (ble_stack_verfuegbar() False) — die App läuft unverändert, alles lokal,
+# keine Cloud. Aktivieren: `pip install bleak`.
+# bleak              # Bluetooth-LE / GATT (optional, Desktop-tauglich)

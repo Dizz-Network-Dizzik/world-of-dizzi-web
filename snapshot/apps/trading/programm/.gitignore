@@ -1,0 +1,50 @@
+# Secrets & Konfiguration mit echten Werten
+.env
+*.key
+*.pem
+secrets/
+*api-key*
+1 API Key/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Daten, DBs, Logs, Audit-Trail (NIE versionieren)
+data/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Freqtrade
+engine/user_data/logs/
+engine/user_data/backtest_results/
+engine/**/tradesv3.sqlite*
+
+# Node / Tauri
+node_modules/
+app/src-tauri/target/
+dist/
+build/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+# lokales Tooling (z. B. Preview-launch.json)
+.claude/
+
+# Per-Bot Runtime-Configs (generiert aus Template + bots.json) — nicht versionieren
+engine/user_data/config_*.json
+!engine/user_data/config_bot1_dryrun.json
+
+# Generierte Backtest-Overlays (engine._bt_config: Live-Config + StaticPairList) — nicht versionieren
+engine/user_data/bt_config_*.json
+
+# Kompilierte Monitor-EXE (wird on-demand aus scripts/monitor_app.cs gebaut)
+bin/

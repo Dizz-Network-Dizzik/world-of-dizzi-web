@@ -10,6 +10,12 @@ dist/ is committed; Netlify publishes it as-is.
     python bake.py --check    verify only: dist/ matches a fresh bake,
                               no dead internal links, no dead anchors,
                               no external subresource. Exit != 0 on any fault.
+
+Every run, in both modes, also resolves each source link against the code
+snapshot in snapshot/ and checks the two figures the README states about the
+built site - its first load in bytes and how many source links there are -
+against the files actually produced. A number nobody measures goes stale
+without anybody noticing; both of these already did once.
 """
 
 from __future__ import annotations
@@ -17,6 +23,7 @@ from __future__ import annotations
 import html
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,12 +36,24 @@ DIST = ROOT / "dist"
 # The public origin. One place to change when the custom domain arrives:
 # canonical URLs, og:url, sitemap.xml, robots.txt and llms.txt all read it.
 HOST = "https://worldofdizzi.netlify.app"
-REPO = "https://github.com/Dizz-Network-Dizzik/dizz-network"
 # This site's own repository. The footer of every page quotes the length of the
 # file below, and /numbers/ states that exactly one figure on this site cannot
 # be checked from outside. That sentence is only true while the file behind the
 # build figure is reachable - so the site links itself, and this is where.
 SELBST = "https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web"
+
+# The code the site talks about used to sit in a second, separate repository.
+# It now sits in THIS one, under the folder below: one public repository, not
+# two. Every source link is built from the two values below and nothing else,
+# so moving or renaming the folder is one line here plus a rebake, never a hunt
+# through the pages. Two counts, because they measure different things and the
+# difference is not a discrepancy: 63 link sites in seiten/ and vorlagen/ - what
+# an author edits - render as 76 links in dist/, since the footer link repeats
+# on all twelve pages and llms.txt and the JSON-LD block carry one each.
+# check_snapshot_links() resolves all 76 against the folder on every bake.
+AUSZUG = "snapshot"
+DATEI = f"{SELBST}/blob/main/{AUSZUG}"   # a file inside the extract
+ORDNER = f"{SELBST}/tree/main/{AUSZUG}"  # a directory inside the extract
 
 # The footer of every page quotes the length of this file, and /numbers/ quotes
 # it twice. That figure was wrong once already - the footer said "100-line"
@@ -118,9 +137,12 @@ PAGES: list[dict] = [
     dict(
         src="de.html", out="de/index.html", path="/de/", lang="de",
         title="the world of dizzi — ein Mensch, zehn Anwendungen",
-        desc="Ein persönliches, lokal-first KI-Netzwerk: zehn Anwendungen um einen "
-             "Kern — neun sprechen einen gemeinsamen Vertrag, der Kern sammelt ihn "
-             "ein. Gebaut von einem Menschen mit KI-Assistenz. Einsehbarer Quellcode.",
+        # 155 characters is the limit pruefen.py enforces; the version pushed on
+        # 27.07. ran to 209 and the gate was red on main until this shortening.
+        # Same claim, nothing dropped that "neun ... der Kern" does not imply.
+        desc="Ein persönliches, lokal-first KI-Netzwerk: neun Anwendungen sprechen "
+             "einen gemeinsamen Vertrag, der Kern sammelt ihn ein. Einsehbarer "
+             "Quellcode.",
         alt="/",
     ),
     dict(
@@ -274,7 +296,7 @@ def head_extras(page: dict) -> dict:
 
     ld = ""
     if page.get("jsonld"):
-        body = JSONLD[page["jsonld"]] % dict(host=HOST, repo=REPO)
+        body = JSONLD[page["jsonld"]] % dict(host=HOST, repo=ORDNER)
         ld = '<script type="application/ld+json">%s</script>\n  ' % body
 
     return dict(ROBOTS=robots, HREFLANG=hreflang, JSONLD=ld)
@@ -294,7 +316,8 @@ def build() -> dict[str, bytes]:
             DESC=html.escape(page["desc"], quote=True),
             PATH=page["path"],
             HOST=HOST,
-            REPO=REPO,
+            DATEI=DATEI,
+            ORDNER=ORDNER,
             OGLOCALE="de_DE" if lang == "de" else "en_GB",
             OGALT=html.escape(OG_ALT, quote=True),
             NAV=nav_html(page),
@@ -379,7 +402,7 @@ def llms() -> str:
 - [About & contact]({HOST}/about/): who builds this, and how to reach me
 
 ## Source
-- [Public repository]({REPO}): 966 files, one curated commit
+- [The code snapshot]({ORDNER}): 966 files, the ten applications and the documents behind them
 - [This site's own source]({SELBST}): the build script behind the figure in every footer
 - [Interactive system map]({HOST}/karte/): self-contained, no external calls
 
@@ -508,6 +531,149 @@ ERSTANSICHT = (
 )
 
 
+def md_anker(text: str) -> set[str]:
+    """GitHub's heading anchors, reproduced closely enough to be worth trusting:
+    lower case, punctuation dropped, EVERY space its own hyphen (two spaces make
+    two), repeated headings numbered -1, -2. Fenced blocks are skipped, because
+    a '# ' inside a code sample is a comment, not a heading."""
+    anker: set[str] = set()
+    gezaehlt: dict[str, int] = {}
+    fence = False
+    for zeile in text.splitlines():
+        if zeile.lstrip().startswith(("```", "~~~")):
+            fence = not fence
+            continue
+        if fence or not re.match(r"#{1,6}\s", zeile.lstrip()):
+            continue
+        slug = re.sub(r"[^\w\s-]", "", zeile.lstrip().lstrip("#").strip().lower())
+        slug = re.sub(r"\s", "-", slug)
+        n = gezaehlt.get(slug, 0)
+        gezaehlt[slug] = n + 1
+        anker.add(slug if not n else f"{slug}-{n}")
+    return anker
+
+
+def check_snapshot_links(tree: dict[str, bytes]) -> list[str]:
+    """The source links used to point into a second repository, where nothing
+    here could follow them: check_links skips external targets by design, so a
+    file renamed on the other side left every gate green while the site linked
+    into nothing. The extract now sits in AUSZUG/, in this repository, so the
+    same links can be resolved - and are, on every build.
+
+    git decides what exists here, not the disk. The disk on a Windows machine
+    answers yes to the wrong capitalisation, holds untracked files and knows
+    empty folders; GitHub does none of the three. Asking the index instead of
+    the filesystem is the difference between checking what will be published
+    and checking what happens to lie around."""
+    try:
+        roh = subprocess.run(
+            ["git", "-C", str(ROOT), "ls-files", "-z"],
+            capture_output=True, text=True, check=True, encoding="utf-8",
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as e:
+        # Fail closed. Falling back to the filesystem would restore exactly the
+        # blind spot this function exists to remove.
+        return [f"cannot ask git what {AUSZUG}/ holds, so the source links "
+                f"cannot be checked: {e}"]
+
+    versioniert = {p for p in roh.split("\0") if p}
+    dateien = {p[len(AUSZUG) + 1:] for p in versioniert
+               if p.startswith(AUSZUG + "/")}
+    if not dateien:
+        return [f"git tracks nothing under {AUSZUG}/ - every source link would "
+                "be a 404 on the remote, however complete the folder looks here"]
+    ordner = {""}
+    for d in dateien:
+        teile = d.split("/")
+        for i in range(1, len(teile)):
+            ordner.add("/".join(teile[:i]))
+
+    # Every github.com address in the output has to be one we meant to write.
+    # Matching only the correct shape would let the likely typos - wrong branch,
+    # wrong repository, /raw/ instead of /blob/ - pass by unseen.
+    ERLAUBT = {SELBST, "https://github.com/Dizz-Network-Dizzik"}
+    ALLE = re.compile(r"https://github\.com/[^\s\"'<>)]+")
+    GUT = re.compile(
+        re.escape(SELBST) + r"/(blob|tree)/main/" + re.escape(AUSZUG)
+        + r"((?:[/#][^\s\"'<>)]*)?)$"
+    )
+    # The site also links one file of its own - bake.py, behind the footer
+    # figure. It costs nothing to hold that to the same standard.
+    EIGEN = re.compile(re.escape(SELBST) + r"/blob/main/([^\s\"'<>)#?]+)$")
+
+    faults: list[str] = []
+    gesehen = 0
+    for rel, data in sorted(tree.items()):
+        if not rel.endswith((".html", ".txt")):
+            continue
+        if rel.startswith("schrift/"):
+            continue  # upstream licence texts, copied verbatim, not ours to edit
+        for url in ALLE.findall(html.unescape(data.decode("utf-8"))):
+            url = url.rstrip(".,;")
+            if url in ERLAUBT:
+                continue
+            treffer = GUT.fullmatch(url)
+            if not treffer:
+                eigen = EIGEN.fullmatch(url)
+                if eigen and not eigen.group(1).startswith(AUSZUG + "/"):
+                    if eigen.group(1) not in versioniert:
+                        faults.append(f"{rel}: {url} - git tracks no such file "
+                                      "in this repository")
+                    continue
+                faults.append(f"{rel}: {url} - not a link into {AUSZUG}/ and not "
+                              "one of this site's own addresses")
+                continue
+            gesehen += 1
+            art, rest = treffer.group(1), treffer.group(2)
+            pfad, _, frag = rest.partition("#")
+            pfad = pfad.split("?")[0].strip("/")
+            if ".." in pfad.split("/"):
+                faults.append(f"{rel}: {url} - climbs out of {AUSZUG}/")
+                continue
+            if art == "blob" and pfad not in dateien:
+                faults.append(f"{rel}: {url} - git tracks no such file")
+                continue
+            if art == "tree" and pfad not in ordner:
+                faults.append(f"{rel}: {url} - git tracks no such folder")
+                continue
+            if not frag:
+                continue
+            # An anchor is only checkable where a Markdown file backs it.
+            quelle = pfad if pfad.endswith(".md") else f"{pfad}/README.md".lstrip("/")
+            if quelle not in dateien:
+                continue
+            anker = md_anker((ROOT / AUSZUG / quelle).read_text(encoding="utf-8"))
+            if frag not in anker:
+                faults.append(f"{rel}: {url} - {quelle} has no heading #{frag}")
+
+    if not gesehen:
+        # A checker that silently matches nothing reads exactly like a clean run.
+        faults.append("no source link into the snapshot found - this check would "
+                      "have passed on a site with none")
+    else:
+        faults += check_linkzahl(gesehen)
+    return faults
+
+
+def check_linkzahl(gemessen: int) -> list[str]:
+    """The README quotes how many source links the site carries. A quoted figure
+    that nothing measures is precisely what /numbers/ spends a page arguing
+    against, so it gets the same treatment as the first-load figure: measured
+    here, at build time, and never trusted."""
+    readme = ROOT / "README.md"
+    if not readme.exists():
+        return []
+    genannt = re.findall(r"\*\*(\d+) source links\*\*",
+                         readme.read_text(encoding="utf-8"))
+    if len(genannt) != 1:
+        return [f"README states {len(genannt)} source-link figures in the form "
+                "**N source links**; the check needs exactly one"]
+    if int(genannt[0]) != gemessen:
+        return [f"README says the site carries {genannt[0]} source links; "
+                f"measured {gemessen}"]
+    return []
+
+
 def check_readme(tree: dict[str, bytes]) -> list[str]:
     """The README states that first load in bytes. The figure went stale twice
     while /numbers/ was being written - once when the stylesheet grew, once when
@@ -559,7 +725,7 @@ def main(argv: list[str]) -> int:
     check_only = "--check" in argv
     tree = build()
 
-    faults = check_links(tree) + check_external(tree)
+    faults = check_links(tree) + check_external(tree) + check_snapshot_links(tree)
     if check_only:
         faults += compare(tree) + check_readme(tree)
 

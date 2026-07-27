@@ -129,6 +129,7 @@ bank
 banner
 based
 baseline
+bases
 be
 bearer
 because
@@ -165,6 +166,7 @@ borrow
 borrows
 both
 bottom
+bought
 bound
 boundary
 bracketed
@@ -552,6 +554,7 @@ fundamentals
 future
 fx
 gain
+gaining
 gap
 gaps
 gated
@@ -574,6 +577,7 @@ glues
 go
 goal
 goes
+gone
 good
 got
 governs
@@ -613,6 +617,7 @@ hints
 his
 history
 hold
+holding
 holds
 holes
 home
@@ -725,6 +730,7 @@ leak
 learning
 leave
 leaves
+led
 left
 legal
 length
@@ -836,6 +842,7 @@ motion
 move
 moved
 moves
+moving
 much
 music
 must
@@ -1104,7 +1111,9 @@ relay
 relying
 reminded
 removed
+rename
 renamed
+renaming
 render
 repeats
 report
@@ -1120,6 +1129,8 @@ requires
 research
 reserved
 residual
+resolved
+resolves
 responsive
 rest
 resting
@@ -1274,6 +1285,7 @@ step
 steps
 still
 stop
+stopped
 stops
 store
 stored
@@ -1416,6 +1428,7 @@ unified
 unit
 unknown
 unmeasured
+unnoticed
 until
 up
 update
