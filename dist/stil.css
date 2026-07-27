@@ -251,6 +251,35 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .strahl h3{font-size:18px;margin-bottom:6px}
 .strahl p{color:var(--tx2);margin-bottom:0;max-width:68ch}
 
+/* --- the track: one work package, station by station ---------------------
+   A rail with stations beside it, and a second rail on top of the first that
+   is drawn by the reading position instead of by a clock. The drawn part sits
+   in the motion section further down, behind the same @supports guard as
+   everything else here: a browser without scroll timelines shows the dim rail
+   and every station, which is the entire content. Nothing in this block
+   carries text - take the whole rail away and the list still reads. */
+
+.bahn{list-style:none;margin:0;padding:0 0 0 30px;position:relative}
+.bahn::before,.bahn::after{content:"";position:absolute;left:7px;top:12px;bottom:12px;
+  width:2px;border-radius:2px}
+.bahn::before{background:var(--line2)}
+/* hidden until a timeline exists - see the note at .fortschritt */
+.bahn::after{display:none;transform-origin:top center;
+  background:linear-gradient(180deg,var(--mag),var(--vio) 55%,var(--cy))}
+.bahn>li{position:relative;margin:0 0 14px;padding:18px 18px;
+  border:1px solid var(--line);border-radius:var(--rad);background:var(--panel)}
+.bahn>li:last-child{margin-bottom:0}
+/* the ring is the page colour, so the rail is interrupted at every station
+   without a second element to do it; z-index keeps the dots above the rail,
+   which is painted after them as the parent's ::after */
+.bahn>li::before{content:"";position:absolute;left:-28px;top:23px;z-index:1;
+  width:12px;height:12px;border-radius:50%;background:var(--akz,var(--vio));
+  box-shadow:0 0 0 4px var(--bg)}
+.bahn h3{font-size:17px;margin-bottom:8px}
+.bahn p{margin-bottom:0;font-size:14.5px;color:var(--tx2);max-width:70ch}
+.bahn p+p{margin-top:.85em}
+.bahn .quellen{margin-top:11px;font-size:13.5px}
+
 /* --- stage list (roadmap without promised dates) ------------------------- */
 
 .stufen{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -412,6 +441,22 @@ address{font-style:normal;line-height:1.75}
     .fortschritt{display:block;animation:balken linear both;
       animation-timeline:scroll(root block)}
     @keyframes balken{from{scale:0 1}to{scale:1 1}}
+
+    /* The track is drawn by the reader rather than by a clock. Over the
+       `contain` range the leading edge sits at the top of the screen when the
+       list's first line reaches the top and at the bottom when its last line
+       reaches the bottom - so it stays level with the station being read
+       instead of running ahead of it. Same reason as the reading bar for
+       being switched on only here: a rail frozen at zero says something
+       untrue about where the reader is. */
+    .bahn::after{display:block;animation:schiene linear both;
+      animation-timeline:view(block);animation-range:contain}
+    @keyframes schiene{from{scale:1 0}to{scale:1 1}}
+    /* Each station lights as it is reached, and dims again on the way back:
+       opacity and scale only, both on the compositor, nothing that reflows. */
+    .bahn>li::before{animation:halt linear both;animation-timeline:view();
+      animation-range:entry 18% cover 38%}
+    @keyframes halt{from{opacity:.22;scale:.5}to{opacity:1;scale:1}}
   }
 }
 @view-transition{navigation:auto}
@@ -423,9 +468,12 @@ address{font-style:normal;line-height:1.75}
   /* A full exit, not a fast version of the same thing: the animations are
      removed outright, so nothing ever starts at opacity 0 and nothing can be
      caught mid-flight. The reading bar goes with them - the browser's own
-     scrollbar already says the same thing without moving anything. */
-  .hero>.wrap>*,.reveal>*,.wrap>.kicker,.wrap>h2,.app-kopf{animation:none!important}
-  .fortschritt{display:none!important}
+     scrollbar already says the same thing without moving anything - and so
+     does the drawn rail of the track, for the same reason: what is left is
+     the dim rail, every station lit, and no motion anywhere. */
+  .hero>.wrap>*,.reveal>*,.wrap>.kicker,.wrap>h2,.app-kopf,
+  .bahn>li::before{animation:none!important}
+  .fortschritt,.bahn::after{display:none!important}
   .kachel:hover{translate:none}
 }
 
@@ -433,8 +481,9 @@ address{font-style:normal;line-height:1.75}
    waiting to be revealed would print at zero opacity. The same exit as above,
    for the one medium that cannot scroll. */
 @media print{
-  .hero>.wrap>*,.reveal>*,.wrap>.kicker,.wrap>h2,.app-kopf{animation:none!important}
-  .fortschritt{display:none!important}
+  .hero>.wrap>*,.reveal>*,.wrap>.kicker,.wrap>h2,.app-kopf,
+  .bahn>li::before{animation:none!important}
+  .fortschritt,.bahn::after{display:none!important}
   /* and every folded method is unfolded: on paper there is nothing to click */
   .methode-inhalt{display:block!important}
   .methode>summary::before{content:"\2013"}

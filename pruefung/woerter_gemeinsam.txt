@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 26.07.2026, 120 Woerter.
+# Stand: 27.07.2026, 121 Woerter.
 
 admin
 am
@@ -78,6 +78,7 @@ markdown
 mcp
 md
 memory
+merge
 mobile
 module
 money

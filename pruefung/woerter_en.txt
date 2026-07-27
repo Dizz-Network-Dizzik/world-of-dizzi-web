@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 27.07.2026, 1550 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 27.07.2026, 1603 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -31,6 +31,7 @@ action
 actions
 actively
 activity
+actors
 acts
 actual
 actually
@@ -68,6 +69,7 @@ among
 analytics
 anchor
 and
+animation
 animations
 announces
 another
@@ -166,6 +168,7 @@ blank
 blanks
 ble
 blind
+block
 blunt
 books
 borrow
@@ -176,11 +179,13 @@ bought
 bound
 boundary
 bracketed
+branch
 break
 breaks
 bridges
 brief
 briefing
+bright
 brings
 broke
 broken
@@ -205,6 +210,7 @@ byte
 bytes
 cache
 calculations
+call
 called
 calls
 calm
@@ -255,10 +261,12 @@ clean
 clearly
 clever
 click
+clock
 clone
 close
 closed
 closest
+closing
 cockpit
 codes
 coding
@@ -269,6 +277,7 @@ come
 comm
 command
 comment
+comments
 committed
 company
 compliance
@@ -285,6 +294,7 @@ connections
 connectivity
 connector
 connectors
+consecutive
 consequential
 consistent
 consolidation
@@ -304,6 +314,7 @@ continuous
 contract
 contracts
 contributes
+control
 convenience
 convenient
 conversation
@@ -417,13 +428,17 @@ dormant
 doubt
 down
 drafts
+drawing
+drawn
 drift
 drifts
 driven
+during
 each
 earliest
 early
 easiest
+edge
 edit
 editing
 editions
@@ -435,6 +450,7 @@ efficient
 eight
 either
 element
+elements
 eleven
 eleventh
 else
@@ -446,6 +462,7 @@ encrypted
 end
 endpoint
 endpoints
+ends
 enforced
 engagement
 engine
@@ -458,7 +475,6 @@ error
 escalation
 escape
 essence
-eür
 europe
 evaluate
 evaluating
@@ -492,6 +508,7 @@ export
 exports
 exposes
 external
+eür
 faces
 fail
 fails
@@ -529,6 +546,7 @@ fints
 fit
 fits
 five
+fix
 fixed
 fixes
 fleet
@@ -553,6 +571,7 @@ form
 format
 forty
 forward
+found
 foundations
 four
 fragment
@@ -561,6 +580,7 @@ free
 fresh
 from
 front
+frozen
 full
 function
 functional
@@ -602,10 +622,12 @@ grammar
 graph
 green
 grew
+grow
 guard
 habit
 had
 half
+handed
 handful
 hands
 happened
@@ -733,6 +755,7 @@ ladder
 lake
 land
 lands
+lane
 languages
 large
 larger
@@ -773,6 +796,7 @@ linked
 list
 listed
 listens
+listing
 lists
 lives
 living
@@ -820,6 +844,7 @@ may
 me
 mean
 means
+meant
 measure
 measured
 measurement
@@ -861,6 +886,7 @@ moment
 monorepo
 months
 more
+morning
 mortems
 most
 motion
@@ -941,6 +967,8 @@ or
 orchestra
 orchestrates
 orchestration
+order
+ordered
 ordinary
 organising
 origin
@@ -953,6 +981,7 @@ outdated
 outermost
 outlives
 output
+outright
 outside
 outward
 over
@@ -983,6 +1012,7 @@ partners
 parts
 party
 pass
+passes
 passing
 past
 path
@@ -990,6 +1020,8 @@ paths
 pattern
 payment
 pays
+permission
+permissions
 persist
 personal
 phone
@@ -1056,6 +1088,7 @@ progress
 project
 projects
 promise
+promises
 promotion
 prompting
 proof
@@ -1072,6 +1105,7 @@ protocols
 prove
 proves
 providers
+pseudo
 public
 publish
 published
@@ -1093,8 +1127,11 @@ quiet
 quietly
 quotation
 quotes
+racing
+rail
 raised
 ran
+range
 rank
 ranking
 rate
@@ -1102,6 +1139,7 @@ rather
 re
 reach
 reachable
+reached
 read
 readable
 reader
@@ -1142,11 +1180,14 @@ relaxation
 relay
 relying
 reminded
+remove
 removed
+removes
 rename
 renamed
 renaming
 render
+repair
 repeats
 report
 reported
@@ -1165,6 +1206,7 @@ resolved
 resolves
 responsive
 rest
+restarted
 resting
 rests
 result
@@ -1189,11 +1231,14 @@ risky
 roadmap
 rotation
 roughly
+round
 rounded
+rounds
 route
 router
 routes
 routing
+row
 rule
 rules
 runnable
@@ -1243,6 +1288,7 @@ sets
 settings
 seven
 shape
+shaped
 share
 shared
 sharpest
@@ -1313,11 +1359,15 @@ starting
 starts
 state
 stated
+statement
 states
 static
 stating
+station
+stations
 status
 stay
+stayed
 stays
 step
 steps
@@ -1362,6 +1412,7 @@ swappable
 switchable
 switched
 sync
+systematic
 systems
 tab
 table
@@ -1435,12 +1486,14 @@ topics
 total
 touch
 touched
+track
 tracked
 trackers
 trade
 transfer
 translated
 transport
+travels
 tree
 trends
 tricked
