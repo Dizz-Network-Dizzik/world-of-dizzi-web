@@ -41,6 +41,14 @@ def ratio(fg: str, bg: str) -> float:
 PAIRS = [
     ("tx",     "bg",     4.5, "body text on the page background"),
     ("tx",     "panel",  4.5, "body text inside a card"),
+    # Cards are painted with a gradient from --panel-hi down to --panel, so the
+    # top third of every card is lighter than the token the pairs below measure.
+    # A surface a reader sees and a gate does not is how a gate goes green for
+    # the wrong reason: the brightest value that gradient reaches is measured
+    # here too, and the three pairs against it are the ones that decide.
+    ("tx",     "panel-hi", 4.5, "body text on the lit top edge of a card"),
+    ("tx2",    "panel-hi", 4.5, "muted text on the lit top edge of a card"),
+    ("cy",     "panel-hi", 4.5, "links on the lit top edge of a card"),
     ("tx",     "panel2", 4.5, "body text inside a notice"),
     ("tx",     "panelh", 4.5, "card text in the hover state"),
     ("tx",     "bg2",    4.5, "header, footer and code block text"),

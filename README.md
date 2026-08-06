@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **83,322 bytes** uncompressed — 21.1 KB markup, 31.5 KB stylesheet,
+page: **91,158 bytes** uncompressed — 21.1 KB markup, 39.1 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
@@ -57,6 +57,30 @@ it. A browser without scroll timelines shows no rail at all rather than one
 frozen at zero; reduced motion and print remove it outright, each in the rule
 that already removes the other animations. About half of those bytes are the
 comments saying why.
+
+The most recent 7,836 bytes are the design pass, and every one of them is
+stylesheet: the markup did not grow by a byte. What the site had was a palette
+and a font; what it lacked was a system. A heading sat flush against the text
+under it, because headings carried no bottom margin at all and every page
+bought its own spacing back with a utility class. Cards were flat fills with a
+hairline around them. Only one element on the site — the app tile — did
+anything on hover, and the secondary button's hover set its border to the
+colour it already had. That is now one recipe rather than nine: cards are lit
+from above by a two-stop gradient and cast a shadow downward, code blocks take
+the same light from the other side because a code block is a hole in the page
+rather than a card on it, and one curve and one duration are shared by
+everything that moves. The eyebrow above every section heading carries the
+house gradient as a short rule, which is the one ornament that repeats on all
+twelve pages and most of what makes them look like one site. Two things there
+are worth more than the ornament: the top of that card gradient is a colour
+token like any other, so `kontrast.py` measures text against the *brightest*
+surface a card actually paints rather than only against the flat value
+underneath it; and the accent colours stay out of text, on bars and borders,
+where the 3:1 they are proven against is the threshold that applies. Three
+fifths of those bytes are the comments saying so — 4,765 of the 7,836. The last
+of them records the one finding the pass produced rather than fixed: measured at
+320 pixels, the wordmark was a 39-pixel touch target in a header where every
+other free-standing link had already been raised to 44.
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being

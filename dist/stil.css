@@ -6,12 +6,31 @@
 
 :root{
   --bg:#080b12; --bg2:#0d1119; --panel:#111726; --panel2:#151c2d; --panelh:#1a2440;
+  /* The lit top edge of every card. A surface a reader can see but a gate
+     cannot is a gate that passes for the wrong reason, so the brightest value
+     the card gradient actually reaches is a token like any other - and
+     pruefung/kontrast.py measures text against it, not only against --panel. */
+  --panel-hi:#181f30;
   --tx:#e8ebf2; --tx2:#9aa4b6; --tx3:#6a7488;
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
   --mag:#ff3ea5; --cy:#2ee6d6; --vio:#8b6cff; --amber:#f5b942; --coral:#f2645a;
   --green:#36d399; --orange:#fb923c; --blue:#38bdf8;
   --grad:linear-gradient(90deg,#ff3ea5 0%,#8b6cff 50%,#2ee6d6 100%);
-  --rad:14px; --maxw:1220px;
+  --rad:14px; --rad-s:9px; --rad-l:20px; --maxw:1220px;
+
+  /* One surface recipe for every raised box on the site: the panel colour with
+     a light source above it. Two stops, three percent - enough that a card has
+     a top and a bottom, far too little to read as a gradient. */
+  --flaeche:linear-gradient(180deg,var(--panel-hi) 0,var(--panel) 46%);
+  --flaeche-h:linear-gradient(180deg,var(--panelh) 0,var(--panel2) 62%);
+  /* Shadows sit under the box, never around it: on a dark page a glow reads as
+     fog, an offset shadow reads as height. */
+  --schatten:0 1px 2px rgba(0,0,0,.34),0 10px 26px -20px rgba(0,0,0,.9);
+  --schatten-h:0 2px 4px rgba(0,0,0,.36),0 20px 44px -26px rgba(0,0,0,1);
+  /* One curve and one duration for the whole site. Everything that moves on
+     hover or focus borrows them, so nothing is faster or slower than the rest
+     for no reason. */
+  --ueb:.18s cubic-bezier(.22,.61,.36,1);
 
   --display:"Orbitron","Orbitron Fallback",system-ui,sans-serif;
   --text:"Chakra Petch","Chakra Fallback",system-ui,sans-serif;
@@ -69,15 +88,27 @@ body{
   overflow-wrap:break-word;
 }
 img,svg{max-width:100%;height:auto}
-a{color:var(--cy);text-decoration-thickness:1px;text-underline-offset:3px}
+a{color:var(--cy);text-decoration-thickness:1px;text-underline-offset:3px;
+  transition:color var(--ueb)}
 a:hover{color:var(--tx)}
 :focus-visible{outline:2px solid var(--cy);outline-offset:2px;border-radius:3px}
 h1,h2,h3,h4{font-family:var(--display);font-weight:700;line-height:1.14;margin:0;
-  letter-spacing:-.01em}
+  letter-spacing:-.01em;
+  /* Headings are short and set large, which is exactly where a lone word on
+     the last line shows. `balance` is a hint: a browser that does not know it
+     wraps as before, so nothing depends on it. */
+  text-wrap:balance}
 h1{font-size:clamp(30px,6vw,52px)}
 h2{font-size:clamp(26px,4.2vw,34px)}
 h3{font-size:clamp(20px,2.6vw,24px)}
-p{margin:0 0 1em}
+/* A heading used to sit flush against the text under it - zero margin, so the
+   first line of a section began where its title ended and the page read as one
+   undifferentiated column. The space belongs to the heading, not to a utility
+   class on whatever follows: adjacent margins collapse, so where a .mt-* class
+   already sets a larger gap it still wins and no page shifts. */
+h2:not(:last-child){margin-bottom:18px}
+h3:not(:last-child){margin-bottom:10px}
+p{margin:0 0 1em;text-wrap:pretty}
 ul,ol{margin:0 0 1em;padding-left:1.25em}
 li{margin:.3em 0}
 code,kbd{font-family:var(--mono);font-size:.88em}
@@ -108,8 +139,15 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .lang{font-size:1.0625rem;line-height:1.68}   /* 17px bei 16px Grundschrift */
 .lang p{margin-bottom:1.15em}
 
-.kicker{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.18em;
+/* The eyebrow above a section heading carries the house gradient as a short
+   rule. It is the one ornament that repeats on every page, which is what makes
+   twelve pages read as one site rather than twelve. Decoration only - it is a
+   pseudo-element, so it is not in the accessibility tree and not in the text. */
+.kicker{display:flex;align-items:center;gap:11px;
+  font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.18em;
   text-transform:uppercase;color:var(--cy);margin:0 0 14px}
+.kicker::before{content:"";flex:none;width:22px;height:2px;border-radius:2px;
+  background:var(--grad)}
 .lede{font-size:clamp(17px,2.2vw,20px);line-height:1.55;color:var(--tx2);max-width:66ch;
   margin:0 0 1.2em}
 .dach{color:var(--tx2);max-width:72ch}
@@ -148,8 +186,13 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 /* --- footer -------------------------------------------------------------- */
 
-.fuss{border-top:1px solid var(--line);background:var(--bg2);
+/* The footer closes the page, so its top edge is the one hairline on the site
+   that carries the house gradient instead of a grey line - dimmed far enough
+   that it reads as a seam and not as a rule. */
+.fuss{position:relative;border-top:1px solid var(--line);background:var(--bg2);
   padding-block:36px;margin-top:var(--spur);font-size:14px}
+.fuss::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;
+  background:var(--grad);opacity:.34}
 .fuss .wrap{display:grid;gap:22px}
 .fuss-oben{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center}
 .fuss nav ul{display:flex;flex-wrap:wrap;gap:2px 6px;list-style:none;margin:0;padding:0}
@@ -164,13 +207,19 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 .knopf{display:inline-flex;align-items:center;gap:9px;min-height:44px;
   padding:11px 20px;border-radius:var(--rad);border:1px solid var(--line2);
-  background:var(--panel);color:var(--tx);font-family:var(--display);
-  font-weight:600;font-size:14px;text-decoration:none;
-  transition:border-color .18s,background .18s,box-shadow .18s}
-.knopf:hover{color:var(--tx);border-color:var(--line2);background:var(--panelh)}
+  background:var(--flaeche);color:var(--tx);font-family:var(--display);
+  font-weight:600;font-size:14px;text-decoration:none;box-shadow:var(--schatten);
+  transition:border-color var(--ueb),background var(--ueb),box-shadow var(--ueb),
+    translate var(--ueb)}
+/* The secondary button used to set its hover border to the colour it already
+   had, so only the fill moved. Both move now, and the arrow moves with them. */
+.knopf:hover{color:var(--tx);border-color:var(--tx3);background:var(--flaeche-h);
+  box-shadow:var(--schatten-h);translate:0 -1px}
 .knopf.prim{border-color:var(--cy);color:var(--tx)}
-.knopf.prim:hover{background:var(--panelh);box-shadow:0 0 0 1px var(--cy),0 6px 26px -12px var(--cy)}
-.knopf .pfeil{color:var(--cy);font-size:15px}
+.knopf.prim:hover{background:var(--flaeche-h);border-color:var(--cy);
+  box-shadow:0 0 0 1px var(--cy),0 12px 32px -14px var(--cy)}
+.knopf .pfeil{color:var(--cy);font-size:15px;transition:translate var(--ueb)}
+.knopf:hover .pfeil{translate:2px 0}
 .knoepfe{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 0}
 
 /* --- status strip -------------------------------------------------------- */
@@ -178,7 +227,9 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .leiste{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;
   margin-top:30px;padding:12px 16px;border:1px solid var(--line);
   border-radius:var(--rad);background:var(--bg2);
-  font-family:var(--mono);font-size:12.5px;color:var(--tx2)}
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.35);
+  font-family:var(--mono);font-size:12.5px;color:var(--tx2);
+  font-variant-numeric:tabular-nums}
 .leiste b{font-family:var(--display);font-size:11px;letter-spacing:.16em;
   color:var(--tx);font-weight:700}
 .leiste span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
@@ -201,9 +252,15 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
   grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));
   list-style:none;margin:0;padding:0}
 .zahl{padding:20px 18px;border:1px solid var(--line);border-radius:var(--rad);
-  background:var(--panel);margin:0}
+  background:var(--flaeche);box-shadow:var(--schatten);margin:0;
+  transition:border-color var(--ueb),box-shadow var(--ueb)}
+.zahl:hover{border-color:var(--line2);box-shadow:var(--schatten-h)}
+/* Figures are set in a face with proportional digits by default, so a column
+   of them staggers. Tabular numerals line the digits up under each other -
+   the one typographic setting a page of measurements cannot do without. */
 .zahl b{display:block;font-family:var(--display);font-weight:800;
-  font-size:clamp(28px,4vw,36px);line-height:1.05;color:var(--tx)}
+  font-size:clamp(28px,4vw,36px);line-height:1.05;color:var(--tx);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .zahl span{display:block;margin-top:7px;font-size:13.5px;color:var(--tx2)}
 
 /* --- cards / bento ------------------------------------------------------- */
@@ -211,7 +268,9 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .karten{display:grid;gap:16px;
   grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
 .karte{padding:22px 20px;border:1px solid var(--line);border-radius:var(--rad);
-  background:var(--panel)}
+  background:var(--flaeche);box-shadow:var(--schatten);
+  transition:border-color var(--ueb),box-shadow var(--ueb)}
+.karte:hover{border-color:var(--line2);box-shadow:var(--schatten-h)}
 .karte h3{font-size:19px;margin-bottom:10px}
 .karte p:last-child{margin-bottom:0}
 .karte p{color:var(--tx2)}
@@ -222,38 +281,56 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .bento li{margin:0}
 .kachel{display:flex;flex-direction:column;gap:8px;height:100%;padding:16px 16px 14px;
   border:1px solid var(--line);border-left:3px solid var(--akz,var(--cy));
-  border-radius:var(--rad);background:var(--panel);color:var(--tx);
-  text-decoration:none;
-  transition:background .18s,border-color .18s,translate .18s,box-shadow .18s}
-.kachel:hover,.kachel:focus-visible{background:var(--panelh);color:var(--tx);
-  translate:0 -3px;box-shadow:0 14px 30px -22px var(--akz,var(--cy))}
+  border-radius:var(--rad);background:var(--flaeche);color:var(--tx);
+  text-decoration:none;box-shadow:var(--schatten);
+  transition:background var(--ueb),border-color var(--ueb),translate var(--ueb),
+    box-shadow var(--ueb)}
+/* The lift is small on purpose. A tile that jumps announces itself; a tile that
+   rises by three pixels answers. The shadow it casts is tinted with the app's
+   own accent, which is the only place the accent leaves its edge. */
+.kachel:hover,.kachel:focus-visible{background:var(--flaeche-h);color:var(--tx);
+  border-color:var(--line2);translate:0 -3px;
+  box-shadow:var(--schatten-h),0 16px 34px -24px var(--akz,var(--cy))}
 .kachel .kn{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;
   font-family:var(--display);font-weight:700;font-size:15px}
 .kachel .kt{font-size:13.5px;color:var(--tx2);flex:1}
-.kachel .kf{font-family:var(--mono);font-size:12px;color:var(--akz,var(--cy))}
+.kachel .kf{font-family:var(--mono);font-size:12px;color:var(--akz,var(--cy));
+  font-variant-numeric:tabular-nums}
 .chip{display:inline-block;padding:2px 8px;border:1px solid var(--line2);
   border-radius:999px;background:var(--bg2);font-family:var(--mono);
-  font-size:11.5px;color:var(--tx2);white-space:nowrap}
+  font-size:11.5px;color:var(--tx2);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
 
 /* --- law quote ----------------------------------------------------------- */
 
 .gesetz{position:relative;margin:0 0 20px;padding:18px 20px 18px 24px;
-  border:1px solid var(--line);border-radius:var(--rad);background:var(--panel);
-  overflow:hidden}
+  border:1px solid var(--line);border-radius:var(--rad);background:var(--flaeche);
+  box-shadow:var(--schatten);overflow:hidden}
 .gesetz::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
   background:var(--grad)}
 .gesetz .lk{display:block;font-family:var(--display);font-size:11px;font-weight:700;
   letter-spacing:.18em;text-transform:uppercase;color:var(--cy);margin-bottom:9px}
-.gesetz p{font-size:17px;line-height:1.5;margin:0}
+/* A quoted law is the one place on this site where the text itself is the
+   object being shown, so it gets the larger size and the looser line. */
+.gesetz p{font-size:17px;line-height:1.55;margin:0}
 .gesetz footer{margin-top:11px;font-size:13px;color:var(--tx2)}
 
 /* --- timeline ------------------------------------------------------------ */
 
 .strahl{list-style:none;margin:0;padding:0 0 0 26px;position:relative}
-.strahl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;
-  background:linear-gradient(180deg,var(--line2),var(--line))}
+.strahl::before,.strahl::after{content:"";position:absolute;left:5px;top:6px;bottom:6px;
+  width:1px}
+.strahl::before{background:linear-gradient(180deg,var(--line2),var(--line))}
+/* The chronicle had a rail drawn by nothing while the method page next door had
+   one drawn by the reader. Same mechanism, same guard, same two exits below -
+   the dated list is exactly the kind of thing a reader walks down, so it gets
+   the same treatment instead of a second invention. Hidden until a scroll
+   timeline exists: a rail frozen at zero states something untrue. */
+.strahl::after{display:none;transform-origin:top center;
+  background:linear-gradient(180deg,var(--mag),var(--vio) 55%,var(--cy))}
 .strahl>li{position:relative;margin:0 0 26px;padding:0}
-.strahl>li::before{content:"";position:absolute;left:-24px;top:7px;width:9px;height:9px;
+.strahl>li::before{content:"";position:absolute;left:-24px;top:7px;z-index:1;
+  width:9px;height:9px;
   border-radius:50%;background:var(--bg);border:2px solid var(--akz,var(--vio))}
 .strahl .datum{display:inline-block;margin-bottom:7px;padding:2px 9px;
   border:1px solid var(--line2);border-radius:999px;background:var(--bg2);
@@ -277,7 +354,8 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .bahn::after{display:none;transform-origin:top center;
   background:linear-gradient(180deg,var(--mag),var(--vio) 55%,var(--cy))}
 .bahn>li{position:relative;margin:0 0 14px;padding:18px 18px;
-  border:1px solid var(--line);border-radius:var(--rad);background:var(--panel)}
+  border:1px solid var(--line);border-radius:var(--rad);background:var(--flaeche);
+  box-shadow:var(--schatten)}
 .bahn>li:last-child{margin-bottom:0}
 /* the ring is the page colour, so the rail is interrupted at every station
    without a second element to do it; z-index keeps the dots above the rail,
@@ -297,9 +375,9 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
   list-style:none;margin:24px 0 0;padding:0;counter-reset:none}
 .stufe{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;
   margin:0;padding:18px 18px;border:1px solid var(--line);border-radius:var(--rad);
-  background:var(--panel)}
+  background:var(--flaeche);box-shadow:var(--schatten)}
 .stufe.fertig{border-color:rgba(54,211,153,.42)}
-.stufe.jetzt{border-color:var(--line2);background:var(--panel2)}
+.stufe.jetzt{border-color:var(--line2);background:var(--flaeche-h)}
 .st-n{grid-row:1/3;display:flex;align-items:center;justify-content:center;
   width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);
   background:var(--bg2);font-family:var(--display);font-size:13px;font-weight:700;
@@ -319,10 +397,13 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 .messung{display:grid;gap:14px;list-style:none;margin:0;padding:0}
 .mess{margin:0;padding:20px 18px;border:1px solid var(--line);
-  border-radius:var(--rad);background:var(--panel)}
+  border-radius:var(--rad);background:var(--flaeche);box-shadow:var(--schatten);
+  transition:border-color var(--ueb),box-shadow var(--ueb)}
+.mess:hover{border-color:var(--line2);box-shadow:var(--schatten-h)}
 .mess-kopf{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:0}
 .mess-wert{font-family:var(--display);font-weight:800;line-height:1.1;color:var(--tx);
-  font-size:clamp(26px,3.6vw,32px)}
+  font-size:clamp(26px,3.6vw,32px);font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em}
 .mess-was{color:var(--tx2);font-size:15px}
 
 .methode{margin-top:15px;border-top:1px solid var(--line);padding-top:13px}
@@ -355,7 +436,11 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 /* --- code / contract block ---------------------------------------------- */
 
 .code{margin:0 0 20px;padding:16px 18px;border:1px solid var(--line);
-  border-radius:var(--rad);background:var(--bg2);overflow-x:auto}
+  border-radius:var(--rad);background:var(--bg2);overflow-x:auto;
+  /* The one recessed surface on the site. Cards are lit from above and cast a
+     shadow downward; a block of code is a hole in the page, so the light falls
+     the other way. That is the whole distinction, and one inset line carries it. */
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.45)}
 .code pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.7;
   color:var(--tx2);white-space:pre}
 .code pre b{color:var(--tx);font-weight:400}
@@ -366,7 +451,8 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 address{font-style:normal;line-height:1.75}
 .hinweis{padding:16px 18px;border:1px solid var(--line2);border-radius:var(--rad);
-  background:var(--panel2);color:var(--tx2);font-size:14.5px}
+  background:var(--flaeche-h);color:var(--tx2);font-size:14.5px;
+  box-shadow:var(--schatten)}
 .hinweis b{color:var(--tx)}
 /* min(...,100%) rather than a bare track floor: below the floor a bare minmax
    keeps the column at its full width and pushes the page sideways, and there is
@@ -382,10 +468,28 @@ address{font-style:normal;line-height:1.75}
 .liste li{position:relative;padding-left:19px;color:var(--tx2)}
 .liste li::before{content:"";position:absolute;left:2px;top:.65em;width:6px;height:1px;
   background:var(--cy)}
-.app-abschnitt{scroll-margin-top:24px;padding-block:var(--spur)}
+/* Ten sections built from one template read as one section printed ten times -
+   the flattest stretch of the whole site. Each of them already carries its
+   application's accent, because the tiles above need it, so the header borrows
+   what is already there: a short bar in front of the name and the port chip
+   outlined in the same colour, over a corner of tinted air. No markup changes,
+   and the ten stop looking like one.
+   The accent stays out of the TEXT on purpose. A bar and a border are non-text
+   indicators and clear 3:1 against the page, which kontrast.py proves for all
+   nine accents; several of them would not clear the 4.5:1 that 11.5px chip text
+   needs, and no gate here measures a colour that is only set on a class. */
+.app-abschnitt{position:relative;scroll-margin-top:24px;padding-block:var(--spur)}
 .app-abschnitt+.app-abschnitt{border-top:1px solid var(--line)}
-.app-kopf{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;margin-bottom:16px}
-.app-kopf h2{font-size:clamp(21px,3vw,26px)}
+.app-abschnitt::before{content:"";position:absolute;z-index:-1;
+  inset:0 auto auto 0;width:min(540px,100%);height:260px;pointer-events:none;
+  background:radial-gradient(80% 70% at 0 0,
+    color-mix(in srgb,var(--akz,var(--cy)) 7%,transparent),transparent 70%)}
+.app-kopf{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:10px 14px;margin-bottom:16px;padding-left:17px}
+.app-kopf::before{content:"";position:absolute;left:0;top:.14em;bottom:.14em;
+  width:3px;border-radius:2px;background:var(--akz,var(--cy))}
+.app-kopf h2{font-size:clamp(21px,3vw,26px);margin-bottom:0}
+.app-kopf .chip:first-of-type{border-color:var(--akz,var(--cy))}
 .figur{margin:0 0 8px;padding:0}
 .figur .buehne{overflow-x:auto;overscroll-behavior-x:contain}
 .figur svg{display:block;width:100%;min-width:520px;height:auto}
@@ -395,7 +499,7 @@ address{font-style:normal;line-height:1.75}
 .schichten{display:grid;gap:0}
 .sch{padding:16px 18px;border:1px solid var(--line);
   border-left:3px solid var(--akz,var(--cy));border-radius:var(--rad);
-  background:var(--panel)}
+  background:var(--flaeche);box-shadow:var(--schatten)}
 .sch+.sch{margin-top:26px;position:relative}
 .sch+.sch::before{content:"";position:absolute;left:50%;top:-21px;width:1px;height:16px;
   background:var(--line2)}
@@ -421,8 +525,14 @@ address{font-style:normal;line-height:1.75}
   mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 100%)}
 .hero .strich{width:min(280px,52%);height:3px;background:var(--grad);border-radius:2px;
   margin:0 0 26px;transform-origin:left center}
-.hero h1{max-width:16ch}
+/* Display type set this large needs its tracking pulled in; the value the rest
+   of the headings use is measured for 26-34px, not for 52px. */
+.hero h1{max-width:16ch;letter-spacing:-.024em}
 .hero .lede{margin-top:20px}
+/* The eyebrow in a hero sits under the gradient bar, which already says the
+   same thing louder. It keeps its colour and drops its own rule. */
+.hero .kicker::before{display:none}
+.hero .kicker{gap:0}
 
 /* --- motion: opt-in, compositor only, killed under reduced-motion --------
    Two mechanisms, no JavaScript, nothing that moves on its own. The top of a
@@ -469,13 +579,13 @@ address{font-style:normal;line-height:1.75}
        instead of running ahead of it. Same reason as the reading bar for
        being switched on only here: a rail frozen at zero says something
        untrue about where the reader is. */
-    .bahn::after{display:block;animation:schiene linear both;
+    .bahn::after,.strahl::after{display:block;animation:schiene linear both;
       animation-timeline:view(block);animation-range:contain}
     @keyframes schiene{from{scale:1 0}to{scale:1 1}}
     /* Each station lights as it is reached, and dims again on the way back:
        opacity and scale only, both on the compositor, nothing that reflows. */
-    .bahn>li::before{animation:halt linear both;animation-timeline:view();
-      animation-range:entry 18% cover 38%}
+    .bahn>li::before,.strahl>li::before{animation:halt linear both;
+      animation-timeline:view();animation-range:entry 18% cover 38%}
     @keyframes halt{from{opacity:.22;scale:.5}to{opacity:1;scale:1}}
   }
 }
@@ -492,8 +602,8 @@ address{font-style:normal;line-height:1.75}
      does the drawn rail of the track, for the same reason: what is left is
      the dim rail, every station lit, and no motion anywhere. */
   .hero>.wrap>*,.reveal>*,.wrap>.kicker,.wrap>h2,.app-kopf,
-  .bahn>li::before{animation:none!important}
-  .fortschritt,.bahn::after{display:none!important}
+  .bahn>li::before,.strahl>li::before{animation:none!important}
+  .fortschritt,.bahn::after,.strahl::after{display:none!important}
   .kachel:hover{translate:none}
 }
 
@@ -502,8 +612,8 @@ address{font-style:normal;line-height:1.75}
    for the one medium that cannot scroll. */
 @media print{
   .hero>.wrap>*,.reveal>*,.wrap>.kicker,.wrap>h2,.app-kopf,
-  .bahn>li::before{animation:none!important}
-  .fortschritt,.bahn::after{display:none!important}
+  .bahn>li::before,.strahl>li::before{animation:none!important}
+  .fortschritt,.bahn::after,.strahl::after{display:none!important}
   /* and every folded method is unfolded: on paper there is nothing to click */
   .methode-inhalt{display:block!important}
   .methode>summary::before{content:"\2013"}
@@ -584,6 +694,12 @@ address{font-style:normal;line-height:1.75}
   .quellen a,.fuss-status a,a.zielgross{min-height:44px;padding-block:10px}
   .fuss nav a{display:flex;align-items:center;min-height:44px;padding:10px 8px}
   .methode>summary{min-height:44px}
+  /* Measured at 320px after the design pass: the wordmark - a free-standing
+     link to the start page, in the header and again in the footer - stood at
+     39.2px while every other free-standing link on a touch screen had been
+     raised to 44. It clears WCAG 2.2 AA either way; the rule this site wrote
+     for itself two lines above is the stricter one, and it applies here too. */
+  .marke{display:inline-flex;align-items:center;min-height:44px}
 }
 
 /* --- narrow viewports ---------------------------------------------------- */
