@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 27.07.2026, 1603 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 06.08.2026, 1609 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -76,6 +76,7 @@ another
 answer
 answers
 any
+anyone
 anything
 anywhere
 apart
@@ -118,6 +119,7 @@ audio
 audit
 audited
 audits
+august
 authenticate
 authentication
 author
@@ -220,6 +222,7 @@ can't
 cannot
 canon
 canonical
+capital
 care
 carries
 carry
@@ -437,6 +440,7 @@ during
 each
 earliest
 early
+earns
 easiest
 edge
 edit
@@ -1211,6 +1215,7 @@ resting
 rests
 result
 resulting
+results
 returns
 reuse
 reveal
@@ -1490,6 +1495,7 @@ track
 tracked
 trackers
 trade
+trades
 transfer
 translated
 transport
