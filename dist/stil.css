@@ -54,9 +54,17 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
+/* Der Fliesstext in rem, nicht in px. 15px waren an die Schriftgroesse des
+   Geraetes NICHT gebunden: wer im Browser oder im Telefon eine groessere
+   Grundschrift einstellt - der haeufigste Handgriff aelterer Augen -, bekam
+   auf dieser Seite trotzdem 15px und musste zoomen. .9375rem sind bei der
+   Voreinstellung von 16px exakt dieselben 15px, also aendert sich fuer alle
+   anderen nichts; bei 20px Grundschrift werden daraus 18,75px. Ueberschriften,
+   Chips und Etiketten bleiben absichtlich in px: sie sind Gestalt, nicht Text,
+   und sollen die Zeile nicht sprengen, wenn der Fliesstext waechst. */
 body{
   margin:0; background:var(--bg); color:var(--tx);
-  font:400 15px/1.6 var(--text);
+  font:400 .9375rem/1.6 var(--text);
   text-rendering:optimizeLegibility;
   overflow-wrap:break-word;
 }
@@ -97,7 +105,7 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .quellen a,.fuss-status a,a.zielgross{display:inline-block;max-width:100%;
   min-height:24px;padding-block:2px}
 .eng{max-width:72ch}
-.lang{font-size:17px;line-height:1.68}
+.lang{font-size:1.0625rem;line-height:1.68}   /* 17px bei 16px Grundschrift */
 .lang p{margin-bottom:1.15em}
 
 .kicker{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.18em;
@@ -189,7 +197,8 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 /* --- number tiles -------------------------------------------------------- */
 
-.zahlen{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+.zahlen{display:grid;gap:14px;
+  grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));
   list-style:none;margin:0;padding:0}
 .zahl{padding:20px 18px;border:1px solid var(--line);border-radius:var(--rad);
   background:var(--panel);margin:0}
@@ -199,14 +208,16 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 /* --- cards / bento ------------------------------------------------------- */
 
-.karten{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.karten{display:grid;gap:16px;
+  grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
 .karte{padding:22px 20px;border:1px solid var(--line);border-radius:var(--rad);
   background:var(--panel)}
 .karte h3{font-size:19px;margin-bottom:10px}
 .karte p:last-child{margin-bottom:0}
 .karte p{color:var(--tx2)}
 
-.bento{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));
+.bento{display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(min(215px,100%),1fr));
   list-style:none;margin:0;padding:0}
 .bento li{margin:0}
 .kachel{display:flex;flex-direction:column;gap:8px;height:100%;padding:16px 16px 14px;
@@ -281,7 +292,8 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 
 /* --- stage list (roadmap without promised dates) ------------------------- */
 
-.stufen{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+.stufen{display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));
   list-style:none;margin:24px 0 0;padding:0;counter-reset:none}
 .stufe{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;
   margin:0;padding:18px 18px;border:1px solid var(--line);border-radius:var(--rad);
@@ -356,7 +368,16 @@ address{font-style:normal;line-height:1.75}
 .hinweis{padding:16px 18px;border:1px solid var(--line2);border-radius:var(--rad);
   background:var(--panel2);color:var(--tx2);font-size:14.5px}
 .hinweis b{color:var(--tx)}
-.raster{display:grid;gap:26px 34px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+/* min(...,100%) rather than a bare track floor: below the floor a bare minmax
+   keeps the column at its full width and pushes the page sideways, and there is
+   no overflow-x:hidden anywhere to catch it. Measured at a 280px viewport - the
+   outer screen of a folding phone - six of the twelve pages scrolled sideways by
+   16px and up to 24 boxes were cut off with no way to reach them. With the
+   min() the track can never be wider than its container, so the grid falls to
+   one column instead of overflowing. Nothing changes at 320px and above, where
+   the floor still wins; this only decides what happens below it. */
+.raster{display:grid;gap:26px 34px;
+  grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
 .liste{list-style:none;padding:0;margin:0 0 1em}
 .liste li{position:relative;padding-left:19px;color:var(--tx2)}
 .liste li::before{content:"";position:absolute;left:2px;top:.65em;width:6px;height:1px;
@@ -546,6 +567,23 @@ address{font-style:normal;line-height:1.75}
   .nav a{padding:12px 6px;min-height:44px;display:flex;align-items:center;font-size:15px}
   /* Der Unterstrich sass auf 11 px Einzug und passt nicht zur vollen Zeilenbreite. */
   .nav a[aria-current]::after,.nav a:hover::after{left:6px;right:auto;width:22px;bottom:6px}
+
+  /* Tippziele. Die Regeln oben treffen WCAG 2.2 AA (2.5.8, 24 px) - das war eine
+   * Entscheidung und keine Nachlaessigkeit. Ein Daumen ist trotzdem keine Maus:
+   * auf einem Beruehrungsschirm gehen die freistehenden Links und die Bedien-
+   * elemente auf 44 px. Gemessen bei 320 px, vor dieser Regel: Fuss-Navigation
+   * 34,4 px, Quell-Links 26,4 px, die Methoden-Klappen auf /numbers/ 24,0 px.
+   * Die Menue-Eintraege standen schon auf 44 px.
+   *
+   * BEWUSST NICHT angehoben: a.beleg, der Quell-Pfeil mitten im Satz. 2.5.8 nimmt
+   * Ziele aus, deren Groesse durch die Zeilenhoehe des Textes um sie herum
+   * begrenzt ist, und genau das ist er. Ein 44-px-Kasten inline wuerde entweder
+   * den Zeilenrhythmus zerreissen oder - als unsichtbare Trefferflaeche - ueber
+   * den Zeilen darueber und darunter liegen und deren Taps abfangen. Das waere
+   * ein kleines Ziel gegen gestohlene Beruehrungen getauscht.                   */
+  .quellen a,.fuss-status a,a.zielgross{min-height:44px;padding-block:10px}
+  .fuss nav a{display:flex;align-items:center;min-height:44px;padding:10px 8px}
+  .methode>summary{min-height:44px}
 }
 
 /* --- narrow viewports ---------------------------------------------------- */

@@ -21,7 +21,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **80,569 bytes** uncompressed — 20.9 KB markup, 29.1 KB stylesheet,
+page: **83,050 bytes** uncompressed — 20.9 KB markup, 31.5 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. It was 69,773 bytes before the reveal animations and the
 numbers page, which added 5,263 bytes of stylesheet and 55 bytes of markup;
