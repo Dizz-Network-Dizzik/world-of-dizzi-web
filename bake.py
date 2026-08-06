@@ -409,8 +409,10 @@ def llms() -> str:
 - [Interactive system map]({HOST}/karte/): self-contained, no external calls
 
 ## Notes
-- Status: independent project, pre-incorporation. No revenue yet; the trading
-  fleet runs dry-run only. Snapshot public since 23 July 2026.
+- Status: independent project, pre-incorporation. No revenue yet. Since 4 August
+  2026 a small part of the fleet trades with my own money, on my own account; no
+  outside capital, no offer to anyone. The public snapshot runs dry-run. Snapshot
+  public since 23 July 2026.
 - The six figures this site leads with are listed at {HOST}/numbers/ with the
   method that produced each one and the date it was measured. One of them, the
   commit count, is private, cannot be checked from outside, and is stated as a
