@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 1692 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 1746 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -24,6 +24,7 @@ accents
 accept
 acceptance
 accidentally
+accommodation
 account
 across
 act
@@ -72,6 +73,7 @@ anchor
 and
 animation
 animations
+announcement
 announces
 another
 answer
@@ -118,6 +120,7 @@ asynchronous
 at
 attack
 attributes
+audience
 audio
 audit
 audited
@@ -178,6 +181,7 @@ block
 blocks
 blunt
 blunter
+booked
 books
 border
 borders
@@ -216,6 +220,7 @@ bus
 business
 but
 button
+buy
 buys
 by
 byte
@@ -304,6 +309,7 @@ comprehensible
 compresses
 concept
 condensed
+confirmed
 confirms
 conformance
 connected
@@ -391,6 +397,7 @@ deleting
 deletion
 deliberate
 deliberately
+deliver
 delivers
 demand
 demands
@@ -452,10 +459,12 @@ dormant
 doubt
 down
 downward
+draft
 drafts
 drawing
 drawn
 drift
+drifted
 drifts
 driven
 dropped
@@ -509,6 +518,7 @@ europe
 evaluate
 evaluating
 even
+evenings
 event
 ever
 every
@@ -588,6 +598,8 @@ fixed
 fixes
 flat
 fleet
+flight
+flights
 floor
 flourish
 flow
@@ -615,6 +627,7 @@ foundations
 four
 fragment
 fragments
+francisco
 free
 fresh
 from
@@ -624,8 +637,10 @@ full
 function
 functional
 functions
+fund
 fundamental
 fundamentals
+funding
 future
 fx
 gain
@@ -689,6 +704,7 @@ headers
 heading
 headings
 headline
+hear
 held
 helps
 here
@@ -707,6 +723,7 @@ holding
 holds
 hole
 holes
+holiday
 home
 honest
 honesty
@@ -755,6 +772,7 @@ installed
 instance
 instead
 integration
+intended
 intention
 intentionally
 interaction
@@ -777,6 +795,7 @@ joined
 joins
 journey
 json
+judge
 judged
 judgement
 judges
@@ -809,6 +828,7 @@ land
 lands
 lane
 languages
+laptop
 large
 larger
 largest
@@ -823,6 +843,7 @@ layout
 leading
 leads
 leak
+learn
 learning
 least
 leave
@@ -832,6 +853,7 @@ left
 legal
 length
 less
+lesson
 let
 lets
 level
@@ -888,6 +910,7 @@ manual
 many
 map
 margin
+marked
 marketing
 marks
 markup
@@ -912,6 +935,7 @@ mechanics
 mechanism
 media
 meet
+meeting
 memo
 menu
 merely
@@ -942,11 +966,13 @@ models
 modules
 moment
 monorepo
+month
 months
 more
 morning
 mortems
 most
+mostly
 motion
 move
 moved
@@ -956,6 +982,7 @@ much
 music
 must
 my
+naive
 name
 named
 names
@@ -1018,6 +1045,7 @@ opening
 openly
 opens
 operating
+opinion
 opt
 optimised
 optional
@@ -1050,6 +1078,7 @@ overnight
 overs
 overstate
 overview
+owe
 own
 owns
 pace
@@ -1058,6 +1087,7 @@ packages
 packaging
 page
 pages
+paid
 paints
 palette
 panels
@@ -1076,12 +1106,14 @@ party
 pass
 passes
 passing
+passport
 past
 path
 paths
 pattern
 payment
 pays
+people
 permission
 permissions
 persist
@@ -1150,6 +1182,7 @@ progress
 project
 projects
 promise
+promised
 promises
 promotion
 prompting
@@ -1207,6 +1240,7 @@ reached
 read
 readable
 reader
+readers
 reading
 readings
 reads
@@ -1301,6 +1335,8 @@ riskiest
 risks
 risky
 roadmap
+room
+rooms
 rotation
 roughly
 round
@@ -1320,12 +1356,14 @@ runtime
 safe
 said
 same
+san
 sat
 satisfy
 say
 saying
 says
 scaffold
+scale
 scales
 schedules
 scheduling
@@ -1338,6 +1376,7 @@ scroll
 search
 second
 secondary
+secret
 secrets
 section
 sector
@@ -1356,12 +1395,14 @@ sentences
 separable
 separate
 separated
+september
 servable
 services
 session
 set
 sets
 settings
+settled
 seven
 shadow
 shape
@@ -1505,13 +1546,16 @@ targeted
 targets
 taught
 tax
+team
 tell
+tells
 temperature
 temptation
 tempting
 ten
 tenth
 term
+tested
 text
 texts
 than
@@ -1577,14 +1621,17 @@ trades
 transfer
 translated
 transport
+travel
 travels
 tree
 trends
 tricked
+trip
 true
 trust
 truth
 try
+trying
 turns
 twelve
 twenty
@@ -1602,10 +1649,12 @@ under
 underneath
 understands
 undoing
+unfinished
 unification
 unified
 unit
 unknown
+unlinked
 unmeasured
 unnoticed
 until
@@ -1624,6 +1673,7 @@ validates
 validation
 value
 values
+variant
 vault
 verbatim
 verdict
@@ -1651,6 +1701,7 @@ we
 weaker
 wearable
 web
+week
 weeks
 welcome
 well
@@ -1672,6 +1723,7 @@ whose
 why
 width
 will
+window
 wins
 wire
 wires
@@ -1683,6 +1735,7 @@ without
 wonder
 word
 wordmark
+words
 work
 workbench
 worked
@@ -1699,6 +1752,7 @@ writes
 writing
 written
 wrong
+year
 years
 yesterday
 yet

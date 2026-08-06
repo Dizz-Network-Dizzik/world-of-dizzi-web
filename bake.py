@@ -134,6 +134,27 @@ PAGES: list[dict] = [
         title="About & contact | the world of dizzi",
         desc="Who builds the world of dizzi, and how to get in touch.",
     ),
+    # DRAFT - not to be published without David's word. The two entries below
+    # are the same page in both languages; the third, further down, is the
+    # variant that names a time window and is linked from nowhere.
+    dict(
+        src="travel.html", out="travel/index.html", path="/travel/", lang="en",
+        title="Why San Francisco | the world of dizzi",
+        desc="Why the next step of this project points at San Francisco: to keep "
+             "building, to show the work as it is, and to learn from the people "
+             "doing the same.",
+        alt="/de/reise/", langlink='<a class="nav-lang" href="/de/reise/" lang="de" '
+                                  'hreflang="de">Deutsch</a>',
+    ),
+    dict(
+        src="de-reise.html", out="de/reise/index.html", path="/de/reise/", lang="de",
+        title="Warum San Francisco | the world of dizzi",
+        desc="Warum der nächste Schritt dieses Projekts nach San Francisco zeigt: "
+             "weiterbauen, die Arbeit zeigen, wie sie ist, und von den Menschen "
+             "lernen, die dasselbe tun.",
+        alt="/travel/", langlink='<a class="nav-lang" href="/travel/" lang="en" '
+                                'hreflang="en">English</a>',
+    ),
     dict(
         src="de.html", out="de/index.html", path="/de/", lang="de",
         title="the world of dizzi — ein Mensch, zehn Anwendungen",
@@ -163,6 +184,18 @@ PAGES: list[dict] = [
         desc="This panel is not in the registry.",
         noindex=True, nomap=True,
     ),
+    # DRAFT, and deliberately reachable only by typing its address: the variant
+    # of the travel page that names a time window. No navigation entry, no
+    # sitemap entry, noindex, and no page links to it. Deleting this one dict
+    # removes it from the built site completely.
+    dict(
+        src="reise_mit_daten_ENTWURF.html", out="reise_mit_daten_ENTWURF.html",
+        path="/reise_mit_daten_ENTWURF.html", lang="en",
+        title="Draft — San Francisco, with dates",
+        desc="Unlinked draft: the travel page in the variant that names a "
+             "placeholder time window.",
+        noindex=True, nomap=True,
+    ),
 ]
 
 # --------------------------------------------------------------------------
@@ -176,6 +209,9 @@ NAV = [
     ("/numbers/", "Numbers", "Zahlen"),
     ("/journey/", "Journey", "Chronik"),
     ("/vision/", "Vision", "Vision"),
+    # DRAFT. "Journey" is already taken by the dated chronicle, so the travel
+    # page is named for its destination instead of for the word.
+    ("/travel/", "Travel", "Reise"),
     ("/about/", "About", "Kontakt"),
 ]
 
@@ -271,7 +307,10 @@ def nav_html(page: dict) -> str:
     items = []
     for path, en, de in NAV:
         label = de if lang == "de" else en
-        cur = ' aria-current="page"' if path == page["path"] else ""
+        # A page and its other-language twin are the same entry in the menu, so
+        # the German twin marks the English entry rather than marking nothing.
+        hier = path in (page["path"], page.get("alt"))
+        cur = ' aria-current="page"' if hier else ""
         items.append(f'<li><a href="{path}"{cur}>{label}</a></li>')
     items.append(
         f'<li><a class="nav-karte" href="/karte/">{T[lang]["MAP"]}</a></li>'
@@ -328,6 +367,12 @@ def build() -> dict[str, bytes]:
             BAKERCODE=str(BAKER_CODE),
             SELBST=SELBST,
         )
+        # The language switch is one fixed string per language, which is right
+        # while every English page has the same German twin - the entry page.
+        # A page with a twin of its own says so here, so the switch leads to the
+        # translation instead of back to the German front door.
+        if page.get("langlink"):
+            values["LANGLINK"] = page["langlink"]
         values.update(head_extras(page))
         body = read(SEITEN_DIR / page["src"])
         doc = fill(kopf + body + fuss, values)

@@ -36,6 +36,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://worldofdizzi.netlify.app/travel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/travel/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/reise/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.netlify.app/de/reise/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/reise/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/travel/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://worldofdizzi.netlify.app/de/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/"/>
