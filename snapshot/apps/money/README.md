@@ -8,9 +8,13 @@
 
 | Doku | Inhalt |
 |---|---|
-| [docs/00_VISION.md](docs/00_VISION.md) | Was die App tut |
-| [docs/01_APP_VERTRAG.md](docs/01_APP_VERTRAG.md) | Wie sie ans Gesamtsystem andockt |
-| [docs/02_ANFORDERUNGEN.md](docs/02_ANFORDERUNGEN.md) | Kern-Umfang (Anforderungsliste) |
+| `docs/00_VISION.md` | Was die App tut |
+| `docs/01_APP_VERTRAG.md` | Wie sie ans Gesamtsystem andockt |
+| `docs/02_ANFORDERUNGEN.md` | Kern-Umfang (Anforderungsliste) |
 
 **Status:** Scaffolding (Kern folgt nach der geteilten Architektur, siehe Gesamtplan).
 **Port-Vorschlag (Core):** 8210.
+
+---
+
+> **Zu diesem Auszug:** Veröffentlicht ist von dieser App nur diese README. Ihr Code und ihre eigene Doku (`docs/`) sind seit dem 6. August 2026 nicht mehr Teil des öffentlichen Auszugs; die netzweiten Gesetze und Verträge, nach denen sie gebaut ist, liegen in [`docs/`](../../docs/README.md).

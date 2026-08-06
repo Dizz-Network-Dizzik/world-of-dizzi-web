@@ -1,11 +1,11 @@
 # the world of dizzi
 
 > One person, ten local-first applications, one shared architecture - a
-> source-visible personal AI network. Curated public snapshot; not open source.
+> personal AI network. A curated set of documents is public; the code is not.
 
 ## Start here
 - [The system](https://worldofdizzi.netlify.app/system/): architecture, the app contract, shared core library
-- [The ten applications](https://worldofdizzi.netlify.app/apps/): what each app does, with source links
+- [The ten applications](https://worldofdizzi.netlify.app/apps/): what each app does, and what is published
 - [The method](https://worldofdizzi.netlify.app/method/): written laws, contracts, AI build-chat orchestration
 - [The numbers](https://worldofdizzi.netlify.app/numbers/): the six headline figures, each with its method
 - [Journey](https://worldofdizzi.netlify.app/journey/): dated milestones since June 2026
@@ -13,18 +13,20 @@
 - [About & contact](https://worldofdizzi.netlify.app/about/): who builds this, and how to reach me
 
 ## Source
-- [The code snapshot](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 966 files, the ten applications and the documents behind them
+- [The published documents](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 38 documents - the network laws and
+  contracts plus one README per application. The code extract that stood here
+  until 6 August 2026 is no longer published
 - [This site's own source](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web): the build script behind the figure in every footer
 - [Interactive system map](https://worldofdizzi.netlify.app/karte/): self-contained, no external calls
 
 ## Notes
 - Status: independent project, pre-incorporation. No revenue yet. Since 4 August
   2026 a small part of the fleet trades with my own money, on my own account; no
-  outside capital, no offer to anyone. The public snapshot runs dry-run. Snapshot
-  public since 23 July 2026.
+  outside capital, no offer to anyone. Public since 23 July 2026; cut back to a
+  document set on 6 August 2026.
 - The six figures this site leads with are listed at https://worldofdizzi.netlify.app/numbers/ with the
-  method that produced each one and the date it was measured. One of them, the
-  commit count, is private, cannot be checked from outside, and is stated as a
-  floor for that reason. Figures that appear inside a sentence carry their
-  source link where they stand.
+  method that produced each one and the date it was measured. Three of them can
+  no longer be checked from outside: the commit count is private and stated as a
+  floor for that reason, and the two code figures were measured against the
+  extract that was withdrawn on 6 August 2026. Each says so in its own entry.
 - German entry page: https://worldofdizzi.netlify.app/de/

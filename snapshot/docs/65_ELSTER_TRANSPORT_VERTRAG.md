@@ -2,7 +2,7 @@
 
 > **Status: VERTRAG (M-1, Architektur-KI 04.07.2026, Worktree `chat/elster-kern`). REINES DESIGN — kein Bau,
 > keine ERiC-Lib installiert, keine Übermittlung, kein Zertifikat berührt.** Verträge-als-Code:
-> [`apps/money/moneyapp/elster/vertrag.py`](../apps/money/moneyapp/elster/vertrag.py) (Stubs, Docstrings
+> `apps/money/moneyapp/elster/vertrag.py` (Stubs, Docstrings
 > normativ) + `apps/money/tests/test_elster_vertrag.py` (61 Tests). Bau = Bau-KI M1-1…M1-8 (§12) NACH den
 > Gates §14 **und** den verordneten Vorstufen M-2/M-3/M-7 (VO-5). Zwilling zu docs/64 (M-6): dort kommen
 > Kontodaten LESEND rein — hier geht die **Steuererklärung RAUS** ans Finanzamt (Davids D7-Endgame,

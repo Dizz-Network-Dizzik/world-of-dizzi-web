@@ -2,8 +2,8 @@
 
 > **Status: FERTIG designt (FP-3, Architektur-KI, 03.07.2026, Worktree `chat/runtime`).** Dies ist der
 > Interface-VERTRAG (docs/52 E1.1–E1.3, VO-10) — **kein Umbau erfolgt**. Verträge-als-Code liegen als
-> Stubs: [`packages/appkit/runtime.py`](../packages/appkit/runtime.py) +
-> [`packages/appkit/modellprofil.py`](../packages/appkit/modellprofil.py) (+ Vertrags-Tests, Ollama-frei).
+> Stubs: `packages/appkit/runtime.py` +
+> `packages/appkit/modellprofil.py` (+ Vertrags-Tests, Ollama-frei).
 > **Bau-KI baut danach C1–C11 (docs/53 §5)** — dieses Dokument beantwortet jede Baufrage vorab; die
 > Docstrings der Stubs sind normativ. Budget-Rahmen: docs/58 §5.1 · Zünd-Prompt: docs/59 §A FP-3.
 

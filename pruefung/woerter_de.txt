@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 27.07.2026, 824 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 06.08.2026, 849 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 
 ab
 aber
@@ -31,6 +31,7 @@ aller
 alles
 als
 also
+alten
 analyse
 anbieter
 anbieterkennzeichnung
@@ -81,6 +82,7 @@ aufruf
 aufrufe
 aufsichtsbehörde
 auftrag
+august
 aus
 ausdrücklich
 ausdrücklicher
@@ -98,6 +100,7 @@ ausübung
 automatisch
 autonome
 autonomie
+außen
 außenwirkung
 außer
 außerhalb
@@ -116,7 +119,9 @@ behauptet
 beheben
 behörden
 bei
+beiden
 beim
+beispiel
 beiwerk
 bekanntwerden
 benannt
@@ -167,7 +172,9 @@ dafür
 dagegen
 daher
 dahinter
+damit
 dann
+darauf
 darf
 das
 dass
@@ -215,6 +222,7 @@ digitale
 dockt
 dokument
 dokumente
+dokumenten
 dort
 dortigem
 drei
@@ -282,6 +290,7 @@ erlaubt
 erledigen
 erreicht
 erscheint
+ersetzt
 erst
 erste
 ersten
@@ -425,6 +434,7 @@ immer
 inc
 inhalt
 inhalte
+ins
 insbesondere
 interaktiv
 interaktive
@@ -484,6 +494,7 @@ lauf
 laufen
 leben
 lebt
+leere
 leerzeilen
 lesen
 lesend
@@ -491,6 +502,7 @@ letzte
 lieber
 liegen
 limited
+link
 lit
 lizenz
 llc
@@ -570,12 +582,14 @@ persönliches
 plan
 posteingang
 postweg
+privat
 privaten
 problem
 produkten
 projekt
 projekte
 protokolle
+prüfbar
 prüfen
 prüfobjekt
 prüft
@@ -625,6 +639,7 @@ seine
 seit
 seite
 seiten
+seither
 sektor
 sekunde
 selbst
@@ -654,8 +669,10 @@ speicherdauer
 sprechen
 springen
 spur
+stammen
 stand
 standardvertragsklauseln
+standen
 startet
 stationen
 statt
@@ -682,6 +699,7 @@ teilen
 teilzunehmen
 telefonanschluss
 termin
+testzahl
 testzahlen
 tiefen
 tonfall
@@ -697,6 +715,7 @@ tut
 uhrzeit
 um
 umfang
+umfasst
 umgehend
 umsatzsteuer
 umziehen
@@ -734,10 +753,12 @@ verfügung
 verlangen
 verlinkt
 verlinkte
+verlinkten
 verlinkung
 verloren
 verlässt
 verpflichtet
+verschwinden
 versionierte
 verständigen
 vertrags
@@ -752,6 +773,7 @@ verwendeten
 verwendung
 verzeichnis
 veröffentlichen
+veröffentlicht
 veröffentlichte
 videos
 vier
@@ -795,6 +817,7 @@ wurden
 zahl
 zahlen
 zehn
+zeigen
 zeigt
 zeile
 zeilen
@@ -806,6 +829,7 @@ zugriffs
 zum
 zur
 zurückgelesen
+zurückgezogen
 zusammen
 zusammenfassung
 zusammenhält
@@ -821,6 +845,7 @@ züge
 älter
 ändert
 änderungen
+öffentlich
 öffentliche
 öffentlichen
 öffentlicher

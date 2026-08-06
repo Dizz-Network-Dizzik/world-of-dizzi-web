@@ -56,14 +56,14 @@ Legende: ✅ gebaut · ◐ teilweise/Slot · ❌ nicht gebaut.
 ## §2 · THEMA §1 — MODELL-FLEXIBILITÄT / KI-RUNTIME-ABSTRAKTION
 
 ### Ist (verifiziert, 27.06.)
-- **Provider-Kette gebaut** — [`apps/core/app/ai/providers.py`](../apps/core/app/ai/providers.py): `PROVIDERS` =
+- **Provider-Kette gebaut** — `apps/core/app/ai/providers.py`: `PROVIDERS` =
   Boost (NVIDIA NIM/Groq/Cerebras, OpenAI-kompatibel `/v1`, opt-in per Key) + `lokal` (Ollama) als **immer-erreichbarer
   Boden**; `chain(sensitive)` (sensibel ⇒ NUR lokal) + Circuit-Breaker (P3.3b, lokal nie ausgesperrt).
 - **Modell-Wahl ist HEUTE config-getrieben:** `local_model()` liest Setting `ai_model` (Default `qwen3:14b`),
   Schnell-Tasks `qwen3:4b`; Boost-Modell je Provider per Setting `boost_model_<id>`. **Embedding swappbar** über
-  [`apps/memory/archivapp/rag.py`](../apps/memory/archivapp/rag.py) `EMBED_MODELLE` (Registry Name→Dim; bge-m3 Default;
+  `apps/memory/archivapp/rag.py` `EMBED_MODELLE` (Registry Name→Dim; bge-m3 Default;
   qwen3-embedding/arctic/mxbai dim-gleich ⇒ Tausch ohne Migration).
-- **Constrained decoding gebaut** — [`packages/appkit/ollama.py`](../packages/appkit/ollama.py) `strukturiert()`:
+- **Constrained decoding gebaut** — `packages/appkit/ollama.py` `strukturiert()`:
   `format=schema.model_json_schema()` über Ollamas **nativen** `/api/chat`-`format`-Slot (nimmt auch `$ref`/Wurzel-Array,
   anders als die strikte `/v1`-`response_format`-Variante); `providers.quick_chat(format=)` analog.
 - **LÜCKE (ehrlich):** Die **Runtime Ollama selbst** ist NICHT abstrahiert. Stellen sind hart auf Ollama verdrahtet:
@@ -143,9 +143,9 @@ auto-aktualisiert/release-gegatet, server top-gepflegt). qwen3:14b/4b/bge-m3 ble
 
 ### Ist (verifiziert)
 - **Lokal-first, Single-User** (localhost = Vertrauensgrenze; `DEFAULT_USER_ID="dizzi"`; Stufe `lokal`).
-- **Identitäts-Naht GEBAUT** — [`packages/appkit/auth.py`](../packages/appkit/auth.py): pluggbarer Provider
+- **Identitäts-Naht GEBAUT** — `packages/appkit/auth.py`: pluggbarer Provider
   (`set_identity_provider`), Stufen `lokal<verifiziert<hochsicher` **fail-closed**, `require_level`/`require_fresh_stepup`.
-  **Dizzi-ID (K1) existiert** — [`docs/17`](17_DIZZI_ID_K1.md): OIDC-Provider im Core (PKCE/Ed25519/Refresh-Rotation,
+  **Dizzi-ID (K1) existiert** — `docs/17` (nicht in diesem Auszug): OIDC-Provider im Core (PKCE/Ed25519/Refresh-Rotation,
   Google-Broker + lokales Passwort + TOTP/WebAuthn), RP-Anschluss `install_dizzi_id(...)`.
 - **Multi-User-Nähte angelegt:** `user_id` durchgängig, `db.alle_user_ids()` (docs/50 P6.1), per-Nutzer-Loops.
   **Per-Daten-Wurzel-Architektur:** jede App hat ihr eigenes `data\apps\<id>` (eigene SQLite-Datei je App/Daten-Wurzel).
@@ -223,7 +223,7 @@ Modell** (Silo bestätigen? Datenresidenz-Region? Lösch-/DPA-Politik?) = Nutzer
 ## §4 · THEMA §3 — MCP-BIDIREKTIONALITÄT + OUTBOUND AUF EXTERNE KI
 
 ### Ist (verifiziert)
-- **INBOUND ✅** — [`apps/core/app/ai/mcp_gateway.py`](../apps/core/app/ai/mcp_gateway.py): ausgehender MCP-Server
+- **INBOUND ✅** — `apps/core/app/ai/mcp_gateway.py`: ausgehender MCP-Server
   (Streamable-HTTP, JSON-RPC 2.0, **read-only v1**), Bearer-Token, **Sensitivitäts-Gate** (`_tool_stufe`/`_erlaubt`,
   hochsicher gesperrt ohne Freigabe), Aktions-Gate (Schreib-Tools extern gesperrt), MCP-**2025-06-18** structuredContent/
   Annotationen, Audit. OAuth-2.1/DCR = dokumentierter **v2-Slot**.
@@ -286,7 +286,7 @@ Nutzer-Entscheid.
 
 ### Ist (verifiziert)
 - **Management = Social-Media** ([ME-Stand]): Kanäle/Bots/Posts/Zeitplan + Creating-Empfang + Redaktion + Bereich-Achse.
-- **Bausteine für Agenten DA:** Core-Agent-Loop — [`apps/core/app/ai/agent.py`](../apps/core/app/ai/agent.py)
+- **Bausteine für Agenten DA:** Core-Agent-Loop — `apps/core/app/ai/agent.py`
   (natives Tool-Calling, **Runden-Tools parallel** via `asyncio.gather`, `MAX_ROUNDS`, Fehler isoliert); `tools.registry`
   (MCP-Hub); **appkit/connectors** (externe Quelle/Senke, HITL-Senden); **K4-HITL** (appkit/actions); **Bereich-Typ-Modell**
   ([docs/49](49_BEREICH_TYP_MODELL.md): `art` schaltet Module frei; Typen geschaeft/mandant/studium/…).

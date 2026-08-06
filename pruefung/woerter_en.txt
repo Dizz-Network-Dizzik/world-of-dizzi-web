@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 06.08.2026, 1609 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 06.08.2026, 1652 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -78,6 +78,7 @@ answers
 any
 anyone
 anything
+anyway
 anywhere
 apart
 appear
@@ -97,6 +98,7 @@ architecture
 are
 area
 areas
+argued
 argument
 arise
 arithmetic
@@ -172,6 +174,7 @@ ble
 blind
 block
 blunt
+blunter
 books
 borrow
 borrows
@@ -183,6 +186,7 @@ boundary
 bracketed
 branch
 break
+breakdown
 breaks
 bridges
 brief
@@ -224,6 +228,7 @@ canon
 canonical
 capital
 care
+carried
 carries
 carry
 carrying
@@ -343,9 +348,11 @@ critical
 cross
 csp
 curated
+curation
 current
 custom
 customers
+cut
 cutover
 dangerous
 data
@@ -369,6 +376,7 @@ deep
 deeper
 default
 defence
+deleting
 deletion
 deliberate
 deliberately
@@ -408,8 +416,10 @@ directories
 directory
 directs
 disagree
+disappearing
 discipline
 discrepancy
+dishonesty
 disk
 display
 disprove
@@ -436,6 +446,8 @@ drawn
 drift
 drifts
 driven
+dropped
+dropping
 during
 each
 earliest
@@ -472,6 +484,7 @@ engagement
 engine
 english
 enough
+entirely
 entitled
 entries
 entry
@@ -492,6 +505,8 @@ everywhere
 evidence
 exact
 exactly
+example
+examples
 exception
 exchange
 excluded
@@ -512,6 +527,7 @@ export
 exports
 exposes
 external
+extract
 eür
 faces
 fail
@@ -594,6 +610,7 @@ fundamentals
 future
 fx
 gain
+gained
 gaining
 gap
 gaps
@@ -637,6 +654,7 @@ hands
 happened
 happens
 hard
+hardened
 hardening
 harder
 hardest
@@ -650,6 +668,7 @@ headers
 heading
 headline
 held
+helps
 here
 hidden
 hiding
@@ -659,6 +678,7 @@ highest
 him
 hints
 his
+historical
 history
 hold
 holding
@@ -686,6 +706,7 @@ if
 image
 implement
 implementation
+implements
 implied
 imply
 import
@@ -731,6 +752,7 @@ joined
 joins
 journey
 json
+judged
 judgement
 judges
 jul
@@ -776,6 +798,7 @@ leading
 leads
 leak
 learning
+least
 leave
 leaves
 led
@@ -816,6 +839,7 @@ long
 longer
 look
 looked
+looking
 looks
 loop
 lose
@@ -855,6 +879,7 @@ measurement
 measurements
 measures
 measuring
+mechanics
 mechanism
 media
 meet
@@ -911,6 +936,7 @@ narrated
 narrow
 narrower
 navigation
+necessary
 need
 needed
 needless
@@ -1005,6 +1031,7 @@ pages
 palette
 panels
 paper
+papers
 paperwork
 parallel
 parse
@@ -1128,6 +1155,7 @@ questions
 queue
 quickly
 quiet
+quieter
 quietly
 quotation
 quotes
@@ -1152,6 +1180,7 @@ readings
 reads
 real
 reason
+reasons
 rebinding
 reboot
 rebuildable
@@ -1183,6 +1212,7 @@ relation
 relaxation
 relay
 relying
+remains
 reminded
 remove
 removed
@@ -1192,7 +1222,11 @@ renamed
 renaming
 render
 repair
+repeat
+repeated
 repeats
+replaced
+replaces
 report
 reported
 reproduce
@@ -1253,6 +1287,8 @@ runtime
 safe
 said
 same
+sat
+satisfy
 say
 saying
 says
@@ -1282,6 +1318,7 @@ sensitive
 sensitivity
 sensor
 sentence
+sentences
 separable
 separate
 separated
@@ -1302,6 +1339,7 @@ shell
 shells
 shift
 ship
+shipping
 short
 should
 show
@@ -1411,6 +1449,7 @@ supplements
 supplies
 surface
 surround
+survive
 suspends
 swap
 swappable
@@ -1587,6 +1626,7 @@ which
 while
 whitespace
 who
+whoever
 whole
 whom
 whose
@@ -1598,12 +1638,14 @@ wire
 wires
 wish
 withdrawal
+withdrawn
 within
 without
 wonder
 word
 work
 workbench
+worked
 workflow
 working
 works
@@ -1623,6 +1665,7 @@ yet
 you
 you're
 your
+yourself
 zero
 
 # --- Kompositum-Bestandteile ----------------------------------------------

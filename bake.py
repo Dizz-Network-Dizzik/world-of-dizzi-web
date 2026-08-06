@@ -47,10 +47,10 @@ SELBST = "https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web"
 # two. Every source link is built from the two values below and nothing else,
 # so moving or renaming the folder is one line here plus a rebake, never a hunt
 # through the pages. Two counts, because they measure different things and the
-# difference is not a discrepancy: 70 link sites in seiten/ and vorlagen/ - what
-# an author edits - render as 83 links in dist/, since the footer link repeats
+# difference is not a discrepancy: 54 link sites in seiten/ and vorlagen/ - what
+# an author edits - render as 67 links in dist/, since the footer link repeats
 # on all twelve pages and llms.txt and the JSON-LD block carry one each.
-# check_snapshot_links() resolves all 83 against the folder on every bake.
+# check_snapshot_links() resolves all 67 against the folder on every bake.
 AUSZUG = "snapshot"
 DATEI = f"{SELBST}/blob/main/{AUSZUG}"   # a file inside the extract
 ORDNER = f"{SELBST}/tree/main/{AUSZUG}"  # a directory inside the extract
@@ -85,7 +85,7 @@ PAGES: list[dict] = [
         title="the world of dizzi — one person, ten applications",
         desc="A personal, local-first AI network: ten applications, one shared "
              "contract, built by one person with AI coding assistants. "
-             "Source-visible showcase.",
+             "Documents public, code private.",
         alt="/de/", jsonld="start",
     ),
     dict(
@@ -119,8 +119,8 @@ PAGES: list[dict] = [
         src="journey.html", out="journey/index.html", path="/journey/", lang="en",
         title="Journey — dated milestones | the world of dizzi",
         desc="From the first trading validation nights in June 2026 to the "
-             "curated public snapshot on 23 July 2026 — every node dated in "
-             "the repository.",
+             "public extract of 23 July and its curation down to documents on "
+             "6 August — every node dated.",
     ),
     dict(
         src="vision.html", out="vision/index.html", path="/vision/", lang="en",
@@ -141,8 +141,8 @@ PAGES: list[dict] = [
         # 27.07. ran to 209 and the gate was red on main until this shortening.
         # Same claim, nothing dropped that "neun ... der Kern" does not imply.
         desc="Ein persönliches, lokal-first KI-Netzwerk: neun Anwendungen sprechen "
-             "einen gemeinsamen Vertrag, der Kern sammelt ihn ein. Einsehbarer "
-             "Quellcode.",
+             "einen gemeinsamen Vertrag, der Kern sammelt ihn ein. Die Dokumente "
+             "sind öffentlich.",
         alt="/",
     ),
     dict(
@@ -186,8 +186,8 @@ T = {
         MENU="Menu",
         MAP="System map",
         LANGLINK='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a>',
-        SOURCE="Source",
-        FOOT_CLAIM="Source-visible showcase, not open source. All rights reserved.",
+        SOURCE="Documents",
+        FOOT_CLAIM="Documents public, code private. All rights reserved.",
         FOOT_STATUS="Independent project — incorporation ahead.",
         FOOT_LEGALLABEL="Legal",
         IMPRESSUM="Impressum",
@@ -201,8 +201,8 @@ T = {
         MENU="Menü",
         MAP="System-Karte",
         LANGLINK='<a class="nav-lang" href="/" lang="en" hreflang="en">English</a>',
-        SOURCE="Quellcode",
-        FOOT_CLAIM="Einsehbarer Quellcode, keine Open-Source-Lizenz. Alle Rechte "
+        SOURCE="Dokumente",
+        FOOT_CLAIM="Dokumente öffentlich, Code privat. Alle Rechte "
                    "vorbehalten.",
         FOOT_STATUS="Unabhängiges Projekt — Gründung in Vorbereitung.",
         FOOT_LEGALLABEL="Rechtliches",
@@ -238,7 +238,7 @@ JSONLD = {
     {
       "@type": "SoftwareSourceCode",
       "name": "the world of dizzi",
-      "description": "Ten local-first applications around a headless core, joined by one written app contract. Curated public snapshot, source-visible, not open source.",
+      "description": "Ten local-first applications around a headless core, joined by one written app contract. A curated set of documents is published; the code is not.",
       "codeRepository": "%(repo)s",
       "programmingLanguage": "Python",
       "runtimePlatform": "Python 3.12",
@@ -392,11 +392,11 @@ def llms() -> str:
     return f"""# the world of dizzi
 
 > One person, ten local-first applications, one shared architecture - a
-> source-visible personal AI network. Curated public snapshot; not open source.
+> personal AI network. A curated set of documents is public; the code is not.
 
 ## Start here
 - [The system]({HOST}/system/): architecture, the app contract, shared core library
-- [The ten applications]({HOST}/apps/): what each app does, with source links
+- [The ten applications]({HOST}/apps/): what each app does, and what is published
 - [The method]({HOST}/method/): written laws, contracts, AI build-chat orchestration
 - [The numbers]({HOST}/numbers/): the six headline figures, each with its method
 - [Journey]({HOST}/journey/): dated milestones since June 2026
@@ -404,20 +404,22 @@ def llms() -> str:
 - [About & contact]({HOST}/about/): who builds this, and how to reach me
 
 ## Source
-- [The code snapshot]({ORDNER}): 966 files, the ten applications and the documents behind them
+- [The published documents]({ORDNER}): 38 documents - the network laws and
+  contracts plus one README per application. The code extract that stood here
+  until 6 August 2026 is no longer published
 - [This site's own source]({SELBST}): the build script behind the figure in every footer
 - [Interactive system map]({HOST}/karte/): self-contained, no external calls
 
 ## Notes
 - Status: independent project, pre-incorporation. No revenue yet. Since 4 August
   2026 a small part of the fleet trades with my own money, on my own account; no
-  outside capital, no offer to anyone. The public snapshot runs dry-run. Snapshot
-  public since 23 July 2026.
+  outside capital, no offer to anyone. Public since 23 July 2026; cut back to a
+  document set on 6 August 2026.
 - The six figures this site leads with are listed at {HOST}/numbers/ with the
-  method that produced each one and the date it was measured. One of them, the
-  commit count, is private, cannot be checked from outside, and is stated as a
-  floor for that reason. Figures that appear inside a sentence carry their
-  source link where they stand.
+  method that produced each one and the date it was measured. Three of them can
+  no longer be checked from outside: the commit count is private and stated as a
+  floor for that reason, and the two code figures were measured against the
+  extract that was withdrawn on 6 August 2026. Each says so in its own entry.
 - German entry page: {HOST}/de/
 """
 

@@ -2,7 +2,7 @@
 
 > **Status: VERTRAG (M-6, Architektur-KI 03.07.2026, Worktree `chat/bank-sync`). REINES DESIGN — kein Bau,
 > keine Bankverbindung, kein Paket installiert.** Verträge-als-Code:
-> [`apps/money/moneyapp/banksync/vertrag.py`](../apps/money/moneyapp/banksync/vertrag.py) (Stubs, Docstrings
+> `apps/money/moneyapp/banksync/vertrag.py` (Stubs, Docstrings
 > normativ) + `apps/money/tests/test_banksync_vertrag.py`. Bau = Bau-KI M6-1…M6-7 (§12) NACH den Gates §14.
 > Vorlage: docs/62/63 (FP-3/FP-4-Muster). Quellen: money `docs/02` §Bank-Anbindung · money-importers ·
 > `appkit/{vault,secrets_os,connectors,net_safe}.py` · docs/56 (Editionen) · docs/61 §3-M-5+§4 (Fundament).

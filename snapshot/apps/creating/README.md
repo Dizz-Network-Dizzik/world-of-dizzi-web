@@ -10,13 +10,17 @@ GPU-Zuteilung, Asset-Verwaltung und die Kennzeichnung erzeugter Inhalte.
 
 | Doku | Inhalt |
 |---|---|
-| [docs/00_VISION.md](docs/00_VISION.md) | Was die App tut |
-| [docs/01_APP_VERTRAG.md](docs/01_APP_VERTRAG.md) | Wie sie ans Gesamtsystem andockt |
-| [docs/02_ANFORDERUNGEN.md](docs/02_ANFORDERUNGEN.md) | Kern-Umfang (Anforderungsliste) |
-| [workflows/README.md](workflows/README.md) | Die ComfyUI-Graph-Bibliothek (Bild · Video · Audio) |
+| `docs/00_VISION.md` | Was die App tut |
+| `docs/01_APP_VERTRAG.md` | Wie sie ans Gesamtsystem andockt |
+| `docs/02_ANFORDERUNGEN.md` | Kern-Umfang (Anforderungsliste) |
+| `workflows/README.md` | Die ComfyUI-Graph-Bibliothek (Bild · Video · Audio) |
 
 **Port-Vorschlag (Core):** 8214.
 
 > **Hinweis zu diesem Auszug:** Enthalten sind Architektur, Verträge und die
 > Workflow-Bibliothek dieser App. Die Kern-Implementierung ist in diesem öffentlichen
 > Snapshot bewusst nicht enthalten.
+
+---
+
+> **Zu diesem Auszug:** Veröffentlicht ist von dieser App nur diese README. Ihr Code und ihre eigene Doku (`docs/`) sind seit dem 6. August 2026 nicht mehr Teil des öffentlichen Auszugs; die netzweiten Gesetze und Verträge, nach denen sie gebaut ist, liegen in [`docs/`](../../docs/README.md).

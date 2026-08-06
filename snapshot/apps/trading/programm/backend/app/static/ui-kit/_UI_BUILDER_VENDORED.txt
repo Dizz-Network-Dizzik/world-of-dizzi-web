@@ -1,3 +1,0 @@
-UI Builder Tool · Quelle 76bfb1d · sha256 3bfcf3939e356a12c90e4b8863ca5750be68d1df8a7190cf14e123b381e24e6d
-Kanonische Quelle: the world of dizzi/tools/ui-builder-tool.{html,js}
-NICHT hier editieren — dort aendern und mit ops/sync_ui_builder.py neu vendoren.

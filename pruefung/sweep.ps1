@@ -91,24 +91,30 @@ $exceptions += @{
 # repository on 27.07.2026 and the gate reported "clean" over 54 files without
 # ever opening one of them. A disclosure gate that does not see what is being
 # published is worse than none, because it signs off on it.
-# The code snapshot is a byte-identical copy of material that is already public
-# under the same account. Every term it carries - the local build path and the
-# names of AI vendors - stands in that public copy today; this gate only started
-# seeing them when the folder moved in on 27.07.2026, measured then: 277 hits
-# over 251 files. Scrubbing them here would not un-publish anything. It would
-# make the public extract differ from the curated original it claims to be, and
-# every later refresh would have to repeat the scrub or silently undo it. Same
-# reasoning as the copied system map above, applied to the folder it came from.
-# Decided by David, 27.07.2026.
+# Every term the folder carries - the local build path and the names of AI
+# vendors - already stands in the public copy this folder was taken from; this
+# gate only started seeing them when the folder moved in on 27.07.2026, measured
+# then: 277 hits over 251 files. Scrubbing them here would not un-publish
+# anything. Same reasoning as the copied system map above, applied to the folder
+# it came from. Decided by David, 27.07.2026.
+#
+# 06.08.2026: the folder was cut back from 966 files to 38 documents, and the
+# reading fell to 75 hits over 15 files. Two sentences that used to stand here
+# had to go with it, because they stopped being true: the folder is no longer a
+# code snapshot, and it is no longer byte-identical to its source. The index
+# READMEs were rewritten to describe what is published now, and links pointing
+# at files that were removed were turned back into plain text - a dead link in a
+# public README is worse than an edited one. Nothing was added to any document.
 #
 # This is deliberately NOT silence: the hits stay counted and are printed as a
-# per-term summary on every run. If that number moves, something entered the
-# folder that was not in the curated snapshot, and it is meant to be noticed.
+# per-term summary on every run. That figure is expected to fall as documents
+# leave. If it RISES, something entered the folder that was not in the curated
+# set, and it is meant to be noticed.
 $exceptions += @{
   pattern = '*'
   path    = '*\snapshot\*'
   match   = '*'
-  why     = 'code snapshot: byte-identical copy of the already-public curated extract'
+  why     = 'already public in the curated extract this folder copies - see the note in this script'
 }
 
 $scan = @(
@@ -218,7 +224,7 @@ if ($eigen.Count) {
 
 if ($ausz.Count) {
   $dn = ($ausz.file | Sort-Object -Unique).Count
-  Write-Host ("CODE SNAPSHOT ($($ausz.Count) hits over $dn files, all declared)") -ForegroundColor DarkYellow
+  Write-Host ("PUBLISHED EXTRACT ($($ausz.Count) hits over $dn files, all declared)") -ForegroundColor DarkYellow
   Write-Host "  already public in the curated extract this folder copies - see the note in this script" -ForegroundColor DarkGray
   $ausz | Group-Object pattern | Sort-Object Count -Descending | ForEach-Object {
     "    {0,-14} x{1}" -f $_.Name, $_.Count | Write-Host

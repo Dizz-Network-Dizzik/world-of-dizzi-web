@@ -23,7 +23,7 @@ Aktionen nur bei verifizierter Verbindung.
 - **Schwebender, schleuderbarer Settings-+Account-Knopf** als wiederkehrendes Element —
   in jeder App vor-implementiert/vorbereitet (Muster: Dizzis FloatingSettings).
 - **Panel-Spin-Physik** (greifen → mobile Achse → Schwingen → Schleudern → Impuls-Übertrag aufs
-  schwebende Element): einheitlich nach [14_SPIN_PHYSIK_SPEC.md](14_SPIN_PHYSIK_SPEC.md)
+  schwebende Element): einheitlich nach `docs/14_SPIN_PHYSIK_SPEC.md` (nicht in diesem Auszug)
   (erst kanonisch in Dizzi perfektioniert, dann überall portiert).
 
 ### A3 — Vernetzung (App-Vertrag)

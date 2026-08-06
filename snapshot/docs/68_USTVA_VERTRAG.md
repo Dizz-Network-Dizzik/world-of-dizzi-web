@@ -2,7 +2,7 @@
 
 > **Status: VERTRAG (M-4, Architektur-KI 04.07.2026, Worktree `chat/ustva-kern`). REINES DESIGN — kein Bau,
 > keine echte Berechnung gegen Echtdaten, keine Übermittlung, kein UI.** Verträge-als-Code:
-> [`apps/money/moneyapp/ustva/vertrag.py`](../apps/money/moneyapp/ustva/vertrag.py) (Stufe 0,
+> `apps/money/moneyapp/ustva/vertrag.py` (Stufe 0,
 > Docstrings normativ) + `apps/money/tests/test_ustva_vertrag.py`. Zwilling zu docs/65 (M-1):
 > dort fährt der **Transport** die Erklärung ans Finanzamt — hier entsteht der **validierte
 > UStVA-INHALT**, den er fährt. Zusammen vollenden sie Davids D7-Endgame (docs/58 §3.B M-1…M-7).

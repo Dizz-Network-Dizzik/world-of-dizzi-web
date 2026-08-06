@@ -1,10 +1,11 @@
 # the world of dizzi — website
 
 The public site for **the world of dizzi**, the personal local-first AI network
-whose curated code snapshot lives in [`snapshot/`](snapshot) — in this same
-repository, beside the site that explains it.
+whose curated document set lives in [`snapshot/`](snapshot) — in this same
+repository, beside the site that explains it. Until 6 August 2026 that folder
+held a 966-file code extract; it now holds 38 documents and no code.
 
-The code proves the system. This site explains it.
+The documents show how the system is built. This site explains it.
 
 > The source of this site is part of the showcase. It is written to be read.
 
@@ -21,9 +22,11 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **83,050 bytes** uncompressed — 20.9 KB markup, 31.5 KB stylesheet,
+page: **83,322 bytes** uncompressed — 21.1 KB markup, 31.5 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. It was 69,773 bytes before the reveal animations and the
+server compresses. The last 272 bytes are the sentences the 6 August curation
+made necessary: the start page now says on itself that the code behind two of
+its figures is no longer published. It was 69,773 bytes before the reveal animations and the
 numbers page, which added 5,263 bytes of stylesheet and 55 bytes of markup;
 those bytes bought motion that needs no script. Another 140 bytes of markup
 followed, and all of it address: the start page carries six source links, and
@@ -73,7 +76,7 @@ is measured here, so the file behind it has to be reachable.
 |---|---|
 | Build | `bake.py` — Python standard library only, no node, no npm |
 | Output | `dist/`, committed; Netlify publishes it with **no cloud build** |
-| Design | palette and typography taken from `snapshot/_netzwerk/SYSTEM_KARTE.html` |
+| Design | palette and typography taken from the system map in `statisch/karte/` |
 | Languages | English throughout, plus a German entry page at `/de/` and German legal pages |
 | Hosting | Netlify free tier; `_headers` carries the CSP and the security headers |
 
@@ -90,7 +93,7 @@ python bake.py --check    # verifies without writing (part of the gate)
 **the one place to change when the custom domain arrives.** `SELBST` sits
 beside it and names this repository, so that the file behind the build figure
 in every footer — `bake.py` itself — stays reachable from the page that quotes
-it. `AUSZUG` below it names the folder holding the code snapshot, and the
+it. `AUSZUG` below it names the folder holding the published documents, and the
 two link bases built from those two, `DATEI` and `ORDNER`, carry every source
 link on the site. Moving or renaming the snapshot is one line here, then build
 again.
@@ -146,7 +149,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **83 source links** against
+be resolved, and `check_snapshot_links` resolves all **67 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -165,7 +168,7 @@ source instead of two, but it is not gone. It lives in `bake.py` as `SELBST`.
 ```
 bake.py               the build
 netlify.toml          publish dist/, run no build command
-snapshot/             the code this site is about — 966 files, the curated
+snapshot/             what the site links into — 38 documents, the curated
                       extract; travels with the repository, not with the site
 vorlagen/             head + header, and footer
 seiten/               content fragments, no <html> of their own
@@ -234,5 +237,5 @@ Impressum carries a real, servable address. `bake.py` exits `2` until it does.
 
 ## Licence
 
-Source-visible showcase, not open source. All rights reserved. The two font
+Documents public, code private, not open source. All rights reserved. The two font
 families are SIL OFL 1.1 — their licence texts are in `statisch/schrift/`.

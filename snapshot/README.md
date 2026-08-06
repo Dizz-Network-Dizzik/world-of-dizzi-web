@@ -13,34 +13,34 @@ method: laws before code, contracts before features, research protocols before d
 documents in [`docs/`](docs/) are not an afterthought — they are the instrument that made a
 system this size buildable by one human.
 
-> **This is a curated public snapshot — some modules are intentionally not included.**
-> **Source-visible showcase, not open source.** There is no LICENSE file: all rights reserved.
-> You are welcome to read, study and evaluate the code. You may not copy, redistribute or use
-> it in your own products.
+> **This folder holds documents, not code.** Until 6 August 2026 it carried a curated code
+> extract of 966 tracked files. It was cut back on purpose to the **38 documents** that show
+> how the network is built and governed: the laws, the vision, the architecture papers, the
+> written contracts, and one README per application.
 >
-> The snapshot lives inside the repository of the project's website; the source links on
-> the site point into this folder. What you see here is a **state, not a history** — the
+> **All rights reserved.** There is no LICENSE file. You are welcome to read, study and
+> evaluate what is here. You may not copy, redistribute or use it in your own products.
+>
+> The folder lives inside the repository of the project's website; the source links on
+> the site point into it. What you see here is a **state, not a history** — the
 > commits that produced it are in a private working repository.
 
 ---
 
 ## The numbers
 
-Measured on **27 July 2026**, against this snapshot, with the method written
-next to each number — so the numbers can be reproduced instead of believed.
-
-**Run the commands from inside this folder.** This snapshot is a folder in a
-larger repository, so `git ls-files` at the repository root answers a different
+**Run the commands from inside this folder.** This folder sits inside a larger
+repository, so `git ls-files` at the repository root answers a different
 question and returns larger numbers: it counts the website around this folder
 as well.
 
 | | | how it was counted |
 |---|---|---|
-| Applications | **10** (Core + 9) | directories under [`apps/`](apps) |
-| Commits | **2,600+** since June 2026 | in the private working repository behind this snapshot — **not** the commit count of the repository you are reading this in. **The one figure on this page you cannot reproduce from this folder**, and stated as a floor for that reason |
-| Python in this snapshot | **~100,000 lines** across **632** files | `git ls-files "*.py" \| wc -l` from this folder; the line figure counts non-blank lines (100,234 exactly; 119,249 with blanks). Lines are counted, not line breaks — two files here end without a closing newline, so a `wc -l` measurement loses their last line and reports 100,232. Same snapshot, two honest methods, two lines apart |
-| Tests in this snapshot | **2,667** test functions in **309** files | functions whose name begins with `test_`, counted by parsing every tracked `.py` file in this folder — not by running the suite, so this is a count of tests written, not of tests passing |
-| Tracked files | **966** | `git ls-files \| wc -l` from this folder |
+| Applications | **10** (Core + 9) | one row each in *The applications* below. Nine of them also carry their own README under [`apps/`](apps); the trading fleet's papers are deliberately not published |
+| Documents here | **38** | `git ls-files` from this folder, counted 6 August 2026 |
+| Commits | **2,600+** since June 2026 | in the private working repository behind this folder — **not** the commit count of the repository you are reading this in. Stated as a floor, because it cannot be reproduced from here |
+| Python, measured 27 July 2026 | **~100,000 lines** across **632** files | measured in the code extract that stood here until 6 August 2026 and **is no longer published**, so this can no longer be reproduced. It counted non-blank lines (100,234 exactly; 119,249 with blanks) |
+| Tests, measured 27 July 2026 | **2,667** test functions in **309** files | same withdrawn extract: functions whose name begins with `test_`, counted by parsing every tracked `.py` file — not by running the suite, so a count of tests written, not of tests passing |
 | Built by | one person + AI coding assistants, local-first, no cloud dependency at the core | |
 
 Each application runs independently. **Independently *sellable* is a design
@@ -78,6 +78,7 @@ Three things hold it together:
   Write the contract, and the app appears in the dashboard automatically.
 - **`packages/appkit`** — one shared library, no vendoring. Authentication, CSP hardening,
   account deletion proofs, security posture, area canon. Changed once, effective everywhere.
+  The library itself is not published; the contract it has to satisfy is.
 - **Cross-connections** ([`docs/26_QUERVERBINDUNGEN.md`](docs/26_QUERVERBINDUNGEN.md)) — data
   stays at its source; the Core only relays read-only; anything with outside effect needs an
   explicit human approval step.
@@ -109,15 +110,17 @@ Three things hold it together:
 
 ## Where to look first
 
-1. [`_netzwerk/SYSTEM_KARTE.html`](_netzwerk/SYSTEM_KARTE.html) — the interactive system map.
-   Open it in a browser: it is self-contained, dark, responsive, and makes no external calls.
-2. [`docs/12_GESAMTVERSTAENDNIS.md`](docs/12_GESAMTVERSTAENDNIS.md) — the whole system explained
+1. [`docs/12_GESAMTVERSTAENDNIS.md`](docs/12_GESAMTVERSTAENDNIS.md) — the whole system explained
    for someone with no prior knowledge.
+2. [`docs/01_GRUNDGESETZE.md`](docs/01_GRUNDGESETZE.md) — the written laws the work obeys. The
+   most unusual thing here, and the reason the rest exists.
 3. [`docs/16_APP_VERTRAG_SPEC.md`](docs/16_APP_VERTRAG_SPEC.md) — the contract that makes ten
    applications behave like one.
-4. [`packages/appkit/`](packages/appkit/) — the shared core library, where the care shows.
+4. [`docs/README.md`](docs/README.md) — the index of every network-wide norm and contract.
 
-*The documentation is written in German; the code and its structure speak for themselves.*
+The interactive system map is on the website: <https://worldofdizzi.netlify.app/karte/>
+
+*The documentation is written in German.*
 
 ---
 
@@ -137,22 +140,22 @@ Recherche-Protokolle, dann Entscheidungen. Die Dokumente in [`docs/`](docs/) sin
 sondern das Instrument, das ein System dieser Größe für eine einzelne Person überhaupt baubar
 gemacht hat.
 
-> **Dies ist ein kuratierter öffentlicher Auszug — einzelne Module sind bewusst nicht enthalten.**
-> **Einsehbarer Quellcode, keine Open-Source-Lizenz.** Es gibt keine LICENSE-Datei: alle Rechte
-> vorbehalten. Lesen, studieren und bewerten ausdrücklich willkommen — kopieren, weitergeben
-> oder in eigenen Produkten verwenden nicht.
+> **Dieser Ordner enthält Dokumente, keinen Code.** Bis zum 6. August 2026 lag hier ein
+> kuratierter Code-Auszug mit 966 versionierten Dateien. Er wurde bewusst auf die **38
+> Dokumente** zurückgeschnitten, die zeigen, wie das Netz gebaut ist und wonach es sich
+> richtet. **Alle Rechte vorbehalten**, es gibt keine LICENSE-Datei. Lesen, studieren und
+> bewerten ausdrücklich willkommen — kopieren, weitergeben oder in eigenen Produkten
+> verwenden nicht.
 
 ### Die Zahlen
 
-Gemessen am **27. Juli 2026**, an diesem Auszug; die Zählweise steht in der englischen
-Tabelle oben neben jeder Zahl.
-
-**10 Apps** (Core + 9) · **2.600+ Commits** seit Juni 2026 — im privaten Arbeits-Repository
-hinter diesem Auszug — **nicht** die Commit-Zahl des Repositorys, in dem Sie das hier lesen ·
-**~100.000 Zeilen Python** (ohne Leerzeilen) in **632** Dateien · **2.667 Test-Funktionen**
-in **309** Dateien — gezählt, nicht ausgeführt: es sind geschriebene Tests, keine bestandenen ·
-**966** versionierte Dateien · gebaut von einer Person mit KI-Assistenz, lokal-first, ohne
-Cloud-Abhängigkeit im Kern.
+**10 Apps** (Core + 9) · **38 Dokumente** in diesem Ordner (Stand 6. August 2026) ·
+**2.600+ Commits** seit Juni 2026 — im privaten Arbeits-Repository
+hinter diesem Ordner — **nicht** die Commit-Zahl des Repositorys, in dem Sie das hier lesen ·
+**~100.000 Zeilen Python** (ohne Leerzeilen) in **632** Dateien und **2.667 Test-Funktionen**
+in **309** Dateien — beides am 27. Juli 2026 im inzwischen zurückgezogenen Code-Auszug
+gemessen und von außen **nicht mehr nachprüfbar** · gebaut von einer Person mit KI-Assistenz,
+lokal-first, ohne Cloud-Abhängigkeit im Kern.
 
 ### Die Architektur in einem Satz
 
@@ -170,7 +173,8 @@ Core unverändert vom PC auf einen Server umziehen kann — Windows wie Linux.
 
 ### Wo anfangen
 
-1. [`_netzwerk/SYSTEM_KARTE.html`](_netzwerk/SYSTEM_KARTE.html) — die interaktive System-Karte
-   (im Browser öffnen; self-contained, keine externen Aufrufe).
-2. [`docs/12_GESAMTVERSTAENDNIS.md`](docs/12_GESAMTVERSTAENDNIS.md) — das Ganze ohne Vorwissen.
+1. [`docs/12_GESAMTVERSTAENDNIS.md`](docs/12_GESAMTVERSTAENDNIS.md) — das Ganze ohne Vorwissen.
+2. [`docs/01_GRUNDGESETZE.md`](docs/01_GRUNDGESETZE.md) — die geschriebenen Gesetze.
 3. [`docs/README.md`](docs/README.md) — der Index aller netzweiten Normen und Verträge.
+
+Die interaktive System-Karte steht auf der Website: <https://worldofdizzi.netlify.app/karte/>

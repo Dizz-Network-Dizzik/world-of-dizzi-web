@@ -7,11 +7,17 @@
       next to each figure, so you can reproduce it instead of believing it — and where
       you cannot, it says so.</p>
     <p class="dach mt-m">Four of the six were measured on 26 July
-      2026 against the public snapshot of 23 July 2026, and measured again on 27 July
+      2026 against the public code extract of 23 July 2026, and measured again on 27 July
       2026 — the two readings agree. The fifth is measured
       in this website's own repository, the sixth in the private working repository
-      behind the snapshot. Each of those two names its repository in its own entry
+      behind it. Each of those two names its repository in its own entry
       below.</p>
+    <p class="hinweis mt-m"><b>On 6 August 2026 that code extract was withdrawn.</b> What
+      is published now is a curated set of <b>38 documents</b> — the network laws and
+      contracts, and one README per application. Two of the figures below therefore
+      describe something that is <b>no longer public and can no longer be reproduced
+      from outside</b>. They stay on the page with that said, because deleting a number
+      the site led with for two weeks would be the quieter kind of dishonesty.</p>
   </div>
 </section>
 
@@ -19,8 +25,8 @@
   <div class="wrap">
     <p class="kicker">Measured, not claimed</p>
     <h2>The six figures this site leads with</h2>
-    <p class="dach">Each one opens to show how it was produced. The last of the six is
-      the only figure here that cannot be checked from outside, and it says so itself.</p>
+    <p class="dach">Each one opens to show how it was produced. Three of the six cannot
+      be checked from outside any more, and each of the three says so itself.</p>
 
     <ol class="messung reveal mt-l">
 
@@ -30,27 +36,44 @@
         <details class="methode">
           <summary>How it was counted</summary>
           <div class="methode-inhalt">
-            <p>Directories under <code>apps/</code> in the snapshot: admin,
+            <p>The ten are one row each in the extract's README: admin,
               communication, core, creating, healthy, management, memory, money, news,
               trading. Counting the Core as one of the ten is a choice, not a
               measurement — the same set is described as nine applications around a
               headless core wherever that relation is the point.</p>
+            <p>Until 6 August 2026 the count had a second, blunter method: directories
+              under <code>apps/</code>. Nine of them survive the curation with their
+              README; the trading fleet's papers were taken out entirely, so counting
+              folders now lands at nine and the table is the method that still holds.</p>
             <p class="quellen"><a href="{{ORDNER}}/apps" rel="noopener">apps/ in the repository &#8599;</a></p>
           </div>
         </details>
       </li>
 
       <li class="mess" id="dateien">
-        <p class="mess-kopf"><b class="mess-wert">966</b>
-          <span class="mess-was">tracked files, published as one curated commit</span></p>
+        <p class="mess-kopf"><b class="mess-wert">38</b>
+          <span class="mess-was">documents published — the code is not</span></p>
         <details class="methode">
-          <summary>How it was counted</summary>
+          <summary>How it was counted, and what it replaced</summary>
           <div class="methode-inhalt">
-            <p><code>git ls-files</code> in the snapshot. One commit, because the
-              snapshot is curated: it was assembled deliberately rather than pushed as a
-              working history. Some modules are left out on purpose, and the largest of
-              those gaps is named on the page that would otherwise overstate itself.</p>
-            <p class="quellen"><a href="/apps/#creating">The largest gap, named &#8594;</a></p>
+            <p><code>git ls-files</code> in the published folder: <b>38</b> Markdown
+              documents. Twenty-eight are the network's own — the laws, the vision, the
+              architecture papers and the written contracts — and nine are one README
+              per application; the last is the folder's own README. This figure is
+              current and can be reproduced by anyone in one command.</p>
+            <p>It replaces a different figure. From 23 July to <b>6 August 2026</b> the
+              same folder held <b>966 tracked files</b>: the whole code extract, one
+              curated commit. That was cut back deliberately. What went, went for
+              reasons that are worth naming rather than hiding — the shared libraries
+              and the security concept, because a map of what is not yet hardened helps
+              exactly one kind of reader; the trading fleet's papers, because sizing
+              rules and decision mechanics of something that moves real money do not
+              belong on an open page; every application's implementation, because
+              showing the method does not require shipping the machine.</p>
+            <p><b>Nothing was published to make this number look better.</b> The folder
+              only lost files, never gained any, and every document still in it stood
+              there before.</p>
+            <p class="quellen"><a href="{{ORDNER}}" rel="noopener">The 38, in the repository &#8599;</a><span class="trenn">·</span><a href="/apps/#trading">The one application with no source link &#8594;</a></p>
           </div>
         </details>
       </li>
@@ -59,8 +82,12 @@
         <p class="mess-kopf"><b class="mess-wert">~100,000</b>
           <span class="mess-was">lines of Python, across 632 files</span></p>
         <details class="methode">
-          <summary>How it was counted</summary>
+          <summary>How it was counted, and why you can no longer repeat it</summary>
           <div class="methode-inhalt">
+            <p class="hinweis"><b>Measured in the code extract that was withdrawn on
+              6 August 2026.</b> The method below was reproducible until that day and is
+              not any more. It is written out anyway, so the figure can at least be
+              judged by how it was made.</p>
             <p>File count: <code>git ls-files "*.py"</code> — 632 files. The rounded
               figure stands for an exact one: <b>100,234 lines carry a
               non-whitespace character</b>, and 119,249 lines exist in total. The
@@ -81,8 +108,10 @@
         <p class="mess-kopf"><b class="mess-wert">2,667</b>
           <span class="mess-was">test functions, in 309 files</span></p>
         <details class="methode">
-          <summary>How it was counted</summary>
+          <summary>How it was counted, and why you can no longer repeat it</summary>
           <div class="methode-inhalt">
+            <p class="hinweis"><b>Measured in the code extract that was withdrawn on
+              6 August 2026</b> — like the figure above, and for the same reason.</p>
             <p>Every tracked <code>.py</code> file is parsed for functions whose names
               begin with <code>test_</code>. The suite is <b>not</b> run to produce this
               figure, which means it counts tests <em>written</em>, not tests
@@ -133,9 +162,10 @@
           <summary>How it was counted, and why it is stated as a floor</summary>
           <div class="methode-inhalt">
             <p><code>git rev-list --count</code> in the working repository, which is
-              private. <b>Of the six, this is the one you cannot check.</b> The public
-              snapshot is a single commit, so counting commits there proves nothing
-              about the work behind it.</p>
+              private. <b>This one was never checkable, and it is the only one of the
+              three for which that was always true.</b> The public folder is a single
+              commit, so counting commits there proves nothing about the work behind
+              it.</p>
             <p>It is written as a floor rather than an exact number for that reason: an
               exact figure would look precise while resting on nothing you can inspect,
               and it would be stale within a day. A floor is the most a private number
@@ -151,18 +181,20 @@
 <section id="verteilung">
   <div class="wrap">
     <p class="kicker">The sum a reader will try</p>
-    <h2>Where the other 628 tests live</h2>
+    <h2>Where the other 628 tests sat</h2>
     <div class="raster">
       <div>
         <p class="lang">Add up the nine test figures on the applications page — Dizz
-          Creating carries none, because its core is not in the snapshot — and you get
-          2,039, not 2,667. The difference is real, and it is not hiding anywhere
-          clever: the shared work does not sit inside the applications.</p>
+          Creating carries none, because its core was never in the extract — and you get
+          2,039, not 2,667. The difference is real, and it was not hiding anywhere
+          clever: the shared work does not sit inside the applications. This breakdown
+          belongs to the same 27 July measurement as the total, and like the total it
+          describes a folder that is no longer published.</p>
         <p class="lang">This is the part of the architecture that is easiest to state
           and hardest to show. Shared libraries that carry authentication, contract
           checking, security posture and deletion proofs for ten applications are where
-          a mistake is a mistake everywhere — and that is where 579 of the tests sit,
-          more than any single application has.</p>
+          a mistake is a mistake everywhere — and that is where 579 of the tests sat,
+          more than any single application had.</p>
       </div>
       <div>
         <ul class="liste lang">
@@ -190,8 +222,9 @@
     <div class="raster">
       <div>
         <p class="lang">Separable means each application already runs on its own: its
-          own port, its own database, its own interface. That part is built, and it is
-          visible in the snapshot.</p>
+          own port, its own database, its own interface. That part is built. It was
+          visible in the code extract until 6 August 2026; what remains public is the
+          contract that requires it.</p>
         <p class="lang">Independently <em>sellable</em> is a different claim, and it is
           <b>a design goal, not a finished feature</b>. There is a written export
           contract that specifies how one application, plus the Core and the parts of
@@ -221,12 +254,14 @@
       <li><b>They are a count, not a verdict.</b> A count of 2,667 tests written says
         nothing about how many pass, and nothing about what they cover. A number that
         could be raised by writing worse tests is not a quality measure.</li>
-      <li><b>They describe the snapshot, not the system.</b> The working repository is
-        larger; the snapshot is a curated part of it, and some modules were left out
-        deliberately.</li>
-      <li><b>They are dated.</b> The four snapshot figures were read on 26 July 2026
-        against the snapshot of 23 July 2026, and read again on 27 July. The build
-        figure is produced at build time, so it is as current as the page you are
+      <li><b>They describe an extract, not the system.</b> The working repository is
+        larger; what was published was a curated part of it, and some modules were left
+        out deliberately even then.</li>
+      <li><b>They are dated, and two of them are now historical.</b> The Python and test
+        figures were read on 26 July 2026 against the code extract of 23 July, and read
+        again on 27 July; that extract was withdrawn on 6 August 2026, so those two
+        cannot be repeated. The document count and the build figure are current — the
+        build figure is produced at build time, so it is as current as the page you are
         reading. The commit count was taken in the private repository on 26 July.</li>
       <li><b>They are the six the site leads with, not every number in the text.</b>
         A figure that appears inside a sentence — the nineteen hand-over contracts,
@@ -237,7 +272,7 @@
         than left standing among figures that can be verified.</li>
     </ul>
     <div class="knoepfe">
-      <a class="knopf prim" href="{{ORDNER}}" rel="noopener">Check it in the source <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+      <a class="knopf prim" href="{{ORDNER}}" rel="noopener">Count the documents yourself <span class="pfeil" aria-hidden="true">&#8599;</span></a>
       <a class="knopf" href="/apps/">The per-application figures <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
   </div>
@@ -248,11 +283,15 @@
     <p class="kicker">Auf Deutsch</p>
     <h2>Die Zahlen in einem Absatz</h2>
     <p class="dach">Vier der sechs Zahlen wurden am 26. Juli 2026 anhand des
-      öffentlichen Auszugs vom 23. Juli 2026 gemessen: <b>10 Anwendungen</b> (Core + 9) ·
-      <b>966</b> versionierte Dateien in einem einzigen kuratierten Commit ·
+      öffentlichen Code-Auszugs vom 23. Juli 2026 gemessen: <b>10 Anwendungen</b>
+      (Core + 9) · <b>966</b> versionierte Dateien in einem einzigen kuratierten Commit ·
       <b>~100.000 Zeilen Python</b> in <b>632</b> Dateien, genau: 100.234 Zeilen mit
       sichtbarem Inhalt · <b>2.667 Test-Funktionen</b> in <b>309</b> Dateien — gezählt,
-      nicht ausgeführt, also geschriebene Tests, keine bestandenen. Dazu zwei Zahlen aus
+      nicht ausgeführt, also geschriebene Tests, keine bestandenen.
+      <b>Dieser Code-Auszug wurde am 6. August 2026 zurückgezogen</b>; veröffentlicht ist
+      seither ein kuratierter Satz von <b>38 Dokumenten</b>. Die beiden Python-Zahlen
+      sind damit von außen nicht mehr nachprüfbar und stehen nur noch mit Datum da; die
+      <b>966</b> ist durch die <b>38</b> ersetzt. Dazu zwei Zahlen aus
       anderen Quellen: <b>{{BAKERZEILEN}} Zeilen</b> im Skript, das diese Website baut —
       beim Bauen selbst gezählt, im
       <a href="{{SELBST}}/blob/main/bake.py" rel="noopener">Repository dieser Website</a> ·

@@ -1,5 +1,0 @@
-Buchungstag;Valutadatum;Buchungstext;Beguenstigter/Zahlungspflichtiger;Verwendungszweck;Kundenreferenz;Betrag;Waehrung
-31.12.2025;31.12.2025;LOHN/GEHALT;Muster GmbH;Gehalt Dezember;E2E-2025-0001;2.450,00;EUR
-02.01.2026;02.01.2026;MIETE;Hausverwaltung Stadt;Miete Januar Wohnung 4;E2E-2026-0007;-825,50;EUR
-03.01.2026;03.01.2026;KARTENZAHLUNG;REWE Markt;Lebensmittel;E2E-2026-0011;-43,29;EUR
-05.01.2026;05.01.2026;GUTSCHRIFT;Finanzamt;Steuererstattung 2024;E2E-2026-0020;1.234,56;EUR
