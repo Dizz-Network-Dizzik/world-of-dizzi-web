@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 06.08.2026, 849 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 866 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 
 ab
 aber
@@ -47,6 +47,7 @@ anfragen
 anfragenden
 anfällt
 angaben
+angebot
 angebote
 angepasst
 anhand
@@ -215,6 +216,7 @@ diensteanbieter
 dies
 diese
 dieselbe
+dieselben
 diesem
 dieser
 dieses
@@ -281,6 +283,7 @@ erfolgt
 erforderlich
 erfüllt
 ergebnis
+ergebnisse
 ergänzt
 erinnerung
 erkennbar
@@ -320,6 +323,7 @@ freigabe
 freigaben
 fremden
 fremder
+fremdkapital
 fristen
 funktionen
 funktionsfähigen
@@ -404,11 +408,14 @@ habe
 haben
 haftung
 halten
+handel
 handelsregister
+handelt
 hartem
 hast
 hat
 haupt
+heute
 hier
 hin
 hinsieht
@@ -443,6 +450,7 @@ interessen
 investoren
 ip
 ireland
+irgendjemanden
 ist
 je
 jede
@@ -466,6 +474,7 @@ keinen
 kern
 ki
 klasse
+kleiner
 klick
 klicken
 kluge
@@ -484,6 +493,7 @@ kopf
 kopieren
 kraft
 krause
+kunden
 kuratierten
 kuratierter
 kurz
@@ -518,6 +528,7 @@ medien
 mehr
 meilensteine
 mein
+meinem
 meint
 meiste
 mensch
@@ -594,11 +605,13 @@ prüfen
 prüfobjekt
 prüft
 prüfung
+punkte
 quellcode
 quellcodes
 quelle
 quellen
 rechner
+rechnung
 recht
 rechte
 rechtliches
@@ -695,6 +708,7 @@ systematische
 systeme
 tabelle
 technisch
+teil
 teilen
 teilzunehmen
 telefonanschluss
@@ -717,6 +731,7 @@ um
 umfang
 umfasst
 umgehend
+umsatz
 umsatzsteuer
 umziehen
 unabhängig
@@ -747,9 +762,11 @@ verbindung
 verbindungsdaten
 verbotene
 verbraucherschlichtungsstelle
+verdient
 verdrahtet
 vereinsregisternummer
 verfügung
+verkauft
 verlangen
 verlinkt
 verlinkte
