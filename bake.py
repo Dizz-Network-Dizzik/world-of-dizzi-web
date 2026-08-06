@@ -149,9 +149,12 @@ PAGES: list[dict] = [
     dict(
         src="de-reise.html", out="de/reise/index.html", path="/de/reise/", lang="de",
         title="Warum San Francisco | the world of dizzi",
+        # German says the same thing in more characters, and 155 is the limit
+        # pruefen.py enforces - this one ran to 159 on the first bake, exactly
+        # as the German entry page above once ran to 209.
         desc="Warum der nächste Schritt dieses Projekts nach San Francisco zeigt: "
-             "weiterbauen, die Arbeit zeigen, wie sie ist, und von den Menschen "
-             "lernen, die dasselbe tun.",
+             "weiterbauen, die Arbeit zeigen, wie sie ist, und von denen lernen, "
+             "die dasselbe tun.",
         alt="/travel/", langlink='<a class="nav-lang" href="/travel/" lang="en" '
                                 'hreflang="en">English</a>',
     ),
