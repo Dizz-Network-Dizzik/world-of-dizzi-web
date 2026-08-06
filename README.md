@@ -173,7 +173,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **70 source links** against
+be resolved, and `check_snapshot_links` resolves all **69 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -183,12 +183,13 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 72 links break at once — and the claim on `/numbers/` that exactly one figure
+all 74 links break at once — and the claim on `/numbers/` that exactly one figure
 cannot be checked from outside quietly stops being true. That figure read 83
-until the travel pages were added, and 83 had not been true for some time: the
-site carried 69. It is the one link count on this page that no gate measures,
-which is precisely why it drifted while the two beside it could not — the same
-lesson this file already tells twice about the first-load number. That risk now has one
+until the travel pages were added, and 83 had not been true for some time:
+counted over the built site as it stood before them, there were 72. It is the
+one link count on this page that no gate measures, which is precisely why it
+drifted while the two beside it could not — the same lesson this file already
+tells twice about the first-load number. That risk now has one
 source instead of two, but it is not gone. It lives in `bake.py` as `SELBST`.
 
 ## Layout

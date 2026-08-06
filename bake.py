@@ -187,19 +187,16 @@ PAGES: list[dict] = [
         desc="This panel is not in the registry.",
         noindex=True, nomap=True,
     ),
-    # DRAFT, and deliberately reachable only by typing its address: the variant
-    # of the travel page that names a time window. No navigation entry, no
-    # sitemap entry, noindex, and no page links to it. Deleting this one dict
-    # removes it from the built site completely.
-    dict(
-        src="reise_mit_daten_ENTWURF.html", out="reise_mit_daten_ENTWURF.html",
-        path="/reise_mit_daten_ENTWURF.html", lang="en",
-        title="Draft — San Francisco, with dates",
-        desc="Unlinked draft: the travel page in the variant that names a "
-             "placeholder time window.",
-        noindex=True, nomap=True,
-    ),
 ]
+
+# NOT a page, on purpose. seiten/reise_mit_daten_ENTWURF.html is the variant of
+# the travel page that names a time window, and it is deliberately absent from
+# the list above: it is therefore in no build output, and dist/ is what gets
+# deployed in one piece. "Unlinked plus noindex" was the earlier answer and it
+# is not protection - the whole of dist/ ships to the host, the address is
+# guessable, and a window of absence would then be publicly retrievable by
+# anyone who typed it. The file stays in seiten/ as a draft to read locally.
+# It becomes a page only by David's word, and only by adding a dict above.
 
 # --------------------------------------------------------------------------
 # chrome: everything the two templates need, per language
