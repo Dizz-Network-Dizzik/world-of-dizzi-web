@@ -176,7 +176,6 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .leiste span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .led{width:7px;height:7px;border-radius:50%;background:var(--green);
   box-shadow:0 0 0 3px rgba(54,211,153,.14);flex:none}
-.led.amber{background:var(--amber);box-shadow:0 0 0 3px rgba(245,185,66,.14)}
 .led.vio{background:var(--vio);box-shadow:0 0 0 3px rgba(139,108,255,.14)}
 .leiste .trenner{color:var(--tx3)}
 

@@ -55,7 +55,7 @@ PAIRS = [
     ("cy",     "panelh", 4.5, "focus ring and button hover"),
     ("green",  "bg",     3.0, "status LED, done marker"),
     ("green",  "panel",  3.0, "done marker inside a card"),
-    ("amber",  "bg",     3.0, "status LED for the dry-run flag"),
+    ("amber",  "bg",     3.0, "amber accent, Dizz Money section"),
     ("vio",    "bg",     3.0, "diagram accent, core ring"),
     ("mag",    "bg",     3.0, "gradient start, tile edges"),
     ("coral",  "bg",     3.0, "trading accent, tile edges"),
