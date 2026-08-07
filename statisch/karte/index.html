@@ -599,7 +599,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
     <div class="stat"><b class="accent">10</b><span>Dienste (Core+8 Apps+TB)</span></div>
     <div class="stat"><b>10/10</b><span>Health-Watch grün</span></div>
     <div class="stat"><b>~2.180</b><span>Tests (Apps) + 400 TB</span></div>
-    <div class="stat"><b>50</b><span>Trading-Bots · 18 Strategien (dry_run)</span></div>
+    <div class="stat"><b>50</b><span>Trading-Bots · 18 Strategien (dry_run · kleiner Teil seit 04.08. eigenes Geld, hinterm Gate)</span></div>
     <div class="stat"><b>1</b><span>Repo · 0 Vendoring</span></div>
   </div>
 </div></header>
@@ -703,7 +703,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
         <div class="moddetail">
           <div class="fac"><b>HITL (Human-in-the-Loop)</b> — Außenwirkung (Mail/Post/Trade) ist eine Freigabe-Aktion (Stufe verifiziert, fail-closed); keine autonome Wirkung nach außen.</div>
           <div class="fac"><b>Ehrliche Grenzen</b> — Disclaimer sichtbar: Steuer = Schätztool (kein Filing) · Health = keine Diagnose · Studium = keine Beratung.</div>
-          <div class="fac"><b>Defensiv-Default</b> — z. B. der Trading-Bot: jede autonome Aktion ist proposal-only, defensiv oder OOS-gegatet; Echtgeld-Transfer bewusst blockiert.</div>
+          <div class="fac"><b>Defensiv-Default</b> — z. B. der Trading-Bot: jede autonome Aktion ist proposal-only, defensiv oder OOS-gegatet; Echtgeld nur hinter dem hochsicheren Menschen-Gate.</div>
           <div class="fac"><b>Gesetz 2 (Ehrlichkeit vor Aktivität)</b> — Zweifel offen sagen; lieber kein Fund als ein erfundener.</div>
         </div>
         <div class="topicsrc">
@@ -1008,14 +1008,14 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 
     <article class="app card lift" data-app="trading" data-mode="money" data-ext="1" data-tags="ext money">
       <div class="ah"><div><h3>Dizz Trading</h3><span class="port">:8137</span></div><button class="exp">+</button></div>
-      <p class="one">Krypto-Bot-Flotte (50 Bots · 18 Strategien, dry_run) — eigener Stack, Echtgeld-Gate hochsicher.</p>
+      <p class="one">Krypto-Bot-Flotte (50 Bots · 18 Strategien; Kern dry_run, kleiner Teil seit 04.08.2026 mit eigenem Geld) — eigener Stack, Echtgeld-Gate hochsicher.</p>
       <div class="badges"><span class="b money">Geld-System · read-only</span><span class="b ext">↗ Anthropic-Recherche</span><span class="b ai">● lokale Lern-Ebenen</span></div>
-      <ul class="kann lese-fn"><li>Eine Flotte von 50 Krypto-Bots über 18 Strategien (jede ≥1; davon 6 neu aus Katalog-Vorlagen anwendbar gemacht) — alles im Trockenlauf (dry_run)</li><li>Lernt selbstständig dazu, kann das Risiko aber nur senken</li><li>Echtgeld-Transfer ist bewusst blockiert (hochsicheres Gate)</li><li><b style="color:var(--cy)">Klapp auf</b> für die komplette 6-Schichten-Sub-Architektur ↓</li></ul>
+      <ul class="kann lese-fn"><li>Eine Flotte von 50 Krypto-Bots über 18 Strategien (jede ≥1; davon 6 neu aus Katalog-Vorlagen anwendbar gemacht) — der Kern im Trockenlauf (dry_run); seit dem 04.08.2026 handelt ein kleiner Teil der Flotte mit eigenem Geld auf eigene Rechnung</li><li>Lernt selbstständig dazu, kann das Risiko aber nur senken</li><li>Echtgeld steht hinter demselben hochsicheren Menschen-Gate — kein fremdes Kapital, kein Angebot, keine Aussage über Erträge</li><li><b style="color:var(--cy)">Klapp auf</b> für die komplette 6-Schichten-Sub-Architektur ↓</li></ul>
       <div class="det"><dl>
         <dt>Stack</dt><dd>eigener FastAPI + Freqtrade-Engines (kein appkit), eigene venvs.</dd>
         <dt>KI-Ebenen</dt><dd>HMM/Master/Anchored-Walk-Forward/Autopilot + MN-Sockel (CSM/Pairs/StatArb/MM, jetzt als <b>Demo-Paper-Bots anlegbar</b>) — lokal.</dd>
         <dt>Recherche</dt><dd>Katalog: KI-Strategien → freqtrade-Engines (Anthropic + web_search, Token).</dd>
-        <dt>Sicherheit</dt><dd>Echtgeld-Transfer „bewusst blockiert"; Bot-CRUD/Restart nur gegated.</dd>
+        <dt>Sicherheit</dt><dd>Echtgeld nur hinter dem Menschen-Gate; Bot-CRUD/Restart nur gegated.</dd>
         <dt>Gotcha</dt><dd>Sandbox blockt HTTP-DELETE/„/stop" → autorisierte Live-Calls brauchen Sandbox-Aus.</dd>
       </dl>
 
@@ -1024,7 +1024,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 
         <div class="tblayer z-teal"><span class="tbnum">①</span><div><b>Markt &amp; Regime-Erkennung</b><span class="tbmods"><code>ccxt/Bitget</code> (OHLCV read-only) · <code>tracker.py</code> (Markt-Snapshot, Regime) · <code>hmm.py</code> (Gauss-HMM, kausal · Baum-Welch im Log-Space) · <code>fundamental.py</code> (Event-Risiko, fail-safe, key-frei)</span></div></div>
         <div class="tbbridge">↓ schreibt Bridge <code>data/hmm_regime.json</code> (venv-übergreifend) · regime · Konfidenz · lev_scale · exposure_scale ↓</div>
-        <div class="tblayer z-blue"><span class="tbnum">②</span><div><b>Ausführung — freqtrade</b> <span style="color:var(--tx3);font-size:11px">(je Bot ein Prozess)</span><span class="tbmods">18 Engines (Spot + Futures-Short, lookahead-frei; 6 neu aus Vorlagen 26.06.) · <code>MasterMeta-Bot</code> (regime-schaltend, Hebel) · <code>runner.py</code> (Prozesse, sicherer Kill) · <code>registry.py</code> — 50 Bots dry_run (jede Strategie ≥1) → <code>tradesv3_*.sqlite</code> (Backend liest read-only, kann nie korrumpieren)</span></div></div>
+        <div class="tblayer z-blue"><span class="tbnum">②</span><div><b>Ausführung — freqtrade</b> <span style="color:var(--tx3);font-size:11px">(je Bot ein Prozess)</span><span class="tbmods">18 Engines (Spot + Futures-Short, lookahead-frei; 6 neu aus Vorlagen 26.06.) · <code>MasterMeta-Bot</code> (regime-schaltend, Hebel) · <code>runner.py</code> (Prozesse, sicherer Kill) · <code>registry.py</code> — 50 Bots (jede Strategie ≥1; Kern dry_run) → <code>tradesv3_*.sqlite</code> (Backend liest read-only, kann nie korrumpieren)</span></div></div>
         <div class="tbbridge">↓ Trades (read-only) ↓</div>
         <div class="tblayer z-purple"><span class="tbnum">③</span><div><b>KI-Lernen — das Gehirn</b> <span style="color:var(--tx3);font-size:11px">(proposal-only, OOS-gegated)</span><span class="tbmods"><code>stats.py</code> (Lern-DB, Trade-Reads) · <code>meta</code> + <code>mn_learn</code> (anchored Walk-Forward, OOS-Gate, Regressions-Gate) · MN-Sockel (CSM/Pairs/StatArb/MM, Sim) · <code>master.py</code> (Ensemble-Politik, PF-gated)</span></div></div>
         <div class="tbbridge">↓ Evidenz + Politik ↓</div>
@@ -1038,7 +1038,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
           <div class="tbkette k-reg"><b>① Regime-Kette</b><span>Markt → HMM/Fundamental → Bridge-Datei → MasterMeta liest live den Hebel/das Exposure (kausal, kein Lookahead).</span></div>
           <div class="tbkette k-loop"><b>② Lern-Loop</b><span>Trades (read-only) → meta/mn_learn (anchored-WF, OOS) → master (Politik) → Autopilot → MERGE + Neustart der Bots.</span></div>
           <div class="tbkette k-ens"><b>③ Ensemble-Politik</b><span>master.derive_policy verdichtet gerichtet (PF-gated) + MN-Sockel + HMM + Fundamental + Vol-Target → Bridge.</span></div>
-          <div class="tbkette k-risk"><b>④ Risk-Override</b><span>governor greift quer bei Breach: alert · de-risk · pause — MasterMeta geschützt, nur dry_run, debounced.</span></div>
+          <div class="tbkette k-risk"><b>④ Risk-Override</b><span>governor greift quer bei Breach: alert · de-risk · pause — MasterMeta geschützt, debounced; Echtgeld nur hinterm Gate.</span></div>
         </div>
 
         <div class="tbprinzip"><b>Kern-Prinzip:</b> Jede autonome Aktion ist <b>proposal-only</b>, <b>defensiv</b> (senkt nur Risiko) oder <b>hart OOS-/opt-in-gegatet</b> — nichts erhöht autonom das Risiko, rollt Unvalidiertes aus oder korrumpiert Live-Daten. Einzige strukturelle Grenze = die <b>Datenreife</b> (die Gates warten korrekt auf Evidenz).</div>
@@ -1100,7 +1100,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
           <div class="fac"><b>Anthropic API</b> (Trading) — Strategie-Recherche-Katalog + <code>web_search</code> (Claude Opus/Sonnet); kostet Token, klar als externer Schritt markiert.</div>
           <div class="fac"><b>Meta-Graph</b> (Communication) — WhatsApp/Instagram senden; Token im Tresor, Versand nur per HITL (Stufe verifiziert, fail-closed).</div>
           <div class="fac"><b>Telegram Bot-API</b> (Communication) — Long-Polling <code>getUpdates</code>, dormant bis Bot-Token.</div>
-          <div class="fac"><b>FRED · Bitget</b> (Trading) — Makro-Daten (Fundamental) · Krypto-Marktdaten &amp; Paper-Trades (read-only, dry_run; Echtgeld-Transfer bewusst blockiert).</div>
+          <div class="fac"><b>FRED · Bitget</b> (Trading) — Makro-Daten (Fundamental) · Krypto-Marktdaten &amp; Trades (read-only-Anbindung; Kern dry_run, kleiner Teil eigenes Geld hinter dem Menschen-Gate).</div>
           <div class="fac"><b>MCP-Gateway-Sperre</b> — nach außen exponiert das Gateway nur read-only Tools; Schreib-/Krypto-/höchst-Tools bleiben lokal.</div>
         </div>
         <div class="topicsrc">
@@ -2008,5 +2008,8 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   targets.forEach(function(el){ ro.observe(el); });
 })();
 </script>
+<footer style="margin:28px auto 20px;max-width:1200px;padding:0 16px;font-size:12px;opacity:.78;text-align:center">
+  <a href="/impressum/" style="color:inherit">Impressum</a> &nbsp;·&nbsp; <a href="/datenschutz/" style="color:inherit">Datenschutz</a> &nbsp;·&nbsp; <a href="/" style="color:inherit">worldofdizzi — Startseite</a>
+</footer>
 </body>
 </html>
