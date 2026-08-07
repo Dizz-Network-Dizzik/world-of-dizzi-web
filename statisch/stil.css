@@ -1267,3 +1267,121 @@ address{font-style:normal;line-height:1.75}
   .tafel-buehne>.tafel tbody tr:hover{background:none}
   .mess:hover{border-color:var(--line);box-shadow:var(--schatten)}
 }
+
+/* ==========================================================================
+   LAYER 3 - the grove: the organic front layer
+   ==========================================================================
+   Lives only on the two front pages (index, /de/) - every rule hangs off the
+   .hain markup those two pages carry, so the inner pages stay plain by
+   construction, not by discipline.
+
+   The whole layer is decoration in the strict sense: no text, no links, no
+   information. It sits behind the content (z-index), never intercepts a
+   pointer (pointer-events:none), and every SVG in it is aria-hidden. If all
+   of it were deleted the page would say exactly the same things.
+
+   Motion doctrine, same as the site's: compositor-only properties (transform,
+   opacity), every animation inside prefers-reduced-motion:no-preference, and
+   a hard kill under reduced-motion and print. Scroll-driven depth uses the
+   same @supports gate as the reveals - browsers without it get a calm,
+   static grove.
+
+   Two transforms cannot share one element, so every leaf is a pair: the
+   outer div takes the scroll-driven drift, the inner svg takes the slow
+   sway. Depth is drawn, not computed: farther fronds are smaller, dimmer
+   and drift a shorter distance - cheap on a mid-range phone, no filters,
+   no blur, at most six small composited layers.                             */
+
+.hain{position:relative}
+.hain-buehne{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.hain-buehne>div{position:absolute}
+.hain-buehne svg{display:block;width:100%;height:auto}
+
+/* the fronds: three depths, two sides */
+.zweig-a{left:max(-40px,-3vw);top:-28px;width:clamp(150px,22vw,300px);opacity:.5}
+.zweig-b{right:max(-56px,-4vw);top:16%;width:clamp(180px,26vw,360px);opacity:.62}
+.zweig-c{left:12%;bottom:-40px;width:clamp(110px,15vw,210px);opacity:.34}
+
+/* the singing bowl: rings behind the headline, barely there */
+.schale-lage{left:50%;top:44%;width:min(70vw,560px);margin-left:min(-35vw,-280px);margin-top:-160px;opacity:.5}
+
+/* the two halves in balance, right of the headline, small and quiet */
+.einklang-lage{right:clamp(8px,6vw,84px);top:60px;width:clamp(64px,8vw,104px);opacity:.7}
+
+@media (prefers-reduced-motion:no-preference){
+  .zweig-a svg{animation:wiegen 12s ease-in-out infinite alternate;transform-origin:18% 6%}
+  .zweig-b svg{animation:wiegen 15s ease-in-out -6s infinite alternate-reverse;transform-origin:86% 8%}
+  .zweig-c svg{animation:wiegen 10s ease-in-out -3s infinite alternate;transform-origin:30% 100%}
+  .schale-ring{animation:schalen-klang 14s cubic-bezier(.23,.6,.34,1) infinite;transform-origin:center;transform-box:fill-box}
+  .schale-ring.r2{animation-delay:4.5s}
+  .schale-ring.r3{animation-delay:9s}
+}
+@keyframes wiegen{from{transform:rotate(-2.1deg)}to{transform:rotate(2.3deg)}}
+@keyframes schalen-klang{0%{opacity:0;transform:scale(.62)}12%{opacity:.55}70%{opacity:0;transform:scale(1.12)}100%{opacity:0;transform:scale(1.12)}}
+
+/* scroll-driven depth: while the hero leaves the viewport each depth falls
+   at its own speed and the balance mark turns once - read direction on the
+   root scroller, drawn only where the browser can drive it from scroll */
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .zweig-a{animation:sinken-nah linear both;animation-timeline:view(block);animation-range:exit 0% exit 100%}
+    .zweig-b{animation:sinken-mitte linear both;animation-timeline:view(block);animation-range:exit 0% exit 100%}
+    .zweig-c{animation:sinken-fern linear both;animation-timeline:view(block);animation-range:exit 0% exit 100%}
+    .einklang-lage{animation:wenden linear both;animation-timeline:view(block);animation-range:exit 0% exit 100%}
+    @keyframes sinken-nah{to{transform:translateY(84px) rotate(3deg)}}
+    @keyframes sinken-mitte{to{transform:translateY(48px) rotate(-2deg)}}
+    @keyframes sinken-fern{to{transform:translateY(22px)}}
+    @keyframes wenden{to{transform:rotate(150deg)}}
+  }
+}
+
+/* the water: one narrow band under the hero, two runs of the same long wave
+   sliding against each other. Each svg is three viewports wide and animates
+   a third of its width, so the loop closes without a visible seam.          */
+.welle{position:relative;height:76px;overflow:hidden;pointer-events:none;margin-top:-8px}
+.welle svg{position:absolute;left:0;top:0;width:300%;height:100%}
+.welle .w2{opacity:.5}
+@media (prefers-reduced-motion:no-preference){
+  .welle .w1{animation:wandern 38s linear infinite}
+  .welle .w2{animation:wandern 26s linear infinite reverse}
+}
+@keyframes wandern{to{transform:translateX(-33.3333%)}}
+
+/* the deep reveal: the front pages' sections tilt up out of the page plane
+   instead of only rising. Same timeline, same range as .reveal - one added
+   axis. perspective on the parent keeps the tilt a real foreshortening.     */
+.tief{perspective:900px}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .tief>*{animation:tief-auf linear both;animation-timeline:view();
+      animation-range:entry 0% cover 32%;transform-origin:50% 100%}
+    @keyframes tief-auf{from{opacity:0;transform:rotateX(9deg) translateY(26px)}
+      to{opacity:1;transform:rotateX(0deg) translateY(0)}}
+  }
+}
+
+/* a mid-range phone: the far frond is gone, the near ones pull outward and
+   shrink, the bowl tightens behind the headline, the water narrows. What
+   remains is four small layers - the calm survives, the cost does not.      */
+@media (max-width:560px){
+  .zweig-c{display:none}
+  .zweig-a{left:-34px;top:-20px;width:132px;opacity:.4}
+  .zweig-b{right:-44px;top:22%;width:158px;opacity:.5}
+  .schale-lage{width:88vw;margin-left:-44vw;margin-top:-120px;opacity:.4}
+  .einklang-lage{right:6px;top:34px;width:56px;opacity:.55}
+  .welle{height:48px}
+}
+
+/* stillness is the fallback everywhere: under reduced motion the grove holds
+   one honest pose, and paper gets no motion and no water band at all        */
+@media (prefers-reduced-motion:reduce){
+  .zweig-a,.zweig-b,.zweig-c,.zweig-a svg,.zweig-b svg,.zweig-c svg,
+  .einklang-lage,.schale-ring,.welle .w1,.welle .w2{animation:none!important}
+  .tief>*{animation:none!important}
+  .schale-ring{opacity:.14}
+}
+@media print{
+  .hain-buehne,.welle{display:none}
+  .tief>*{animation:none!important;opacity:1}
+}
+

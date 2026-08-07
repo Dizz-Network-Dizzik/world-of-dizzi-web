@@ -22,9 +22,12 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **123,614 bytes** uncompressed — 20.9 KB markup, 71.1 KB stylesheet,
+page: **134,609 bytes** uncompressed — 25.4 KB markup, 77.3 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The last 272 bytes are the sentences the 6 August curation
+server compresses. The newest 10,995 bytes — 6,339 of stylesheet, 4,656 of
+markup — are the grove on the two front pages: three fronds, a singing bowl,
+two halves in balance, a band of water and the deep reveals, all of it CSS
+and SVG, none of it script. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
 its figures is no longer published. It was 69,773 bytes before the reveal animations and the
 numbers page, which added 5,263 bytes of stylesheet and 55 bytes of markup;
