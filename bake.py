@@ -343,6 +343,52 @@ def head_extras(page: dict) -> dict:
     return dict(ROBOTS=robots, HREFLANG=hreflang, JSONLD=ld)
 
 
+# A comment and nothing else. The pattern needs the literal "<!--", so the
+# doctype is safe, and it stops at the first "-->", which is where HTML ends a
+# comment. Its indentation and its line ending go with it, so a note that had
+# a line to itself leaves no empty one behind.
+KOMMENTAR_RE = re.compile(r"[ \t]*<!--.*?-->[ \t]*\n?", re.S)
+# Where "<!--" is not a comment: inside a script or a style block it belongs to
+# that language, and inside <pre> it is text the page means to show.
+WOERTLICH_RE = re.compile(
+    r"<(script|style|pre|textarea)\b[^>]*>.*?</\1\s*>", re.S | re.I
+)
+
+
+def strip_kommentare(doc: str, quelle: str) -> str:
+    """Cut every HTML comment out of a baked page.
+
+    A comment is written for whoever edits the source and read by whoever
+    presses Ctrl+U. The two travel pages carried one that named precisely what
+    the published draft leaves out - a time window, a donation appeal - so the
+    note that kept those things off the page announced them to every visitor
+    who opened the source. That holds for notes in general, not just for the
+    one that was noticed: an author writing the next one should not have to
+    remember this, so the delivery drops all of them.
+
+    Only the pages this file assembles come through here. The verbatim copies
+    out of statisch/ do not: /karte/ is a mirror of another repository and has
+    to stay byte for byte what that repository says. Nothing outside a
+    <!-- ... --> pair is touched either - the JSON-LD block, the <pre> code
+    samples and every attribute come out unchanged.
+
+    Conditional comments (<!--[if IE]>) would be the one kind to keep, since
+    for the browsers they address they are markup and not a note. No source
+    here holds one; if one is ever written, this is where it has to be
+    excepted."""
+    for block in WOERTLICH_RE.finditer(doc):
+        if "<!--" in block.group(0):
+            # Fail closed. Cutting here would not remove a note, it would cut a
+            # hole into code - and a build that does that while reporting
+            # success is the failure this whole file is written against.
+            raise SystemExit(
+                f"{quelle}: a <{block.group(1).lower()}> block contains "
+                "'<!--', where it is not a comment. Removing it would edit "
+                "that block's contents, so nothing is removed at all."
+            )
+    return KOMMENTAR_RE.sub("", doc)
+
+
 def build() -> dict[str, bytes]:
     kopf = read(VORLAGEN / "kopf.html")
     fuss = read(VORLAGEN / "fuss.html")
@@ -376,6 +422,7 @@ def build() -> dict[str, bytes]:
         values.update(head_extras(page))
         body = read(SEITEN_DIR / page["src"])
         doc = fill(kopf + body + fuss, values)
+        doc = strip_kommentare(doc, page["src"])
         # collapse the blank lines the optional head blocks leave behind
         doc = re.sub(r"\n[ \t]*\n[ \t]*\n+", "\n\n", doc)
         left = re.findall(r"\{\{[A-Z_]+\}\}", doc)
