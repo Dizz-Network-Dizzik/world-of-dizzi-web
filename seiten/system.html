@@ -3,7 +3,7 @@
     <p class="strich" role="presentation"></p>
     <p class="kicker">The system</p>
     <h1>Ten applications that behave like one</h1>
-    <p class="lede">A headless core on <code>:8200</code>, nine services around it, and
+    <p class="lede">A headless core on <code>:8200</code>, nine applications around it, and
       one written contract — machine-checked in the test suite of seven of the ten, on
       every run.</p>
   </div>
@@ -93,8 +93,8 @@
           reachable for the assistant — nobody wires it up by hand.</p>
         <p class="lang">The contract is not a document that hopes to be followed. It is
           <b>machine-enforced</b>: <code>appkit/conformance.py</code> runs inside the test
-          suite of <b>seven of the ten</b>. Creating's core is not in this snapshot at
-          all; the Core and the trading fleet carry their own test suites instead. The
+          suite of <b>seven of the ten</b>. Creating’s core is not in this snapshot at
+          all; the core and the trading fleet carry their own test suites instead. The
           specification says so itself — where the prose and the code disagree, the code
           wins.</p>
         <p class="lang">Measured against the written specification, <b>nine of the ten
@@ -175,7 +175,7 @@
       <div>
         <p class="lang">There is no central data lake. Every application keeps its own
           data, and hands over only through a written contract — nineteen of them,
-          numbered and specified. The Core relays; it listens and it logs.</p>
+          numbered and specified. The core relays; it listens and it logs.</p>
         <p class="lang">The constraint is real and I accept it: local-first makes
           synchronisation harder, and a read-only relay is less convenient than a
           shared database would be. I took that trade on purpose. Data that never
