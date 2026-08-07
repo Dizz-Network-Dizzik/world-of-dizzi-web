@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **123,452 bytes** uncompressed — 20.9 KB markup, 71.0 KB stylesheet,
+page: **123,580 bytes** uncompressed — 20.9 KB markup, 71.1 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
