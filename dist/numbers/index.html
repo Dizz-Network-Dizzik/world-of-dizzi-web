@@ -57,21 +57,14 @@
     <p class="strich" role="presentation"></p>
     <p class="kicker">The numbers</p>
     <h1>Six figures, and how each was counted</h1>
-    <p class="lede">A number without a method is a claim. This page carries the method
-      next to each figure, so you can reproduce it instead of believing it — and where
-      you cannot, it says so.</p>
-    <p class="dach mt-m">Four of the six were measured on 26 July
-      2026 against the public code extract of 23 July 2026, and measured again on 27 July
-      2026 — the two readings agree. The fifth is measured
-      in this website's own repository, the sixth in the private working repository
-      behind it. Each of those two names its repository in its own entry
-      below.</p>
-    <p class="hinweis mt-m"><b>On 6 August 2026 that code extract was withdrawn.</b> What
-      is published now is a curated set of <b>38 documents</b> — the network laws and
-      contracts, and one README per application. Two of the figures below therefore
-      describe something that is <b>no longer public and can no longer be reproduced
-      from outside</b>. They stay on the page with that said, because deleting a number
-      the site led with for two weeks would be the quieter kind of dishonesty.</p>
+    <p class="lede">A number without a method is a claim. Each figure below carries the
+      method that produced it and the date it was measured — and where it cannot be
+      checked from outside, it says so on its own tile.</p>
+    <p class="hinweis mt-m"><b>On 6 August 2026 the public code extract was withdrawn.</b>
+      What is published now is a curated set of <b>38 documents</b>. Two of the figures
+      below therefore describe something that is <b>no longer public and can no longer be
+      reproduced from outside</b>. They stay on the page with that said, because deleting
+      a number the site led with for two weeks would be the quieter kind of dishonesty.</p>
   </div>
 </section>
 
@@ -79,14 +72,15 @@
   <div class="wrap">
     <p class="kicker">Measured, not claimed</p>
     <h2>The six figures this site leads with</h2>
-    <p class="dach">Each one opens to show how it was produced. Three of the six cannot
-      be checked from outside any more, and each of the three says so itself.</p>
+    <p class="dach">Three of the six cannot be checked from outside any more, and each of
+      the three says so on its own tile. Every tile opens to show how it was produced.</p>
 
-    <ol class="messung reveal mt-l">
+    <ol class="messung tafeln reveal mt-l">
 
-      <li class="mess" id="apps">
+      <li class="mess a-cy" id="apps">
         <p class="mess-kopf"><b class="mess-wert">10</b>
           <span class="mess-was">applications — the Core and nine around it</span></p>
+        <p class="mess-stand"><span class="chip gut">can be checked</span></p>
         <details class="methode">
           <summary>How it was counted</summary>
           <div class="methode-inhalt">
@@ -104,9 +98,16 @@
         </details>
       </li>
 
-      <li class="mess" id="dateien">
+      <li class="mess a-green" id="dateien">
         <p class="mess-kopf"><b class="mess-wert">38</b>
           <span class="mess-was">documents published — the code is not</span></p>
+        <p class="mess-stand"><span class="chip gut">can be checked</span></p>
+        <figure class="vergleich">
+          <p class="vgl-z"><span>966 tracked files, until 6 August 2026</span><span class="vgl-b q-966"></span></p>
+          <p class="vgl-z"><span>38 documents, now</span><span class="vgl-b q-038"></span></p>
+          <figcaption>The same folder, before and after the curation of 6 August 2026.
+            Nothing was added to make the second of these bars look better.</figcaption>
+        </figure>
         <details class="methode">
           <summary>How it was counted, and what it replaced</summary>
           <div class="methode-inhalt">
@@ -132,9 +133,10 @@
         </details>
       </li>
 
-      <li class="mess" id="python">
+      <li class="mess a-coral" id="python">
         <p class="mess-kopf"><b class="mess-wert">~100,000</b>
           <span class="mess-was">lines of Python, across 632 files</span></p>
+        <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
         <details class="methode">
           <summary>How it was counted, and why you can no longer repeat it</summary>
           <div class="methode-inhalt">
@@ -158,9 +160,10 @@
         </details>
       </li>
 
-      <li class="mess" id="tests">
+      <li class="mess a-coral" id="tests">
         <p class="mess-kopf"><b class="mess-wert">2,667</b>
           <span class="mess-was">test functions, in 309 files</span></p>
+        <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
         <details class="methode">
           <summary>How it was counted, and why you can no longer repeat it</summary>
           <div class="methode-inhalt">
@@ -180,9 +183,10 @@
         </details>
       </li>
 
-      <li class="mess" id="baecker">
+      <li class="mess a-vio" id="baecker">
         <p class="mess-kopf"><b class="mess-wert">808</b>
           <span class="mess-was">lines in the script that builds this website</span></p>
+        <p class="mess-stand"><span class="chip gut">counted at build time</span></p>
         <details class="methode">
           <summary>How it was counted, and why it counts itself</summary>
           <div class="methode-inhalt">
@@ -209,9 +213,10 @@
         </details>
       </li>
 
-      <li class="mess" id="commits">
+      <li class="mess a-amber" id="commits">
         <p class="mess-kopf"><b class="mess-wert">2,600+</b>
           <span class="mess-was">commits in the private working repository behind the snapshot</span></p>
+        <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
         <details class="methode">
           <summary>How it was counted, and why it is stated as a floor</summary>
           <div class="methode-inhalt">
@@ -236,36 +241,44 @@
   <div class="wrap">
     <p class="kicker">The sum a reader will try</p>
     <h2>Where the other 628 tests sat</h2>
-    <div class="raster">
-      <div>
-        <p class="lang">Add up the nine test figures on the applications page — Dizz
-          Creating carries none, because its core was never in the extract — and you get
-          2,039, not 2,667. The difference is real, and it was not hiding anywhere
-          clever: the shared work does not sit inside the applications. This breakdown
-          belongs to the same 27 July measurement as the total, and like the total it
-          describes a folder that is no longer published.</p>
-        <p class="lang">This is the part of the architecture that is easiest to state
+    <p class="dach">Add up the nine test figures on the applications page — Dizz Creating
+      carries none, because its core was never in the extract — and you get 2,039, not
+      2,667. The difference is real, and it was not hiding anywhere clever: the shared
+      work does not sit inside the applications.</p>
+
+    <ul class="anteil mt-l">
+      <li class="a-vio"><span class="an-k">579</span>
+        <span class="an-b q-579"></span>
+        <span class="an-w">in <code>packages/</code> — the shared libraries, appkit and
+          the design system</span></li>
+      <li class="a-cy"><span class="an-k">46</span>
+        <span class="an-b q-046"></span>
+        <span class="an-w">in <code>ops/</code> — the operating scripts and the
+          documentation check</span></li>
+      <li class="a-amber"><span class="an-k">3</span>
+        <span class="an-b q-003"></span>
+        <span class="an-w">in <code>templates/</code> — the scaffold a new application
+          starts from</span></li>
+      <li class="a-green"><span class="an-k">2,039</span>
+        <span class="an-b q-2039"></span>
+        <span class="an-w">across the ten application folders — Dizz Creating
+          contributes none</span></li>
+    </ul>
+    <p class="dach klein mt-m">579 + 46 + 3 + 2,039 = 2,667. The bars are that sum drawn
+      to scale. The sum is here because a reader who adds these four up deserves the
+      answer on the page rather than a discrepancy to wonder about. This breakdown
+      belongs to the same 27 July measurement as the total, and like the total it
+      describes a folder that is no longer published.</p>
+    <details class="methode">
+      <summary>Why the shared libraries carry the most</summary>
+      <div class="methode-inhalt">
+        <p>This is the part of the architecture that is easiest to state
           and hardest to show. Shared libraries that carry authentication, contract
           checking, security posture and deletion proofs for ten applications are where
           a mistake is a mistake everywhere — and that is where 579 of the tests sat,
           more than any single application had.</p>
       </div>
-      <div>
-        <ul class="liste lang">
-          <li><b>579</b> in <code>packages/</code> — the shared libraries, appkit and
-            the design system.</li>
-          <li><b>46</b> in <code>ops/</code> — the operating scripts and the
-            documentation check.</li>
-          <li><b>3</b> in <code>templates/</code> — the scaffold a new application
-            starts from.</li>
-          <li><b>2,039</b> across the ten application folders — Dizz Creating
-            contributes none.</li>
-        </ul>
-        <p class="dach klein">579 + 46 + 3 + 2,039 = 2,667. The sum is
-          here because a reader who adds these four up deserves the answer on the page
-          rather than a discrepancy to wonder about.</p>
-      </div>
-    </div>
+    </details>
   </div>
 </section>
 
@@ -276,15 +289,21 @@
     <div class="raster">
       <div>
         <p class="lang">Separable means each application already runs on its own: its
-          own port, its own database, its own interface. That part is built. It was
-          visible in the code extract until 6 August 2026; what remains public is the
-          contract that requires it.</p>
+          own port, its own database, its own interface. <b>That part is built.</b></p>
         <p class="lang">Independently <em>sellable</em> is a different claim, and it is
-          <b>a design goal, not a finished feature</b>. There is a written export
-          contract that specifies how one application, plus the Core and the parts of
-          the shared libraries it actually uses, becomes a self-contained bundle. That
-          contract has design, stubs and contract tests. <b>The packaging tooling itself
+          <b>a design goal, not a finished feature</b>. <b>The packaging tooling itself
           is not built.</b></p>
+        <details class="methode">
+          <summary>What is written down, and how far it goes</summary>
+          <div class="methode-inhalt">
+            <p>That part was visible in the code extract until 6 August 2026; what
+              remains public is the contract that requires it.</p>
+            <p>There is a written export
+              contract that specifies how one application, plus the Core and the parts of
+              the shared libraries it actually uses, becomes a self-contained bundle. That
+              contract has design, stubs and contract tests.</p>
+          </div>
+        </details>
         <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/66_APP_EXPORT_VERTRAG.md" rel="noopener">docs/66 — the app export contract &#8599;</a></p>
       </div>
       <div>
@@ -337,22 +356,26 @@
     <p class="kicker">Auf Deutsch</p>
     <h2>Die Zahlen in einem Absatz</h2>
     <p class="dach">Vier der sechs Zahlen wurden am 26. Juli 2026 anhand des
-      öffentlichen Code-Auszugs vom 23. Juli 2026 gemessen: <b>10 Anwendungen</b>
-      (Core + 9) · <b>966</b> versionierte Dateien in einem einzigen kuratierten Commit ·
-      <b>~100.000 Zeilen Python</b> in <b>632</b> Dateien, genau: 100.234 Zeilen mit
-      sichtbarem Inhalt · <b>2.667 Test-Funktionen</b> in <b>309</b> Dateien — gezählt,
-      nicht ausgeführt, also geschriebene Tests, keine bestandenen.
-      <b>Dieser Code-Auszug wurde am 6. August 2026 zurückgezogen</b>; veröffentlicht ist
-      seither ein kuratierter Satz von <b>38 Dokumenten</b>. Die beiden Python-Zahlen
-      sind damit von außen nicht mehr nachprüfbar und stehen nur noch mit Datum da; die
-      <b>966</b> ist durch die <b>38</b> ersetzt. Dazu zwei Zahlen aus
-      anderen Quellen: <b>808 Zeilen</b> im Skript, das diese Website baut —
-      beim Bauen selbst gezählt, im
-      <a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/bake.py" rel="noopener">Repository dieser Website</a> ·
-      und <b>2.600+ Commits</b>
-      im privaten Arbeits-Repository hinter diesem Auszug: die einzige Zahl hier, die Sie
-      nicht nachprüfen können — Sie haben dafür nur mein Wort, und deshalb steht sie als
-      Untergrenze da. Die Zählweise steht oben bei jeder Zahl einzeln, auf Englisch.</p>
+      öffentlichen Code-Auszugs vom 23. Juli 2026 gemessen — dazu zwei aus anderen
+      Quellen. Die Zählweise steht oben bei jeder Zahl einzeln, auf Englisch.</p>
+    <ul class="liste lang">
+      <li><b>10 Anwendungen</b> (Core + 9).</li>
+      <li><b>966</b> versionierte Dateien in einem einzigen kuratierten Commit —
+        <b>dieser Code-Auszug wurde am 6. August 2026 zurückgezogen</b>; veröffentlicht
+        ist seither ein kuratierter Satz von <b>38 Dokumenten</b>, die <b>966</b> ist
+        durch die <b>38</b> ersetzt.</li>
+      <li><b>~100.000 Zeilen Python</b> in <b>632</b> Dateien, genau: 100.234 Zeilen mit
+        sichtbarem Inhalt — von außen nicht mehr nachprüfbar, steht nur noch mit Datum
+        da.</li>
+      <li><b>2.667 Test-Funktionen</b> in <b>309</b> Dateien — gezählt, nicht ausgeführt,
+        also geschriebene Tests, keine bestandenen; auch nicht mehr nachprüfbar.</li>
+      <li><b>808 Zeilen</b> im Skript, das diese Website baut — beim Bauen
+        selbst gezählt, im
+        <a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/bake.py" rel="noopener">Repository dieser Website</a>.</li>
+      <li><b>2.600+ Commits</b> im privaten Arbeits-Repository hinter diesem Auszug: die
+        einzige Zahl hier, die Sie nicht nachprüfen können — Sie haben dafür nur mein
+        Wort, und deshalb steht sie als Untergrenze da.</li>
+    </ul>
     <p class="quellen"><a href="/de/">Zur deutschen Einstiegsseite &#8594;</a></p>
   </div>
 </div>

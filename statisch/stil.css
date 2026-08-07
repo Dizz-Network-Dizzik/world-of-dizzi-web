@@ -710,3 +710,149 @@ address{font-style:normal;line-height:1.75}
   .leiste{font-size:12px}
   .knoepfe .knopf{width:100%;justify-content:center}
 }
+
+/* ==========================================================================
+   apps+numbers visual pass
+   --------------------------------------------------------------------------
+   One appended block, nothing above it rewritten. It carries what /apps/ and
+   /numbers/ needed in order to stop being two walls of prose: a table, ten
+   drawn marks, and two sets of bars. Everything here obeys the three rules the
+   rest of the sheet already obeys - no script, no external request, and no
+   inline style attribute, because `style-src 'self'` governs those too and a
+   bar whose width lives in the markup would need the escape hatch this site
+   does not have. So every width below is a class.
+
+   Nothing here animates. The hover transitions borrow --ueb, which the
+   reduced-motion block above already caps at 1ms for the whole document, so
+   this block needs no exit of its own - and there is nothing to exit from.
+   ========================================================================== */
+
+/* --- the application table (/apps/) --------------------------------------
+   A table, because the ten really are one kind of thing measured four ways,
+   and a reader comparing two of them should not have to scroll past four
+   paragraphs to do it. The container scrolls, never the page: at 360px the
+   four columns do not fit, and a document that scrolls sideways as a whole is
+   a broken document rather than a wide table.                              */
+
+.tafel-buehne{overflow-x:auto;overscroll-behavior-x:contain;
+  border:1px solid var(--line);border-radius:var(--rad);
+  background:var(--flaeche);box-shadow:var(--schatten)}
+.tafel{width:100%;min-width:560px;border-collapse:collapse;
+  font-size:14.5px;text-align:left}
+/* The caption stays short on purpose. It sits inside the scrolling container -
+   a caption belongs to its table - so a long one would be text a phone reader
+   has to drag sideways to finish. What the table needs said in full is said in
+   the note under the container instead, where it wraps to the screen. */
+.tafel caption{caption-side:bottom;padding:13px 16px 15px;
+  font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tx3);text-align:left}
+.tafel thead th{padding:13px 16px;border-bottom:1px solid var(--line2);
+  font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tx2);white-space:nowrap}
+.tafel tbody th,.tafel tbody td{padding:12px 16px;border-top:1px solid var(--line);
+  vertical-align:middle;color:var(--tx2);font-weight:400}
+.tafel tbody tr:first-child th,.tafel tbody tr:first-child td{border-top:0}
+/* The accent of the row is the same --akz the section below it carries, so the
+   table and the ten sections read as one colour system rather than two. */
+.tafel tbody tr{transition:background var(--ueb)}
+.tafel tbody tr:hover{background:var(--panel2)}
+.tafel tbody th{color:var(--tx);white-space:nowrap}
+.tafel tbody th a{color:var(--tx);text-decoration:none;
+  font-family:var(--display);font-weight:700;font-size:14px}
+.tafel tbody th a:hover{color:var(--akz,var(--cy));text-decoration:underline}
+.tafel .zahl-z{font-family:var(--mono);font-size:12.5px;white-space:nowrap;
+  font-variant-numeric:tabular-nums;color:var(--akz,var(--cy))}
+.tafel code{color:var(--tx2)}
+
+/* The ten marks. Drawn here, abstract on purpose: they stand for a shape of
+   work, never for anything inside the machine. They carry no information the
+   row does not already carry in words, which is why they are aria-hidden -
+   a screen reader that reads "Dizz Money" twice is worse served than one that
+   reads it once. currentColor is the row's accent, so the mark is coloured by
+   the same token as the section it links to. */
+.vig{display:inline-block;vertical-align:-6px;width:26px;height:26px;
+  margin-right:10px;color:var(--akz,var(--cy));opacity:.9}
+/* Stroke, width and joins live here rather than on every shape: ten marks with
+   the same four presentation attributes repeated is a kilobyte of markup that
+   says one thing, and one thing said once is easier to change than ten. */
+.vig :is(path,circle,rect){fill:none;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* --- the figure tiles (/numbers/) ----------------------------------------
+   Six figures, two per row where there is room. Each tile leads with the
+   numeral, because that is what the page is about; the method stays folded
+   underneath it and prints unfolded like every other <details> here.       */
+
+.messung.tafeln{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  align-items:start}
+.messung.tafeln .mess-kopf{display:block}
+.messung.tafeln .mess-wert{display:block;font-size:clamp(38px,6vw,54px);
+  color:var(--akz,var(--tx))}
+.messung.tafeln .mess-was{display:block;margin-top:6px;line-height:1.45}
+.mess-stand{margin:12px 0 0}
+/* Two states, and they are the page's own words: a figure a reader can go and
+   count, and a figure that describes something withdrawn or private. The
+   colours sit on the border and the text stays --tx2, so nothing here depends
+   on a hue to be read. */
+.chip.gut{border-color:rgba(54,211,153,.5)}
+.chip.alt{border-color:rgba(242,100,90,.55)}
+
+/* --- bars ----------------------------------------------------------------
+   Both sets below are drawn to scale from figures the pages state in words,
+   and the words stay next to them. The arithmetic, written out so nobody has
+   to trust it:
+       966 -> 100%    38 -> 3.93%             (the folder before and after)
+       579/2667 = 21.71%   46/2667 = 1.72%
+       3/2667 = 0.11%      2039/2667 = 76.45%  (sum 2667, the stated total)
+   Two of those are smaller than a hairline at any sensible width, so the bars
+   carry a min-width of 3px. That makes 3 visible; it does not make it look
+   bigger than 46, because the number stands beside it and the number is the
+   claim. A bar nobody can see would round a real value to nothing, which is
+   the one thing a page about honest figures must not do.                   */
+
+/* Every bar spans the full width of its own row, so all of them resolve their
+   percentage against the same track. That is not a layout preference: the first
+   version put the number and the bar side by side, and because "2,039" is a
+   wider label than "3", the track behind the longest bar was the narrowest one.
+   Measured, the 579 bar came out 0.7% too long against the 2,039 bar. A picture
+   of a ratio that is off by a measurable amount is a wrong number drawn large,
+   and this page of all pages cannot carry one. */
+
+.vergleich{margin:16px 0 0;padding:0}
+.vgl-z{display:grid;grid-template-columns:1fr;gap:5px;margin:0 0 9px;
+  font-family:var(--mono);font-size:12.5px;color:var(--tx2);
+  font-variant-numeric:tabular-nums}
+.vgl-b{height:9px;min-width:3px;border-radius:999px;
+  background:var(--akz,var(--cy));opacity:.75}
+.vergleich figcaption{font-size:13px;line-height:1.6;color:var(--tx2)}
+.q-966{width:100%}
+.q-038{width:3.93%}
+
+.anteil{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.anteil li{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin:0;
+  align-items:baseline}
+.an-k{grid-column:1;grid-row:1;font-family:var(--display);font-weight:800;
+  font-size:20px;color:var(--akz,var(--tx));font-variant-numeric:tabular-nums}
+.an-w{grid-column:2;grid-row:1;font-size:14.5px;line-height:1.6;color:var(--tx2)}
+.an-b{grid-column:1/-1;grid-row:2;height:11px;min-width:3px;border-radius:999px;
+  background:var(--akz,var(--cy));opacity:.75}
+.q-579{width:21.71%}
+.q-046{width:1.72%}
+.q-003{width:.11%}
+.q-2039{width:76.45%}
+
+@media (max-width:560px){
+  .anteil li{grid-template-columns:1fr}
+  .an-k{grid-column:1;grid-row:1}
+  .an-w{grid-column:1;grid-row:2}
+  .an-b{grid-column:1;grid-row:3}
+  .messung.tafeln{grid-template-columns:1fr}
+}
+
+/* On paper a background is usually dropped, and a proportion drawn as a
+   background would print as four empty lines. The figures survive either way -
+   they are words on the same line - but the picture may as well survive too. */
+@media print{
+  .an-b,.vgl-b{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .tafel-buehne{overflow-x:visible}
+}

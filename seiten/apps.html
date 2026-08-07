@@ -10,28 +10,93 @@
       2026</b>, in the code extract that was public from 23 July. <b>That extract is no
       longer published</b> — since 6 August the public folder holds a curated set of
       documents, so these counts can no longer be reproduced from outside. They are
-      kept, dated, rather than dropped. Where an application is thinner than its
-      description, the page still says so where the number would be. Add the nine up —
-      Dizz Creating carried none, because its core was never in the extract — and you
-      get 2,039, less than the network total of 2,667: <a href="/numbers/#verteilung">the
-      numbers page says where the rest sat &#8594;</a></p>
+      kept, dated, rather than dropped.</p>
   </div>
 </section>
 
 <div class="band">
   <div class="wrap">
-    <ul class="bento">
-      <li><a class="a-vio kachel" href="#core"><span class="kn">Dizzi-Core <span class="chip">:8200</span></span><span class="kt">Orchestrator, registry, MCP hub, health watch.</span><span class="kf">344 tests</span></a></li>
-      <li><a class="a-amber kachel" href="#money"><span class="kn">Dizz Money <span class="chip">:8210</span></span><span class="kt">Finance, ledger care-core, German tax filing.</span><span class="kf">462 tests</span></a></li>
-      <li><a class="a-blue kachel" href="#communication"><span class="kn">Dizz Communication <span class="chip">:8218</span></span><span class="kt">Unified inbox, contacts, appointments.</span><span class="kf">191 tests</span></a></li>
-      <li><a class="a-mag kachel" href="#creating"><span class="kn">Dizz Creating <span class="chip">:8214</span></span><span class="kt">Media workbench over one GPU job queue.</span><span class="kf">core excluded</span></a></li>
-      <li><a class="a-cy kachel" href="#memory"><span class="kn">Dizz Memory <span class="chip">:8212</span></span><span class="kt">Markdown vault, full-text search, retrieval.</span><span class="kf">118 tests</span></a></li>
-      <li><a class="a-vio kachel" href="#management"><span class="kn">Dizz Management <span class="chip">:8213</span></span><span class="kt">Agent administration, autonomy ladder.</span><span class="kf">132 tests</span></a></li>
-      <li><a class="a-orange kachel" href="#news"><span class="kn">Dizz News <span class="chip">:8216</span></span><span class="kt">Sector digest, dedup, watchlists.</span><span class="kf">77 tests</span></a></li>
-      <li><a class="a-green kachel" href="#healthy"><span class="kn">Dizz Healthy <span class="chip">:8217</span></span><span class="kt">Metrics, training, wearables.</span><span class="kf">54 tests</span></a></li>
-      <li><a class="a-steel kachel" href="#admin"><span class="kn">Dizz Admin <span class="chip">:8222</span></span><span class="kt">Vault, projects, business, studies, deadlines.</span><span class="kf">190 tests</span></a></li>
-      <li><a class="a-coral kachel" href="#trading"><span class="kn">Dizz Trading <span class="chip">:8137</span></span><span class="kt">Autonomous bot fleet, hard human gate.</span><span class="kf">471 tests</span></a></li>
-    </ul>
+    <div class="tafel-buehne">
+      <table class="tafel">
+        <caption>The ten at a glance</caption>
+        <thead>
+          <tr>
+            <th scope="col">Application</th>
+            <th scope="col">What it does</th>
+            <th scope="col">Port</th>
+            <th scope="col">Tests</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="a-vio">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><circle cx="16" cy="16" r="4.5"></circle><circle cx="16" cy="16" r="11"></circle></svg><a href="#core">Dizzi-Core</a></th>
+            <td>Orchestrator, registry, MCP hub, health watch.</td>
+            <td><code>:8200</code></td>
+            <td class="zahl-z">344 tests</td>
+          </tr>
+          <tr class="a-amber">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M5 19c4-9 7-9 11 0s7 9 11 0"></path><path d="M5 26h22"></path></svg><a href="#money">Dizz Money</a></th>
+            <td>Finance, ledger care-core, German tax filing.</td>
+            <td><code>:8210</code></td>
+            <td class="zahl-z">462 tests</td>
+          </tr>
+          <tr class="a-blue">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M20 7a10 10 0 0 1 0 18"></path><path d="M12 25a10 10 0 0 1 0-18"></path><circle cx="16" cy="16" r="2"></circle></svg><a href="#communication">Dizz Communication</a></th>
+            <td>Unified inbox, contacts, appointments.</td>
+            <td><code>:8218</code></td>
+            <td class="zahl-z">191 tests</td>
+          </tr>
+          <tr class="a-mag">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M6 24c0-10 5-16 11-16s9 5 9 10-4 8-8 8-6-3-6-6 2-5 4-5"></path></svg><a href="#creating">Dizz Creating</a></th>
+            <td>Media workbench over one GPU job queue.</td>
+            <td><code>:8214</code></td>
+            <td class="zahl-z">core excluded</td>
+          </tr>
+          <tr class="a-cy">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M6 11c7-4 13-4 20 0"></path><path d="M6 17c7-4 13-4 20 0"></path><path d="M6 23c7-4 13-4 20 0"></path></svg><a href="#memory">Dizz Memory</a></th>
+            <td>Markdown vault, full-text search, retrieval.</td>
+            <td><code>:8212</code></td>
+            <td class="zahl-z">118 tests</td>
+          </tr>
+          <tr class="a-vio">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M5 26h6v-6h6v-6h6v-6h4"></path></svg><a href="#management">Dizz Management</a></th>
+            <td>Agent administration, autonomy ladder.</td>
+            <td><code>:8213</code></td>
+            <td class="zahl-z">132 tests</td>
+          </tr>
+          <tr class="a-orange">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><circle cx="9" cy="23" r="1.8"></circle><path d="M9 16a7 7 0 0 1 7 7"></path><path d="M9 9a14 14 0 0 1 14 14"></path></svg><a href="#news">Dizz News</a></th>
+            <td>Sector digest, dedup, watchlists.</td>
+            <td><code>:8216</code></td>
+            <td class="zahl-z">77 tests</td>
+          </tr>
+          <tr class="a-green">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M4 17h6l3-8 4 15 3-7h8"></path></svg><a href="#healthy">Dizz Healthy</a></th>
+            <td>Metrics, training, wearables.</td>
+            <td><code>:8217</code></td>
+            <td class="zahl-z">54 tests</td>
+          </tr>
+          <tr class="a-steel">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><rect x="5" y="5" width="15" height="15" rx="4.5"></rect><rect x="12" y="12" width="15" height="15" rx="4.5"></rect></svg><a href="#admin">Dizz Admin</a></th>
+            <td>Vault, projects, business, studies, deadlines.</td>
+            <td><code>:8222</code></td>
+            <td class="zahl-z">190 tests</td>
+          </tr>
+          <tr class="a-coral">
+            <th scope="row"><svg class="vig" role="img" aria-hidden="true" viewBox="0 0 32 32"><path d="M5 22l7-7 5 4 9-11"></path><path d="M21 8h6v6"></path><path d="M5 28h22"></path></svg><a href="#trading">Dizz Trading</a></th>
+            <td>Autonomous bot fleet, hard human gate.</td>
+            <td><code>:8137</code></td>
+            <td class="zahl-z">471 tests</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="dach klein mt-m">What each one does, the port it answers on, and the test
+      functions counted in it. Where an application is thinner than its description, the
+      row says so where the number would be. Add the nine up — Dizz Creating carried
+      none, because its core was never in the extract — and you get 2,039, less than the
+      network total of 2,667: <a href="/numbers/#verteilung">the numbers page says where
+      the rest sat &#8594;</a></p>
   </div>
 </div>
 
@@ -47,9 +112,7 @@
     <div>
       <p class="lang">Ten services that each know how to talk to an assistant would mean ten
         connections to manage, ten places to authenticate, ten places for drift to
-        creep in. The decision was to make the core headless and put everything shared
-        in it: one orchestrator, one registry, one tool bus, one identity. The result
-        is that adding an application costs a contract, not an integration.</p>
+        creep in.</p>
       <ul class="liste">
         <li>AI orchestrator over local models, driven by JSON schema grammar rather
           than hopeful prompting — temperature 0, fail-safe throughout.</li>
@@ -60,6 +123,14 @@
         <li>Health watch over ten targets, plus the master instance of single sign-on
           and the layered memory.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was to make the core headless and put everything shared
+            in it: one orchestrator, one registry, one tool bus, one identity. The result
+            is that adding an application costs a contract, not an integration.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/core" rel="noopener">apps/core &#8599;</a></p>
     </div>
     <div>
@@ -79,12 +150,7 @@
   <div class="raster">
     <div>
       <p class="lang">Personal finance software either sees your bank or it sees
-        nothing. The decision here was read-only by construction: the bank connection
-        over FinTS can import and reconcile, and it cannot move a cent. Everything that
-        does have an effect — a tax submission, a transfer — is a separate, gated act
-        by a human. The result is the second-largest application test suite in the network,
-        after the trading fleet — because money
-        is where being wrong costs the most.</p>
+        nothing.</p>
       <ul class="liste">
         <li>Import, categorisation, budgets, cash flow, foreign exchange.</li>
         <li>A ledger care-core that keeps the books consistent rather than merely
@@ -94,6 +160,17 @@
         <li>Bank sync over FinTS — <b>read-only</b>, specified as such in its own
           contract document.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision here was read-only by construction: the bank connection
+            over FinTS can import and reconcile, and it cannot move a cent. Everything that
+            does have an effect — a tax submission, a transfer — is a separate, gated act
+            by a human. The result is the second-largest application test suite in the network,
+            after the trading fleet — because money
+            is where being wrong costs the most.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/money" rel="noopener">apps/money &#8599;</a><span class="trenn">·</span><a href="{{DATEI}}/docs/64_BANK_SYNC_VERTRAG.md" rel="noopener">docs/64 — bank sync contract &#8599;</a></p>
     </div>
     <div>
@@ -112,11 +189,7 @@
   </div>
   <div class="raster">
     <div>
-      <p class="lang">Messages arrive in six places and a person has to be the router.
-        The decision was one inbox across e-mail and messengers, with contacts as the
-        organising unit rather than threads — so a conversation follows a person, not a
-        protocol. The result is that scheduling, follow-ups and history stop being a
-        function of which app someone happened to use.</p>
+      <p class="lang">Messages arrive in six places and a person has to be the router.</p>
       <ul class="liste">
         <li>Unified inbox across e-mail providers and messenger bridges.</li>
         <li>Smart contacts, per-contact chat history, appointment detection out of
@@ -124,6 +197,15 @@
         <li>Classified at the highest sensitivity level — which means AI routing is
           local only, by default and by contract.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was one inbox across e-mail and messengers, with contacts as the
+            organising unit rather than threads — so a conversation follows a person, not a
+            protocol. The result is that scheduling, follow-ups and history stop being a
+            function of which app someone happened to use.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/communication" rel="noopener">apps/communication &#8599;</a></p>
     </div>
     <div>
@@ -142,16 +224,21 @@
   </div>
   <div class="raster">
     <div>
-      <p class="lang">Image, video and music generation each want the whole GPU. The
-        decision was a single job queue in front of one external generation service, so
-        the network schedules the card instead of fighting over it, and every generated
-        asset is labelled as generated at the moment it is written. The result is a
-        media workbench that behaves like a service rather than a pile of scripts.</p>
+      <p class="lang">Image, video and music generation each want the whole GPU.</p>
       <ul class="liste">
         <li>One shared GPU job queue for image, video and audio work.</li>
         <li>Asset management with AI labelling of generated content.</li>
         <li>A workflow graph library covering image, video and audio pipelines.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was a single job queue in front of one external generation service, so
+            the network schedules the card instead of fighting over it, and every generated
+            asset is labelled as generated at the moment it is written. The result is a
+            media workbench that behaves like a service rather than a pile of scripts.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/creating" rel="noopener">apps/creating &#8599;</a></p>
     </div>
     <div>
@@ -173,10 +260,7 @@
   <div class="raster">
     <div>
       <p class="lang">A knowledge store that lives in a proprietary database is a
-        knowledge store you can lose. The decision was a markdown vault on disk as the
-        truth, with a full-text index beside it for speed — so the files stay readable
-        with any editor, and the index is always rebuildable. The result is a long-term
-        memory across every area of life that outlives the software that made it.</p>
+        knowledge store you can lose.</p>
       <ul class="liste">
         <li>Markdown vault plus SQLite full-text search and retrieval.</li>
         <li>Folders and labels, area-level categorisation, import from existing
@@ -184,6 +268,15 @@
         <li>An MCP namespace of its own, so the assistant can search the vault without
           a second connection.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was a markdown vault on disk as the
+            truth, with a full-text index beside it for speed — so the files stay readable
+            with any editor, and the index is always rebuildable. The result is a long-term
+            memory across every area of life that outlives the software that made it.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/memory" rel="noopener">apps/memory &#8599;</a></p>
     </div>
     <div>
@@ -202,11 +295,7 @@
   <div class="raster">
     <div>
       <p class="lang">Once assistants start doing work unattended, the question stops
-        being “can it?” and becomes “how far may it go, and who says stop?” The
-        decision was a written autonomy ladder from T0 to T3 with an emergency stop, so
-        every agent has a declared ceiling instead of an implied one. The result is
-        agent administration that can be audited: what ran, at which level, approved by
-        whom.</p>
+        being “can it?” and becomes “how far may it go, and who says stop?”</p>
       <ul class="liste">
         <li>Autonomy ladder T0–T3 with a hard human-in-the-loop step and an emergency
           stop, specified in its own contract.</li>
@@ -214,6 +303,15 @@
         <li>Editorial planning per area, channels, drafts and schedules — publishing
           itself stays gated.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was a written autonomy ladder from T0 to T3 with an emergency
+            stop, so every agent has a declared ceiling instead of an implied one. The
+            result is agent administration that can be audited: what ran, at which level,
+            approved by whom.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/management" rel="noopener">apps/management &#8599;</a><span class="trenn">·</span><a href="{{DATEI}}/docs/63_AGENTEN_REGIE_VERTRAG.md" rel="noopener">docs/63 — agent direction contract &#8599;</a></p>
     </div>
     <div>
@@ -232,16 +330,21 @@
   </div>
   <div class="raster">
     <div>
-      <p class="lang">A news feed optimised for engagement is optimised against you.
-        The decision was a fixed set of vetted sources and a digest structured by
-        sector rather than by recency, with cross-source deduplication so one event
-        does not read as eight. The result is a briefing you finish, instead of a
-        stream you escape.</p>
+      <p class="lang">A news feed optimised for engagement is optimised against you.</p>
       <ul class="liste">
         <li>Sector-structured digest from a vetted source list.</li>
         <li>Cross-source deduplication — one event, one entry.</li>
         <li>Living watchlists that carry topics forward across editions.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was a fixed set of vetted sources and a digest structured by
+            sector rather than by recency, with cross-source deduplication so one event
+            does not read as eight. The result is a briefing you finish, instead of a
+            stream you escape.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/news" rel="noopener">apps/news &#8599;</a></p>
     </div>
     <div>
@@ -262,9 +365,7 @@
     <div>
       <p class="lang">Health data is the most sensitive class in the network, and the
         temptation to send it to a large cloud model for a clever summary is exactly
-        where these systems go wrong. The decision was strict: this app's AI routing is
-        local only, and the trends it shows are deterministic calculations, not model
-        output. The result is a health overview that gives hints and never a diagnosis.</p>
+        where these systems go wrong.</p>
       <ul class="liste">
         <li>Measurements, supplements, injuries, training, appointments.</li>
         <li>Deterministic trends, with local AI hints clearly separated from them.</li>
@@ -273,6 +374,14 @@
         <li>Wearable and mobile connection points are prepared and documented, not
           claimed as built.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was strict: this app's AI routing is
+            local only, and the trends it shows are deterministic calculations, not model
+            output. The result is a health overview that gives hints and never a diagnosis.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/healthy" rel="noopener">apps/healthy &#8599;</a></p>
     </div>
     <div>
@@ -292,17 +401,23 @@
   <div class="raster">
     <div>
       <p class="lang">Personal bureaucracy does not fit into projects or into folders;
-        it fits into areas of life that persist for years. The decision was to make the
-        area a first-class type with its own canon, shared across the network, so
-        finance, knowledge and social activity can all report into the same structure.
-        The result is the home of the area-type model — and the reason cross-app views
-        line up at all.</p>
+        it fits into areas of life that persist for years.</p>
       <ul class="liste">
         <li>Vault, projects, business paperwork, studies, deadlines.</li>
         <li>Area-first: the canonical area-type model lives here and is shared by
           contract.</li>
         <li>Feeds the area cockpit that Money, Management and Memory report into.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was to make the
+            area a first-class type with its own canon, shared across the network, so
+            finance, knowledge and social activity can all report into the same structure.
+            The result is the home of the area-type model — and the reason cross-app views
+            line up at all.</p>
+        </div>
+      </details>
       <p class="quellen"><a href="{{ORDNER}}/apps/admin" rel="noopener">apps/admin &#8599;</a><span class="trenn">·</span><a href="{{DATEI}}/docs/49_BEREICH_TYP_MODELL.md" rel="noopener">docs/49 — area-type model &#8599;</a></p>
     </div>
     <div>
@@ -324,11 +439,7 @@
   <div class="raster">
     <div>
       <p class="lang">An autonomous trading fleet is the sharpest possible test of the
-        network's central rule, because here the machine is fast and the human is slow.
-        The decision was that the fleet may propose without limit: a real transfer
-        requires the highest security tier. Since <b>4 August 2026</b> a small part of
-        the fleet trades with my own money, behind that gate. The result is a system
-        whose learning layer can be aggressive precisely because its hands are tied.</p>
+        network's central rule, because here the machine is fast and the human is slow.</p>
       <ul class="liste">
         <li>A bot fleet with a learning layer and a strategy research catalogue.</li>
         <li>Kelly sizing with its own written specification.</li>
@@ -336,6 +447,15 @@
           separate, highest-tier act.</li>
         <li>Defence in depth: exchange keys never carry withdrawal rights.</li>
       </ul>
+      <details class="methode">
+        <summary>The decision, and what it changed</summary>
+        <div class="methode-inhalt">
+          <p>The decision was that the fleet may propose without limit: a real transfer
+            requires the highest security tier. Since <b>4 August 2026</b> a small part of
+            the fleet trades with my own money, behind that gate. The result is a system
+            whose learning layer can be aggressive precisely because its hands are tied.</p>
+        </div>
+      </details>
     </div>
     <div>
       <div class="hinweis warn"><b>This one is not in the extract at all.</b>
