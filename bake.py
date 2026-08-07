@@ -17,7 +17,9 @@ built site - its first load in bytes and how many source links there are -
 against the files actually produced. A number nobody measures goes stale
 without anybody noticing; both of these already did once. The same run also
 holds the hand-written small map, seiten/mini-karte.html, against the copied
-system map it stands in for on a phone - see check_mini_karte().
+system map it stands in for on a phone - see check_mini_karte(). And it holds
+every page it has just built against the rules for in-app browsers - the
+WebViews inside Instagram and its kind - see check_webview().
 """
 
 from __future__ import annotations
@@ -879,6 +881,27 @@ def check_mini_karte() -> list[str]:
     return faults
 
 
+# --------------------------------------------------------------------------
+# the in-app browser watch runs on every bake
+# --------------------------------------------------------------------------
+# The site froze inside Instagram's built-in browser on 08.08.2026 and every
+# gate here was green while it did. The rules that class of fault breaks are
+# in pruefung/webview_wache.py; they are called from here rather than left to
+# a human to remember, so that "run it before publishing" is not a habit but a
+# build step. It judges the tree just built, in memory - a fault caught in
+# dist/ has already been written.
+
+
+def check_webview(tree: dict[str, bytes]) -> list[str]:
+    sys.path.insert(0, str(ROOT / "pruefung"))
+    try:
+        import webview_wache
+    except ImportError:      # a missing watch must not read as a clean tree
+        return ["pruefung/webview_wache.py cannot be imported - the in-app "
+                "browser rules were not checked"]
+    return webview_wache.faults_fuer_bake(ROOT, tree)
+
+
 def compare(tree: dict[str, bytes]) -> list[str]:
     faults = []
     on_disk = {
@@ -911,7 +934,7 @@ def main(argv: list[str]) -> int:
     tree = build()
 
     faults = (check_links(tree) + check_external(tree) + check_snapshot_links(tree)
-              + check_mini_karte())
+              + check_mini_karte() + check_webview(tree))
     if check_only:
         faults += compare(tree) + check_readme(tree)
 

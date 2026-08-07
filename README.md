@@ -283,6 +283,10 @@ python bake.py --check         # links, anchors, external subresources, dist fre
 python pruefung/pruefen.py     # structure, landmarks, heading order, names, metadata
 python pruefung/kontrast.py    # every colour pair against WCAG 2.1 AA
 python pruefung/proofread.py   # spelling, typography, figures, the securities line
+python pruefung/webview_wache.py
+                               # the in-app browser rules — and `bake.py` calls
+                               # it too, so it runs on every build without
+                               # anybody remembering to
 powershell -NoProfile -ExecutionPolicy Bypass -File pruefung/sweep.ps1
                                # the disclosure gate — run before every push.
                                # Windows PowerShell 5.1, not pwsh: PowerShell 7
@@ -297,6 +301,23 @@ than the fragments, because the titles, meta descriptions, navigation and the
 whole footer live in `bake.py` and never in `seiten/`. `sweep.ps1` reads its
 term list from outside this repository and stops with exit code `2` when it
 cannot find it — a clone can run every other check, but not that one.
+
+`webview_wache.py` is the newest and has the same origin story: every gate above
+was green while the site froze inside Instagram's built-in browser. It holds
+eight rules for the browsers this site cannot choose — the WebViews inside the
+social apps, which draw their own bars over the page. Cross-document view
+transitions, unguarded smooth scrolling, `target="_blank"` without
+`rel="noopener"`, `javascript:` URLs, any script that is not JSON-LD, anything
+pinned to a viewport edge while visible, `100vh` and `100dvh`, and meta refresh.
+It reads `seiten/`, `vorlagen/`, the stylesheet and `dist/`, and skips both
+copies of the system map, which is a mirror and brings its own script. Comments
+are blanked before it matches, because the stylesheet quotes the forbidden
+declaration in the note that explains why it went: a watch that fired on its own
+explanation would be switched off within a week. `bake.py` calls it on the pages
+it has just built, so it runs on every build — a rule that only runs when
+somebody remembers it is the rule that was missing the first time. What it
+cannot do is open Instagram: a rendering fault in one app on one phone is found
+by a thumb, and this one was.
 
 Seven checks need a browser and are therefore manual: Lighthouse on mobile, axe
 or pa11y, a keyboard-only walk-through, the 320-pixel reflow, the airplane-mode

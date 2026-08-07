@@ -20,6 +20,21 @@ tap
 transition
 transitions
 wearing
+blanked    # README-Absatz zur WebView-Wache (08.08.), alle fuenfzehn gegengelesen
+declaration
+draw
+fired
+instagram
+remembers
+rendering
+scrolling
+smooth
+somebody
+thumb
+unguarded
+urls
+viewport
+webviews
 air        # README-Absatz zum Phone-Polish (07.08. nachts), alle sieben gegengelesen
 appearing
 closes
@@ -1923,3 +1938,4 @@ zero
 mid        # aus 'mid-range'
 non        # aus 'non-blank lines'
 offs       # aus 'trade-offs'
+ld         # aus 'JSON-LD'
