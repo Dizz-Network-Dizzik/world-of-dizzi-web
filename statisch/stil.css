@@ -444,7 +444,7 @@ section+section,section+.band,.band+section,.band+.band{border-top:1px solid var
 .code pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.7;
   color:var(--tx2);white-space:pre}
 .code pre b{color:var(--tx);font-weight:400}
-.code pre .co{color:var(--tx3)}
+.code pre .co{color:var(--tx2)} /* was --tx3: measured 4.2:1 on --bg2, below the 4.5:1 that informing text needs; kontrast.py does not measure this pair yet */
 .code figcaption{margin-top:12px;font-size:13px;color:var(--tx2)}
 
 /* --- misc ---------------------------------------------------------------- */
