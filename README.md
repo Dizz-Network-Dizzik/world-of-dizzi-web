@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **97,263 bytes** uncompressed — 20.9 KB markup, 45.4 KB stylesheet,
+page: **105,521 bytes** uncompressed — 20.9 KB markup, 53.4 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
@@ -58,7 +58,7 @@ frozen at zero; reduced motion and print remove it outright, each in the rule
 that already removes the other animations. About half of those bytes are the
 comments saying why.
 
-The next 7,836 bytes are the design pass, and every one of them is
+Another 7,836 bytes are the design pass, and every one of them is
 stylesheet: the markup did not grow by a byte. What the site had was a palette
 and a font; what it lacked was a system. A heading sat flush against the text
 under it, because headings carried no bottom margin at all and every page
@@ -82,7 +82,7 @@ of them records the one finding the pass produced rather than fixed: measured at
 320 pixels, the wordmark was a 39-pixel touch target in a header where every
 other free-standing link had already been raised to 44.
 
-The most recent 6,058 bytes are the visual turn, and they are the first entry on
+The next 6,058 bytes are the visual turn, and they are the first entry on
 this list where the markup went *down* while the total went up. The two start
 pages were columns of prose with one diagram in the middle. What they say is
 unchanged; how much of it has to be read is not. Three blocks of running text
@@ -114,6 +114,27 @@ whole difference between a wiring diagram and something grown; the violet ring
 around the core now widens as the diagram is reached, drawn by the reader's
 scroll position like the track and the reading bar, because nothing here is
 allowed to move on its own.
+
+The most recent 8,258 bytes are the pass over `/apps/` and `/numbers/`, and
+every one of them is stylesheet again — so the start page, which uses none of
+it, still pays for it on the first load. That is what one stylesheet for the
+whole site costs, and it is the same trade as every byte above. What those two
+pages had was prose. The ten applications were ten long blocks of text, and
+holding two of them against each other meant reading both; the six figures were
+six headings over six blocks that open. They are now one table with a drawn
+shape per application, and six tiles that start with the number. Nothing was
+dropped: the long text sits under the list it explains, in the same open-on-click
+block `/numbers/` already used. The bars beside the figures are drawn from
+numbers the pages already state — 966 against 38, and 579 + 46 + 3 + 2,039
+against their stated total — and the arithmetic behind every width is written
+out next to it in the stylesheet, because bars are a claim about scale and a
+claim needs its method here like any other. Two of those are thinner than a
+hairline at any width worth using, so the bars carry a floor of three pixels:
+one nobody can see would round a real value down to nothing, which is the one
+thing a page about honest figures must not do. The ten marks say nothing about
+what is inside the machine, and they are hidden from screen readers rather than
+labelled: the row already says the name in words, and saying it twice helps
+nobody.
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being
