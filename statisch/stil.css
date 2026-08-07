@@ -1105,3 +1105,165 @@ address{font-style:normal;line-height:1.75}
   .tafel tbody tr:hover{background:none}
   .kachel:hover{translate:none;box-shadow:var(--schatten)}
 }
+
+/* ==========================================================================
+   the mobile pass, subpages (07.08.2026)
+   --------------------------------------------------------------------------
+   One appended block again, and nothing above this line was touched. It carries
+   the seven subpages - /apps/, /numbers/, /method/, /system/, /about/,
+   /vision/, /journey/ and the 404 - on the screen most readers arrive with: a
+   two- to four-year-old Android in the middle of the range, 360 to 412 pixels.
+   Every figure below was measured in a browser at that width, not estimated.
+   Nothing here animates, and nothing here paints a filter: the target device is
+   slow at both.
+
+   Three things this pass deliberately did NOT do, because a pass that only
+   lists its wins is a marketing document:
+     - `content-visibility:auto` on the ten sections of /apps/. It would save
+       layout work on a slow phone, and the page's whole navigation is ten
+       in-page anchors into exactly those sections. A speed-up that risks the
+       one interaction a page exists for is not a speed-up.
+     - the shared rail. `.bahn` and `.strahl` carry /method/ and /journey/ and
+       also the two start pages, which another lane was rewriting for phones at
+       the same time. Measured at 360: the rail sits at x=23..25 and the station
+       dot at x=18..30, so it already runs through the middle of every dot.
+       Nothing to fix - and a second lane's rule over one construct is how two
+       green lanes merge into one broken one.
+     - the comment colour in the contract listing on /system/. `--tx3` on
+       `--bg2` is about 4.2:1, and those comments are text that carries meaning
+       rather than decoration, so they are short of the 4.5:1 that applies to
+       them. True on the desktop too, older than this pass, and a colour token
+       is not something a mobile block should quietly redefine. Named here so
+       the next reader does not have to find it twice.
+   ========================================================================== */
+
+/* --- the guard the one grid was missing -----------------------------------
+   Every other auto-fit grid here floors its track with min(<floor>,100%),
+   because a bare floor keeps the column at full width below it and pushes the
+   document sideways. `.messung.tafeln` was the one that did not: its 300px
+   floor is wider than the 288px a 320px screen leaves. The one-column rule at
+   560px catches it today - which is the exact shape of a check that passes
+   because something else happened to be in the way. Guarded at the source now.
+   Above 300px of content the two are identical, so no wide screen moves.      */
+.messung.tafeln{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+
+/* --- the application table becomes ten cards ------------------------------
+   /apps/ opens with a table of ten rows and four columns: name, what it does,
+   port, tests. It carries `min-width:560px` and its frame scrolls - the right
+   net under a wide table, the wrong resting state for a phone. Measured at 360:
+   the frame is 326px and the table 560, so a reader arrives looking at two of
+   the four columns with nothing on the screen saying the other two exist. A
+   table you have to guess at is worse than no table.
+
+   The crossover is arithmetic, not a guess. The wrap pads clamp(16px,4vw,32px)
+   on each side and the 4vw term wins between 400 and 800 pixels, so content is
+   0.92 of the viewport; 0.92V >= 562 gives V >= 611. Hence 610px, and not one
+   of the round numbers already in this file.
+
+   Below it every row becomes a card, and what lets this table survive losing
+   its grid is that every cell says what it is on its own: ":8200" reads as a
+   port, "344 tests" reads as tests, and the sentence between them is a
+   sentence. So the column heads are not restated per card - `display:none`
+   takes them out of the accessibility tree along with the table semantics that
+   changing `display` ends anyway. A screen reader gets ten clean blocks in
+   reading order instead of a table to walk cell by cell on a phone.
+   Scoped to `.tafel-buehne`: the start pages build their tables in
+   `.tafel-rahmen` and belong to another lane.                                */
+
+@media (max-width:610px){
+  /* the frame stops being a frame - a card inside a bordered box is two boxes */
+  .tafel-buehne{overflow-x:visible;border:0;border-radius:0;background:none;
+    box-shadow:none}
+  .tafel-buehne>.tafel{display:block;min-width:0;width:100%}
+  .tafel-buehne>.tafel thead{display:none}
+  .tafel-buehne>.tafel caption{display:block;padding:0 0 11px}
+  .tafel-buehne>.tafel tbody{display:grid;gap:11px}
+  .tafel-buehne>.tafel tbody tr{display:block;padding:14px 16px 13px;
+    border:1px solid var(--line);border-left:3px solid var(--akz,var(--cy));
+    border-radius:var(--rad);background:var(--flaeche);box-shadow:var(--schatten)}
+  .tafel-buehne>.tafel tbody :is(th,td){display:block;padding:0;border:0;
+    white-space:normal}
+  /* the accent already draws the left edge of the card, so the bar the row
+     header carries inside the table would be the same statement twice */
+  .tafel-buehne>.tafel tbody th{display:flex;align-items:center;gap:0;
+    margin:0 0 5px;position:static}
+  .tafel-buehne>.tafel tbody th::before{display:none}
+  .tafel-buehne>.tafel tbody th a{display:flex;align-items:center;flex:1;
+    min-height:44px;font-size:16px}
+  .tafel-buehne>.tafel tbody td:first-of-type{color:var(--tx2);font-size:15px;
+    line-height:1.5}
+  /* port and test count close the card on one line, in the order they had */
+  .tafel-buehne>.tafel tbody td:nth-of-type(2),
+  .tafel-buehne>.tafel tbody td:nth-of-type(3){display:inline-block;
+    margin-top:9px}
+  .tafel-buehne>.tafel tbody td:nth-of-type(2){margin-right:13px}
+
+  /* --- the contract listing unfolds ---------------------------------------
+     /system/ lists the mandatory endpoints in monospace, each with its comment
+     aligned to the right of it. Measured at 360 the block needs 452px inside a
+     326px box, and `white-space:pre` means it can never wrap its way out. The
+     alignment is pleasant; the claim is the list of endpoints. So each comment
+     moves under the line it annotates and the block stops scrolling sideways -
+     the same content, one axis fewer. Two things the first attempt got wrong,
+     both caught by measuring: the comments inherit `pre` and so could not wrap
+     out of an overflow of their own (one ran 10px past the padding), and the
+     first comment in a block is not an annotation but its title line, with
+     nothing above it to be indented under.                                   */
+  .code pre .co{display:block;padding-left:2.2em;white-space:normal}
+  .code pre .co:first-child{padding-left:0}
+}
+
+/* --- reading size, touch size --------------------------------------------
+   The body text was .9375rem - 15px where the browser is left alone - which is
+   a desktop measurement. It goes to a full rem on narrow screens. It stays in
+   rem, so a reader who raised their device font still gets the multiple they
+   asked for; this only moves the floor. Under it sit the components that carry
+   sentences at 14 to 14.5px, fine beside a 15px base and small beside a 16px
+   one; only components that appear on these seven pages are touched. Labels
+   stay where they are - chips, dates, kickers and table heads are shape rather
+   than text, which the base rules at the top of this file said first.        */
+
+@media (max-width:768px){
+  body{font-size:1rem}
+  .methode-inhalt,.dach.klein,.sch-b,.sch-g,.an-w,.st-b,.mess-was{font-size:15px}
+  /* Short titles in the display face wrap like headings and were never told
+     so - the headings at the top take `text-wrap:balance` and these do not. At
+     360px "Website & first product editions" put "editions" on a line alone.
+     A hint like the one above it: a browser that does not know it wraps as
+     before, so nothing depends on it. */
+  .st-t,.sch-t{text-wrap:balance}
+  /* 11.5px of letter-spaced capitals is a small thing to aim a thumb at, and
+     on a phone this label is a control. It already has its 44px of height. */
+  .methode>summary{font-size:12.5px}
+  /* Between 611 and 768 the table is still a table, and there its row header
+     is a free-standing link at 17px - the target the house rule two hundred
+     lines up was written about. */
+  .tafel-buehne>.tafel tbody th a{display:inline-flex;align-items:center;
+    min-height:44px}
+  /* and the name beside it may wrap there. Measured at 620px, before this pass
+     and unchanged by it, so a finding rather than a regression: the header is
+     `nowrap`, "Dizz Communication" with its mark needs 209px, the table hands
+     that column 201, and eight pixels of the longest name lay over its
+     neighbour. A second line on one row is the cheapest thing to spend. */
+  .tafel-buehne>.tafel tbody th{white-space:normal}
+  /* the last free-standing control still short of the 44px this site set
+     itself: measured 42.8. It is absolutely positioned and only visible while
+     focused, so the correction moves nothing on any page. */
+  .skip{min-height:44px;padding-block:12px}
+  /* a swipe along a code block that runs out of block should stop there rather
+     than become a page gesture or a step backwards in history */
+  .code{overscroll-behavior-x:contain}
+}
+
+/* --- what a finger leaves behind -----------------------------------------
+   A pointer query rather than a width query: it can never reach a desktop, and
+   it does reach a large tablet a width query would miss. Chrome on Android
+   applies :hover to whatever was tapped last and leaves it applied, so a card
+   the reader only touched on the way past stays lit as though a cursor were
+   resting on it. These hover states are decoration and the tap has already
+   happened, so on a screen with no pointer they do not run.                  */
+
+@media (hover:none){
+  .tafel-buehne>.tafel tbody tr:hover{background:none}
+  .mess:hover{border-color:var(--line);box-shadow:var(--schatten)}
+}

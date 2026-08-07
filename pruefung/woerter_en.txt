@@ -10,10 +10,19 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 1778 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 1828 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
+#
+# Vier Paare sehen doppelt aus und sind es nicht: can't/can’t, doesn't/doesn’t,
+# isn't/isn’t, you're/you’re. Der Tokenizer normalisiert den Apostroph NICHT, und
+# die Seiten setzen durchgehend den typografischen - pruefe_typografie besteht sogar
+# darauf, dass ein Dokument sich fuer eine Sorte entscheidet. Die geraden Formen
+# standen hier also, ohne je erreichbar zu sein, waehrend die vier Woerter der Seiten
+# fehlten und das Gate an richtig geschriebenen Woertern rot war. Beide Sorten stehen
+# jetzt da; entfernt wird keine, weil die geraden in einem Text mit gerader
+# Zeichensetzung wieder gebraucht werden.
 
 about
 above
@@ -71,9 +80,11 @@ always
 among
 analytics
 anchor
+anchors
 and
 animation
 animations
+annotates
 announcement
 announces
 another
@@ -85,6 +96,7 @@ anything
 anyway
 anywhere
 apart
+apostrophe
 appear
 appears
 appkit
@@ -108,6 +120,7 @@ arise
 arithmetic
 around
 arrive
+arrived
 arrives
 artefact
 as
@@ -240,6 +253,7 @@ calm
 came
 can
 can't
+can’t
 cannot
 canon
 canonical
@@ -257,6 +271,7 @@ catalogue
 categorisation
 caught
 ceiling
+cell
 cent
 central
 centre
@@ -338,6 +353,7 @@ constitutional
 constrains
 constraint
 constraints
+construct
 construction
 contact
 contacts
@@ -346,6 +362,7 @@ content
 contents
 continuous
 contract
+contractions
 contracts
 contributes
 control
@@ -359,6 +376,7 @@ copies
 copy
 corner
 corrected
+correctly
 cost
 costs
 could
@@ -434,6 +452,7 @@ designed
 desk
 detection
 deterministic
+device
 diagnosis
 diagram
 did
@@ -468,11 +487,15 @@ documented
 documents
 does
 doesn't
+doesn’t
 doing
 done
 dormant
+dot
 doubt
 down
+downloaded
+downloads
 downward
 draft
 drafts
@@ -487,6 +510,7 @@ dropping
 duration
 during
 each
+earlier
 earliest
 early
 earns
@@ -522,6 +546,7 @@ engagement
 engine
 english
 enough
+entered
 entirely
 entitled
 entries
@@ -560,6 +585,7 @@ explain
 explained
 explaining
 explains
+explanations
 explicit
 explicitly
 export
@@ -571,6 +597,7 @@ eyebrow
 eür
 faces
 fail
+failing
 fails
 fake
 fallback
@@ -579,6 +606,7 @@ family
 far
 fast
 faster
+fault
 favicon
 feature
 features
@@ -621,6 +649,7 @@ floor
 flourish
 flow
 flush
+folded
 folder
 folders
 follow
@@ -637,6 +666,7 @@ forecast
 foreign
 form
 format
+forms
 forty
 forward
 found
@@ -659,11 +689,13 @@ fund
 fundamental
 fundamentals
 funding
+further
 future
 fx
 gain
 gained
 gaining
+gamble
 gap
 gaps
 gated
@@ -696,6 +728,7 @@ grammar
 graph
 green
 grew
+grid
 grow
 grown
 guard
@@ -718,6 +751,7 @@ hashed
 haste
 have
 he
+head
 header
 headers
 heading
@@ -807,6 +841,7 @@ invitation
 irreversible
 is
 isn't
+isn’t
 it
 its
 itself
@@ -860,6 +895,7 @@ layer
 layered
 layers
 layout
+lead
 leading
 leads
 leak
@@ -916,6 +952,7 @@ looking
 looks
 loop
 lose
+losing
 lost
 machine
 machinery
@@ -941,6 +978,7 @@ master
 matched
 matches
 material
+mattered
 matters
 maximally
 may
@@ -1002,6 +1040,7 @@ moved
 moves
 moving
 much
+multiple
 music
 must
 my
@@ -1111,6 +1150,7 @@ pace
 package
 packages
 packaging
+padding
 page
 pages
 paid
@@ -1120,11 +1160,13 @@ panels
 paper
 papers
 paperwork
+paragraph
 parallel
 parse
 parsed
 parsing
 part
+particular
 partly
 partners
 parts
@@ -1137,6 +1179,7 @@ past
 path
 paths
 pattern
+paying
 payment
 pays
 people
@@ -1198,6 +1241,7 @@ prioritised
 privacy
 private
 probe
+problem
 process
 processing
 produce
@@ -1276,6 +1320,7 @@ readings
 reads
 real
 reason
+reasoned
 reasons
 rebinding
 reboot
@@ -1291,6 +1336,8 @@ reconstructed
 record
 recorded
 records
+recovery
+red
 redistribute
 reduced
 refactor
@@ -1348,6 +1395,7 @@ resolves
 responsive
 rest
 restarted
+restate
 restated
 resting
 rests
@@ -1413,6 +1461,7 @@ screen
 script
 scripts
 scroll
+scrolls
 search
 second
 secondary
@@ -1505,6 +1554,7 @@ specification
 specified
 specifies
 speed
+spelled
 spent
 spin
 split
@@ -1691,6 +1741,7 @@ two
 type
 typed
 typing
+typographic
 typography
 unattended
 unchangeable
@@ -1774,6 +1825,7 @@ whole
 whom
 whose
 why
+wide
 widens
 width
 will
@@ -1801,18 +1853,21 @@ worldofdizzi
 worse
 worth
 would
+wrap
 wrapped
 write
 writes
 writing
 written
 wrong
+wrote
 year
 years
 yesterday
 yet
 you
 you're
+you’re
 your
 yourself
 zero
