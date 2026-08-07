@@ -129,12 +129,7 @@ around the core now widens as the diagram is reached, drawn by the reader's
 scroll position like the track and the reading bar, because nothing here is
 allowed to move on its own.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-The most recent 8,258 bytes are the pass over `/apps/` and `/numbers/`, and
-=======
 The next 8,258 bytes are the pass over `/apps/` and `/numbers/`, and
->>>>>>> lane/web-mobil-unterseiten
 every one of them is stylesheet again — so the start page, which uses none of
 it, still pays for it on the first load. That is what one stylesheet for the
 whole site costs, and it is the same trade as every byte above. What those two
@@ -154,8 +149,8 @@ thing a page about honest figures must not do. The ten marks say nothing about
 what is inside the machine, and they are hidden from screen readers rather than
 labelled: the row already says the name in words, and saying it twice helps
 nobody.
-=======
-The newest 7,834 bytes are the mobile pass, and like the two entries above it
+
+The next 7,834 bytes are the mobile pass, and like the two entries above it
 they are all stylesheet — the markup did not grow by a byte. Most of the people
 who arrive here arrive on a phone, and everything above was drawn at desk width.
 Measured at 360 pixels before any of it: the network diagram was held at 520
@@ -184,7 +179,6 @@ bytes are the comments saying all of that — 6,083 of the 7,834. The pages are
 longer for it, the start page measuring 8,100 pixels at 360 instead of 7,762,
 and every line in them is now the full width of the column. At 769 pixels and
 above both start pages measure exactly what they measured before.
->>>>>>> lane/web-mobil
 
 The most recent 10,313 bytes are the phone a second time — the earlier phone
 pass folded the header away, this one carries the seven pages behind the two
