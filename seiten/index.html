@@ -19,10 +19,9 @@
       <span><i class="led" aria-hidden="true"></i>2,667 tests</span>
       <span><i class="led vio" aria-hidden="true"></i>pre-company</span>
     </p>
-    <p class="notiz">This strip holds readings taken in
-      July 2026, not a live feed. This page fetches no live data, and the code those
-      test figures were counted in is <a href="/numbers/#dateien">no longer
-      published &#8594;</a></p>
+    <p class="notiz">Readings from July 2026, not a live feed — this page fetches
+      nothing. The code those test figures were counted in is
+      <a href="/numbers/#dateien">no longer published &#8594;</a></p>
   </div>
 </section>
 
@@ -36,14 +35,43 @@
       <li class="zahl"><b>~100,000</b><span>lines of Python, across 632 files<a class="beleg" href="/numbers/#python"><span aria-hidden="true">&#8594;</span><span class="vh">How the lines and files were counted</span></a></span></li>
       <li class="zahl"><b>2,667</b><span>test functions in 309 files<a class="beleg" href="/numbers/#tests"><span aria-hidden="true">&#8594;</span><span class="vh">How the test functions were counted</span></a></span></li>
     </ul>
-    <p class="hinweis mt-m">From 23 July to <b>6 August 2026</b> the published folder
-      was one curated commit of <b>966 files</b> of code. It now holds <b>38
-      documents</b> and no code, so the two Python figures above <b>can no longer be
-      checked from outside</b> — they stay, dated, rather than quietly disappearing. The
-      2,600+ commits were never checkable. I would rather say all of that than let a
-      number imply something it doesn't.</p>
+
+    <div class="tafel-rahmen mt-m">
+      <table class="tafel">
+        <caption>The same four figures, and what a reader has left to check them against.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Figure</th>
+            <th scope="col">Where it can be checked</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="a-green">
+            <th scope="row">10 applications</th>
+            <td>In the published documents — a table in the folder README names them.</td>
+          </tr>
+          <tr class="a-steel">
+            <th scope="row">2,600+ commits</th>
+            <td>Nowhere. The working repository is private, which is why this one is written as a floor.</td>
+          </tr>
+          <tr class="a-amber">
+            <th scope="row">~100,000 lines of Python</th>
+            <td>Nowhere any more. The code extract it was measured in was withdrawn on 6 August 2026.</td>
+          </tr>
+          <tr class="a-amber">
+            <th scope="row">2,667 test functions</th>
+            <td>Nowhere any more. Same extract, same day.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="notiz">The last three stay on the page, dated, rather than quietly
+      disappearing. I would rather say that than let a number imply something it
+      doesn't.</p>
+
     <div class="knoepfe">
       <a class="knopf" href="/numbers/">The six figures, each with its method <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+      <a class="knopf" href="/numbers/#dateien">What is published now, and what was <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
   </div>
 </section>
@@ -55,23 +83,22 @@
     <div class="karten reveal">
       <article class="karte">
         <h3>Local-first</h3>
-        <p>The core runs offline. Cloud services are opt-in connectors — switchable off at
-          any time, always shown as an external step. That makes sync harder;
-          I took that trade-off deliberately, because the data belongs on the machine that
-          produced it.</p>
+        <p>The core runs offline. Cloud services are opt-in connectors, switchable off
+          at any time.</p>
       </article>
       <article class="karte">
         <h3>Contract-driven</h3>
-        <p>One written app contract, ten applications built to it. Answer the contract
-          and the dashboard picks the app up by itself; the assistant can reach it
-          without a new integration, and nobody wires it up by hand.</p>
+        <p>One written app contract, ten applications built to it. Answer it and the
+          dashboard picks the app up by itself.</p>
       </article>
       <article class="karte">
         <h3>Honest by law</h3>
-        <p>Honesty is not a tone of voice here; it is a written rule the code has to
-          obey: an unmeasured value is reported as unmeasured, never as a zero. The
-          same rule governs this website.</p>
+        <p>An unmeasured value is reported as unmeasured, never as a zero. The same
+          rule governs this website.</p>
       </article>
+    </div>
+    <div class="knoepfe">
+      <a class="knopf" href="/system/#entscheidungen">All three in full, trade-offs included <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
   </div>
 </section>
@@ -89,22 +116,23 @@
       <svg viewBox="0 0 640 380" role="img" aria-labelledby="ring-t ring-d" width="640" height="380">
         <title id="ring-t">The network at a glance</title>
         <desc id="ring-d">Dizzi-Core on port 8200 sits in the middle. Nine
-          applications surround it: Money 8210, Communication 8218, Creating 8214,
-          Memory 8212, Management 8213, News 8216, Healthy 8217, Admin 8222 and
-          Trading 8137. Each is connected to the core, not to the others.</desc>
+          applications sit on one ring around it: Money 8210, Communication 8218,
+          Creating 8214, Memory 8212, Management 8213, News 8216, Healthy 8217, Admin
+          8222 and Trading 8137. Each is connected to the core, not to the others.</desc>
+        <circle cx="320" cy="190" r="120" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"></circle>
         <g stroke="rgba(255,255,255,.16)" stroke-width="1" fill="none">
-          <path d="M320 190 L320 70"></path>
-          <path d="M320 190 L451.8 98.1"></path>
-          <path d="M320 190 L521.9 169.2"></path>
-          <path d="M320 190 L497.5 250"></path>
-          <path d="M320 190 L390.1 302.8"></path>
-          <path d="M320 190 L249.9 302.8"></path>
-          <path d="M320 190 L142.5 250"></path>
-          <path d="M320 190 L118.1 169.2"></path>
-          <path d="M320 190 L188.2 98.1"></path>
+          <path d="M320 190 Q336 130 320 70"></path>
+          <path d="M320 190 Q395 157 451.8 98.1"></path>
+          <path d="M320 190 Q423 196 521.9 169.2"></path>
+          <path d="M320 190 Q404 235 497.5 250"></path>
+          <path d="M320 190 Q342 255 390.1 302.8"></path>
+          <path d="M320 190 Q271 238 249.9 302.8"></path>
+          <path d="M320 190 Q226 205 142.5 250"></path>
+          <path d="M320 190 Q221 164 118.1 169.2"></path>
+          <path d="M320 190 Q263 131 188.2 98.1"></path>
         </g>
         <circle cx="320" cy="190" r="62" fill="#111726" stroke="#8b6cff" stroke-width="1.5"></circle>
-        <circle cx="320" cy="190" r="76" fill="none" stroke="rgba(139,108,255,.28)" stroke-width="1"></circle>
+        <circle class="ring-halo" cx="320" cy="190" r="76" fill="none" stroke="rgba(139,108,255,.28)" stroke-width="1"></circle>
         <text x="320" y="185" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="17" font-weight="700" fill="#e8ebf2">Core</text>
         <text x="320" y="205" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#9aa4b6">:8200</text>
 
@@ -147,36 +175,39 @@
         </g>
       </svg>
       </div>
-      <figcaption>Nine services around one headless core. The interactive version shows
-        the layers, the hand-over contracts and the security posture —
-        self-contained, no external calls.</figcaption>
+      <figcaption>Nine services on one ring around one headless core.</figcaption>
     </figure>
+
+    <h3 class="mt-xl">Each one runs alone. One contract joins them.</h3>
+    <div class="tafel-rahmen mt-m">
+      <table class="tafel">
+        <caption>The ten, each on its own port. Every name leads to its section on the
+          applications page.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Application</th>
+            <th scope="col">What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="a-vio"><th scope="row"><a href="/apps/#core">Dizzi-Core</a> <span class="chip">:8200</span></th><td>AI orchestrator, panel registry, MCP hub, health watch.</td></tr>
+          <tr class="a-amber"><th scope="row"><a href="/apps/#money">Dizz Money</a> <span class="chip">:8210</span></th><td>Finance manager, ledger care-core, German tax filing.</td></tr>
+          <tr class="a-blue"><th scope="row"><a href="/apps/#communication">Dizz Communication</a> <span class="chip">:8218</span></th><td>Unified inbox, smart contacts, appointment detection.</td></tr>
+          <tr class="a-mag"><th scope="row"><a href="/apps/#creating">Dizz Creating</a> <span class="chip">:8214</span></th><td>Local media workbench over one shared GPU job queue.</td></tr>
+          <tr class="a-cy"><th scope="row"><a href="/apps/#memory">Dizz Memory</a> <span class="chip">:8212</span></th><td>Markdown vault, full-text search, retrieval.</td></tr>
+          <tr class="a-vio"><th scope="row"><a href="/apps/#management">Dizz Management</a> <span class="chip">:8213</span></th><td>AI agent administration, autonomy ladder, network inbox.</td></tr>
+          <tr class="a-orange"><th scope="row"><a href="/apps/#news">Dizz News</a> <span class="chip">:8216</span></th><td>Sector-structured digest, cross-source dedup, watchlists.</td></tr>
+          <tr class="a-green"><th scope="row"><a href="/apps/#healthy">Dizz Healthy</a> <span class="chip">:8217</span></th><td>Metrics, training, wearables — the most sensitive class.</td></tr>
+          <tr class="a-steel"><th scope="row"><a href="/apps/#admin">Dizz Admin</a> <span class="chip">:8222</span></th><td>Vault, projects, business, studies, deadlines.</td></tr>
+          <tr class="a-coral"><th scope="row"><a href="/apps/#trading">Dizz Trading</a> <span class="chip">:8137</span></th><td>Autonomous bot fleet with a hard human gate.</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="knoepfe">
       <a class="knopf prim" href="/karte/">Open the system map <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf" href="/system/">How the architecture works <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">The ten</p>
-    <h2>Each one runs alone. One contract joins them.</h2>
-    <ul class="bento reveal mt-l">
-      <li><a class="a-vio kachel" href="/apps/#core"><span class="kn">Dizzi-Core <span class="chip">:8200</span></span><span class="kt">AI orchestrator, panel registry, MCP hub, health watch.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-amber kachel" href="/apps/#money"><span class="kn">Dizz Money <span class="chip">:8210</span></span><span class="kt">Finance manager, ledger care-core, German tax filing.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-blue kachel" href="/apps/#communication"><span class="kn">Dizz Communication <span class="chip">:8218</span></span><span class="kt">Unified inbox, smart contacts, appointment detection.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-mag kachel" href="/apps/#creating"><span class="kn">Dizz Creating <span class="chip">:8214</span></span><span class="kt">Local media workbench over one shared GPU job queue.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-cy kachel" href="/apps/#memory"><span class="kn">Dizz Memory <span class="chip">:8212</span></span><span class="kt">Markdown vault, full-text search, retrieval.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-vio kachel" href="/apps/#management"><span class="kn">Dizz Management <span class="chip">:8213</span></span><span class="kt">AI agent administration, autonomy ladder, network inbox.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-orange kachel" href="/apps/#news"><span class="kn">Dizz News <span class="chip">:8216</span></span><span class="kt">Sector-structured digest, cross-source dedup, watchlists.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-green kachel" href="/apps/#healthy"><span class="kn">Dizz Healthy <span class="chip">:8217</span></span><span class="kt">Metrics, training, wearables — the most sensitive class.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-steel kachel" href="/apps/#admin"><span class="kn">Dizz Admin <span class="chip">:8222</span></span><span class="kt">Vault, projects, business, studies, deadlines.</span><span class="kf">Read &#8594;</span></a></li>
-      <li><a class="a-coral kachel" href="/apps/#trading"><span class="kn">Dizz Trading <span class="chip">:8137</span></span><span class="kt">Autonomous bot fleet with a hard human gate.</span><span class="kf">Read &#8594;</span></a></li>
-    </ul>
-    <div class="knoepfe">
       <a class="knopf" href="/apps/">All ten in detail <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+      <a class="knopf" href="/system/">How the architecture works <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
   </div>
 </section>
@@ -185,30 +216,32 @@
   <div class="wrap">
     <p class="kicker">The method</p>
     <h2>Laws before code</h2>
-    <p class="dach">A system this size is not buildable by one person without rules that
-      hold when nobody is watching. These are written down, in the repository, and they
-      are older than most of the code.</p>
 
-    <div class="reveal mt-l">
-      <blockquote class="gesetz">
-        <span class="lk">Principle · honesty</span>
-        <p>“If a value was never measured, the system says so instead of showing a
-          zero.”</p>
-        <footer>Repository README, <em>Principles</em><a class="beleg" href="{{ORDNER}}#principles" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: the Principles section of the repository README</span></a></footer>
-      </blockquote>
+    <div class="reveal">
       <blockquote class="gesetz">
         <span class="lk">Law · human gates</span>
         <p>“Nothing irreversible without a human. Money, publishing and deletion sit
           behind explicit gates. The trading fleet proposes; a person decides.”</p>
         <footer>Repository README, <em>Principles</em><a class="beleg" href="{{ORDNER}}#principles" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: the Principles section of the repository README</span></a></footer>
       </blockquote>
-      <blockquote class="gesetz">
-        <span class="lk">Law · data at its source</span>
-        <p>“Data stays at its source; the Core only relays read-only; anything with
-          outside effect needs an explicit human approval step.”</p>
-        <footer>Repository README, on cross-connections — the contract itself in docs/26<a class="beleg" href="{{DATEI}}/docs/26_QUERVERBINDUNGEN.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: docs/26_QUERVERBINDUNGEN.md</span></a></footer>
-      </blockquote>
     </div>
+
+    <ol class="fluss mt-l">
+      <li class="a-cy">
+        <p class="fl-t">The assistants propose</p>
+        <p class="fl-b">They observe and suggest. Nothing has an effect yet.</p>
+      </li>
+      <li class="a-vio">
+        <p class="fl-t">A person decides</p>
+        <p class="fl-b">A different endpoint, a fresh authentication, an audit entry the
+          proposing side cannot edit.</p>
+      </li>
+      <li class="a-mag">
+        <p class="fl-t">Only then, it takes effect</p>
+        <p class="fl-b">Money, publishing and deletion — the three that are never
+          reversible.</p>
+      </li>
+    </ol>
 
     <div class="knoepfe">
       <a class="knopf" href="/method/">How this actually gets built <span class="pfeil" aria-hidden="true">&#8594;</span></a>
@@ -224,20 +257,18 @@
       <li class="a-coral">
         <span class="datum">8–25 June 2026</span>
         <h3>Trading foundations and the validation nights</h3>
-        <p>Research protocols, Kelly sizing spec, system checks and dated night runs —
-          the earliest documents in the repository.</p>
+        <p>Research protocols, Kelly sizing spec, system checks, dated night runs.</p>
       </li>
       <li class="a-cy">
         <span class="datum">12 June 2026</span>
         <h3>The app contract</h3>
-        <p>The norm that turns nine separate services into one network: summary
-          endpoint, MCP server, single sign-on, settings module.</p>
+        <p>Summary endpoint, MCP server, single sign-on, settings module.</p>
       </li>
       <li class="a-vio">
         <span class="datum">3–11 July 2026</span>
         <h3>Agent direction, export contract, chronicle core</h3>
         <p>Autonomy ladder T0–T3 with an emergency stop, the single app as a sellable
-          bundle, and a chronicle kernel with its own audit core.</p>
+          bundle, a chronicle kernel with its own audit core.</p>
       </li>
       <li class="a-green">
         <span class="datum">23 July &#183; 6 August 2026</span>

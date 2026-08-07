@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 952 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 988 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 
 ab
 abende
@@ -39,6 +39,7 @@ anbieter
 anbieterkennzeichnung
 anbieters
 anderen
+anderer
 anderswo
 andeuten
 anfallen
@@ -56,11 +57,13 @@ anhand
 ankündigung
 anliegen
 anliegens
+anmeldung
 anschrift
 ansehen
 ansicht
 ansprechbar
 antwortet
+anwendung
 anwendungen
 anzeige
 arbeit
@@ -90,6 +93,7 @@ august
 aus
 ausdrücklich
 ausdrücklicher
+ausführlich
 ausgabe
 ausgeführt
 ausgegeben
@@ -133,6 +137,7 @@ bekanntwerden
 benannt
 benannten
 benötigt
+beobachten
 beobachtungslisten
 berechtigter
 berechtigtes
@@ -169,6 +174,7 @@ bitte
 blatt
 bleiben
 bleibt
+blick
 blätter
 braucht
 bricht
@@ -176,6 +182,7 @@ bringt
 ca
 cdns
 chronik
+comm
 cookiefreie
 da
 dabei
@@ -194,6 +201,7 @@ dasteht
 datei
 dateien
 daten
+datenbank
 datenmenge
 datenschutz
 datenschutzerklärung
@@ -275,6 +283,7 @@ einschränkung
 einsehbar
 einsehbarer
 einstiegsseite
+eintrag
 einwilligungsbanner
 einzeln
 einzelne
@@ -283,6 +292,7 @@ einzelner
 einzige
 einzigen
 endet
+endpunkt
 englisch
 englischen
 entferne
@@ -296,6 +306,7 @@ entschieden
 entsprechende
 entstanden
 entsteht
+entwerfen
 er
 erfolgt
 erforderlich
@@ -344,6 +355,7 @@ freigaben
 fremden
 fremder
 fremdkapital
+frische
 fristen
 funktionen
 funktionsfähigen
@@ -405,6 +417,7 @@ gesetzen
 gesetzlichen
 gespräch
 gespräche
+gestalt
 gestartet
 gestern
 gesundheit
@@ -445,6 +458,7 @@ hat
 hatte
 haupt
 herauszufinden
+herum
 heute
 hier
 hin
@@ -525,6 +539,7 @@ kontaktiert
 kontrollrunde
 kopf
 kopieren
+kosten
 kraft
 krause
 kunden
@@ -545,6 +560,7 @@ lesen
 lesend
 leser
 letzte
+letzten
 leute
 lieber
 liefern
@@ -579,6 +595,7 @@ menschlichen
 menü
 messwerte
 methode
+mgmt
 mich
 michael
 microsoft
@@ -587,6 +604,7 @@ misst
 mit
 miteinander
 mitgeliefertes
+mitte
 monat
 montgomery
 mstv
@@ -599,6 +617,7 @@ nachricht
 nachrichten
 nacht
 naiv
+name
 natürlichen
 neben
 nennen
@@ -614,6 +633,7 @@ nicht
 nichts
 nie
 niemand
+nirgends
 noch
 normen
 notwendige
@@ -625,6 +645,7 @@ nächste
 nächstes
 ob
 oben
+oberfläche
 oder
 offen
 ohne
@@ -647,6 +668,7 @@ produkten
 projekt
 projekte
 projekts
+protokoll
 protokolle
 prüfbar
 prüfen
@@ -683,6 +705,7 @@ rest
 restrisiko
 richtet
 richtung
+ring
 ruhe
 räumen
 sage
@@ -695,13 +718,16 @@ satz
 sauber
 sauberen
 schalen
+schlagen
 schleife
 schnell
 schreiben
+schreibt
 schriftarten
 schriften
 schriftlich
 schritt
+schritte
 schulden
 schwerer
 schönreden
@@ -727,6 +753,8 @@ sie
 sieht
 sind
 sinne
+sitzen
+sitzt
 skalierung
 skript
 skripten
@@ -755,6 +783,7 @@ steht
 stets
 steuer
 stichtag
+still
 straße
 street
 streitbeilegung
@@ -767,6 +796,7 @@ stützt
 systematische
 systeme
 tabelle
+tag
 tage
 takt
 team
@@ -810,6 +840,7 @@ unterbricht
 untergrenze
 unternehmen
 unumkehrbare
+unumkehrbaren
 unverändert
 urheberrecht
 urheberrechtlich
@@ -830,6 +861,7 @@ verbindung
 verbindungsdaten
 verbotene
 verbraucherschlichtungsstelle
+verbunden
 verdient
 verdrahtet
 vereinsregisternummer
@@ -842,6 +874,7 @@ verlinkten
 verlinkung
 verloren
 verlässt
+vermittelt
 verpflichtet
 verschwinden
 versionierte
@@ -862,6 +895,7 @@ verzeichnis
 veröffentlichen
 veröffentlicht
 veröffentlichte
+veröffentlichten
 videos
 vier
 voller
@@ -905,6 +939,8 @@ willkommen
 wir
 wird
 wirklich
+wirkt
+wirkung
 wissen
 wo
 woche
@@ -971,5 +1007,6 @@ züge
 # kein Wort sind. Sie stehen hier unter eigener Ueberschrift, weil sie NICHT
 # aus dem validierten Wortschatz stammen, sondern aus der Arbeitsweise des
 # Werkzeugs - wer die Liste liest, soll den Unterschied sehen.
+anwendungs # aus 'Anwendungs-Seite'
 arbeits    # aus 'Arbeits-Repository'
 ausgangs   # aus 'Ausgangs-Commit'

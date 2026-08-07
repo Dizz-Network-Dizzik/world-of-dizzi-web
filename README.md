@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **91,205 bytes** uncompressed — 21.2 KB markup, 39.1 KB stylesheet,
+page: **97,263 bytes** uncompressed — 20.9 KB markup, 45.4 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
@@ -58,7 +58,7 @@ frozen at zero; reduced motion and print remove it outright, each in the rule
 that already removes the other animations. About half of those bytes are the
 comments saying why.
 
-The most recent 7,836 bytes are the design pass, and every one of them is
+The next 7,836 bytes are the design pass, and every one of them is
 stylesheet: the markup did not grow by a byte. What the site had was a palette
 and a font; what it lacked was a system. A heading sat flush against the text
 under it, because headings carried no bottom margin at all and every page
@@ -81,6 +81,39 @@ fifths of those bytes are the comments saying so — 4,765 of the 7,836. The las
 of them records the one finding the pass produced rather than fixed: measured at
 320 pixels, the wordmark was a 39-pixel touch target in a header where every
 other free-standing link had already been raised to 44.
+
+The most recent 6,058 bytes are the visual turn, and they are the first entry on
+this list where the markup went *down* while the total went up. The two start
+pages were columns of prose with one diagram in the middle. What they say is
+unchanged; how much of it has to be read is not. Three blocks of running text
+became structure instead: the four headline figures now stand above a table that
+says, figure by figure, where each can still be checked; the ten applications are
+a table with a port and one sentence each rather than ten tiles; and the law about
+human gates is drawn as three nodes with the gate between them instead of being
+restated in prose underneath itself. What left the English start page was moved,
+not deleted — the three architectural decisions, in full and with the trade-off
+each carries, are a section of their own at `/system/#entscheidungen`, and the
+start page links there. The German page has no German subpages to move anything
+into, so its six-station route was **shortened rather than relocated**: every
+station and every rule still stands, the elaboration does not, and the page now
+points at `/method/#weg` for it. That is the one place in this pass where text was
+cut instead of moved, which is why it is named here rather than left to be noticed.
+The German page also gained the network diagram it never had.
+
+The start page's own markup came out 322 bytes lighter — far less than the prose
+that left it, because a table row costs about what a sentence costs. The other
+6,380 bytes are stylesheet: three components and one animation, of which 3,365
+bytes are the comments saying why. The one worth repeating here is why none of
+this is a script. An SVG scales its type down with its box, so a drawing that
+reads at 1200 pixels arrives on a 360-pixel phone with nine-pixel labels; the
+obvious fix is JavaScript, and the privacy statement promises there is none —
+a legal text, not a preference. So text that has to stay legible lives in HTML,
+where it reflows, and a picture with no text in it lives in an SVG. The nine
+straight lines from the core became nine curves, which costs 80 bytes and is the
+whole difference between a wiring diagram and something grown; the violet ring
+around the core now widens as the diagram is reached, drawn by the reader's
+scroll position like the track and the reading bar, because nothing here is
+allowed to move on its own.
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being
@@ -173,7 +206,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **69 source links** against
+be resolved, and `check_snapshot_links` resolves all **67 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -183,12 +216,12 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 74 links break at once — and the claim on `/numbers/` that exactly one figure
-cannot be checked from outside quietly stops being true. That figure read 83
-until the travel pages were added, and 83 had not been true for some time:
-counted over the built site as it stood before them, there were 72. It is the
-one link count on this page that no gate measures, which is precisely why it
-drifted while the two beside it could not — the same lesson this file already
+all 72 links break at once — and the claim on `/numbers/` that exactly one figure
+cannot be checked from outside quietly stops being true. It is the one link count
+on this page that no gate measures, and it has drifted twice already: it read 83
+until a count over the built site produced 72, and 74 from the travel pages until
+the start pages were rebuilt. Both times the two figures beside it could not
+drift, because something measures them — the same lesson this file already
 tells twice about the first-load number. That risk now has one
 source instead of two, but it is not gone. It lives in `bake.py` as `SELBST`.
 

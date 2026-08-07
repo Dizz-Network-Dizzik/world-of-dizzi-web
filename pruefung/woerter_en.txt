@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 1746 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 1778 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -142,12 +142,14 @@ baked
 baker
 bank
 banner
+bar
 bars
 based
 baseline
 bases
 be
 bearer
+became
 because
 become
 becomes
@@ -192,6 +194,7 @@ bottom
 bought
 bound
 boundary
+box
 bracketed
 branch
 break
@@ -296,6 +299,7 @@ collapses
 collects
 colour
 colours
+columns
 come
 comm
 command
@@ -304,6 +308,7 @@ comments
 committed
 company
 compliance
+components
 composable
 comprehensible
 compresses
@@ -367,6 +372,7 @@ curated
 curation
 current
 curve
+curves
 custom
 customers
 cut
@@ -393,6 +399,7 @@ deep
 deeper
 default
 defence
+deleted
 deleting
 deletion
 deliberate
@@ -421,6 +428,7 @@ designed
 detection
 deterministic
 diagnosis
+diagram
 did
 difference
 different
@@ -487,6 +495,7 @@ effective
 efficient
 eight
 either
+elaboration
 element
 elements
 eleven
@@ -679,6 +688,7 @@ graph
 green
 grew
 grow
+grown
 guard
 habit
 had
@@ -851,6 +861,7 @@ leaves
 led
 left
 legal
+legible
 length
 less
 lesson
@@ -862,6 +873,7 @@ library
 licence
 life
 light
+lighter
 lighthouse
 like
 limit
@@ -1010,6 +1022,7 @@ nineteen
 no
 nobody
 node
+nodes
 none
 nor
 norm
@@ -1026,6 +1039,7 @@ numbered
 obey
 obeys
 observe
+obvious
 odd
 off
 offer
@@ -1123,6 +1137,7 @@ physical
 physics
 pick
 picks
+picture
 pile
 pilots
 pinned
@@ -1251,6 +1266,7 @@ rebinding
 reboot
 rebuildable
 rebuilding
+rebuilt
 recency
 recent
 recipe
@@ -1266,6 +1282,7 @@ refactor
 reference
 references
 reflow
+reflows
 refresh
 refuse
 refuses
@@ -1278,6 +1295,7 @@ rejected
 relation
 relaxation
 relay
+relocated
 relying
 remains
 reminded
@@ -1291,6 +1309,7 @@ render
 repair
 repeat
 repeated
+repeating
 repeats
 replaced
 replaces
@@ -1312,6 +1331,7 @@ resolves
 responsive
 rest
 restarted
+restated
 resting
 rests
 result
@@ -1322,6 +1342,7 @@ reuse
 reveal
 revenue
 reversals
+reversible
 review
 reviews
 revocation
@@ -1330,6 +1351,7 @@ rewrite
 rewritten
 right
 rights
+ring
 risk
 riskiest
 risks
@@ -1417,6 +1439,7 @@ shift
 ship
 shipping
 short
+shortened
 should
 show
 showcase
@@ -1498,6 +1521,7 @@ stops
 store
 stored
 story
+straight
 strategy
 stream
 strict
@@ -1513,11 +1537,13 @@ style
 styles
 stylesheet
 submission
+subpages
 subresource
 subset
 subsets
 subtle
 such
+suggest
 suites
 sum
 summary
@@ -1527,6 +1553,7 @@ surface
 surround
 survive
 suspends
+svg
 swap
 swappable
 switchable
@@ -1632,6 +1659,7 @@ trust
 truth
 try
 trying
+turn
 turns
 twelve
 twenty
@@ -1686,8 +1714,10 @@ video
 view
 views
 vigilance
+violet
 visible
 visit
+visual
 vocabularies
 voice
 volume
@@ -1721,12 +1751,14 @@ whole
 whom
 whose
 why
+widens
 width
 will
 window
 wins
 wire
 wires
+wiring
 wish
 withdrawal
 withdrawn
@@ -1769,3 +1801,4 @@ zero
 # aus dem validierten Wortschatz stammen, sondern aus der Arbeitsweise des
 # Werkzeugs - wer die Liste liest, soll den Unterschied sehen.
 non        # aus 'non-blank lines'
+offs       # aus 'trade-offs'

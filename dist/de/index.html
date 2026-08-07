@@ -76,10 +76,8 @@
       <span><i class="led" aria-hidden="true"></i>2.667 Tests</span>
       <span><i class="led vio" aria-hidden="true"></i>vor der Gründung</span>
     </p>
-    <p class="notiz">Diese Zeile zeigt Messwerte aus dem
-      Juli 2026, keine Live-Anzeige. Diese Seite fragt nichts ab — und der Code, in dem
-      die Testzahl gezählt wurde, ist seit dem 6. August 2026 nicht mehr
-      veröffentlicht.</p>
+    <p class="notiz">Messwerte aus dem Juli 2026, keine Live-Anzeige — diese Seite
+      fragt nichts ab. Der Code hinter der Testzahl ist nicht mehr veröffentlicht.</p>
   </div>
 </section>
 
@@ -93,14 +91,40 @@
       <li class="zahl"><b>~100.000</b><span>Zeilen Python in 632 Dateien<a class="beleg" href="/numbers/#python"><span aria-hidden="true">&#8594;</span><span class="vh">Wie Zeilen und Dateien gezählt wurden</span></a></span></li>
       <li class="zahl"><b>2.667</b><span>Test-Funktionen in 309 Dateien<a class="beleg" href="/numbers/#tests"><span aria-hidden="true">&#8594;</span><span class="vh">Wie die Test-Funktionen gezählt wurden</span></a></span></li>
     </ul>
-    <p class="hinweis mt-m">Der veröffentlichte Auszug war bis zum
-      <b>6. August 2026</b> ein kuratierter Commit mit <b>966 Dateien</b> Code; seither
-      steht dort ein kuratierter Satz von <b>38 Dokumenten</b> — der Code selbst ist
-      nicht mehr veröffentlicht. Die beiden Python-Zahlen oben stammen aus dem alten
-      Auszug und sind von außen <b>nicht mehr nachprüfbar</b>; sie bleiben mit Datum
-      stehen, statt zu verschwinden. Die 2.600+ Commits sind die Arbeitshistorie
-      dahinter und waren nie prüfbar. Das sage ich lieber, als eine Zahl etwas andeuten
-      zu lassen, was sie nicht meint.</p>
+
+    <div class="tafel-rahmen mt-m">
+      <table class="tafel">
+        <caption>Dieselben vier Zahlen — und was zum Nachprüfen noch da ist.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Zahl</th>
+            <th scope="col">Wo sie nachprüfbar ist</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="a-green">
+            <th scope="row">10 Anwendungen</th>
+            <td>In den veröffentlichten Dokumenten — eine Tabelle im Ordner-README nennt sie.</td>
+          </tr>
+          <tr class="a-steel">
+            <th scope="row">2.600+ Commits</th>
+            <td>Nirgends. Das Arbeits-Repository ist privat; deshalb steht die Zahl als Untergrenze da.</td>
+          </tr>
+          <tr class="a-amber">
+            <th scope="row">~100.000 Zeilen Python</th>
+            <td>Nicht mehr. Der Code-Auszug, in dem sie gemessen wurde, ist seit dem 6. August 2026 zurückgezogen.</td>
+          </tr>
+          <tr class="a-amber">
+            <th scope="row">2.667 Test-Funktionen</th>
+            <td>Nicht mehr. Derselbe Auszug, derselbe Tag.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="notiz">Die letzten drei bleiben mit Datum stehen, statt still zu
+      verschwinden. Das sage ich lieber, als eine Zahl etwas andeuten zu lassen, was sie
+      nicht meint.</p>
+
     <div class="knoepfe">
       <a class="knopf" href="/numbers/" hreflang="en">Die sechs Zahlen mit ihrer Zählweise (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
@@ -114,43 +138,131 @@
     <div class="karten reveal">
       <article class="karte">
         <h3>Lokal-first</h3>
-        <p>Der Core läuft offline. Cloud-Dienste sind zuschaltbare Konnektoren —
-          jederzeit abschaltbar, immer als externer Schritt sichtbar. Das macht
-          Synchronisation schwerer; ich habe mich bewusst dafür entschieden, weil die
-          Daten auf die Maschine gehören, die sie erzeugt hat.</p>
+        <p>Der Core läuft offline. Cloud-Dienste sind zuschaltbare Konnektoren,
+          jederzeit abschaltbar.</p>
       </article>
       <article class="karte">
         <h3>Vertrags-getrieben</h3>
-        <p>Ein geschriebener App-Vertrag, zehn Apps, die auf ihn hin gebaut sind. Eine
-          App, die ihn beantwortet, erscheint von selbst im Dashboard und ist für die KI
-          ansprechbar — niemand verdrahtet sie von Hand.</p>
+        <p>Ein geschriebener App-Vertrag, zehn Apps, die auf ihn hin gebaut sind. Wer
+          ihn beantwortet, erscheint von selbst im Dashboard.</p>
       </article>
       <article class="karte">
         <h3>Ehrlich per Gesetz</h3>
-        <p>Ehrlichkeit ist hier kein Tonfall, sondern eine geschriebene Regel, an die
-          sich der Code halten muss: ein nicht gemessener Wert wird als „nicht
-          gemessen“ ausgegeben, nie als Null. Dieselbe Regel gilt für diese Website.</p>
+        <p>Ein nicht gemessener Wert wird als „nicht gemessen“ ausgegeben, nie als
+          Null. Dieselbe Regel gilt für diese Website.</p>
       </article>
+    </div>
+    <div class="knoepfe">
+      <a class="knopf" href="/system/#entscheidungen" hreflang="en">Alle drei ausführlich, mit dem, was sie kosten (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <p class="kicker">Die zehn</p>
+    <p class="kicker">Die Gestalt</p>
     <h2>Jede läuft allein. Ein Vertrag verbindet sie.</h2>
-    <ul class="bento reveal mt-l">
-      <li><a class="a-vio kachel" href="/apps/#core" hreflang="en"><span class="kn">Dizzi-Core <span class="chip">:8200</span></span><span class="kt">KI-Orchestrator, Panel-Registry, MCP-Hub, Health-Watch.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-amber kachel" href="/apps/#money" hreflang="en"><span class="kn">Dizz Money <span class="chip">:8210</span></span><span class="kt">Finanzen, Ledger-Kern, deutsche Steuer-Übermittlung.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-blue kachel" href="/apps/#communication" hreflang="en"><span class="kn">Dizz Communication <span class="chip">:8218</span></span><span class="kt">Ein Posteingang, kluge Kontakte, Termin-Erkennung.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-mag kachel" href="/apps/#creating" hreflang="en"><span class="kn">Dizz Creating <span class="chip">:8214</span></span><span class="kt">Medien-Werkbank über eine gemeinsame GPU-Warteschlange.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-cy kachel" href="/apps/#memory" hreflang="en"><span class="kn">Dizz Memory <span class="chip">:8212</span></span><span class="kt">Markdown-Tresor, Volltextsuche, Retrieval.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-vio kachel" href="/apps/#management" hreflang="en"><span class="kn">Dizz Management <span class="chip">:8213</span></span><span class="kt">KI-Agenten-Verwaltung, Autonomie-Treppe, Netz-Posteingang.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-orange kachel" href="/apps/#news" hreflang="en"><span class="kn">Dizz News <span class="chip">:8216</span></span><span class="kt">Sektor-Überblick, Quellen-Dedup, Beobachtungslisten.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-green kachel" href="/apps/#healthy" hreflang="en"><span class="kn">Dizz Healthy <span class="chip">:8217</span></span><span class="kt">Messwerte, Training, Wearables — sensibelste Klasse.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-steel kachel" href="/apps/#admin" hreflang="en"><span class="kn">Dizz Admin <span class="chip">:8222</span></span><span class="kt">Tresor, Projekte, Geschäft, Studium, Fristen.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-coral kachel" href="/apps/#trading" hreflang="en"><span class="kn">Dizz Trading <span class="chip">:8137</span></span><span class="kt">Autonome Bot-Flotte mit hartem Menschen-Gate.</span><span class="kf">Lesen &#8594;</span></a></li>
-    </ul>
+    <p class="dach">Jede Anwendung hat ihren eigenen Port, ihre eigene Datenbank und
+      ihre eigene Oberfläche. Der Core vermittelt — er schreibt nie von sich aus nach
+      außen.</p>
+
+    <figure class="figur reveal mt-l">
+      <div class="buehne">
+      <svg viewBox="0 0 640 380" role="img" aria-labelledby="ring-t ring-d" width="640" height="380">
+        <title id="ring-t">Das Netz auf einen Blick</title>
+        <desc id="ring-d">Der Dizzi-Core auf Port 8200 sitzt in der Mitte. Neun
+          Anwendungen sitzen auf einem Ring um ihn herum: Money 8210, Communication
+          8218, Creating 8214, Memory 8212, Management 8213, News 8216, Healthy 8217,
+          Admin 8222 und Trading 8137. Jede ist mit dem Core verbunden, nicht mit den
+          anderen.</desc>
+        <circle cx="320" cy="190" r="120" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"></circle>
+        <g stroke="rgba(255,255,255,.16)" stroke-width="1" fill="none">
+          <path d="M320 190 Q336 130 320 70"></path>
+          <path d="M320 190 Q395 157 451.8 98.1"></path>
+          <path d="M320 190 Q423 196 521.9 169.2"></path>
+          <path d="M320 190 Q404 235 497.5 250"></path>
+          <path d="M320 190 Q342 255 390.1 302.8"></path>
+          <path d="M320 190 Q271 238 249.9 302.8"></path>
+          <path d="M320 190 Q226 205 142.5 250"></path>
+          <path d="M320 190 Q221 164 118.1 169.2"></path>
+          <path d="M320 190 Q263 131 188.2 98.1"></path>
+        </g>
+        <circle cx="320" cy="190" r="62" fill="#111726" stroke="#8b6cff" stroke-width="1.5"></circle>
+        <circle class="ring-halo" cx="320" cy="190" r="76" fill="none" stroke="rgba(139,108,255,.28)" stroke-width="1"></circle>
+        <text x="320" y="185" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="17" font-weight="700" fill="#e8ebf2">Core</text>
+        <text x="320" y="205" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#9aa4b6">:8200</text>
+
+        <g font-family="ui-monospace, monospace" font-size="12.5" fill="#9aa4b6">
+          <circle cx="320" cy="70" r="7" fill="#080b12" stroke="#f5b942" stroke-width="2"></circle>
+          <text x="320" y="52" text-anchor="middle" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Money</text>
+          <text x="320" y="94" text-anchor="middle">:8210</text>
+
+          <circle cx="451.8" cy="98.1" r="7" fill="#080b12" stroke="#38bdf8" stroke-width="2"></circle>
+          <text x="468" y="94" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Comm.</text>
+          <text x="468" y="110">:8218</text>
+
+          <circle cx="521.9" cy="169.2" r="7" fill="#080b12" stroke="#ff3ea5" stroke-width="2"></circle>
+          <text x="538" y="165" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Creating</text>
+          <text x="538" y="181">:8214</text>
+
+          <circle cx="497.5" cy="250" r="7" fill="#080b12" stroke="#2ee6d6" stroke-width="2"></circle>
+          <text x="514" y="246" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Memory</text>
+          <text x="514" y="262">:8212</text>
+
+          <circle cx="390.1" cy="302.8" r="7" fill="#080b12" stroke="#8b6cff" stroke-width="2"></circle>
+          <text x="406" y="299" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Mgmt</text>
+          <text x="406" y="315">:8213</text>
+
+          <circle cx="249.9" cy="302.8" r="7" fill="#080b12" stroke="#fb923c" stroke-width="2"></circle>
+          <text x="234" y="299" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">News</text>
+          <text x="234" y="315" text-anchor="end">:8216</text>
+
+          <circle cx="142.5" cy="250" r="7" fill="#080b12" stroke="#36d399" stroke-width="2"></circle>
+          <text x="126" y="246" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Healthy</text>
+          <text x="126" y="262" text-anchor="end">:8217</text>
+
+          <circle cx="118.1" cy="169.2" r="7" fill="#080b12" stroke="#9aa4b6" stroke-width="2"></circle>
+          <text x="102" y="165" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Admin</text>
+          <text x="102" y="181" text-anchor="end">:8222</text>
+
+          <circle cx="188.2" cy="98.1" r="7" fill="#080b12" stroke="#f2645a" stroke-width="2"></circle>
+          <text x="172" y="94" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Trading</text>
+          <text x="172" y="110" text-anchor="end">:8137</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>Neun Dienste auf einem Ring um einen Core.</figcaption>
+    </figure>
+
+    <div class="tafel-rahmen mt-l">
+      <table class="tafel">
+        <caption>Die zehn, jede auf ihrem eigenen Port. Jeder Name führt zu ihrem
+          Abschnitt auf der Anwendungs-Seite (englisch).</caption>
+        <thead>
+          <tr>
+            <th scope="col">Anwendung</th>
+            <th scope="col">Was sie tut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="a-vio"><th scope="row"><a href="/apps/#core" hreflang="en">Dizzi-Core</a> <span class="chip">:8200</span></th><td>KI-Orchestrator, Panel-Registry, MCP-Hub, Health-Watch.</td></tr>
+          <tr class="a-amber"><th scope="row"><a href="/apps/#money" hreflang="en">Dizz Money</a> <span class="chip">:8210</span></th><td>Finanzen, Ledger-Kern, deutsche Steuer-Übermittlung.</td></tr>
+          <tr class="a-blue"><th scope="row"><a href="/apps/#communication" hreflang="en">Dizz Communication</a> <span class="chip">:8218</span></th><td>Ein Posteingang, kluge Kontakte, Termin-Erkennung.</td></tr>
+          <tr class="a-mag"><th scope="row"><a href="/apps/#creating" hreflang="en">Dizz Creating</a> <span class="chip">:8214</span></th><td>Medien-Werkbank über eine gemeinsame GPU-Warteschlange.</td></tr>
+          <tr class="a-cy"><th scope="row"><a href="/apps/#memory" hreflang="en">Dizz Memory</a> <span class="chip">:8212</span></th><td>Markdown-Tresor, Volltextsuche, Retrieval.</td></tr>
+          <tr class="a-vio"><th scope="row"><a href="/apps/#management" hreflang="en">Dizz Management</a> <span class="chip">:8213</span></th><td>KI-Agenten-Verwaltung, Autonomie-Treppe, Netz-Posteingang.</td></tr>
+          <tr class="a-orange"><th scope="row"><a href="/apps/#news" hreflang="en">Dizz News</a> <span class="chip">:8216</span></th><td>Sektor-Überblick, Quellen-Dedup, Beobachtungslisten.</td></tr>
+          <tr class="a-green"><th scope="row"><a href="/apps/#healthy" hreflang="en">Dizz Healthy</a> <span class="chip">:8217</span></th><td>Messwerte, Training, Wearables — sensibelste Klasse.</td></tr>
+          <tr class="a-steel"><th scope="row"><a href="/apps/#admin" hreflang="en">Dizz Admin</a> <span class="chip">:8222</span></th><td>Tresor, Projekte, Geschäft, Studium, Fristen.</td></tr>
+          <tr class="a-coral"><th scope="row"><a href="/apps/#trading" hreflang="en">Dizz Trading</a> <span class="chip">:8137</span></th><td>Autonome Bot-Flotte mit hartem Menschen-Gate.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="knoepfe">
+      <a class="knopf prim" href="/karte/">System-Karte öffnen <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+      <a class="knopf" href="/apps/" hreflang="en">Alle zehn im Detail (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
   </div>
 </section>
 
@@ -158,19 +270,28 @@
   <div class="wrap">
     <p class="kicker">Die Methode</p>
     <h2>Gesetze vor Code</h2>
-    <div class="raster">
-      <div class="lang">
-        <p>Ein System dieser Größe ist für eine Person nicht baubar ohne Regeln, die
-          auch dann tragen, wenn niemand hinsieht. Sie stehen geschrieben im
-          Repository, und sie sind älter als der meiste Code: Gesetze vor Code,
-          Verträge vor Funktionen, Recherche vor Entscheidungen.</p>
-        <p>Ein Mensch führt Regie. Ein verwaltender Chat hält den Gesamtstand und
-          entscheidet, was als Nächstes passiert; getrennte Bau-Chats erledigen die
-          Arbeit, ein Arbeitspaket nach dem anderen. Sie sprechen nicht miteinander; sie
-          verständigen sich ausschließlich <b>über geschriebene Übergabe-Dokumente</b>. Und alles Unumkehrbare —
-          Geld, Veröffentlichen, Löschen — steht hinter einem menschlichen Gate.</p>
-        <p class="quellen"><a href="/method/" hreflang="en">Die Methode im Detail (englisch) &#8594;</a></p>
-      </div>
+    <p class="dach">Ein Mensch führt Regie. Ein verwaltender Chat hält den Gesamtstand,
+      getrennte Bau-Chats erledigen die Arbeit — sie sprechen nicht miteinander, sondern
+      über geschriebene Übergabe-Dokumente.</p>
+
+    <ol class="fluss mt-l">
+      <li class="a-cy">
+        <p class="fl-t">Die Assistenten schlagen vor</p>
+        <p class="fl-b">Sie beobachten und entwerfen. Noch wirkt nichts.</p>
+      </li>
+      <li class="a-vio">
+        <p class="fl-t">Ein Mensch entscheidet</p>
+        <p class="fl-b">Ein anderer Endpunkt, eine frische Anmeldung, ein Eintrag im
+          Protokoll.</p>
+      </li>
+      <li class="a-mag">
+        <p class="fl-t">Erst dann Wirkung</p>
+        <p class="fl-b">Geld, Veröffentlichen, Löschen — die drei unumkehrbaren
+          Schritte.</p>
+      </li>
+    </ol>
+
+    <div class="raster mt-l">
       <div>
         <blockquote class="gesetz">
           <span class="lk">Gesetz 2 · Ehrlichkeit</span>
@@ -178,6 +299,8 @@
             eigenen Zweifeln: offen sagen, nicht schönreden.“</p>
           <footer>docs/01_GRUNDGESETZE.md, Gesetz 2<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
         </blockquote>
+      </div>
+      <div>
         <blockquote class="gesetz">
           <span class="lk">Gesetz 11 · Ruhe vor Hast</span>
           <p>„Im Zweifelsfall lieber eine Sekunde länger prüfen. ‚Schnell bitte‘ setzt
@@ -186,6 +309,7 @@
         </blockquote>
       </div>
     </div>
+    <p class="quellen"><a href="/method/" hreflang="en">Die Methode im Detail (englisch) &#8594;</a></p>
   </div>
 </section>
 
@@ -194,59 +318,44 @@
     <p class="kicker">Die Arbeitsweise</p>
     <h2>Der Weg eines Arbeitspakets</h2>
     <p class="dach">Sechs Stationen zwischen der ersten geschriebenen Zeile und dem
-      Merge. Jede davon ist eine Regel mit einem Dokument dahinter — keine Beschreibung,
-      die hinterher entstanden ist.</p>
+      Merge — jede eine Regel mit einem Dokument dahinter.</p>
     <ol class="bahn reveal mt-l">
       <li class="a-mag">
         <h3>Der Auftrag steht vor der Arbeit</h3>
         <p>Ein Paket beginnt als Datei: Ziel, Ausgangs-Commit, verbotene Züge und das
-          Gate, das es bestehen muss. Geschrieben für jemanden ohne Erinnerung an
-          gestern — denn genau der übernimmt es.</p>
+          Gate, das es bestehen muss.</p>
       </li>
       <li class="a-mag">
         <h3>Die Spur steht im Dokument</h3>
         <p>Unabhängige Pakete laufen gleichzeitig, jedes in einem eigenen Arbeitsbaum
-          auf einem eigenen Zweig; zwei Bauten bearbeiten nie dieselbe Arbeitskopie.
-          Nachprüfbar statt behauptet: Die Verträge im Repository nennen Baum, Zweig und
-          Stufe in ihrem Kopf.</p>
+          auf einem eigenen Zweig.</p>
       </li>
       <li class="a-vio">
         <h3>Die Freigabe kommt vor der Nacht</h3>
-        <p>Ein unbeaufsichtigter Lauf trägt seine Freigaben schriftlich: was neu
-          gestartet werden darf, was grün bleiben muss, was er nicht anfassen darf. Erst
-          wird der Plan einmal zurückgelesen, dann bestätigt ein Mensch, dann arbeitet
-          die Maschine allein durch.</p>
+        <p>Ein unbeaufsichtigter Lauf trägt seine Freigaben schriftlich. Erst bestätigt
+          ein Mensch, dann arbeitet die Maschine allein durch.</p>
       </li>
       <li class="a-vio">
         <h3>Zweimal sauber hintereinander</h3>
-        <p>Der Abschlussblock ist eine Schleife, kein Häkchen: prüfen, durchsehen,
-          beheben, alles noch einmal prüfen — fertig ist erst nach zwei sauberen
-          Durchläufen in Folge. Ein einzelner grüner Lauf sieht genauso aus wie eine
-          Prüfung, die ihr Prüfobjekt nie erreicht hat.</p>
+        <p>Der Abschlussblock ist eine Schleife, kein Häkchen: fertig ist erst nach zwei
+          sauberen Durchläufen in Folge.</p>
       </li>
       <li class="a-cy">
         <h3>Es endet in einem Dokument</h3>
-        <p>Das Letzte, was ein Paket erzeugt, ist ein Übergabe-Blatt: gebaut, gemessen,
-          offen geblieben. Der nächste Chat startet beim Blatt. Eine Übergabe, die nur
-          im Gespräch lebt, ist mit dem Gespräch verloren.</p>
+        <p>Das Letzte, was ein Paket erzeugt, ist ein Übergabe-Blatt. Der nächste Chat
+          startet beim Blatt.</p>
       </li>
       <li class="a-cy">
         <h3>Der Überblick bleibt beim Menschen</h3>
         <p>Nach einem großen Paket verlangen die Regeln eine große Kontrollrunde über
-          alles — und davor eine systematische Ausgabe dessen, was die Systeme jetzt
-          tun. Der Überblick wird an den Teilen gelesen, nicht einer Zusammenfassung
-          geglaubt.</p>
+          alles.</p>
       </li>
     </ol>
     <p class="hinweis mt-l">Diese Website ist nach denselben Regeln
       entstanden: erst aufgeschrieben, in einem eigenen Arbeitsbaum gebaut, an einem
       Gate aus benannten Skripten gemessen — und nicht eher fertig, als bis dieses Gate
       zweimal hintereinander sauber war.</p>
-    <p class="dach mt-m">Die Arbeitspakete und Übergabe-Blätter selbst standen bis zum
-      <b>6. August 2026</b> im öffentlichen Auszug. Seither ist dort ein kuratierter Satz
-      von Dokumenten — die Beispiel-Blätter gehören nicht dazu, und der Link darauf ist
-      deshalb weg statt ins Leere zu zeigen.</p>
-    <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot/docs" rel="noopener">Die Netz-Dokumente im Repository &#8599;</a></p>
+    <p class="quellen mt-m"><a href="/method/#weg" hreflang="en">Die sechs Stationen ausführlich (englisch) &#8594;</a><span class="trenn">·</span><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot/docs" rel="noopener">Die Netz-Dokumente im Repository &#8599;</a></p>
   </div>
 </section>
 

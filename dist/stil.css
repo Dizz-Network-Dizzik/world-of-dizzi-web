@@ -619,6 +619,116 @@ address{font-style:normal;line-height:1.75}
   .methode>summary::before{content:"\2013"}
 }
 
+/* ==========================================================================
+   THE VISUAL TURN (07.08.2026) - everything the two start pages needed to
+   stop being columns of prose. One block on purpose: it was written while
+   another lane was rewriting /apps/ and /numbers/ in a second working tree,
+   and a change that sits in one place is a change that merges in one place.
+   Nothing above this line was touched.
+
+   Three components and one animation:
+     .tafel      a comparison that stopped being a paragraph
+     .fluss      three nodes and the gate between them
+     .ring-halo  the one thing on this site that breathes
+   ========================================================================== */
+
+/* --- tables --------------------------------------------------------------
+   Which figure can still be checked, and what each of the ten applications
+   does, are comparisons. Written as sentences they make the reader hold the
+   columns in their own head; a real <table> with real <th scope> hands that
+   work to the browser and to the screen reader instead. The rows carry the
+   same nine accents the tiles carried, so the colour system survives the
+   change of element.
+   The frame scrolls, never the page: two columns wrap down to 320px on their
+   own, and the overflow rule is the net under the table that will not. */
+
+.tafel-rahmen{border:1px solid var(--line);border-radius:var(--rad);
+  background:var(--flaeche);box-shadow:var(--schatten);overflow-x:auto;
+  overscroll-behavior-x:contain}
+.tafel{width:100%;border-collapse:collapse;margin:0;font-size:14.5px}
+.tafel caption{padding:15px 18px 3px;text-align:left;color:var(--tx2);font-size:13.5px}
+.tafel th,.tafel td{text-align:left;padding:12px 16px;vertical-align:top;
+  border-bottom:1px solid var(--line)}
+.tafel tbody tr:last-child :is(th,td){border-bottom:0}
+.tafel thead th{font-family:var(--display);font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--cy);
+  border-bottom:1px solid var(--line2)}
+.tafel tbody th{position:relative;padding-left:19px;font-family:var(--display);
+  font-weight:700;font-size:14.5px;color:var(--tx)}
+/* The accent is a bar, never the text. A bar is a non-text indicator and
+   clears the 3:1 that applies to it; several of the nine accents would not
+   clear the 4.5:1 that text needs. Same decision, same reason, as the
+   application sections on /apps/. */
+.tafel tbody th::before{content:"";position:absolute;left:2px;top:14px;bottom:14px;
+  width:3px;border-radius:2px;background:var(--akz,var(--cy))}
+.tafel tbody td{color:var(--tx2)}
+.tafel tbody tr{transition:background var(--ueb)}
+.tafel tbody tr:hover{background:var(--panelh)}
+.tafel .chip{margin-left:8px}
+.tafel a{text-decoration:none}
+.tafel a:hover{text-decoration:underline}
+
+/* --- flow: three nodes, and the gate between them -------------------------
+   The quoted law above it says that a person decides before anything
+   irreversible happens. This draws that sentence instead of repeating it.
+   Grid and two pseudo-elements, not an SVG, and that is the rule this whole
+   pass followed: an SVG scales its type down with its box, so a drawing that
+   reads at 1200px arrives on a 360px phone with nine-pixel labels. Text that
+   has to stay legible belongs in HTML, where it reflows. A picture with no
+   text in it belongs in an SVG.
+   Below 760px the nodes stack and the connector turns with them, so the arrow
+   never points sideways at a box that now sits underneath. */
+
+.fluss{display:grid;gap:26px;grid-template-columns:1fr;list-style:none;
+  margin:0;padding:0}
+.fluss>li{position:relative;margin:0;padding:18px;border:1px solid var(--line);
+  background:var(--flaeche);box-shadow:var(--schatten);
+  /* One corner wider than the other three, alternating along the row: the
+     smallest asymmetry that stops three boxes reading as a form. */
+  border-radius:var(--rad-l) var(--rad) var(--rad) var(--rad)}
+.fluss>li:nth-child(2n){border-radius:var(--rad) var(--rad-l) var(--rad) var(--rad)}
+.fluss .fl-t{display:flex;align-items:center;gap:10px;margin:0 0 7px;
+  font-family:var(--display);font-weight:700;font-size:15.5px;color:var(--tx)}
+.fluss .fl-t::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;
+  background:var(--akz,var(--cy));
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--akz,var(--cy)) 18%,transparent)}
+.fluss .fl-b{margin:0;font-size:14px;color:var(--tx2)}
+.fluss>li+li::before{content:"";position:absolute;left:50%;top:-21px;
+  width:1px;height:16px;background:var(--line2)}
+.fluss>li+li::after{content:"";position:absolute;left:50%;top:-8px;translate:-50% 0;
+  border:5px solid transparent;border-top-color:var(--line2);border-bottom:0}
+@media (min-width:760px){
+  .fluss{grid-template-columns:repeat(3,1fr);gap:38px}
+  .fluss>li+li::before{left:-27px;top:29px;width:18px;height:1px}
+  .fluss>li+li::after{left:-10px;top:24px;translate:0 0;
+    border:5px solid transparent;border-left-color:var(--line2);border-right:0}
+}
+
+/* --- the ring that breathes ----------------------------------------------
+   The violet ring around the core of the network diagram widens as the
+   diagram is reached. It is drawn by the reader's scroll position and not by
+   a clock, which is the rule the track and the reading bar already follow:
+   nothing on this site moves on its own, so nothing can move while a sentence
+   is being read. `transform-box:fill-box` is what makes a scale inside an SVG
+   grow from the middle of the circle rather than from the origin of the
+   drawing.
+   Its own two exits, rather than a line added to the two lists further up -
+   same reason as the block heading: this way the whole pass is one hunk.
+   Paper never scrolls and a reader who switched motion off never supplies a
+   scroll position either, so both would otherwise keep a ring frozen at
+   three-quarter size, which is a size the diagram never means. */
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .ring-halo{animation:atem linear both;animation-timeline:view();
+      animation-range:entry 12% cover 46%;
+      transform-box:fill-box;transform-origin:center}
+    @keyframes atem{from{opacity:.2;scale:.72}to{opacity:1;scale:1}}
+  }
+}
+@media (prefers-reduced-motion:reduce){.ring-halo{animation:none!important}}
+@media print{.ring-halo{animation:none!important}}
+
 /* --- utilities ----------------------------------------------------------
    Deliberately a small, closed set: the site carries no inline style
    attributes, so `style-src 'self'` needs no 'unsafe-inline' escape hatch. */
