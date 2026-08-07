@@ -22,9 +22,13 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **137,691 bytes** uncompressed — 25.9 KB markup, 79.8 KB stylesheet,
+page: **142,710 bytes** uncompressed — 26.0 KB markup, 84.6 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The newest 3,082 bytes — 2,567 of stylesheet, 515 of markup —
+server compresses. The newest 5,019 bytes are the phone polish pass: the
+stacked tables drop their desktop width floor instead of hiding a third of
+every sentence, anchors land with air above them, the menu arrives instead of
+appearing, taps get an answer, the primary button reads as the first step,
+and a back-to-top link closes every footer. The 3,082 before them — 2,567 of stylesheet, 515 of markup —
 are the small map: a second, hand-written map at `/mini-karte/` that stands in
 for the copied one on every screen under 769 pixels, and the CSS pair that
 decides which of the two a link points at. The 10,995 before them — 6,339 of

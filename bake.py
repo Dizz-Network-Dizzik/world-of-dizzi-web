@@ -238,6 +238,7 @@ T = {
         FOOT_LEGALLABEL="Legal",
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Privacy",
+        FOOT_TOP="Back to top",
         FOOT_BUILT=f'Built with a <a href="/numbers/#baecker">{BAKER_ZEILEN}-line '
                    "Python baker</a>. No cookies, no trackers, no external requests.",
     ),
@@ -255,6 +256,7 @@ T = {
         FOOT_LEGALLABEL="Rechtliches",
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Datenschutz",
+        FOOT_TOP="Nach oben",
         FOOT_BUILT=f'Gebacken von einem <a href="/numbers/#baecker">{BAKER_ZEILEN}-'
                    "Zeilen-Python-Skript</a>. Keine Cookies, keine Tracker, keine "
                    "externen Aufrufe.",
