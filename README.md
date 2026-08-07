@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **105,521 bytes** uncompressed — 20.9 KB markup, 53.4 KB stylesheet,
+page: **113,355 bytes** uncompressed — 20.9 KB markup, 61.1 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
@@ -115,6 +115,7 @@ around the core now widens as the diagram is reached, drawn by the reader's
 scroll position like the track and the reading bar, because nothing here is
 allowed to move on its own.
 
+<<<<<<< HEAD
 The most recent 8,258 bytes are the pass over `/apps/` and `/numbers/`, and
 every one of them is stylesheet again — so the start page, which uses none of
 it, still pays for it on the first load. That is what one stylesheet for the
@@ -135,6 +136,37 @@ thing a page about honest figures must not do. The ten marks say nothing about
 what is inside the machine, and they are hidden from screen readers rather than
 labelled: the row already says the name in words, and saying it twice helps
 nobody.
+=======
+The newest 7,834 bytes are the mobile pass, and like the two entries above it
+they are all stylesheet — the markup did not grow by a byte. Most of the people
+who arrive here arrive on a phone, and everything above was drawn at desk width.
+Measured at 360 pixels before any of it: the network diagram was held at 520
+pixels inside a 328-pixel column, so 192 pixels of it — three of the nine
+services — sat behind a sideways swipe that nothing announces; the ten
+applications stood in a 168/158 split, and 158 pixels is 21 characters, so every
+description of them broke over five lines; the link on an application name was a
+19-pixel touch target, on a site whose own rule raises a free-standing link on a
+touch screen to 44; and the body text was 15 pixels.
+
+The diagram needed an answer rather than a smaller copy of the old one, because
+an SVG scales its type with its box and the labels go illegible first. So below
+566 pixels — the width at which the column finally reaches the 520 the drawing
+is held at — the nine labels are hidden and the drawing is cropped to the ring
+itself, which then fills the screen. The names and the ports are not lost: they
+stand in the table directly under the figure, where they reflow, and in the
+description a screen reader is given. Two things were given up, and are named
+here rather than left to be found. The ring stops breathing on a phone — a
+scroll-driven scale inside an SVG re-renders the SVG rather than moving a layer,
+and that is a repaint per scroll frame for an ornament, on the mid-range phone
+this was written for. And below 480 pixels the two tables become stacks of
+cards, which costs them their table role: affordable in these two and nowhere
+else here, because both are two columns whose first column is the row header, a
+shape that linearises into what it already looked like. Three quarters of the
+bytes are the comments saying all of that — 6,083 of the 7,834. The pages are
+longer for it, the start page measuring 8,100 pixels at 360 instead of 7,762,
+and every line in them is now the full width of the column. At 769 pixels and
+above both start pages measure exactly what they measured before.
+>>>>>>> lane/web-mobil
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being
