@@ -820,3 +820,142 @@ address{font-style:normal;line-height:1.75}
   .leiste{font-size:12px}
   .knoepfe .knopf{width:100%;justify-content:center}
 }
+
+/* ==========================================================================
+   THE MOBILE PASS (07.08.2026) - the same components, on the screen most
+   people arrive on. The block above was drawn at desk width. One block again,
+   for its reason - another lane is rewriting /apps/ and /numbers/ next door.
+   Nothing above this line was touched, and every rule below is scoped to a
+   width or to a pointer, so the desktop is never handed one of them.
+
+   Measured at 360x640 against the built site, before any of it:
+     - the diagram is pinned at 520px inside a 328px column, so 192 pixels of
+       it - three of the nine services - sat behind a swipe nothing announces
+     - the ten applications stood in a 168/158 split, and 158 pixels is 21
+       characters, so every description of them broke over five lines
+     - the link on an application name was an 85x19 touch target, here, where
+       a free-standing link on a touch screen is 44
+     - body text was 15px, and the four headline figures spent 483 pixels of
+       column saying four numbers
+   Afterwards: the start page is 8,100 pixels tall instead of 7,762, the
+   German one 10,851 instead of 10,683. Longer, and every line full width. At
+   769px and above both measure what they measured before this block existed.
+   ========================================================================== */
+
+/* --- the diagram on a phone ----------------------------------------------
+   Below 566px the stage scrolls sideways: the drawing is pinned at 520px so
+   its labels stay readable, the column is 0.92 of the viewport, and the two
+   meet at 565.2. Hence 565, and the property it buys is exact - at no width
+   does that stage have anything left to scroll to.
+
+   The picture asserts one core, nine services on one ring around it, and a
+   line from each to the core and to no other. The labels carry none of that:
+   the names and ports stand in the table directly below, where they reflow,
+   and in the <desc> a screen reader is given. So on a phone the labels go and
+   the drawing takes the column - text that must stay legible lives in HTML,
+   a picture with no text in it lives in an SVG.
+
+   The rest is a window on the drawing, not a scale of it: laid out 145.45%
+   wide (640 over 440) and pulled left by 100 of those 440 units, framing
+   viewBox x 100..540, y 42..330. That is the nine nodes - they sit on an
+   ellipse of 404 by 240, not on the faint circle at r=120, which only the top
+   one touches. `aspect-ratio` states the window, so the numbers can be read
+   against each other rather than trusted.
+
+   The core keeps its label, and it is the one size in this file that is not a
+   size on screen: inside a viewBox, 17 units arrive as 12.7 pixels. 23 and 18
+   arrive as 17 and 13, the size the desktop drawing shows. */
+
+@media (max-width:565px){
+  .figur .buehne{overflow:hidden;aspect-ratio:440/288}
+  .figur .buehne>svg{width:145.45%;min-width:0;max-width:none;
+    margin:-9.64% 0 0 -22.73%}
+  .figur .buehne svg>g:last-of-type>text{display:none}
+  /* drawn for 0.81 scale, arriving at 0.75, where a 1-unit spoke is under a
+     pixel. Widened, not moved: the nodes stay on the ring the caption names. */
+  .figur .buehne svg>g:last-of-type>circle{stroke-width:3.5}
+  .figur .buehne svg>g:first-of-type{stroke-width:1.6}
+  .figur .buehne svg>text{transform-box:fill-box;transform-origin:center}
+  .figur .buehne svg>text:first-of-type{font-size:23px;transform:translateY(-2px)}
+  .figur .buehne svg>text:nth-of-type(2){font-size:18px;transform:translateY(6px)}
+  /* And the one thing here that breathes stops breathing. A scroll-driven
+     `scale` inside an SVG is not a layer on the compositor: it re-renders the
+     SVG, and the window above makes that SVG 45% wider than the stage showing
+     it - a repaint per scroll frame, for an ornament, on the four-gigabyte
+     phone this pass is written for. It rests at full size, which is a size the
+     diagram means, and is the exit reduced motion and print already take. */
+  .figur .buehne .ring-halo{animation:none}
+}
+
+/* --- type, and the four figures ------------------------------------------
+   15px reads at arm's length on a desk and squints in a hand, so the body
+   goes to a full rem and the four things carrying sentences follow. Chips,
+   labels and the status strip stay, for the reason at the top of this file:
+   they are shape, not text.
+   The figure tiles turn on their side. Stacked, the four headline numbers
+   needed 483 pixels of a 640-pixel screen; laid across they need 390 and
+   arrive together, which is why four numbers are set beside each other at
+   all. Not a word changes. */
+
+@media (max-width:560px){
+  body{font-size:1rem}
+  .tafel{font-size:15.5px}
+  .tafel caption,.figur figcaption{font-size:14px}
+  .zahl span{font-size:14.5px}
+  .fluss .fl-b{font-size:15px}
+  .notiz{font-size:13.5px}
+  .zahl{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;
+    align-items:center;padding:16px}
+  .zahl span{margin-top:0}
+}
+
+/* --- the two tables, as a stack ------------------------------------------
+   A two-column comparison stops being one when a column is 21 characters
+   wide. Below 480px each row becomes its own block: row header on top, the
+   sentence under it at the full width of the card. At 480 the description
+   column measures 239 pixels - 32 characters, which reads - so that is where
+   the split sits, and above it nothing changes.
+   The cost, stated rather than hidden: `display:block` takes the table role
+   with it and no CSS hands it back. It is affordable in these two tables and
+   nowhere else here, because both are two columns whose first is the row
+   header - a shape that linearises into what it already looked like. The
+   header row is hidden the way this file hides things rather than deleted, so
+   its two words survive as text for a reader who no longer gets them as
+   headers, and `scope` stays in the markup for any browser keeping the roles.
+   The `::before` label technique was the alternative, and wanted `data-`
+   attributes on sixty cells to repeat two words the caption already says. */
+
+@media (max-width:479px){
+  .tafel,.tafel tbody,.tafel tbody tr,.tafel tbody th,.tafel tbody td{display:block}
+  .tafel thead{position:absolute;width:1px;height:1px;overflow:hidden;
+    clip-path:inset(50%)}
+  .tafel caption{padding:15px 16px 11px}
+  .tafel tbody tr{padding:12px 16px 14px;border-bottom:1px solid var(--line)}
+  .tafel tbody tr:last-child{border-bottom:0}
+  .tafel tbody th,.tafel tbody td{padding:0;border-bottom:0}
+  .tafel tbody th{padding-left:15px}
+  /* the accent bar was inset 14px against a cell two lines tall; against a
+     row header one line tall that leaves a bar with no height */
+  .tafel tbody th::before{top:.2em;bottom:.2em}
+}
+
+/* --- touch ---------------------------------------------------------------
+   The ten application names became links in the pass above and arrived as
+   19-pixel targets. The rule further up - a free-standing link on a touch
+   screen is 44, stricter than the 24 WCAG 2.2 asks - lists the ones it
+   raised; this is the eleventh, at the width the rest of them use. The proof
+   arrow inside a sentence stays exempt, for the reason given there.
+
+   A finger has no hover, but a browser hands a tap to `:hover` and leaves it
+   there. Two states here are strong enough to read afterwards as a selection:
+   a lit table row and a lifted tile. Both answer a pointer that is not
+   present, and both repaint a card-sized box to say nothing.
+   `:focus-visible` keeps the lift, because a keyboard does mean it. */
+
+@media (max-width:768px){
+  .tafel tbody th a{display:inline-flex;align-items:center;min-height:44px}
+}
+@media (hover:none){
+  .tafel tbody tr:hover{background:none}
+  .kachel:hover{translate:none;box-shadow:var(--schatten)}
+}

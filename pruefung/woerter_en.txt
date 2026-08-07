@@ -47,6 +47,7 @@ administration
 adopted
 advance
 advantage
+affordable
 after
 afterthought
 again
@@ -183,6 +184,7 @@ block
 blocks
 blunt
 blunter
+body
 booked
 books
 border
@@ -200,6 +202,7 @@ branch
 break
 breakdown
 breaks
+breathing
 bridges
 brief
 briefing
@@ -263,6 +266,7 @@ changes
 channels
 chapter
 character
+characters
 cheaper
 check
 checkable
@@ -299,6 +303,7 @@ collapses
 collects
 colour
 colours
+column
 columns
 come
 comm
@@ -366,6 +371,7 @@ covering
 credential
 creep
 critical
+cropped
 cross
 csp
 curated
@@ -425,6 +431,7 @@ descriptions
 deserves
 design
 designed
+desk
 detection
 deterministic
 diagnosis
@@ -592,6 +599,7 @@ files
 filing
 fills
 final
+finally
 finance
 find
 finding
@@ -636,6 +644,7 @@ foundations
 four
 fragment
 fragments
+frame
 francisco
 free
 fresh
@@ -755,6 +764,7 @@ idea
 identical
 identity
 if
+illegible
 image
 implement
 implementation
@@ -879,6 +889,7 @@ like
 limit
 limits
 line
+linearises
 link
 linked
 list
@@ -1014,6 +1025,7 @@ neither
 network
 never
 new
+newest
 next
 night
 nights
@@ -1161,6 +1173,7 @@ pointing
 points
 policy
 polish
+ports
 position
 possible
 post
@@ -1242,6 +1255,7 @@ quotes
 racing
 rail
 raised
+raises
 ran
 range
 rank
@@ -1252,6 +1266,7 @@ re
 reach
 reachable
 reached
+reaches
 read
 readable
 reader
@@ -1306,6 +1321,8 @@ rename
 renamed
 renaming
 render
+renders
+repaint
 repair
 repeat
 repeated
@@ -1357,6 +1374,7 @@ riskiest
 risks
 risky
 roadmap
+role
 room
 rooms
 rotation
@@ -1448,6 +1466,7 @@ shown
 shows
 side
 sides
+sideways
 sign
 sil
 simply
@@ -1488,7 +1507,9 @@ specifies
 speed
 spent
 spin
+split
 sqlite
+stacks
 stake
 stale
 stand
@@ -1556,6 +1577,7 @@ suspends
 svg
 swap
 swappable
+swipe
 switchable
 switched
 sync
@@ -1563,6 +1585,7 @@ systematic
 systems
 tab
 table
+tables
 take
 taken
 takes
@@ -1794,11 +1817,13 @@ your
 yourself
 zero
 
+
 # --- Kompositum-Bestandteile ----------------------------------------------
 # Der Tokenizer trennt an Bindestrichen, damit 'local-first' als zwei echte
 # Woerter geprueft wird. Dabei entstehen Bestandteile, die fuer sich allein
 # kein Wort sind. Sie stehen hier unter eigener Ueberschrift, weil sie NICHT
 # aus dem validierten Wortschatz stammen, sondern aus der Arbeitsweise des
 # Werkzeugs - wer die Liste liest, soll den Unterschied sehen.
+mid        # aus 'mid-range'
 non        # aus 'non-blank lines'
 offs       # aus 'trade-offs'
