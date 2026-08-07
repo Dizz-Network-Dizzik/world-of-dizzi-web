@@ -64,7 +64,9 @@ water
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 08.08.2026 nachts, 1885 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 08.08.2026 nachts, 1920 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Nachgezaehlt mit der Marker-Wache: die Zeile stand auf 1885, die Liste trug
+# damals schon 1900 - genau das Stillveralten, das der naechste Absatz benennt.
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -1927,6 +1929,32 @@ you’re
 your
 yourself
 zero
+
+# Neu am 08.08.2026 nachts mit der Marker-Wache: der README-Absatz zu
+# check_merge_marker. Zwanzig Woerter, jedes einzeln gegengelesen. 'enrol' ist
+# die britische Schreibung, die dieses Haus durchgaengig fuehrt (colours,
+# labelled). 'git' faellt hier erstmals an, weil der Absatz den Werkzeugnamen
+# als Prosa setzt und nicht in Backticks - der Tokenizer sieht Code nicht.
+aimed
+conflict
+correct
+derived
+divider
+enrol
+equals
+git
+hide
+indistinguishable
+longest
+marker
+markers
+nested
+quoting
+refusal
+signs
+underlines
+unmistakable
+vocabulary
 
 
 # --- Kompositum-Bestandteile ----------------------------------------------

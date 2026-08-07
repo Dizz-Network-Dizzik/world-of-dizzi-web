@@ -19,7 +19,9 @@ without anybody noticing; both of these already did once. The same run also
 holds the hand-written small map, seiten/mini-karte.html, against the copied
 system map it stands in for on a phone - see check_mini_karte(). And it holds
 every page it has just built against the rules for in-app browsers - the
-WebViews inside Instagram and its kind - see check_webview().
+WebViews inside Instagram and its kind - see check_webview(). And it refuses
+any half-merged text: a git conflict marker in a source, in a word list, in the
+README or in a page just built stops the build - see check_merge_marker().
 """
 
 from __future__ import annotations
@@ -902,6 +904,126 @@ def check_webview(tree: dict[str, bytes]) -> list[str]:
     return webview_wache.faults_fuer_bake(ROOT, tree)
 
 
+# --------------------------------------------------------------------------
+# the merge-marker watch: nothing half-merged leaves this repository
+# --------------------------------------------------------------------------
+# On the night of 07.08.2026 two nested conflict blocks from a phone-side merge
+# stood committed and PUSHED in README.md, in the middle of a paragraph anybody
+# could read on GitHub. A lane reading the chronicle for its stories found
+# them. No gate did, and there were six.
+#
+# Why none of them did is the part worth writing down, because it is the shape
+# of the hole rather than the accident: every check in this repository reads
+# content. check_links and check_external judge the built pages, pruefen.py
+# judges dist/, proofread.py reads the baked prose, kontrast.py reads the
+# colours, webview_wache.py reads the markup and the stylesheet. README.md is
+# built into nothing, so not one of them ever opened it. The markers sat in the
+# one file no content gate reads.
+#
+# So this watch is not aimed at a place. It is aimed at a class of text, and it
+# reads on both levels that class can reach:
+#
+#   the baked tree   what a reader gets, judged in memory before a byte reaches
+#                    dist/ - a marker that survives into a page is this failure
+#                    in its published form.
+#   the sources      where a merge actually lands. git writes its markers into
+#                    the working tree: seiten/, vorlagen/, statisch/, and the
+#                    files beside them that nothing builds - README.md, the word
+#                    lists under pruefung/, this file. A conflict in a word list
+#                    would be the quietest of all: proofread.py reads those
+#                    lists as vocabulary, so the three marker lines would enrol
+#                    as three more legal words and the gate would stay green.
+#
+# What is read on disk is DERIVED, never listed. A list of places to look is
+# how the last one got through - README.md was on nobody's list - and it would
+# need extending by whoever adds the next kind of file, which is the same
+# failure again under a different name. The walk therefore takes the whole
+# repository and names only what it skips:
+#
+#   .git/            git's own storage, which holds conflicted blobs by design
+#   __pycache__/     compiled copies of sources that are read anyway
+#   dist/            the tree in file form. A plain bake writes it from the very
+#                    tree judged above; --check proves it equal to that tree in
+#                    compare(). Walking it too would only double every fault.
+#   statisch/karte/  the mirror of another repository. Unlike the WebView rules
+#                    it is NOT waived here - a marker in it would be published
+#                    like any other, and the fix is to copy the mirror again -
+#                    but it is judged as part of the tree, and naming the same
+#                    bytes twice helps nobody.
+#
+# Anything that does not decode as UTF-8 is skipped, and that is a derivation
+# rather than a guess: git does not write conflict markers into a file it
+# treats as binary, it keeps one side of it whole.
+#
+# This file is read like every other one. The marker forms below stand in it as
+# string literals, indented, in the middle of a line - which is the whole
+# difference between naming a marker and being one.
+
+# Three of the four lines git writes mean nothing else in any file here. The
+# fourth does: in Markdown a row of equals signs underlines a heading, and
+# README.md is Markdown - a bare one is a Setext rule, not a fault. It is
+# therefore counted only where the same file also carries one of the three
+# unambiguous markers. That pair rule costs nothing, because git never writes
+# the divider alone: it stands between two sides whose ends are unmistakable.
+# And a watch that fired on a lone one would be red on a correct tree, which is
+# how a gate gets switched off within a week.
+#
+# Seven characters exactly, then a space or the end of the line. git puts a
+# label after the space ("HEAD", a branch name); requiring the space alone would
+# miss the labelless form other merge tools write, and eight of the same
+# character is somebody's divider rather than a marker.
+MARKER_RE = re.compile(r"^(?:<{7}|\|{7}|>{7})(?= |$)")
+MARKER_MITTE = "======="
+NICHT_GELESEN = {".git", "__pycache__", "dist"}
+
+
+def marker_funde(name: str, text: str) -> list[str]:
+    """Every conflict marker in one file as "name:line: what". The pair rule is
+    applied here, per file, because a file is the scope git writes a block in."""
+    eindeutig, teiler = [], []
+    for n, z in enumerate(text.splitlines(), 1):
+        if MARKER_RE.match(z):
+            eindeutig.append(f"{name}:{n}: git conflict marker - a merge was "
+                             f"never finished: {z.strip()[:60]}")
+        elif z.rstrip() == MARKER_MITTE:
+            teiler.append(f"{name}:{n}: the {MARKER_MITTE} divider of a conflict "
+                          "block, in a file that carries a marker")
+    return eindeutig + (teiler if eindeutig else [])
+
+
+def merge_marker_quellen(ordner: Path | None = None) -> list[tuple[str, str]]:
+    quellen: list[tuple[str, str]] = []
+    for pfad in sorted((ordner or ROOT).iterdir()):
+        rel = pfad.relative_to(ROOT)
+        if pfad.is_dir():
+            if rel.name in NICHT_GELESEN or rel.as_posix() == "statisch/karte":
+                continue
+            quellen += merge_marker_quellen(pfad)
+        elif pfad.is_file():
+            try:
+                quellen.append((rel.as_posix(), pfad.read_text(encoding="utf-8")))
+            except (UnicodeDecodeError, OSError):
+                continue      # not text: git keeps a binary file whole instead
+    return quellen
+
+
+def check_merge_marker(tree: dict[str, bytes]) -> list[str]:
+    quellen = merge_marker_quellen()
+    if len(quellen) < 30:
+        # A watch that reads nothing reports exactly what a clean tree reports.
+        return [f"the merge-marker watch read only {len(quellen)} text file(s) "
+                "under the repository root - it cannot have seen the sources"]
+    faults = []
+    for name, text in quellen:
+        faults += marker_funde(name, text)
+    for rel in sorted(tree):
+        try:
+            faults += marker_funde(f"dist/{rel}", tree[rel].decode("utf-8"))
+        except UnicodeDecodeError:
+            continue
+    return faults
+
+
 def compare(tree: dict[str, bytes]) -> list[str]:
     faults = []
     on_disk = {
@@ -934,7 +1056,7 @@ def main(argv: list[str]) -> int:
     tree = build()
 
     faults = (check_links(tree) + check_external(tree) + check_snapshot_links(tree)
-              + check_mini_karte() + check_webview(tree))
+              + check_mini_karte() + check_webview(tree) + check_merge_marker(tree))
     if check_only:
         faults += compare(tree) + check_readme(tree)
 

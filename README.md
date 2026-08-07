@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,298 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
+page: **143,299 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The newest 588 bytes are a removal wearing its explanation:
 the cross-document view transition is gone, because inside in-app browsers its
@@ -312,6 +312,26 @@ it has just built, so it runs on every build — a rule that only runs when
 somebody remembers it is the rule that was missing the first time. What it
 cannot do is open Instagram: a rendering fault in one app on one phone is found
 by a thumb, and this one was.
+
+The newest watch is not a script but a refusal, and it lives in `bake.py` as
+`check_merge_marker`. On the night of 7 August 2026 two nested conflict blocks
+from a merge stood committed and published **in this file**, in the middle of a
+paragraph — and all six gates were green, because all six read content and this
+file is built into nothing. So the watch is aimed at a class of text rather
+than at a place: the seven-character lines git leaves behind when it cannot
+merge, in the pages just built *and* in every text file of the working tree.
+What it reads on disk is derived rather than listed — the whole repository,
+naming only what it skips, since a list of places to look is precisely how the
+last one got through. The divider line of a conflict block, seven equals signs,
+is also how Markdown underlines a heading, so it counts only where the same
+file carries one of the unmistakable markers too: a gate that goes red on a
+correct file is switched off within a week. For the same reason this paragraph
+names those markers in words instead of quoting them — the watch reads this
+file like any other, and a quotation that drifted to the start of a line would
+be indistinguishable from the thing it quotes. The one word list a conflict
+could hide in longest is `pruefung/woerter_*.txt`: `proofread.py` reads those
+as vocabulary, so three marker lines would enrol as three more legal words and
+nothing would ever say so.
 
 Seven checks need a browser and are therefore manual: Lighthouse on mobile, axe
 or pa11y, a keyboard-only walk-through, the 320-pixel reflow, the airplane-mode
