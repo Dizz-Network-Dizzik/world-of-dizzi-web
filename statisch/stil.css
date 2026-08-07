@@ -592,12 +592,19 @@ address{font-style:normal;line-height:1.75}
     @keyframes halt{from{opacity:.22;scale:.5}to{opacity:1;scale:1}}
   }
 }
-@view-transition{navigation:auto}
+/* No cross-document view transitions - REMOVED 08.08.2026, and deliberately so.
+   `@view-transition{navigation:auto}` made every link click snapshot the old
+   page and blend to the new one. Inside in-app browsers (Instagram and its
+   kind render this site inside a WebView) that snapshot path is exactly where
+   the engine freezes: the old frame stays up, the new page never paints, and
+   to the reader the site "hangs when a link is tapped" - observed live from
+   Instagram on 08.08.2026. A page that reliably NAVIGATES beats a page that
+   beautifully transitions, in every browser this site cannot choose. The
+   in-page animations are unaffected; they never block navigation.           */
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;
     transition-duration:1ms!important;scroll-behavior:auto!important}
-  ::view-transition-old(*),::view-transition-new(*){animation:none!important}
   /* A full exit, not a fast version of the same thing: the animations are
      removed outright, so nothing ever starts at opacity 0 and nothing can be
      caught mid-flight. The reading bar goes with them - the browser's own

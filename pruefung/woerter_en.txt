@@ -8,6 +8,18 @@ offs       # aus 'trade-offs'
 non        # aus 'non-blank lines'
 mobil
 offs       # aus 'trade-offs'
+beats      # README-Absatz zum View-Transition-Fix (08.08. nachts), alle zwölf gegengelesen
+beautifully
+browsers
+explanation
+froze
+navigates
+reliably
+removal
+tap
+transition
+transitions
+wearing
 air        # README-Absatz zum Phone-Polish (07.08. nachts), alle sieben gegengelesen
 appearing
 closes
@@ -37,7 +49,7 @@ water
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 08.08.2026 nachts, 1873 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 08.08.2026 nachts, 1885 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
