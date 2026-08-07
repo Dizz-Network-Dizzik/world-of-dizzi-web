@@ -1,4 +1,9 @@
 # woerter_en.txt - validierter Wortschatz dieser Website.
+offs       # aus 'trade-offs'
+non        # aus 'non-blank lines'
+mobil
+offs       # aus 'trade-offs'
+# woerter_en.txt - validierter Wortschatz dieser Website.
 #
 # Kein heruntergeladenes Woerterbuch: jedes Wort steht hier, weil es auf einer
 # dieser Seiten vorkommt UND ein unabhaengiger Leser mit frischem Kontext es
@@ -10,7 +15,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 1828 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 1850 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.
@@ -492,6 +497,7 @@ doing
 done
 dormant
 dot
+double     # aus 'double-entry ledger'
 doubt
 down
 downloaded
@@ -1759,6 +1765,7 @@ unknown
 unlinked
 unmeasured
 unnoticed
+unterseiten
 until
 up
 update

@@ -10,7 +10,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 988 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 999 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 
 ab
 abende
@@ -161,6 +161,7 @@ betrieb
 betrieben
 betriebenen
 betriebssystemkennung
+bevor      # aus dem Zitat Gesetz 11
 bewerten
 bewertungen
 bewusst
@@ -320,6 +321,7 @@ erkennung
 erklärung
 erlaubt
 erledigen
+erneut     # aus 'am 27. Juli erneut gelesen'
 erreicht
 erscheint
 ersetzt
@@ -372,10 +374,13 @@ gegen
 gegenüber
 geglaubt
 gegründet
+gehandelt  # aus dem Zitat Gesetz 11
 geheim
 gehostet
 gehostete
 gehören
+geht
+gekürzt    # Beleg-Vermerk am Zitat
 geladen
 geld
 geldgeber
@@ -527,6 +532,7 @@ klick
 klicken
 kluge
 knoten
+kollisionen # aus dem Zitat Gesetz 11
 kommandozentrale
 kommission
 kommt
@@ -548,6 +554,7 @@ kuratierter
 kurz
 können
 könnten
+lage       # aus dem Zitat Gesetz 11
 lassen
 lauf
 laufen
@@ -616,6 +623,7 @@ nachprüfen
 nachricht
 nachrichten
 nacht
+nachzählbar # aus 'jederzeit nachzählbar'
 naiv
 name
 natürlichen
@@ -758,6 +766,7 @@ sitzt
 skalierung
 skript
 skripten
+skripts    # aus 'des Bau-Skripts'
 sobald
 sodass
 software
@@ -957,6 +966,7 @@ zeigen
 zeigt
 zeile
 zeilen
+zeilenzahl # aus 'die Zeilenzahl des Bau-Skripts'
 zeitpunkt
 ziel
 zimmer
@@ -993,6 +1003,7 @@ züge
 über
 überall
 überblick
+überdenken # aus dem Zitat Gesetz 11
 übergabe
 überhaupt
 übermitteln

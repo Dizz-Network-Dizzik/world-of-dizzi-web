@@ -25,19 +25,19 @@
 
       <li class="mess a-cy" id="apps">
         <p class="mess-kopf"><b class="mess-wert">10</b>
-          <span class="mess-was">applications — the Core and nine around it</span></p>
+          <span class="mess-was">applications — the core and nine around it</span></p>
         <p class="mess-stand"><span class="chip gut">can be checked</span></p>
         <details class="methode">
           <summary>How it was counted</summary>
           <div class="methode-inhalt">
-            <p>The ten are one row each in the extract's README: admin,
+            <p>The ten are one row each in the extract’s README: admin,
               communication, core, creating, healthy, management, memory, money, news,
-              trading. Counting the Core as one of the ten is a choice, not a
+              trading. Counting the core as one of the ten is a choice, not a
               measurement — the same set is described as nine applications around a
               headless core wherever that relation is the point.</p>
             <p>Until 6 August 2026 the count had a second, blunter method: directories
               under <code>apps/</code>. Nine of them survive the curation with their
-              README; the trading fleet's papers were taken out entirely, so counting
+              README; the trading fleet’s papers were taken out entirely, so counting
               folders now lands at nine and the table is the method that still holds.</p>
             <p class="quellen"><a href="{{ORDNER}}/apps" rel="noopener">apps/ in the repository &#8599;</a></p>
           </div>
@@ -58,18 +58,18 @@
           <summary>How it was counted, and what it replaced</summary>
           <div class="methode-inhalt">
             <p><code>git ls-files</code> in the published folder: <b>38</b> Markdown
-              documents. Twenty-eight are the network's own — the laws, the vision, the
+              documents. Twenty-eight are the network’s own — the laws, the vision, the
               architecture papers and the written contracts — and nine are one README
-              per application; the last is the folder's own README. This figure is
+              per application; the last is the folder’s own README. This figure is
               current and can be reproduced by anyone in one command.</p>
             <p>It replaces a different figure. From 23 July to <b>6 August 2026</b> the
               same folder held <b>966 tracked files</b>: the whole code extract, one
               curated commit. That was cut back deliberately. What went, went for
               reasons that are worth naming rather than hiding — the shared libraries
               and the security concept, because a map of what is not yet hardened helps
-              exactly one kind of reader; the trading fleet's papers, because sizing
+              exactly one kind of reader; the trading fleet’s papers, because sizing
               rules and decision mechanics of something that moves real money do not
-              belong on an open page; every application's implementation, because
+              belong on an open page; every application’s implementation, because
               showing the method does not require shipping the machine.</p>
             <p><b>Nothing was published to make this number look better.</b> The folder
               only lost files, never gained any, and every document still in it stood
@@ -108,7 +108,7 @@
 
       <li class="mess a-coral" id="tests">
         <p class="mess-kopf"><b class="mess-wert">2,667</b>
-          <span class="mess-was">test functions, in 309 files</span></p>
+          <span class="mess-was">test functions in 309 files</span></p>
         <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
         <details class="methode">
           <summary>How it was counted, and why you can no longer repeat it</summary>
@@ -136,7 +136,7 @@
         <details class="methode">
           <summary>How it was counted, and why it counts itself</summary>
           <div class="methode-inhalt">
-            <p>The physical line count of <code>bake.py</code>, in this website's own
+            <p>The physical line count of <code>bake.py</code>, in this website’s own
               repository. Of those lines, {{BAKERCODE}} carry a non-whitespace
               character. The footer of every page names this figure, so it belongs here
               with its method like the rest.</p>
@@ -154,7 +154,7 @@
               figure can no longer go stale without the check saying so. And the footer
               figure is now a link to this entry, which carries the source link that was
               missing.</p>
-            <p class="quellen"><a href="{{SELBST}}/blob/main/bake.py" rel="noopener"><code>bake.py</code> in this website's own repository &#8599;</a></p>
+            <p class="quellen"><a href="{{SELBST}}/blob/main/bake.py" rel="noopener"><code>bake.py</code> in this website’s own repository &#8599;</a></p>
           </div>
         </details>
       </li>
@@ -245,7 +245,7 @@
             <p>That part was visible in the code extract until 6 August 2026; what
               remains public is the contract that requires it.</p>
             <p>There is a written export
-              contract that specifies how one application, plus the Core and the parts of
+              contract that specifies how one application, plus the core and the parts of
               the shared libraries it actually uses, becomes a self-contained bundle. That
               contract has design, stubs and contract tests.</p>
           </div>
@@ -301,25 +301,30 @@
   <div class="wrap" lang="de">
     <p class="kicker">Auf Deutsch</p>
     <h2>Die Zahlen in einem Absatz</h2>
-    <p class="dach">Vier der sechs Zahlen wurden am 26. Juli 2026 anhand des
-      öffentlichen Code-Auszugs vom 23. Juli 2026 gemessen — dazu zwei aus anderen
-      Quellen. Die Zählweise steht oben bei jeder Zahl einzeln, auf Englisch.</p>
+    <p class="dach">Zwei der sechs Zahlen – die Python-Zeilen und die Test-Funktionen –
+      wurden am 26. Juli 2026 anhand des öffentlichen Code-Auszugs vom 23. Juli 2026
+      gemessen und am 27. Juli erneut gelesen. Die anderen vier stammen aus eigenen
+      Quellen: die Zahl der Anwendungen aus der Tabelle im README des Auszugs, die 38
+      Dokumente aus dem veröffentlichten Ordner (jederzeit nachzählbar), die Zeilenzahl
+      des Bau-Skripts beim Bauen selbst, die Commits am 26. Juli aus dem privaten
+      Arbeits-Repository. Die Zählweise steht oben bei jeder Zahl einzeln, auf
+      Englisch.</p>
     <ul class="liste lang">
       <li><b>10 Anwendungen</b> (Core + 9).</li>
-      <li><b>966</b> versionierte Dateien in einem einzigen kuratierten Commit —
+      <li><b>966</b> versionierte Dateien in einem einzigen kuratierten Commit –
         <b>dieser Code-Auszug wurde am 6. August 2026 zurückgezogen</b>; veröffentlicht
         ist seither ein kuratierter Satz von <b>38 Dokumenten</b>, die <b>966</b> ist
         durch die <b>38</b> ersetzt.</li>
       <li><b>~100.000 Zeilen Python</b> in <b>632</b> Dateien, genau: 100.234 Zeilen mit
-        sichtbarem Inhalt — von außen nicht mehr nachprüfbar, steht nur noch mit Datum
+        sichtbarem Inhalt – von außen nicht mehr nachprüfbar, steht nur noch mit Datum
         da.</li>
-      <li><b>2.667 Test-Funktionen</b> in <b>309</b> Dateien — gezählt, nicht ausgeführt,
+      <li><b>2.667 Test-Funktionen</b> in <b>309</b> Dateien – gezählt, nicht ausgeführt,
         also geschriebene Tests, keine bestandenen; auch nicht mehr nachprüfbar.</li>
-      <li><b>{{BAKERZEILEN}} Zeilen</b> im Skript, das diese Website baut — beim Bauen
+      <li><b>{{BAKERZEILEN}} Zeilen</b> im Skript, das diese Website baut – beim Bauen
         selbst gezählt, im
         <a href="{{SELBST}}/blob/main/bake.py" rel="noopener">Repository dieser Website</a>.</li>
       <li><b>2.600+ Commits</b> im privaten Arbeits-Repository hinter diesem Auszug: die
-        einzige Zahl hier, die Sie nicht nachprüfen können — Sie haben dafür nur mein
+        einzige Zahl hier, die Sie nicht nachprüfen können – Sie haben dafür nur mein
         Wort, und deshalb steht sie als Untergrenze da.</li>
     </ul>
     <p class="quellen"><a href="/de/">Zur deutschen Einstiegsseite &#8594;</a></p>
