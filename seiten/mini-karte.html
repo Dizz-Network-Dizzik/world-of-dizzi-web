@@ -1,0 +1,185 @@
+<!-- The small map. /karte/ is one self-contained page of 181,002 bytes, drawn
+     for a desktop screen; on a phone it has never worked. This page is what a
+     narrow screen gets instead: 15,206 bytes of markup, a twelfth of it, which
+     is why the lede may say "a tenth of the load" and still understate the
+     saving. bake.py's check_mini_karte() holds the two together on every build,
+     so the small one cannot quietly fall behind the large one. Nothing here is
+     generated - it is written by hand, which is exactly why it needs a check. -->
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">Die Karte, klein</p>
+    <h1>Das System auf einen Blick</h1>
+    <p class="lede">Die große Systemkarte, destilliert für die Hand — dieselbe
+      Wahrheit, ein Zehntel der Last.</p>
+    <div class="knoepfe">
+      <a class="knopf prim" href="/karte/">Die große Karte in voller Tiefe <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Der Netz-Ring</p>
+    <h2>Ein Core, neun Anwendungen um ihn herum</h2>
+
+    <figure class="figur mt-l">
+      <div class="buehne">
+      <svg viewBox="0 0 640 380" role="img" aria-labelledby="ring-t ring-d" width="640" height="380">
+        <title id="ring-t">Das Netz auf einen Blick</title>
+        <desc id="ring-d">Der Dizzi-Core auf Port 8200 sitzt in der Mitte. Neun
+          Anwendungen sitzen auf einem Ring um ihn herum: Money 8210, Communication
+          8218, Creating 8214, Memory 8212, Management 8213, News 8216, Healthy 8217,
+          Admin 8222 und Trading 8137. Jede ist mit dem Core verbunden, nicht mit den
+          anderen.</desc>
+        <circle cx="320" cy="190" r="120" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"></circle>
+        <g stroke="rgba(255,255,255,.16)" stroke-width="1" fill="none">
+          <path d="M320 190 Q336 130 320 70"></path>
+          <path d="M320 190 Q395 157 451.8 98.1"></path>
+          <path d="M320 190 Q423 196 521.9 169.2"></path>
+          <path d="M320 190 Q404 235 497.5 250"></path>
+          <path d="M320 190 Q342 255 390.1 302.8"></path>
+          <path d="M320 190 Q271 238 249.9 302.8"></path>
+          <path d="M320 190 Q226 205 142.5 250"></path>
+          <path d="M320 190 Q221 164 118.1 169.2"></path>
+          <path d="M320 190 Q263 131 188.2 98.1"></path>
+        </g>
+        <circle cx="320" cy="190" r="62" fill="#111726" stroke="#8b6cff" stroke-width="1.5"></circle>
+        <circle class="ring-halo" cx="320" cy="190" r="76" fill="none" stroke="rgba(139,108,255,.28)" stroke-width="1"></circle>
+        <text x="320" y="185" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="17" font-weight="700" fill="#e8ebf2">Core</text>
+        <text x="320" y="205" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#9aa4b6">:8200</text>
+
+        <g font-family="ui-monospace, monospace" font-size="12.5" fill="#9aa4b6">
+          <circle cx="320" cy="70" r="7" fill="#080b12" stroke="#f5b942" stroke-width="2"></circle>
+          <text x="320" y="52" text-anchor="middle" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Money</text>
+          <text x="320" y="94" text-anchor="middle">:8210</text>
+
+          <circle cx="451.8" cy="98.1" r="7" fill="#080b12" stroke="#38bdf8" stroke-width="2"></circle>
+          <text x="468" y="94" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Comm.</text>
+          <text x="468" y="110">:8218</text>
+
+          <circle cx="521.9" cy="169.2" r="7" fill="#080b12" stroke="#ff3ea5" stroke-width="2"></circle>
+          <text x="538" y="165" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Creating</text>
+          <text x="538" y="181">:8214</text>
+
+          <circle cx="497.5" cy="250" r="7" fill="#080b12" stroke="#2ee6d6" stroke-width="2"></circle>
+          <text x="514" y="246" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Memory</text>
+          <text x="514" y="262">:8212</text>
+
+          <circle cx="390.1" cy="302.8" r="7" fill="#080b12" stroke="#8b6cff" stroke-width="2"></circle>
+          <text x="406" y="299" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Mgmt</text>
+          <text x="406" y="315">:8213</text>
+
+          <circle cx="249.9" cy="302.8" r="7" fill="#080b12" stroke="#fb923c" stroke-width="2"></circle>
+          <text x="234" y="299" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">News</text>
+          <text x="234" y="315" text-anchor="end">:8216</text>
+
+          <circle cx="142.5" cy="250" r="7" fill="#080b12" stroke="#36d399" stroke-width="2"></circle>
+          <text x="126" y="246" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Healthy</text>
+          <text x="126" y="262" text-anchor="end">:8217</text>
+
+          <circle cx="118.1" cy="169.2" r="7" fill="#080b12" stroke="#9aa4b6" stroke-width="2"></circle>
+          <text x="102" y="165" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Admin</text>
+          <text x="102" y="181" text-anchor="end">:8222</text>
+
+          <circle cx="188.2" cy="98.1" r="7" fill="#080b12" stroke="#f2645a" stroke-width="2"></circle>
+          <text x="172" y="94" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Trading</text>
+          <text x="172" y="110" text-anchor="end">:8137</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>Neun Anwendungen auf einem Ring um einen Core. Der Ring lässt sich
+        seitwärts schieben.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Die Schichten</p>
+    <h2>Von oben nach unten gelesen</h2>
+    <p class="dach klein">Jede Schicht darf nur, was die Schicht über ihr erlaubt.
+      Das ist die ganze Ordnung des Hauses.</p>
+
+    <figure class="figur-klein mt-l">
+      <svg class="schichten" viewBox="0 0 320 412" role="img" aria-labelledby="schichten-t schichten-d">
+        <title id="schichten-t">Die fünf Schichten des Netzes</title>
+        <desc id="schichten-d">Fünf Ebenen, von oben nach unten mit Pfeilen
+          verbunden. Erstens David, sein Wort ist Gesetz. Zweitens die Gesetze und
+          Tore, das geschriebene Recht des Hauses. Drittens der Dizzi-Core auf Port
+          8200, der orchestriert und nie von sich aus nach außen schreibt. Viertens
+          die neun Anwendungen, jede mit eigenem Port, eigenen Daten und eigener
+          Oberfläche. Fünftens die gemeinsame Basis aus appkit und ui-kit, mit allen
+          Daten lokal.</desc>
+
+        <g fill="#111726">
+          <rect x="6" y="10" width="308" height="62" rx="10" stroke="#8b6cff" stroke-width="1.5"></rect>
+          <rect x="6" y="92" width="308" height="62" rx="10" stroke="#ff3ea5" stroke-width="1.5"></rect>
+          <rect x="6" y="174" width="308" height="62" rx="10" stroke="#2ee6d6" stroke-width="1.5"></rect>
+          <rect x="6" y="256" width="308" height="62" rx="10" stroke="#38bdf8" stroke-width="1.5"></rect>
+          <rect x="6" y="338" width="308" height="62" rx="10" stroke="#9aa4b6" stroke-width="1.5"></rect>
+        </g>
+
+        <g stroke="#9aa4b6" stroke-width="2" fill="#9aa4b6">
+          <path d="M160 74 L160 84"></path>
+          <path d="M154 84 L166 84 L160 91 Z" stroke="none"></path>
+          <path d="M160 156 L160 166"></path>
+          <path d="M154 166 L166 166 L160 173 Z" stroke="none"></path>
+          <path d="M160 238 L160 248"></path>
+          <path d="M154 248 L166 248 L160 255 Z" stroke="none"></path>
+          <path d="M160 320 L160 330"></path>
+          <path d="M154 330 L166 330 L160 337 Z" stroke="none"></path>
+        </g>
+
+        <g font-family="Orbitron, sans-serif" font-size="14" font-weight="700" fill="#e8ebf2">
+          <text x="20" y="36">David</text>
+          <text x="20" y="118">Gesetze + Tore</text>
+          <text x="20" y="200">Dizzi-Core :8200</text>
+          <text x="20" y="282">Neun Anwendungen</text>
+          <text x="20" y="364">Gemeinsame Basis</text>
+        </g>
+        <g font-size="12" fill="#9aa4b6">
+          <text x="20" y="56">Sein Wort ist Gesetz</text>
+          <text x="20" y="138">Das geschriebene Recht des Hauses</text>
+          <text x="20" y="220">Orchestriert, schreibt nie nach außen</text>
+          <text x="20" y="302">Eigener Port, eigene Daten, eigene UI</text>
+          <text x="20" y="384">appkit + ui-kit &#183; alle Daten lokal</text>
+        </g>
+      </svg>
+      <figcaption>Fünf Schichten. Der Pfeil zeigt, wer wem antwortet.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Die Zehn</p>
+    <h2>Jede auf ihrem eigenen Port</h2>
+    <ul class="bento mt-m">
+      <li><a class="a-vio kachel" href="/apps/#core" hreflang="en"><span class="kn">Dizzi-Core <span class="chip">:8200</span></span><span class="kt">Orchestriert, Panel-Registry, MCP-Hub.</span></a></li>
+      <li><a class="a-amber kachel" href="/apps/#money" hreflang="en"><span class="kn">Dizz Money <span class="chip">:8210</span></span><span class="kt">Finanzen, Ledger-Kern, Steuer-Übermittlung.</span></a></li>
+      <li><a class="a-blue kachel" href="/apps/#communication" hreflang="en"><span class="kn">Dizz Communication <span class="chip">:8218</span></span><span class="kt">Ein Posteingang, Kontakte, Termin-Erkennung.</span></a></li>
+      <li><a class="a-mag kachel" href="/apps/#creating" hreflang="en"><span class="kn">Dizz Creating <span class="chip">:8214</span></span><span class="kt">Medien-Werkbank auf einer GPU-Warteschlange.</span></a></li>
+      <li><a class="a-cy kachel" href="/apps/#memory" hreflang="en"><span class="kn">Dizz Memory <span class="chip">:8212</span></span><span class="kt">Markdown-Tresor, Volltextsuche, Retrieval.</span></a></li>
+      <li><a class="a-vio kachel" href="/apps/#management" hreflang="en"><span class="kn">Dizz Management <span class="chip">:8213</span></span><span class="kt">KI-Agenten, Autonomie-Treppe, Netz-Posteingang.</span></a></li>
+      <li><a class="a-orange kachel" href="/apps/#news" hreflang="en"><span class="kn">Dizz News <span class="chip">:8216</span></span><span class="kt">Sektor-Überblick, Quellen-Dedup, Beobachtungslisten.</span></a></li>
+      <li><a class="a-green kachel" href="/apps/#healthy" hreflang="en"><span class="kn">Dizz Healthy <span class="chip">:8217</span></span><span class="kt">Messwerte, Training, Wearables.</span></a></li>
+      <li><a class="a-steel kachel" href="/apps/#admin" hreflang="en"><span class="kn">Dizz Admin <span class="chip">:8222</span></span><span class="kt">Tresor, Projekte, Geschäft, Fristen.</span></a></li>
+      <li><a class="a-coral kachel" href="/apps/#trading" hreflang="en"><span class="kn">Dizz Trading <span class="chip">:8137</span></span><span class="kt">Bot-Flotte hinter hartem Menschen-Tor.</span></a></li>
+    </ul>
+    <p class="notiz">Jeder Name führt zu seinem Abschnitt auf der englischen
+      Anwendungs-Seite.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="hinweis balken">
+      <p><b>Die ganze Karte gibt es weiterhin.</b> Sie bringt eigene Ebenen,
+        Verträge und eine Suche mit — und sie will einen breiten Bildschirm.</p>
+      <a class="knopf" href="/karte/">Die große Karte in voller Tiefe <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+    <p class="notiz">Diese Mini-Karte wird parallel zur großen Karte gepflegt; ein
+      Bau-Check vergleicht beide bei jedem Backen. Stand: August 2026.</p>
+  </div>
+</section>

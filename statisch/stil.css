@@ -1385,3 +1385,51 @@ address{font-style:normal;line-height:1.75}
   .tief>*{animation:none!important;opacity:1}
 }
 
+/* ==========================================================================
+   die Mini-Karte und das Paar aus zwei Zielen (07.08.2026)
+   --------------------------------------------------------------------------
+   Wieder ein angehaengter Block, und ueber dieser Linie wurde nichts angefasst.
+
+   Die grosse System-Karte unter /karte/ ist eine einzelne, sehr schwere Seite
+   fuer einen breiten Bildschirm - auf dem Telefon war sie nie zu gebrauchen.
+   Statt sie dort zu reparieren, was fremder Code in einem Spiegel ist, den
+   diese Website nicht bearbeiten darf, steht neben ihr eine kleine, hier
+   geschriebene Seite: /mini-karte/. Wer auf einem schmalen Schirm auf die
+   Karte tippt, bekommt sie.
+
+   Die Weiche ist CSS und sonst nichts: kein Skript, keine Weiterleitung, kein
+   Erraten des Geraets. Beide Links stehen immer im Markup - eine Suchmaschine,
+   ein Lesemodus und ein Ausdruck sehen also beide, und der Ausfall des einen
+   nimmt dem Leser nicht den anderen.
+
+   BEWUSST NICHT `display:revert` fuer das Wiedereinblenden, obwohl das die
+   kuerzeste Zeile waere: `revert` faellt auf den Wert des Browsers zurueck und
+   wirft dabei JEDE Angabe dieser Datei weg. Ein `a.knopf` ist hier
+   `inline-flex` - `revert` macht daraus ein `inline`, und ein Knopf ohne
+   Flex-Kasten verliert Hoehe, Abstand und die Ausrichtung seines Pfeils. Darum
+   steht hier je Element der Wert, den es ausserhalb der Media Query ohnehin
+   haette. Zwei Zeilen statt einer, dafuer keine, die etwas anderes tut als sie
+   sagt.
+
+   Das Paar sitzt bei einer Kachel am <li> und nicht am <a>: die Liste ist ein
+   Raster, und ein verstecktes <a> in einem sichtbaren <li> haette eine leere
+   Zelle im Raster hinterlassen.                                             */
+
+.nur-schmal{display:none}
+
+@media (max-width:768px){
+  .nur-breit{display:none}
+  li.nur-schmal{display:list-item}
+  a.nur-schmal.knopf{display:inline-flex}
+}
+
+/* Das Schichten-Bild der Mini-Karte. Anders als `.figur` bekommt es KEINE
+   Mindestbreite und keine seitwaerts schiebbare Buehne: es ist fuer 320
+   Pixel gezeichnet, nicht dafuer verkleinert. Der viewBox ist 320 breit, der
+   Deckel 360 - auf einem 360-px-Telefon steht der Inhalt der Seite auf rund
+   328 px, das Bild wird also eher leicht vergroessert als geschrumpft, und
+   die 12 px der kleinsten Zeile bleiben 12 px. */
+.figur-klein{margin:0;padding:0}
+.schichten{display:block;width:100%;max-width:360px;height:auto;margin:0 auto}
+.figur-klein figcaption{margin-top:12px;font-size:13.5px;color:var(--tx2);
+  text-align:center}

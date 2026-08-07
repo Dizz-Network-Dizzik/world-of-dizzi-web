@@ -54,6 +54,10 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://worldofdizzi.netlify.app/mini-karte/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://worldofdizzi.netlify.app/karte/</loc>
     <priority>0.8</priority>
   </url>

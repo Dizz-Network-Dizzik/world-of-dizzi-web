@@ -236,10 +236,15 @@ FAKTEN: list[dict] = [
          woerter={}, wortmuster=[], erlaubt=None, warum="", kanon=None),
     dict(name="pages",
          muster=[r"\b(\d+)\s+(?:pages|Seiten)\b"],
-         woerter={"twelve": 12, "zwölf": 12, "eleven": 11, "elf": 11,
-                  "ten": 10, "zehn": 10},
-         wortmuster=[r"\b(twelve|eleven|ten)\s+pages\b",
-                     r"\b(zwölf|elf|zehn)\s+Seiten\b"],
+         # "fifteen" joined the list on 07.08.2026, with /mini-karte/. The
+         # figure had drifted before that and nothing here could see it: the
+         # README still said twelve while dist/ held fourteen pages, because
+         # this rule only holds the places that state the number against each
+         # other - it cannot count pages, and it never claimed to.
+         woerter={"fifteen": 15, "fünfzehn": 15, "twelve": 12, "zwölf": 12,
+                  "eleven": 11, "elf": 11, "ten": 10, "zehn": 10},
+         wortmuster=[r"\b(fifteen|twelve|eleven|ten)\s+pages\b",
+                     r"\b(fünfzehn|zwölf|elf|zehn)\s+Seiten\b"],
          erlaubt=None, warum="", kanon=None),
     dict(name="lines of python",
          muster=[r"(\d[\d.,]*)\s+(?:lines of Python|Zeilen Python)\b"],

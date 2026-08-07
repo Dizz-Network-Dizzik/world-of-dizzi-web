@@ -1,4 +1,9 @@
 # woerter_en.txt - validierter Wortschatz dieser Website.
+# Neu am 07.08.2026 mit der Mini-Karte: 'Mini map' steht als Menue-Eintrag
+# auf den englischen Seiten, 'fifteen' und 'pair' im README-Absatz dazu.
+fifteen
+mini
+pair
 offs       # aus 'trade-offs'
 non        # aus 'non-blank lines'
 mobil
@@ -25,7 +30,7 @@ water
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 1860 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 1866 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 # Die Zahl stand bis zum 27.07. auf 1496, waehrend die Liste schon 1509 Woerter
 # trug: kein Gate prueft diese Zeile, also veraltet sie still. Wer hier eintraegt,
 # zaehlt bitte nach.

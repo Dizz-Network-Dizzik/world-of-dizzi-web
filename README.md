@@ -13,7 +13,7 @@ The documents show how the system is built. This site explains it.
 
 ## What it is
 
-Twelve pages of static HTML, one stylesheet, three subset web fonts and a
+Fifteen pages of static HTML, one stylesheet, three subset web fonts and a
 Python baker that counts its own lines and writes the figure into the footer
 of every page — so the footer's number cannot drift away from the file it
 describes. **No JavaScript, no cookies, no trackers, no external request** —
@@ -22,10 +22,13 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **134,609 bytes** uncompressed — 25.4 KB markup, 77.3 KB stylesheet,
+page: **137,691 bytes** uncompressed — 25.9 KB markup, 79.8 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The newest 10,995 bytes — 6,339 of stylesheet, 4,656 of
-markup — are the grove on the two front pages: three fronds, a singing bowl,
+server compresses. The newest 3,082 bytes — 2,567 of stylesheet, 515 of markup —
+are the small map: a second, hand-written map at `/mini-karte/` that stands in
+for the copied one on every screen under 769 pixels, and the CSS pair that
+decides which of the two a link points at. The 10,995 before them — 6,339 of
+stylesheet, 4,656 of markup — are the grove on the two front pages: three fronds, a singing bowl,
 two halves in balance, a band of water and the deep reveals, all of it CSS
 and SVG, none of it script. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
@@ -74,7 +77,7 @@ the same light from the other side because a code block is a hole in the page
 rather than a card on it, and one curve and one duration are shared by
 everything that moves. The eyebrow above every section heading carries the
 house gradient as a short rule, which is the one ornament that repeats on all
-twelve pages and most of what makes them look like one site. Two things there
+fifteen pages and most of what makes them look like one site. Two things there
 are worth more than the ornament: the top of that card gradient is a colour
 token like any other, so `kontrast.py` measures text against the *brightest*
 surface a card actually paints rather than only against the flat value
@@ -302,7 +305,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **67 source links** against
+be resolved, and `check_snapshot_links` resolves all **68 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never

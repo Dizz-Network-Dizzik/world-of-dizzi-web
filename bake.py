@@ -15,7 +15,9 @@ Every run, in both modes, also resolves each source link against the code
 snapshot in snapshot/ and checks the two figures the README states about the
 built site - its first load in bytes and how many source links there are -
 against the files actually produced. A number nobody measures goes stale
-without anybody noticing; both of these already did once.
+without anybody noticing; both of these already did once. The same run also
+holds the hand-written small map, seiten/mini-karte.html, against the copied
+system map it stands in for on a phone - see check_mini_karte().
 """
 
 from __future__ import annotations
@@ -48,9 +50,9 @@ SELBST = "https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web"
 # so moving or renaming the folder is one line here plus a rebake, never a hunt
 # through the pages. Two counts, because they measure different things and the
 # difference is not a discrepancy: 54 link sites in seiten/ and vorlagen/ - what
-# an author edits - render as 67 links in dist/, since the footer link repeats
-# on all twelve pages and llms.txt and the JSON-LD block carry one each.
-# check_snapshot_links() resolves all 67 against the folder on every bake.
+# an author edits - render as 68 links in dist/, since the footer link repeats
+# on all fifteen pages and llms.txt and the JSON-LD block carry one each.
+# check_snapshot_links() resolves all 68 against the folder on every bake.
 AUSZUG = "snapshot"
 DATEI = f"{SELBST}/blob/main/{AUSZUG}"   # a file inside the extract
 ORDNER = f"{SELBST}/tree/main/{AUSZUG}"  # a directory inside the extract
@@ -170,6 +172,13 @@ PAGES: list[dict] = [
         alt="/",
     ),
     dict(
+        src="mini-karte.html", out="mini-karte/index.html", path="/mini-karte/",
+        lang="de",
+        title="Die Karte, klein | the world of dizzi",
+        desc="Die große Systemkarte, destilliert für die Hand: der Netz-Ring, die "
+             "fünf Schichten und die zehn Anwendungen mit ihren Ports.",
+    ),
+    dict(
         src="impressum.html", out="impressum/index.html", path="/impressum/",
         lang="de", title="Impressum | the world of dizzi",
         desc="Anbieterkennzeichnung nach § 5 DDG.",
@@ -221,6 +230,7 @@ T = {
         NAVLABEL="Main",
         MENU="Menu",
         MAP="System map",
+        MAPMINI="Mini map",
         LANGLINK='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a>',
         SOURCE="Documents",
         FOOT_CLAIM="Documents public, code private. All rights reserved.",
@@ -236,6 +246,7 @@ T = {
         NAVLABEL="Haupt",
         MENU="Menü",
         MAP="System-Karte",
+        MAPMINI="Mini-Karte",
         LANGLINK='<a class="nav-lang" href="/" lang="en" hreflang="en">English</a>',
         SOURCE="Dokumente",
         FOOT_CLAIM="Dokumente öffentlich, Code privat. Alle Rechte "
@@ -312,8 +323,19 @@ def nav_html(page: dict) -> str:
         hier = path in (page["path"], page.get("alt"))
         cur = ' aria-current="page"' if hier else ""
         items.append(f'<li><a href="{path}"{cur}>{label}</a></li>')
+    # One entry, two targets. The map at /karte/ is a single heavy page drawn
+    # for a wide screen; /mini-karte/ is the same system distilled for a phone.
+    # Which of the two is in the document flow is decided by one CSS pair -
+    # .nur-breit / .nur-schmal - and by nothing else: no script, no redirect,
+    # no guess about the device. Both <li> are always in the markup, so a
+    # crawler and a printout see both.
     items.append(
-        f'<li><a class="nav-karte" href="/karte/">{T[lang]["MAP"]}</a></li>'
+        f'<li class="nur-breit"><a class="nav-karte" href="/karte/">'
+        f'{T[lang]["MAP"]}</a></li>'
+    )
+    items.append(
+        f'<li class="nur-schmal"><a class="nav-karte" href="/mini-karte/">'
+        f'{T[lang]["MAPMINI"]}</a></li>'
     )
     _ = idx, en, de
     return "\n        ".join(items)
@@ -792,6 +814,69 @@ def check_readme(tree: dict[str, bytes]) -> list[str]:
     return []
 
 
+# --------------------------------------------------------------------------
+# the small map has to keep up with the large one
+# --------------------------------------------------------------------------
+# statisch/karte/index.html is a mirror of another repository and is never
+# edited here. seiten/mini-karte.html says the same things by hand, in a tenth
+# of the bytes, and it is what every narrow screen is sent to instead of the
+# map. Two files that state the same facts and are maintained apart drift
+# apart; this is the machine that notices.
+#
+# The set of application ports is DERIVED from the map and never listed here.
+# A list would be wrong on the day an eleventh application arrives, and it
+# would be wrong in silence - the mini map would keep its ten, the list would
+# agree with it, and every gate would stay green while the two maps said
+# different things.
+#
+# Two narrow patterns rather than one broad ":8\d{3}", because the map carries
+# more ports than it has applications: :8317 and :8422 stand in the prose of
+# two "Gotcha" lines as the isolated test proxies of Healthy and Admin. A broad
+# match would demand both of them on the mini map, where they have no business
+# being. What does mean "this is an application" is the port in the header of
+# an application card and the port in the node data of the map's own diagram.
+# Both are read and they have to agree: if they ever do not, the map has
+# changed shape, and a check that no longer knows what it is looking at reports
+# a fault rather than a pass.
+KARTE_PORT_KOPF = re.compile(r'<span class="port">:(\d{4})</span>')
+KARTE_PORT_KNOTEN = re.compile(r"pt:':(\d{4})'")
+MINI_PORT = re.compile(r":(\d{4})")
+
+
+def check_mini_karte() -> list[str]:
+    karte = STATISCH / "karte" / "index.html"
+    mini = SEITEN_DIR / "mini-karte.html"
+    if not karte.exists():
+        return ["the system map statisch/karte/index.html is missing, so the "
+                "mini map cannot be checked against it"]
+    if not mini.exists():
+        return ["seiten/mini-karte.html is missing - it is where every narrow "
+                "screen is sent instead of the system map"]
+
+    text = karte.read_text(encoding="utf-8")
+    koepfe = set(KARTE_PORT_KOPF.findall(text))
+    knoten = set(KARTE_PORT_KNOTEN.findall(text))
+    if len(koepfe) < 2 or len(knoten) < 2:
+        # A pattern that matches nothing reads exactly like a clean run.
+        return [f"the system map yields {len(koepfe)} application header port(s) "
+                f"and {len(knoten)} diagram node port(s) - its markup has changed "
+                "and the mini map can no longer be checked against it"]
+    if koepfe != knoten:
+        return ["the system map disagrees with itself about which ports belong to "
+                f"an application: its cards say {sorted(koepfe)}, its own diagram "
+                f"says {sorted(knoten)}"]
+
+    klein = set(MINI_PORT.findall(mini.read_text(encoding="utf-8")))
+    faults = []
+    for port in sorted(koepfe - klein):
+        faults.append(f"seiten/mini-karte.html: the system map carries application "
+                      f"port :{port} and the mini map does not")
+    for port in sorted(klein - koepfe):
+        faults.append(f"seiten/mini-karte.html: port :{port} stands on the mini map "
+                      "and is no application port on the system map")
+    return faults
+
+
 def compare(tree: dict[str, bytes]) -> list[str]:
     faults = []
     on_disk = {
@@ -823,7 +908,8 @@ def main(argv: list[str]) -> int:
     check_only = "--check" in argv
     tree = build()
 
-    faults = check_links(tree) + check_external(tree) + check_snapshot_links(tree)
+    faults = (check_links(tree) + check_external(tree) + check_snapshot_links(tree)
+              + check_mini_karte())
     if check_only:
         faults += compare(tree) + check_readme(tree)
 

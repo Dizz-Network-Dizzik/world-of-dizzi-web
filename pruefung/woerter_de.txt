@@ -1,3 +1,54 @@
+# Neu am 07.08.2026 mit der Mini-Karte (/mini-karte/): die Seite ist
+# deutsch, also faellt ihr ganzer Wortschatz hier an. Jedes Wort einzeln
+# gegengelesen, bevor es hier steht - die Reihenfolge, auf die der Kopf
+# dieser Datei besteht.
+allen
+appkit
+Backen
+Basis
+beide
+Bildschirm
+breiten
+Check
+destilliert
+Drittens
+Ebenen
+eigenem
+Erstens
+fünf
+Fünftens
+Hauses
+jedem
+klein
+kleine
+Last
+lässt
+Netzes
+orchestriert
+Ordnung
+parallel
+Pfeil
+Pfeilen
+Ports
+Schicht
+Schichten
+schieben
+sein
+seinem
+seitwärts
+Suche
+Systemkarte
+Tiefe
+Tor
+Tore
+unten
+vergleicht
+Viertens
+Wahrheit
+weiterhin
+wem
+Zehntel
+Zweitens
 # woerter_de.txt - validierter Wortschatz dieser Website.
 #
 # Kein heruntergeladenes Woerterbuch: jedes Wort steht hier, weil es auf einer
@@ -10,7 +61,7 @@
 # Neu erzeugen: python pruefung/proofread.py --woerter, validieren lassen,
 # dann einsortieren.
 #
-# Stand: 07.08.2026, 999 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
+# Stand: 07.08.2026, 1046 Woerter (ohne die Kompositum-Bestandteile am Dateiende).
 
 ab
 abende
@@ -1021,3 +1072,4 @@ züge
 anwendungs # aus 'Anwendungs-Seite'
 arbeits    # aus 'Arbeits-Repository'
 ausgangs   # aus 'Ausgangs-Commit'
+mini       # aus 'Mini-Karte'
