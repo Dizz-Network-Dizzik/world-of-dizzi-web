@@ -22,7 +22,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **105,521 bytes** uncompressed — 20.9 KB markup, 53.4 KB stylesheet,
+page: **115,618 bytes** uncompressed — 20.9 KB markup, 63.3 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
@@ -115,7 +115,7 @@ around the core now widens as the diagram is reached, drawn by the reader's
 scroll position like the track and the reading bar, because nothing here is
 allowed to move on its own.
 
-The most recent 8,258 bytes are the pass over `/apps/` and `/numbers/`, and
+The next 8,258 bytes are the pass over `/apps/` and `/numbers/`, and
 every one of them is stylesheet again — so the start page, which uses none of
 it, still pays for it on the first load. That is what one stylesheet for the
 whole site costs, and it is the same trade as every byte above. What those two
@@ -135,6 +135,42 @@ thing a page about honest figures must not do. The ten marks say nothing about
 what is inside the machine, and they are hidden from screen readers rather than
 labelled: the row already says the name in words, and saying it twice helps
 nobody.
+
+The most recent 10,313 bytes are the phone a second time — the earlier phone
+pass folded the header away, this one carries the seven pages behind the two
+that lead. 10,097 of them are stylesheet and 216 are markup, and every figure
+in them was read off a browser at 360 and at 412 pixels rather than reasoned
+about. The finding that mattered was on `/apps/`: its table of ten is 560
+pixels wide inside a frame that is 326 on a phone, so a reader arrived looking
+at two of the four columns with nothing on the screen saying the other two
+existed. Below 611 pixels — where the wrap padding leaves less than the table
+needs, which is arithmetic and not a chosen round number — every row is now a
+card. What lets this particular table survive losing its grid is that each cell
+says what it is on its own: a port reads as a port and a test count says tests,
+so no card has to restate a column head. The contract listing on `/system/`
+had the same shape of problem and took the same kind of answer: it needed 452
+pixels in a 326 box and could not wrap out of it, so each comment moved under
+the line it annotates instead. Measured after: at 360 and at 412 not one of the
+seven pages scrolls sideways, and neither does any box inside them. At 320 one
+block still does — the diagram on `/method/` — inside its own frame, which is
+the rule this site already wrote for wide things. The body text goes from 15 to
+16 pixels below 769, still in `rem` so a raised device font keeps its multiple;
+the ten links in that table, the six recovery links on the 404 page and the two
+contact links on `/about/` became 44-pixel targets. Three things were measured
+and then left alone rather than fixed, and they are named in the stylesheet with
+the reason: `content-visibility` on `/apps/`, because the ten in-page anchors it
+would gamble with are that page's whole navigation; the rail on `/method/` and
+`/journey/`, because it already runs through the middle of every station dot and
+because a second lane was working the same construct; and the comment colour in
+that contract listing, which is about 4.2:1 where 4.5 applies and is older than
+this pass. Four fifths of the stylesheet bytes are those explanations. A further
+1,028 bytes went into `pruefung/woerter_en.txt`, which nobody downloads. Some of
+that is this paragraph paying its own way — a word the site has not used before
+has to be checked and entered before the gate will pass it — but four of the
+entries are a real fault it had been hiding: `can't`, `doesn't`, `isn't` and
+`you're` stood in the list with a straight apostrophe while every page sets the
+typographic one, so the gate had been red on four correctly spelled words and
+the straight forms it did hold could never be reached.
 
 That figure is exact rather than rounded, and `bake.py --check` measures it
 against the built files. It went stale twice while `/numbers/` was being
