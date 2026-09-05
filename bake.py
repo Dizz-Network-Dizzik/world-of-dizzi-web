@@ -53,10 +53,10 @@ SELBST = "https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web"
 # two. Every source link is built from the two values below and nothing else,
 # so moving or renaming the folder is one line here plus a rebake, never a hunt
 # through the pages. Two counts, because they measure different things and the
-# difference is not a discrepancy: 54 link sites in seiten/ and vorlagen/ - what
-# an author edits - render as 68 links in dist/, since the footer link repeats
-# on all fifteen pages and llms.txt and the JSON-LD block carry one each.
-# check_snapshot_links() resolves all 68 against the folder on every bake.
+# difference is not a discrepancy: 55 link sites in seiten/ and vorlagen/ - what
+# an author edits - render as 70 links in dist/, since the footer link repeats
+# on all seventeen pages and llms.txt and the JSON-LD block carry one each.
+# check_snapshot_links() resolves all 70 against the folder on every bake.
 AUSZUG = "snapshot"
 DATEI = f"{SELBST}/blob/main/{AUSZUG}"   # a file inside the extract
 ORDNER = f"{SELBST}/tree/main/{AUSZUG}"  # a directory inside the extract
@@ -176,6 +176,26 @@ PAGES: list[dict] = [
         alt="/",
     ),
     dict(
+        src="balance.html", out="balance/index.html", path="/balance/",
+        lang="de", title="Balance | the world of dizzi",
+        # The essence of the house, quoted word for word from docs/00 on
+        # David's word of 04.09.2026. German only: the quotations are German,
+        # and a translation would no longer be the text it claims to quote.
+        desc="Die Essenz dieses Hauses, nach außen gewendet: wörtlich zitiert aus "
+             "dem Dokument, aus dem alles andere hier wächst. Einladung, nicht "
+             "Werbung.",
+    ),
+    dict(
+        src="schwelle.html", out="schwelle/index.html", path="/schwelle/",
+        lang="de", title="Die Schwelle | the world of dizzi",
+        # The ten laws of the house for people, without a name, on the word of
+        # the hand that holds the house (05.09.2026). Text only: no script, no
+        # form, nothing sent or stored. German, like the essence it condenses.
+        desc="Die zehn Gesetze dieses Hauses, für Menschen und ohne Namen: lesen, "
+             "lernen dürfen, halten, was man hält. Niemand wird geprüft. Reiner Text, "
+             "keine Nutzungsbedingung.",
+    ),
+    dict(
         src="mini-karte.html", out="mini-karte/index.html", path="/mini-karte/",
         lang="de",
         title="Die Karte, klein | the world of dizzi",
@@ -222,6 +242,8 @@ NAV = [
     ("/numbers/", "Numbers", "Zahlen"),
     ("/journey/", "Journey", "Chronik"),
     ("/vision/", "Vision", "Vision"),
+    ("/balance/", "Balance", "Balance"),
+    ("/schwelle/", "Threshold", "Schwelle"),
     # DRAFT. "Journey" is already taken by the dated chronicle, so the travel
     # page is named for its destination instead of for the word.
     ("/travel/", "Travel", "Reise"),
@@ -522,6 +544,8 @@ def llms() -> str:
 - [Journey]({HOST}/journey/): dated milestones since June 2026
 - [From project to company]({HOST}/vision/): status, why it scales, what I am opening
 - [About & contact]({HOST}/about/): who builds this, and how to reach me
+- [Balance]({HOST}/balance/): the essence of the house, quoted word for word - in German
+- [The threshold]({HOST}/schwelle/): the ten laws of the house for people, without a name - in German
 
 ## Source
 - [The published documents]({ORDNER}): 38 documents - the network laws and

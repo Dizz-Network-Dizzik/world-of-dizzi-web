@@ -13,7 +13,7 @@ The documents show how the system is built. This site explains it.
 
 ## What it is
 
-Fifteen pages of static HTML, one stylesheet, three subset web fonts and a
+Seventeen pages of static HTML, one stylesheet, three subset web fonts and a
 Python baker that counts its own lines and writes the figure into the footer
 of every page — so the footer's number cannot drift away from the file it
 describes. **No JavaScript, no cookies, no trackers, no external request** —
@@ -22,9 +22,17 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,299 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
+page: **143,400 bytes** uncompressed — 26.1 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The newest 588 bytes are a removal wearing its explanation:
+server compresses. The newest 52 bytes are one entry in the menu: a seventeenth
+page, `/schwelle/`, in German — the ten laws of the house for people, without a
+name, as plain text: it asks nothing, sends nothing and stores nothing. Before
+that, 49 bytes were a sixteenth page, `/balance/`, in German, that quotes the
+essence of the house word for word from the document the rest of this site
+grows out of — and says plainly which of the sections it quotes the published
+copy of that document already carries, and which came later. Before that, 588
+bytes were a removal wearing
+its explanation:
 the cross-document view transition is gone, because inside in-app browsers its
 snapshot froze the page on every link tap, and a site that reliably navigates
 beats one that beautifully transitions. Before that, 5,019 bytes were the
@@ -85,7 +93,7 @@ the same light from the other side because a code block is a hole in the page
 rather than a card on it, and one curve and one duration are shared by
 everything that moves. The eyebrow above every section heading carries the
 house gradient as a short rule, which is the one ornament that repeats on all
-fifteen pages and most of what makes them look like one site. Two things there
+seventeen pages and most of what makes them look like one site. Two things there
 are worth more than the ornament: the top of that card gradient is a colour
 token like any other, so `kontrast.py` measures text against the *brightest*
 surface a card actually paints rather than only against the flat value
@@ -348,7 +356,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **68 source links** against
+be resolved, and `check_snapshot_links` resolves all **71 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never

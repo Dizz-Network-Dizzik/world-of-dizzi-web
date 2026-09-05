@@ -1967,3 +1967,20 @@ mid        # aus 'mid-range'
 non        # aus 'non-blank lines'
 offs       # aus 'trade-offs'
 ld         # aus 'JSON-LD'
+
+# Neu am 04.09.2026 mit der Balance-Seite: 'sixteen' und 'sixteenth' im
+# README-Absatz zur Seitenzahl, 'grows', 'quoted' und 'sections' im Satz, der
+# die neuen 49 Bytes erklaert; 'quoted' auch in llms.txt.
+grows
+quoted
+sections
+sixteen
+sixteenth
+
+# Neu am 05.09.2026 mit der Schwelle: 'seventeen'/'seventeenth' im README-Absatz,
+# 'sends'/'stores' in der Seitenbeschreibung, 'schwelle' als Pfad im Menue und in llms.txt.
+schwelle
+sends
+seventeen
+seventeenth
+stores

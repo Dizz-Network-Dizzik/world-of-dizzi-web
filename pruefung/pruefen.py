@@ -133,7 +133,7 @@ def check(path: Path, rel: str) -> list[str]:
     if not p.lang:
         out.append("<html> has no lang attribute")
     expected = "de" if rel.startswith(
-        ("de/", "impressum/", "datenschutz/", "mini-karte/")) else "en"
+        ("de/", "impressum/", "datenschutz/", "mini-karte/", "balance/")) else "en"
     if p.lang != expected:
         out.append(f"lang is {p.lang!r}, expected {expected!r}")
 

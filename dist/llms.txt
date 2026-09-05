@@ -11,6 +11,8 @@
 - [Journey](https://worldofdizzi.netlify.app/journey/): dated milestones since June 2026
 - [From project to company](https://worldofdizzi.netlify.app/vision/): status, why it scales, what I am opening
 - [About & contact](https://worldofdizzi.netlify.app/about/): who builds this, and how to reach me
+- [Balance](https://worldofdizzi.netlify.app/balance/): the essence of the house, quoted word for word - in German
+- [The threshold](https://worldofdizzi.netlify.app/schwelle/): the ten laws of the house for people, without a name - in German
 
 ## Source
 - [The published documents](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 38 documents - the network laws and
