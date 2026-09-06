@@ -29,6 +29,21 @@ $root = Split-Path -Parent $PSScriptRoot
 $listenPfad = if ($env:DIZZI_SPERRLISTE) { $env:DIZZI_SPERRLISTE }
               else { Join-Path (Split-Path -Parent (Split-Path -Parent $root)) "Projektzentrale\pruefung\sperrbegriffe.txt" }
 
+# The trace. Until 06.09.2026 this gate left nothing behind: "clean" existed
+# only in the terminal of whoever ran it, and a run that never happened was
+# indistinguishable from one that passed. Every run now appends one line -
+# time, file count, findings, exceptions, exit code - to a log that lives next
+# to the term list, outside every public repository. Failing to write the
+# trace never changes the verdict; it is reported and the gate goes on.
+$spurPfad = Join-Path (Split-Path -Parent $listenPfad) "sweep_spur.jsonl"
+function Write-Spur([int]$code, [int]$dateien, [int]$funde, [int]$ausnahmen) {
+  try {
+    $zeile = @{ ts = (Get-Date).ToString("s"); repo = (Split-Path $root -Leaf); files = $dateien
+                findings = $funde; exceptions = $ausnahmen; exit = $code } | ConvertTo-Json -Compress
+    [System.IO.File]::AppendAllText($spurPfad, $zeile + "`r`n", (New-Object System.Text.UTF8Encoding($false)))  # no BOM, ever
+  } catch { Write-Host "WARNING: trace line not written ($($_.Exception.Message))" -ForegroundColor DarkYellow }
+}
+
 if (-not (Test-Path $listenPfad)) {
   Write-Host "ABORT: term list not found at $listenPfad" -ForegroundColor Red
   Write-Host "Nothing was checked. Do not push." -ForegroundColor Red
@@ -237,8 +252,10 @@ if ($hard.Count -or $msgs.Count) {
   $hard | ForEach-Object { "  {0}:{1}  [{2}]  {3}" -f $_.file, $_.line, $_.pattern, $_.text | Write-Host }
   $msgs | ForEach-Object { "  $_" | Write-Host }
   Write-Host "`n$($hard.Count + $msgs.Count) finding(s). Do not push." -ForegroundColor Red
+  Write-Spur 1 $files.Count ($hard.Count + $msgs.Count) $accepted.Count
   exit 1
 }
 
 Write-Host "sweep clean - 0 findings, $($accepted.Count) declared exceptions." -ForegroundColor Green
+Write-Spur 0 $files.Count 0 $accepted.Count
 exit 0

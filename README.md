@@ -294,6 +294,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File pruefung/sweep.ps1
                                # Windows PowerShell 5.1, not pwsh: PowerShell 7
                                # is not installed here, and `pwsh: not found`
                                # looks exactly like a gate that was skipped.
+python pruefung/live_gegenprobe.py
+                               # the delivery gate — after every push: fetches
+                               # every file bake.py wrote and compares it byte
+                               # for byte with what is live; the host's own
+                               # injection is stripped and reported, anything
+                               # else is drift. Until 05.09.2026 this was done
+                               # by hand, which looks exactly like not at all.
 ```
 
 The first three gates were tight from the start and the site still went out
