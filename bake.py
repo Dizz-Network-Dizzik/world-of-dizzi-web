@@ -41,7 +41,7 @@ DIST = ROOT / "dist"
 
 # The public origin. One place to change when the custom domain arrives:
 # canonical URLs, og:url, sitemap.xml, robots.txt and llms.txt all read it.
-HOST = "https://worldofdizzi.netlify.app"
+HOST = "https://worldofdizzi.com"
 # This site's own repository. The footer of every page quotes the length of the
 # file below, and /numbers/ states that exactly one figure on this site cannot
 # be checked from outside. That sentence is only true while the file behind the

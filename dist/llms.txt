@@ -4,31 +4,31 @@
 > personal AI network. A curated set of documents is public; the code is not.
 
 ## Start here
-- [The system](https://worldofdizzi.netlify.app/system/): architecture, the app contract, shared core library
-- [The ten applications](https://worldofdizzi.netlify.app/apps/): what each app does, and what is published
-- [The method](https://worldofdizzi.netlify.app/method/): written laws, contracts, AI build-chat orchestration
-- [The numbers](https://worldofdizzi.netlify.app/numbers/): the six headline figures, each with its method
-- [Journey](https://worldofdizzi.netlify.app/journey/): dated milestones since June 2026
-- [From project to company](https://worldofdizzi.netlify.app/vision/): status, why it scales, what I am opening
-- [About & contact](https://worldofdizzi.netlify.app/about/): who builds this, and how to reach me
-- [Balance](https://worldofdizzi.netlify.app/balance/): the essence of the house, quoted word for word - in German
-- [The threshold](https://worldofdizzi.netlify.app/schwelle/): the ten laws of the house for people, without a name - in German
+- [The system](https://worldofdizzi.com/system/): architecture, the app contract, shared core library
+- [The ten applications](https://worldofdizzi.com/apps/): what each app does, and what is published
+- [The method](https://worldofdizzi.com/method/): written laws, contracts, AI build-chat orchestration
+- [The numbers](https://worldofdizzi.com/numbers/): the six headline figures, each with its method
+- [Journey](https://worldofdizzi.com/journey/): dated milestones since June 2026
+- [From project to company](https://worldofdizzi.com/vision/): status, why it scales, what I am opening
+- [About & contact](https://worldofdizzi.com/about/): who builds this, and how to reach me
+- [Balance](https://worldofdizzi.com/balance/): the essence of the house, quoted word for word - in German
+- [The threshold](https://worldofdizzi.com/schwelle/): the ten laws of the house for people, without a name - in German
 
 ## Source
 - [The published documents](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 38 documents - the network laws and
   contracts plus one README per application. The code extract that stood here
   until 6 August 2026 is no longer published
 - [This site's own source](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web): the build script behind the figure in every footer
-- [Interactive system map](https://worldofdizzi.netlify.app/karte/): self-contained, no external calls
+- [Interactive system map](https://worldofdizzi.com/karte/): self-contained, no external calls
 
 ## Notes
 - Status: independent project, pre-incorporation. No revenue yet. Since 4 August
   2026 a small part of the fleet trades with my own money, on my own account; no
   outside capital, no offer to anyone. Public since 23 July 2026; cut back to a
   document set on 6 August 2026.
-- The six figures this site leads with are listed at https://worldofdizzi.netlify.app/numbers/ with the
+- The six figures this site leads with are listed at https://worldofdizzi.com/numbers/ with the
   method that produced each one and the date it was measured. Three of them can
   no longer be checked from outside: the commit count is private and stated as a
   floor for that reason, and the two code figures were measured against the
   extract that was withdrawn on 6 August 2026. Each says so in its own entry.
-- German entry page: https://worldofdizzi.netlify.app/de/
+- German entry page: https://worldofdizzi.com/de/

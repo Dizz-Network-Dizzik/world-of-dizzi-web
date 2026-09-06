@@ -2,71 +2,71 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://worldofdizzi.netlify.app/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/"/>
+    <loc>https://worldofdizzi.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/"/>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/system/</loc>
+    <loc>https://worldofdizzi.com/system/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/apps/</loc>
+    <loc>https://worldofdizzi.com/apps/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/numbers/</loc>
+    <loc>https://worldofdizzi.com/numbers/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/method/</loc>
+    <loc>https://worldofdizzi.com/method/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/journey/</loc>
+    <loc>https://worldofdizzi.com/journey/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/vision/</loc>
+    <loc>https://worldofdizzi.com/vision/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/about/</loc>
+    <loc>https://worldofdizzi.com/about/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/travel/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/travel/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/reise/"/>
+    <loc>https://worldofdizzi.com/travel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/travel/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/reise/"/>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/de/reise/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/reise/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/travel/"/>
+    <loc>https://worldofdizzi.com/de/reise/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/reise/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/travel/"/>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/de/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.netlify.app/de/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.netlify.app/"/>
+    <loc>https://worldofdizzi.com/de/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/"/>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/balance/</loc>
+    <loc>https://worldofdizzi.com/balance/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/schwelle/</loc>
+    <loc>https://worldofdizzi.com/schwelle/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/mini-karte/</loc>
+    <loc>https://worldofdizzi.com/mini-karte/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://worldofdizzi.netlify.app/karte/</loc>
+    <loc>https://worldofdizzi.com/karte/</loc>
     <priority>0.8</priority>
   </url>
 </urlset>

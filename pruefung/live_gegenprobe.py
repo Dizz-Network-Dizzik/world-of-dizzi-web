@@ -29,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
-DEFAULT_BASE = "https://worldofdizzi.netlify.app"
+DEFAULT_BASE = "https://worldofdizzi.com"
 TIMEOUT_S = 20
 
 # Noise the host may add to HTML without changing what the reader sees.

@@ -22,9 +22,12 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,400 bytes** uncompressed — 26.1 KB markup, 85.2 KB stylesheet,
+page: **143,296 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The newest 52 bytes are one entry in the menu: a seventeenth
+server compresses. The latest change is a removal: 104 bytes left on 6 September
+2026 when the site moved to its own domain, worldofdizzi.com, and every absolute
+address on the start page — canonical link, sitemap, structured data, social
+preview — got twelve characters shorter. Before that, 52 bytes were one entry in the menu: a seventeenth
 page, `/schwelle/`, in German — the ten laws of the house for people, without a
 name, as plain text: it asks nothing, sends nothing and stores nothing. Before
 that, 49 bytes were a sixteenth page, `/balance/`, in German, that quotes the
