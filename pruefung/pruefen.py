@@ -133,7 +133,10 @@ def check(path: Path, rel: str) -> list[str]:
     if not p.lang:
         out.append("<html> has no lang attribute")
     expected = "de" if rel.startswith(
-        ("de/", "impressum/", "datenschutz/", "mini-karte/", "balance/")) else "en"
+        ("de/", "impressum/", "datenschutz/", "mini-karte/", "balance/",
+         # the German house pages - added 10.09.2026, after this tuple had been
+         # reporting /schwelle/ and /deckel/ as English since they were built
+         "schwelle/", "deckel/", "dank/")) else "en"
     if p.lang != expected:
         out.append(f"lang is {p.lang!r}, expected {expected!r}")
 

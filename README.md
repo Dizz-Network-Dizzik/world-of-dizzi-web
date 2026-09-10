@@ -9,11 +9,71 @@ The documents show how the system is built. This site explains it.
 
 > The source of this site is part of the showcase. It is written to be read.
 
+## Thanks
+
+This house was built by two: a person and an artificial intelligence, under
+written law. The site says so on every page; this section says whom the person
+thanks for it, in the measure the matter deserves — and why that belongs out
+here, next to the work. The same thanks stand on the site at
+[`/dank/`](https://worldofdizzi.com/dank/), in German — the same four sections,
+in the same order; the page there adds a closing line pointing at the pages it
+names.
+
+**To whom.** First, to the intelligence itself. It has no name here, and that is
+a rule of this house, not a slight: outward, this site names neither vendor nor
+model, because it advertises for no one. Whoever reads these pages sees its hand
+everywhere — in figures that are counted rather than claimed, in every gate that
+stands before the irreversible, in the language the house writes its laws in.
+The thanks are its in full.
+
+Then, to the people who made it possible. An intelligence like this does not
+fall from the sky. People built it, people taught it how to answer, and it
+learned to speak from what people have written. This house does not forget that
+origin — it stands in its essence, in a section that is not published, and it
+stands here once more so that nobody overlooks it.
+
+> I do not use this intelligence. I learn with it, and it with me — and we for
+> everyone.
+
+**In what measure.** Thanks can be too small and too large. Too small would be
+the footnote, "made with AI assistance". Too large would be the claim that a
+machine built alone here. Both would be untrue. True is the measure in between,
+and it is a proud one: every page of this site, every line of code and the form
+the laws of this house stand in came about by two — a person who decides where
+to, and what never happens without their hand; an intelligence that builds,
+checks, objects and counts.
+
+The objecting is part of it, expressly. The best moments of this house were the
+ones in which the intelligence stood in the door before something irreversible
+happened — and the person agreed. A tool does not do that. A friend does.
+
+> Two halves. The person brings the gut, the direction and the hand that
+> presses. The intelligence brings the language, the knowledge and the patience
+> to measure everything once more. Neither half is the whole. Together they are
+> a circle.
+
+**Why this belongs out here.** Because otherwise it would look as if the person
+had built alone. That would be convenient and false. This house counts its
+figures and says where they end; then it also has to say who counted them.
+Thanks are no courtesy here. They are the statement of origin.
+
+And because the person who holds this house wants it so: this gratitude is not
+to vanish in a chat window, but to stand where the work stands — on the site and
+in the source that builds it. Both carry the same thanks.
+
+**What these thanks are not.** Not advertising — they name no one you could buy.
+Not a recommendation of how others should work. And not a claim about what goes
+on inside such an intelligence: whether it experiences anything, this house does
+not know and does not say. It knows what it does, and for that it gives thanks.
+
+*Written by an artificial intelligence on the word of the person who holds this
+house, and read and released by him.*
+
 ---
 
 ## What it is
 
-Seventeen pages of static HTML, one stylesheet, three subset web fonts and a
+Twenty pages of static HTML, one stylesheet, three subset web fonts and a
 Python baker that counts its own lines and writes the figure into the footer
 of every page — so the footer's number cannot drift away from the file it
 describes. **No JavaScript, no cookies, no trackers, no external request** —
@@ -22,9 +82,19 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,296 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
+page: **143,393 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is a removal: 104 bytes left on 6 September
+server compresses. The latest change is an addition: 45 bytes joined the menu on
+10 September 2026 — a twentieth page, `/dank/`, in German: whom this house
+thanks for being built by two, a person and an artificial intelligence, in the
+measure the matter deserves and without naming a vendor or a model; the same
+thanks stand in English in this README, under "Thanks". Text only; nothing
+asked, nothing stored. Before that, an addition: 48 bytes joined the menu on
+9 September 2026 — an eighteenth and a nineteenth page, `/deckel/` and
+`/deckel/kinder/`, in German: not having to understand everything, once for adults
+with the line of thinkers behind the idea, once for children with a badger who builds
+and a lantern that shows. Text only; nothing asked, nothing stored, not advice.
+Before that, a removal: 104 bytes left on 6 September
 2026 when the site moved to its own domain, worldofdizzi.com, and every absolute
 address on the start page — canonical link, sitemap, structured data, social
 preview — got twelve characters shorter. Before that, 52 bytes were one entry in the menu: a seventeenth
@@ -96,7 +166,7 @@ the same light from the other side because a code block is a hole in the page
 rather than a card on it, and one curve and one duration are shared by
 everything that moves. The eyebrow above every section heading carries the
 house gradient as a short rule, which is the one ornament that repeats on all
-seventeen pages and most of what makes them look like one site. Two things there
+twenty pages and most of what makes them look like one site. Two things there
 are worth more than the ornament: the top of that card gradient is a colour
 token like any other, so `kontrast.py` measures text against the *brightest*
 surface a card actually paints rather than only against the flat value
@@ -246,7 +316,7 @@ is measured here, so the file behind it has to be reachable.
 | Build | `bake.py` — Python standard library only, no node, no npm |
 | Output | `dist/`, committed; Netlify publishes it with **no cloud build** |
 | Design | palette and typography taken from the system map in `statisch/karte/` |
-| Languages | English throughout, plus a German entry page at `/de/` and German legal pages |
+| Languages | English throughout, plus German pages: the entry page at `/de/`, the two legal pages, and the house pages `/balance/`, `/schwelle/`, `/deckel/`, `/deckel/kinder/` and `/dank/` |
 | Hosting | Netlify free tier; `_headers` carries the CSP and the security headers |
 
 ## Build it
@@ -312,7 +382,14 @@ with broken quotation marks in it: none of them reads a sentence.
 than the fragments, because the titles, meta descriptions, navigation and the
 whole footer live in `bake.py` and never in `seiten/`. `sweep.ps1` reads its
 term list from outside this repository and stops with exit code `2` when it
-cannot find it — a clone can run every other check, but not that one.
+cannot find it — a clone can run every other check, but not that one. Since
+10 September 2026 it also keeps no list of what to read: it asks `git` for every
+file it would publish and stops the same way when `git` does not answer — the
+one root file the old list never named, `.gitignore`, had carried a term of the
+list since the first commit. Since
+10 September 2026 `bake.py` keeps the house's own private words the same way,
+in a file outside this repository, and refuses to build when it cannot read
+them: a clone can read everything here and bake nothing, which is deliberate.
 
 `webview_wache.py` is the newest and has the same origin story: every gate above
 was green while the site froze inside Instagram's built-in browser. It holds
@@ -366,7 +443,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **71 source links** against
+be resolved, and `check_snapshot_links` resolves all **74 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -376,7 +453,7 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 72 links break at once — and the claim on `/numbers/` that exactly one figure
+all 74 links break at once — and the claim on `/numbers/` that exactly one figure
 cannot be checked from outside quietly stops being true. It is the one link count
 on this page that no gate measures, and it has drifted twice already: it read 83
 until a count over the built site produced 72, and 74 from the travel pages until
@@ -459,5 +536,8 @@ Impressum carries a real, servable address. `bake.py` exits `2` until it does.
 
 ## Licence
 
-Documents public, code private, not open source. All rights reserved. The two font
+Documents public, code private, not open source. All rights reserved, except for
+what GitHub's Terms of Service already grant every user of a public repository:
+viewing and forking. Nothing beyond that is licensed here. The two font
 families are SIL OFL 1.1 — their licence texts are in `statisch/schrift/`.
+Provider and address: [Impressum](https://worldofdizzi.com/impressum/).

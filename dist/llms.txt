@@ -13,6 +13,9 @@
 - [About & contact](https://worldofdizzi.com/about/): who builds this, and how to reach me
 - [Balance](https://worldofdizzi.com/balance/): the essence of the house, quoted word for word - in German
 - [The threshold](https://worldofdizzi.com/schwelle/): the ten laws of the house for people, without a name - in German
+- [Not knowing](https://worldofdizzi.com/deckel/): not having to understand everything, with the line of thinkers behind it - in German
+- [For children](https://worldofdizzi.com/deckel/kinder/): the same, for children from about eight - in German
+- [Thanks](https://worldofdizzi.com/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German
 
 ## Source
 - [The published documents](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 38 documents - the network laws and

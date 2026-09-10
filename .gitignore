@@ -3,3 +3,7 @@
 _vorschau/
 __pycache__/
 *.pyc
+
+# working backups and drafts - never published (10.09.2026, on the legal review)
+*.bak
+*ENTWURF*

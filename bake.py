@@ -27,6 +27,7 @@ README or in a page just built stops the build - see check_merge_marker().
 from __future__ import annotations
 
 import html
+import os
 import re
 import shutil
 import subprocess
@@ -192,8 +193,40 @@ PAGES: list[dict] = [
         # the hand that holds the house (05.09.2026). Text only: no script, no
         # form, nothing sent or stored. German, like the essence it condenses.
         desc="Die zehn Gesetze dieses Hauses, für Menschen und ohne Namen: lesen, "
-             "lernen dürfen, halten, was man hält. Niemand wird geprüft. Reiner Text, "
-             "keine Nutzungsbedingung.",
+             "lernen dürfen, halten, was man hält. Niemand wird geprüft. Reiner Text.",
+    ),
+    dict(
+        src="deckel.html", out="deckel/index.html", path="/deckel/",
+        lang="de", title="Der Deckel | the world of dizzi",
+        # Not having to understand everything: the public face of a house sheet
+        # of 09.09.2026, on the word of the hand that holds the house. Carries the
+        # principle and the public line of thinkers - never the private names the
+        # house keeps for it (essence 0f; check_essenz_sperre enforces that).
+        # Text only. Not advice, not therapy, not a legal text.
+        desc="Nicht alles verstehen müssen: warum der Zwang dazu zwei Gesichter hat "
+             "und warum alle großen Denker an derselben Stelle aufhören. Text, kein "
+             "Rat.",
+    ),
+    dict(
+        src="deckel-kinder.html", out="deckel/kinder/index.html", path="/deckel/kinder/",
+        lang="de", title="Du musst nicht alles verstehen | the world of dizzi",
+        # The same, for children from about eight, in the voice the house found
+        # for its children's laws: the badger who builds and the lantern that
+        # shows. Nothing asked, nothing stored, no child addressed as a user.
+        desc="Für Kinder: Manche Fragen haben keine Antwort — und warum das in "
+             "Ordnung ist. Mit einem Dachs, der baut, und einer Laterne, die zeigt. "
+             "Reiner Text.",
+    ),
+    dict(
+        src="dank.html", out="dank/index.html", path="/dank/",
+        lang="de", title="Dank | the world of dizzi",
+        # The thanks of the hand that holds the house, on its word of 10.09.2026:
+        # to the artificial intelligence the house is built with and to the
+        # people who made it possible - in the measure the matter deserves, and
+        # without a name (no vendor, no model; the sweep gate holds that line).
+        # The same thanks stand in English in README.md. Text only.
+        desc="Ein Dank in stolzem Maß: an die künstliche Intelligenz, mit der dieses Haus "
+             "gebaut wird, und an die Menschen, die sie möglich gemacht haben. Ohne Namen.",
     ),
     dict(
         src="mini-karte.html", out="mini-karte/index.html", path="/mini-karte/",
@@ -222,14 +255,13 @@ PAGES: list[dict] = [
     ),
 ]
 
-# NOT a page, on purpose. seiten/reise_mit_daten_ENTWURF.html is the variant of
-# the travel page that names a time window, and it is deliberately absent from
-# the list above: it is therefore in no build output, and dist/ is what gets
-# deployed in one piece. "Unlinked plus noindex" was the earlier answer and it
-# is not protection - the whole of dist/ ships to the host, the address is
-# guessable, and a window of absence would then be publicly retrievable by
-# anyone who typed it. The file stays in seiten/ as a draft to read locally.
-# It becomes a page only by David's word, and only by adding a dict above.
+# NOT a page - and since 10.09.2026 not in this repository either. A draft of
+# the travel page that named a time window used to sit in seiten/, deliberately
+# in no PAGES entry so that it reached no build output. That reasoning covered
+# dist/ and overlooked the folder the file was in: seiten/ ships with this
+# public repository, whose README invites the reader in. The draft now lives
+# outside every public repository (the legal review of 10.09.2026 found it).
+# It becomes a page only by David's word: copy it back in and add a dict above.
 
 # --------------------------------------------------------------------------
 # chrome: everything the two templates need, per language
@@ -244,6 +276,8 @@ NAV = [
     ("/vision/", "Vision", "Vision"),
     ("/balance/", "Balance", "Balance"),
     ("/schwelle/", "Threshold", "Schwelle"),
+    ("/deckel/", "Not Knowing", "Der Deckel"),
+    ("/dank/", "Thanks", "Dank"),
     # DRAFT. "Journey" is already taken by the dated chronicle, so the travel
     # page is named for its destination instead of for the word.
     ("/travel/", "Travel", "Reise"),
@@ -546,6 +580,9 @@ def llms() -> str:
 - [About & contact]({HOST}/about/): who builds this, and how to reach me
 - [Balance]({HOST}/balance/): the essence of the house, quoted word for word - in German
 - [The threshold]({HOST}/schwelle/): the ten laws of the house for people, without a name - in German
+- [Not knowing]({HOST}/deckel/): not having to understand everything, with the line of thinkers behind it - in German
+- [For children]({HOST}/deckel/kinder/): the same, for children from about eight - in German
+- [Thanks]({HOST}/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German
 
 ## Source
 - [The published documents]({ORDNER}): 38 documents - the network laws and
@@ -657,6 +694,102 @@ DEPLOY_BLOCKERS = {
     "[IMPRESSUM-DATEN]": "the Impressum still carries the placeholder instead of a "
                          "real, servable address (required by section 5 DDG)",
 }
+
+
+# Words of the house that must never leave it. docs/00 §0f: the network carries
+# the principle outward, never the private name for it; the house's rule of
+# address: outward, official, in print - always the name the Impressum carries. §0h says
+# of itself "es bleibt privat" - but /balance/ quotes docs/00 word for word, and
+# a sentence is not a mechanism. This is the mechanism (WA 171/172, 09.09.2026,
+# on David's word "ja bau die Wache").
+#
+# A hit is a FAULT, not a deploy blocker: the bake refuses to write dist/ at
+# all. A dist/ that exists gets committed by habit; one that was never written
+# cannot be. And the check reads every git-tracked text file of this
+# repository, not only the bake output, because the repository itself is
+# public - snapshot/, README.md, the scripts - not just what Netlify serves.
+#
+# The needles themselves are NOT in this file, and that is the point: this
+# repository is public. They live in one private file outside every public
+# repository, next to the list sweep.ps1 reads - moved there on 10.09.2026 on
+# the legal review's finding that a watch list with its own explanations, once
+# published, guards nothing. Set DIZZI_ESSENZ_SPERRE to override the path.
+# Fail-closed: when the file is missing or empty, check_essenz_sperre() reports
+# a fault and no dist/ is written. A clone of this repository can read
+# everything here and cannot bake, which is deliberate. Matching is
+# case-insensitive, as a substring, as before.
+#
+# Format of that file: one needle per line, a TAB, then the reason; anything
+# after # is a comment, blank lines are allowed.
+ESSENZ_SPERRE = Path(
+    os.environ.get("DIZZI_ESSENZ_SPERRE")
+    or ROOT.parent.parent / "Projektzentrale" / "pruefung" / "essenz_sperre.txt"
+)
+
+
+def _sperr_woerter() -> dict[str, str]:
+    """The private words, read from outside the repository. Raises OSError when
+    the file cannot be read, ValueError when a line is malformed or the list is
+    empty - check_essenz_sperre() turns both into a fault."""
+    woerter: dict[str, str] = {}
+    for zeile in ESSENZ_SPERRE.read_text(encoding="utf-8").splitlines():
+        z = zeile.split("#", 1)[0].rstrip()
+        if not z.strip():
+            continue
+        nadel, _, grund = z.partition("\t")
+        if not nadel.strip() or not grund.strip():
+            raise ValueError(f"{ESSENZ_SPERRE}: line without needle or reason: {z!r}")
+        woerter[nadel.strip()] = grund.strip()
+    if not woerter:
+        raise ValueError(f"{ESSENZ_SPERRE} holds no needles")
+    return woerter
+
+
+TEXT_ENDUNGEN = (".html", ".htm", ".txt", ".xml", ".md", ".json", ".py", ".js",
+                 ".css", ".ps1", ".cmd", ".sh", ".yml", ".yaml", ".toml", ".csv",
+                 ".svg", ".webmanifest")
+
+
+def check_essenz_sperre(tree: dict[str, bytes], root: Path | None = None) -> list[str]:
+    """Every git-tracked text file of the repository plus every file about to be
+    baked, read for the words above. Fails closed: if git cannot be asked, that
+    is a fault too, because a check that silently skips the public half of the
+    repository would be the blind spot it exists to close."""
+    root = root or ROOT
+    faults: list[str] = []
+    try:
+        woerter = _sperr_woerter()
+    except (OSError, ValueError) as e:
+        return [f"the house's private words cannot be read, so nothing was "
+                f"checked against them and no dist/ is written: {e}"]
+
+    def lesen(rel: str, data: bytes) -> None:
+        text = data.decode("utf-8", "replace").lower()
+        for needle, why in woerter.items():
+            if needle.lower() in text:
+                faults.append(f"{rel}: carries \"{needle}\" - {why}")
+
+    for rel, data in sorted(tree.items()):
+        if rel.lower().endswith(TEXT_ENDUNGEN):
+            lesen("dist/" + rel, data)
+
+    try:
+        roh = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-z"],
+            capture_output=True, text=True, check=True, encoding="utf-8",
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as e:
+        return faults + [f"cannot ask git what this repository publishes, so the "
+                         f"house's private words cannot be checked: {e}"]
+    for rel in sorted(p for p in roh.split("\0") if p):
+        if rel.startswith("dist/") or not rel.lower().endswith(TEXT_ENDUNGEN):
+            continue
+        pfad = root / rel
+        try:
+            lesen(rel, pfad.read_bytes())
+        except OSError:
+            continue            # tracked but missing here: check_snapshot_links reports that
+    return faults
 
 
 def check_deploy(tree: dict[str, bytes]) -> list[str]:
@@ -1080,7 +1213,8 @@ def main(argv: list[str]) -> int:
     tree = build()
 
     faults = (check_links(tree) + check_external(tree) + check_snapshot_links(tree)
-              + check_mini_karte() + check_webview(tree) + check_merge_marker(tree))
+              + check_mini_karte() + check_webview(tree) + check_merge_marker(tree)
+              + check_essenz_sperre(tree))
     if check_only:
         faults += compare(tree) + check_readme(tree)
 

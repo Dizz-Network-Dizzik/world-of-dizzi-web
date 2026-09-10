@@ -132,32 +132,36 @@ $exceptions += @{
   why     = 'already public in the curated extract this folder copies - see the note in this script'
 }
 
-$scan = @(
-  "$root\bake.py", "$root\netlify.toml", "$root\README.md",
-  "$root\vorlagen", "$root\seiten", "$root\statisch",
-  "$root\pruefung", "$root\werkzeug", "$root\dist",
-  "$root\snapshot"
-) | Where-Object { Test-Path $_ }
-
-$files = foreach ($p in $scan) {
-  if (Test-Path $p -PathType Container) { Get-ChildItem $p -Recurse -File } else { Get-Item $p }
-}
-
-# Scan what could actually be published, not what happens to lie on the disk.
-# A stray __pycache__ carries the absolute build path inside its bytecode and
-# reports as a finding every time, although .gitignore means it can never reach
-# the remote. Findings nobody can act on are how a gate teaches people to look
-# away, so ask git which files are real candidates and judge only those.
+# Which files could reach the remote is git's question, not a list's. Until
+# 10.09.2026 this gate scanned a hand-written list of roots and then filtered
+# it against git - so a tracked file outside that list was never opened, and
+# the gate said "clean" over it. .gitignore was one, since the first commit,
+# and it holds a term of the list (a tool folder's name, no person in it).
+# The legal review of 10.09.2026 found it: the same shape of hole as on
+# 27.07. (the snapshot folder) and 09.09. (the essence watch). So the set is
+# now DERIVED: every file git would publish - tracked, plus untracked and not
+# ignored - from the repository root down, nothing listed by hand. When git
+# cannot answer, nothing has been checked, and the gate says so: exit 2.
+$files = @()
+$gitOk = $false
 if (Test-Path "$root\.git") {
-  $verfolgt = @{}
   try {
-    foreach ($rel in @(git -C $root ls-files --cached --others --exclude-standard)) {
-      if ($rel) { $verfolgt[(Join-Path $root ($rel -replace '/', '\'))] = $true }
+    $rels = @(git -C $root ls-files --cached --others --exclude-standard)
+    if ($LASTEXITCODE -eq 0 -and $rels.Count) {
+      $files = foreach ($rel in $rels) {
+        if (-not $rel) { continue }
+        $p = Join-Path $root ($rel -replace '/', '\')
+        if (Test-Path -LiteralPath $p -PathType Leaf) { Get-Item -LiteralPath $p }
+      }
+      $gitOk = $true
     }
-  } catch { $verfolgt = @{} }
-  if ($verfolgt.Count) {
-    $files = $files | Where-Object { $verfolgt.ContainsKey($_.FullName) }
-  }
+  } catch { $gitOk = $false }
+}
+if (-not $gitOk) {
+  Write-Host "ABORT: git did not answer, so the set of publishable files is unknown." -ForegroundColor Red
+  Write-Host "Nothing was checked. Do not push." -ForegroundColor Red
+  Write-Spur 2 0 0 0
+  exit 2
 }
 # binaries carry no readable text. This script is scanned like everything else -
 # it no longer holds the terms, so it has nothing to be excused for.
