@@ -82,9 +82,13 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,393 bytes** uncompressed — 26.0 KB markup, 85.2 KB stylesheet,
+page: **143,681 bytes** uncompressed — 26.4 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is an addition: 45 bytes joined the menu on
+server compresses. The latest change is an addition: 288 bytes joined the footer
+on 17 September 2026 — two links, to the two public profiles of this site, in a
+`nav` of their own beside the legal one, on every page. They cost no stylesheet
+line, because the footer already styles every `nav` inside it. Before that, an
+addition: 45 bytes joined the menu on
 10 September 2026 — a twentieth page, `/dank/`, in German: whom this house
 thanks for being built by two, a person and an artificial intelligence, in the
 measure the matter deserves and without naming a vendor or a model; the same
@@ -336,6 +340,18 @@ it. `AUSZUG` below it names the folder holding the published documents, and the
 two link bases built from those two, `DATEI` and `ORDNER`, carry every source
 link on the site. Moving or renaming the snapshot is one line here, then build
 again.
+
+`SOZIAL`, below those, holds the public profiles of this house as a name and an
+address. It feeds two places and nothing else: the footer of every page, which
+links them, and the section of the Impressum that names the profiles the same
+answers hold for. An entry whose address is empty renders nowhere at all — no
+footer link, no line in the Impressum — and the build stays green, because an
+Impressum that announces a profile it cannot name is worse than one that says
+nothing. Writing an address in and building again is the whole change; the
+profile's name is the link text and the address stays in the `href`, so no word
+list has to grow for it. The links do add bytes to the start page, so the
+first-load figure below has to be measured again in the same run, and
+`bake.py --check` says what it is.
 
 It refuses to finish quietly. It fails on a dead internal link, a dead anchor,
 an unknown `{{PLACEHOLDER}}` or a subresource pointing at another host, and it

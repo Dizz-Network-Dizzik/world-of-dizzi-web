@@ -1307,6 +1307,8 @@ produces
 product
 products
 professional
+profile
+profiles
 progress
 project
 projects

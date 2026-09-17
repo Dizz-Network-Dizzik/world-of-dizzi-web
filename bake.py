@@ -62,6 +62,24 @@ AUSZUG = "snapshot"
 DATEI = f"{SELBST}/blob/main/{AUSZUG}"   # a file inside the extract
 ORDNER = f"{SELBST}/tree/main/{AUSZUG}"  # a directory inside the extract
 
+# The public profiles of this house. Two things hang on these strings and on
+# nothing else: the Impressum has to name the profiles it also speaks for -
+# section 18 MStV asks the same of a profile as of a website, and what carries
+# that duty is the profile's own bio linking back to /impressum/ - and the
+# footer of every page has to be able to reach them.
+#
+# Nothing here is guessed. While an entry carries no address, that profile is
+# rendered nowhere: no footer link, no line in the Impressum, and the build
+# stays green and publishable. An Impressum that announces profiles it cannot
+# name would be worse than one that says nothing, and a footer link into
+# nothing is a dead link the delivery gate would find after the push instead of
+# before it. Writing the two addresses in and baking again is the whole change;
+# it needs no other edit anywhere.
+SOZIAL: list[tuple[str, str]] = [
+    ("X", "https://x.com/DavidKrause188"),
+    ("Instagram", "https://www.instagram.com/dizz_network_dizzik/"),
+]
+
 # The footer of every page quotes the length of this file, and /numbers/ quotes
 # it twice. That figure was wrong once already - the footer said "100-line"
 # while the file had 530 - and it went wrong again the moment this file grew by
@@ -296,6 +314,7 @@ T = {
         FOOT_CLAIM="Documents public, code private. All rights reserved.",
         FOOT_STATUS="Independent project — incorporation ahead.",
         FOOT_LEGALLABEL="Legal",
+        FOOT_SOZIALLABEL="Profiles",
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Privacy",
         FOOT_TOP="Back to top",
@@ -314,6 +333,7 @@ T = {
                    "vorbehalten.",
         FOOT_STATUS="Unabhängiges Projekt — Gründung in Vorbereitung.",
         FOOT_LEGALLABEL="Rechtliches",
+        FOOT_SOZIALLABEL="Profile",
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Datenschutz",
         FOOT_TOP="Nach oben",
@@ -401,6 +421,59 @@ def nav_html(page: dict) -> str:
     )
     _ = idx, en, de
     return "\n        ".join(items)
+
+
+def sozial_eintraege() -> list[tuple[str, str]]:
+    """The profiles that actually carry an address. Every other entry in SOZIAL
+    is a slot waiting for one, and a slot renders nothing."""
+    return [(name, url.strip()) for name, url in SOZIAL if url.strip()]
+
+
+def sozial_fuss(lang: str) -> str:
+    """The footer's profile links - or nothing at all, which is what an empty
+    SOZIAL means. The markup repeats the shape of the legal nav beside it on
+    purpose: the stylesheet addresses `.fuss nav ul` and `.fuss nav a`, every
+    nav inside the footer, so this needs no stylesheet change at all and cannot
+    drift away from its neighbour later."""
+    eintraege = sozial_eintraege()
+    if not eintraege:
+        return ""
+    zeilen = "\n".join(
+        f'        <li><a href="{html.escape(url, quote=True)}" '
+        f'rel="me noopener">{html.escape(name)} &#8599;</a></li>'
+        for name, url in eintraege
+    )
+    label = html.escape(T[lang]["FOOT_SOZIALLABEL"], quote=True)
+    # The leading newline belongs to the block, not to the template: with it
+    # here, an empty SOZIAL leaves the footer byte for byte what it was, and no
+    # page pays for a slot nobody filled.
+    return ('\n    <nav class="fuss-sozial" aria-label="%s">\n      <ul>\n%s\n'
+            '      </ul>\n    </nav>' % (label, zeilen))
+
+
+def sozial_impressum() -> str:
+    """The section of the Impressum that names the profiles it also speaks for.
+
+    The profile's name is the link text and the address sits in the href, not
+    in the prose. That is not a matter of taste: the proofreading gate reads
+    every rendered sentence against a word list, so a printed address would
+    make the scheme, the host and the handle three new dictionary entries, and
+    every later change of a handle would demand a word-list edit before the
+    gate went green again. With the name as the text, filling in an address
+    above needs no other edit anywhere - which is the whole point of keeping
+    the two strings in one place."""
+    eintraege = sozial_eintraege()
+    if not eintraege:
+        return ""
+    zeilen = "\n".join(
+        f'        <li><a href="{html.escape(url, quote=True)}" '
+        f'rel="me noopener">{html.escape(name)}</a></li>'
+        for name, url in eintraege
+    )
+    return ('      <h2 class="mt-xl">Dieses Impressum gilt auch für</h2>\n'
+            '      <ul class="liste">\n%s\n      </ul>\n'
+            '      <p>Für diese Profile gelten dieselben Angaben wie für diese '
+            'Website.</p>\n' % zeilen)
 
 
 def head_extras(page: dict) -> dict:
@@ -496,6 +569,8 @@ def build() -> dict[str, bytes]:
             BAKERZEILEN=str(BAKER_ZEILEN),
             BAKERCODE=str(BAKER_CODE),
             SELBST=SELBST,
+            SOZIAL=sozial_fuss(lang),
+            IMPRESSUM_SOZIAL=sozial_impressum(),
         )
         # The language switch is one fixed string per language, which is right
         # while every English page has the same German twin - the entry page.

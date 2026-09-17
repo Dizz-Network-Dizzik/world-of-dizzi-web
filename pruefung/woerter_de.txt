@@ -287,6 +287,7 @@ die
 dienst
 dienste
 diensteanbieter
+diensteanbieters
 dies
 diese
 dieselbe
@@ -307,6 +308,7 @@ drei
 dsgvo
 dublin
 durch
+durchgesehen
 durchläufen
 durchsehen
 dünnen
@@ -544,6 +546,7 @@ inhalt
 inhalte
 ins
 insbesondere
+instagram
 interaktiv
 interaktive
 interesse
@@ -724,6 +727,7 @@ privat
 privaten
 problem
 produkten
+profile
 projekt
 projekte
 projekts
@@ -751,6 +755,7 @@ rechtsgrundlage
 rechtsmittel
 rechtsverletzungen
 rechtsverstöße
+redaktionelle
 referrer
 regel
 regeln
@@ -840,6 +845,7 @@ statt
 stattfinden
 stehen
 steht
+stellenweise
 stets
 steuer
 stichtag
@@ -912,6 +918,7 @@ ustg
 verantwortlich
 verantwortlichen
 verantwortlicher
+verantwortung
 verarbeite
 verarbeitet
 verarbeiteten
@@ -956,6 +963,7 @@ veröffentlichen
 veröffentlicht
 veröffentlichte
 veröffentlichten
+veröffentlichung
 videos
 vier
 voller
