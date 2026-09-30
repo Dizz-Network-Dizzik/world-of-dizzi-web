@@ -598,14 +598,15 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   <div class="statline">
     <div class="stat"><b class="accent">10</b><span>Dienste (Core+8 Apps+TB)</span></div>
     <div class="stat"><b>10/10</b><span>Health-Watch grün</span></div>
-    <div class="stat"><b>~2.180</b><span>Tests (Apps) + 400 TB</span></div>
-    <div class="stat"><b>50</b><span>Trading-Bots · 18 Strategien (dry_run · kleiner Teil seit 04.08. eigenes Geld, hinterm Gate)</span></div>
+    <div class="stat"><b>4.099</b><span>Netz-Tests grün · 0 rot (19.08.2026) + TB-Suite 772 grün (20.08.)</span></div>
+    <div class="stat"><b>48</b><span>Trading-Bots · 17 Strategien (dry_run · kleiner Teil seit 04.08. eigenes Geld, hinterm Gate)</span></div>
     <div class="stat"><b>1</b><span>Repo · 0 Vendoring</span></div>
   </div>
 </div></header>
 
 <nav class="bar"><div class="wrap">
   <span class="brand"><span class="mk"></span> dizz-network</span>
+  <a class="lnk" href="#mitte">Die Mitte</a>
   <a class="lnk" href="#karte">Karte</a>
   <a class="lnk" href="#ueberblick">Überblick</a>
   <a class="lnk" href="#architektur">Architektur</a>
@@ -618,6 +619,16 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 </div></nav>
 
 <main class="wrap">
+
+<!-- ◎ DIE MITTE -->
+<section id="mitte">
+  <div class="sh"><span class="num">◎</span><h2>Die Mitte — das Zentrum, um das herum alles andere gebaut ist</h2></div>
+  <p class="sub">Im Zentrum dieses Systems steht kein Dienst und kein Port, sondern ein Text: <b>docs/00_VISION_UND_ANFORDERUNGEN.md, §0 bis §0h</b> — die Haltung und die Essenz dieses Vorhabens. <b>Das System ist um die Mitte herum gewachsen, nicht umgekehrt.</b> Sie ist kein Dokument unter Dokumenten; bei Konflikt gewinnt die Mitte — nicht der Zeitplan, nicht die Eleganz einer Lösung.</p>
+  <div class="card">
+    <p style="margin:0 0 10px"><b>Wie sie geschützt ist</b> — sachlich und prüfbar: acht <b>SHA-256-Pins</b> über §0–§0h in <code>ops/doku_check.py</code> (fail-closed — weicht ein Zeichen ab, fällt der Lauf rot) und die laufende Integritäts-Wache. Geändert wird sie nur durch Davids ausdrückliches, wörtliches Wort — <b>Gesetz 0</b>.</p>
+    <p style="margin:0"><b>Die Grenze (§0d):</b> Geprüft wird allein ihre Unversehrtheit, nie ihre Erfüllung — sie wird nie zu einer Kennzahl.</p>
+  </div>
+</section>
 
 <!-- ★ KONSTELLATION -->
 <section id="karte">
@@ -1008,9 +1019,9 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 
     <article class="app card lift" data-app="trading" data-mode="money" data-ext="1" data-tags="ext money">
       <div class="ah"><div><h3>Dizz Trading</h3><span class="port">:8137</span></div><button class="exp">+</button></div>
-      <p class="one">Krypto-Bot-Flotte (50 Bots · 18 Strategien; Kern dry_run, kleiner Teil seit 04.08.2026 mit eigenem Geld) — eigener Stack, Echtgeld-Gate hochsicher.</p>
+      <p class="one">Krypto-Bot-Flotte (48 Bots · 17 Strategien; Kern dry_run, kleiner Teil seit 04.08.2026 mit eigenem Geld) — eigener Stack, Echtgeld-Gate hochsicher.</p>
       <div class="badges"><span class="b money">Geld-System · read-only</span><span class="b ext">↗ Anthropic-Recherche</span><span class="b ai">● lokale Lern-Ebenen</span></div>
-      <ul class="kann lese-fn"><li>Eine Flotte von 50 Krypto-Bots über 18 Strategien (jede ≥1; davon 6 neu aus Katalog-Vorlagen anwendbar gemacht) — der Kern im Trockenlauf (dry_run); seit dem 04.08.2026 handelt ein kleiner Teil der Flotte mit eigenem Geld auf eigene Rechnung</li><li>Lernt selbstständig dazu, kann das Risiko aber nur senken</li><li>Echtgeld steht hinter demselben hochsicheren Menschen-Gate — kein fremdes Kapital, kein Angebot, keine Aussage über Erträge</li><li><b style="color:var(--cy)">Klapp auf</b> für die komplette 6-Schichten-Sub-Architektur ↓</li></ul>
+      <ul class="kann lese-fn"><li>Eine Flotte von 48 Krypto-Bots über 17 Strategien (jede ≥1; davon 6 neu aus Katalog-Vorlagen anwendbar gemacht) — der Kern im Trockenlauf (dry_run); seit dem 04.08.2026 handelt ein kleiner Teil der Flotte mit eigenem Geld auf eigene Rechnung</li><li>Lernt selbstständig dazu, kann das Risiko aber nur senken</li><li>Echtgeld steht hinter demselben hochsicheren Menschen-Gate — kein fremdes Kapital, kein Angebot, keine Aussage über Erträge</li><li><b style="color:var(--cy)">Klapp auf</b> für die komplette 6-Schichten-Sub-Architektur ↓</li></ul>
       <div class="det"><dl>
         <dt>Stack</dt><dd>eigener FastAPI + Freqtrade-Engines (kein appkit), eigene venvs.</dd>
         <dt>KI-Ebenen</dt><dd>HMM/Master/Anchored-Walk-Forward/Autopilot + MN-Sockel (CSM/Pairs/StatArb/MM, jetzt als <b>Demo-Paper-Bots anlegbar</b>) — lokal.</dd>
@@ -1024,7 +1035,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 
         <div class="tblayer z-teal"><span class="tbnum">①</span><div><b>Markt &amp; Regime-Erkennung</b><span class="tbmods"><code>ccxt/Bitget</code> (OHLCV read-only) · <code>tracker.py</code> (Markt-Snapshot, Regime) · <code>hmm.py</code> (Gauss-HMM, kausal · Baum-Welch im Log-Space) · <code>fundamental.py</code> (Event-Risiko, fail-safe, key-frei)</span></div></div>
         <div class="tbbridge">↓ schreibt Bridge <code>data/hmm_regime.json</code> (venv-übergreifend) · regime · Konfidenz · lev_scale · exposure_scale ↓</div>
-        <div class="tblayer z-blue"><span class="tbnum">②</span><div><b>Ausführung — freqtrade</b> <span style="color:var(--tx3);font-size:11px">(je Bot ein Prozess)</span><span class="tbmods">18 Engines (Spot + Futures-Short, lookahead-frei; 6 neu aus Vorlagen 26.06.) · <code>MasterMeta-Bot</code> (regime-schaltend, Hebel) · <code>runner.py</code> (Prozesse, sicherer Kill) · <code>registry.py</code> — 50 Bots (jede Strategie ≥1; Kern dry_run) → <code>tradesv3_*.sqlite</code> (Backend liest read-only, kann nie korrumpieren)</span></div></div>
+        <div class="tblayer z-blue"><span class="tbnum">②</span><div><b>Ausführung — freqtrade</b> <span style="color:var(--tx3);font-size:11px">(je Bot ein Prozess)</span><span class="tbmods">18 Engines (Spot + Futures-Short, lookahead-frei; 6 neu aus Vorlagen 26.06.) · <code>MasterMeta-Bot</code> (regime-schaltend, Hebel) · <code>runner.py</code> (Prozesse, sicherer Kill) · <code>registry.py</code> — 48 Bots (17 der 18 Engines geflogen; Kern dry_run) → <code>tradesv3_*.sqlite</code> (Backend liest read-only, kann nie korrumpieren)</span></div></div>
         <div class="tbbridge">↓ Trades (read-only) ↓</div>
         <div class="tblayer z-purple"><span class="tbnum">③</span><div><b>KI-Lernen — das Gehirn</b> <span style="color:var(--tx3);font-size:11px">(proposal-only, OOS-gegated)</span><span class="tbmods"><code>stats.py</code> (Lern-DB, Trade-Reads) · <code>meta</code> + <code>mn_learn</code> (anchored Walk-Forward, OOS-Gate, Regressions-Gate) · MN-Sockel (CSM/Pairs/StatArb/MM, Sim) · <code>master.py</code> (Ensemble-Politik, PF-gated)</span></div></div>
         <div class="tbbridge">↓ Evidenz + Politik ↓</div>
@@ -2008,8 +2019,5 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   targets.forEach(function(el){ ro.observe(el); });
 })();
 </script>
-<footer style="margin:28px auto 20px;max-width:1200px;padding:0 16px;font-size:12px;opacity:.78;text-align:center">
-  <a href="/impressum/" style="color:inherit">Impressum</a> &nbsp;·&nbsp; <a href="/datenschutz/" style="color:inherit">Datenschutz</a> &nbsp;·&nbsp; <a href="/" style="color:inherit">worldofdizzi — Startseite</a>
-</footer>
 </body>
 </html>
