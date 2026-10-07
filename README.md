@@ -82,9 +82,18 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,681 bytes** uncompressed — 26.4 KB markup, 85.2 KB stylesheet,
+page: **143,704 bytes** uncompressed — 26.4 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is an addition: 288 bytes joined the footer
+server compresses. The latest change is a rewording, and it costs the start page 23 bytes. The
+sentences about the code extract now say exactly what the current tree holds:
+the extract is no longer part of it, and the figures measured in it cannot be
+checked against it. No figure changed. The same pass brought the two legal
+pages up to date, neither of them part of the first load: the Impressum names
+the legal form, a sole proprietorship, and the privacy statement gained a
+section on the Instagram profile — which statistics the operator of the network
+and this site are jointly responsible for, and the rights that go with that. The
+profile is linked as text and embedded nowhere. Before that, an addition: 288
+bytes joined the footer
 on 17 September 2026 — two links, to the two public profiles of this site, in a
 `nav` of their own beside the legal one, on every page. They cost no stylesheet
 line, because the footer already styles every `nav` inside it. Before that, an
@@ -125,7 +134,7 @@ stylesheet, 4,656 of markup — are the grove on the two front pages: three fron
 two halves in balance, a band of water and the deep reveals, all of it CSS
 and SVG, none of it script. The last 272 bytes are the sentences the 6 August curation
 made necessary: the start page now says on itself that the code behind two of
-its figures is no longer published. It was 69,773 bytes before the reveal animations and the
+its figures is no longer part of the current tree. It was 69,773 bytes before the reveal animations and the
 numbers page, which added 5,263 bytes of stylesheet and 55 bytes of markup;
 those bytes bought motion that needs no script. Another 140 bytes of markup
 followed, and all of it address: the start page carries six source links, and

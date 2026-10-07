@@ -5,11 +5,11 @@
     <h1>Six figures, and how each was counted</h1>
     <p class="lede">A number without a method is a claim. Each figure below carries the
       method that produced it and the date it was measured — and where it cannot be
-      checked from outside, it says so on its own tile.</p>
-    <p class="hinweis mt-m"><b>On 6 August 2026 the public code extract was withdrawn.</b>
+      checked against the current tree, it says so on its own tile.</p>
+    <p class="hinweis mt-m"><b>On 6 August 2026 the public code extract left the current tree.</b>
       What is published now is a curated set of <b>38 documents</b>. Two of the figures
-      below therefore describe something that is <b>no longer public and can no longer be
-      reproduced from outside</b>. They stay on the page with that said, because deleting
+      below therefore describe something that is <b>no longer part of the current tree and
+      cannot be reproduced against it</b>. They stay on the page with that said, because deleting
       a number the site led with for two weeks would be the quieter kind of dishonesty.</p>
   </div>
 </section>
@@ -18,7 +18,7 @@
   <div class="wrap">
     <p class="kicker">Measured, not claimed</p>
     <h2>The six figures this site leads with</h2>
-    <p class="dach">Three of the six cannot be checked from outside any more, and each of
+    <p class="dach">Three of the six cannot be checked against the current tree, and each of
       the three says so on its own tile. Every tile opens to show how it was produced.</p>
 
     <ol class="messung tafeln reveal mt-l">
@@ -82,13 +82,13 @@
       <li class="mess a-coral" id="python">
         <p class="mess-kopf"><b class="mess-wert">~100,000</b>
           <span class="mess-was">lines of Python, across 632 files</span></p>
-        <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
+        <p class="mess-stand"><span class="chip alt">cannot be checked against the current tree</span></p>
         <details class="methode">
-          <summary>How it was counted, and why you can no longer repeat it</summary>
+          <summary>How it was counted, and why it cannot be repeated against the current tree</summary>
           <div class="methode-inhalt">
-            <p class="hinweis"><b>Measured in the code extract that was withdrawn on
-              6 August 2026.</b> The method below was reproducible until that day and is
-              not any more. It is written out anyway, so the figure can at least be
+            <p class="hinweis"><b>Measured in the code extract that left the current tree on
+              6 August 2026.</b> Until that day the method below could be repeated on the
+              current tree; since then it cannot. It is written out anyway, so the figure can at least be
               judged by how it was made.</p>
             <p>File count: <code>git ls-files "*.py"</code> — 632 files. The rounded
               figure stands for an exact one: <b>100,234 lines carry a
@@ -109,11 +109,11 @@
       <li class="mess a-coral" id="tests">
         <p class="mess-kopf"><b class="mess-wert">2,667</b>
           <span class="mess-was">test functions in 309 files</span></p>
-        <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
+        <p class="mess-stand"><span class="chip alt">cannot be checked against the current tree</span></p>
         <details class="methode">
-          <summary>How it was counted, and why you can no longer repeat it</summary>
+          <summary>How it was counted, and why it cannot be repeated against the current tree</summary>
           <div class="methode-inhalt">
-            <p class="hinweis"><b>Measured in the code extract that was withdrawn on
+            <p class="hinweis"><b>Measured in the code extract that left the current tree on
               6 August 2026</b> — like the figure above, and for the same reason.</p>
             <p>Every tracked <code>.py</code> file is parsed for functions whose names
               begin with <code>test_</code>. The suite is <b>not</b> run to produce this
@@ -151,7 +151,7 @@
               footer, into this entry and into the German summary at the foot of this
               page. An edit that changes its length changes all of them, and
               <code>bake.py --check</code> fails until they are built again — so the
-              figure can no longer go stale without the check saying so. And the footer
+              figure cannot go stale any more without the check saying so. And the footer
               figure is now a link to this entry, which carries the source link that was
               missing.</p>
             <p class="quellen"><a href="{{SELBST}}/blob/main/bake.py" rel="noopener"><code>bake.py</code> in this website’s own repository &#8599;</a></p>
@@ -162,7 +162,7 @@
       <li class="mess a-amber" id="commits">
         <p class="mess-kopf"><b class="mess-wert">2,600+</b>
           <span class="mess-was">commits in the private working repository behind the snapshot</span></p>
-        <p class="mess-stand"><span class="chip alt">cannot be checked from outside</span></p>
+        <p class="mess-stand"><span class="chip alt">cannot be checked against the current tree</span></p>
         <details class="methode">
           <summary>How it was counted, and why it is stated as a floor</summary>
           <div class="methode-inhalt">
@@ -214,7 +214,7 @@
       to scale. The sum is here because a reader who adds these four up deserves the
       answer on the page rather than a discrepancy to wonder about. This breakdown
       belongs to the same 27 July measurement as the total, and like the total it
-      describes a folder that is no longer published.</p>
+      describes code that is no longer part of the current tree.</p>
     <details class="methode">
       <summary>Why the shared libraries carry the most</summary>
       <div class="methode-inhalt">
@@ -243,7 +243,7 @@
           <summary>What is written down, and how far it goes</summary>
           <div class="methode-inhalt">
             <p>That part was visible in the code extract until 6 August 2026; what
-              remains public is the contract that requires it.</p>
+              the current tree carries is the contract that requires it.</p>
             <p>There is a written export
               contract that specifies how one application, plus the core and the parts of
               the shared libraries it actually uses, becomes a self-contained bundle. That
@@ -278,8 +278,8 @@
         out deliberately even then.</li>
       <li><b>They are dated, and two of them are now historical.</b> The Python and test
         figures were read on 26 July 2026 against the code extract of 23 July, and read
-        again on 27 July; that extract was withdrawn on 6 August 2026, so those two
-        cannot be repeated. The document count and the build figure are current — the
+        again on 27 July; that extract has not been part of the current tree since 6 August 2026, so those two
+        cannot be repeated against it. The document count and the build figure are current — the
         build figure is produced at build time, so it is as current as the page you are
         reading. The commit count was taken in the private repository on 26 July.</li>
       <li><b>They are the six the site leads with, not every number in the text.</b>
@@ -312,14 +312,14 @@
     <ul class="liste lang">
       <li><b>10 Anwendungen</b> (Core + 9).</li>
       <li><b>966</b> versionierte Dateien in einem einzigen kuratierten Commit –
-        <b>dieser Code-Auszug wurde am 6. August 2026 zurückgezogen</b>; veröffentlicht
+        <b>dieser Code-Auszug gehört seit dem 6. August 2026 nicht mehr zum aktuellen Stand</b>; veröffentlicht
         ist seither ein kuratierter Satz von <b>38 Dokumenten</b>, die <b>966</b> ist
         durch die <b>38</b> ersetzt.</li>
       <li><b>~100.000 Zeilen Python</b> in <b>632</b> Dateien, genau: 100.234 Zeilen mit
-        sichtbarem Inhalt – von außen nicht mehr nachprüfbar, steht nur noch mit Datum
+        sichtbarem Inhalt – im aktuellen Stand nicht nachprüfbar, steht nur noch mit Datum
         da.</li>
       <li><b>2.667 Test-Funktionen</b> in <b>309</b> Dateien – gezählt, nicht ausgeführt,
-        also geschriebene Tests, keine bestandenen; auch nicht mehr nachprüfbar.</li>
+        also geschriebene Tests, keine bestandenen; auch im aktuellen Stand nicht nachprüfbar.</li>
       <li><b>{{BAKERZEILEN}} Zeilen</b> im Skript, das diese Website baut – beim Bauen
         selbst gezählt, im
         <a href="{{SELBST}}/blob/main/bake.py" rel="noopener">Repository dieser Website</a>.</li>

@@ -131,7 +131,7 @@ PAGES: list[dict] = [
         src="numbers.html", out="numbers/index.html", path="/numbers/", lang="en",
         title="How the numbers were counted | the world of dizzi",
         desc="The six figures this site leads with — how each was counted, when it was "
-             "measured, and which one cannot be checked from outside.",
+             "measured, and which one cannot be checked publicly.",
     ),
     dict(
         src="method.html", out="method/index.html", path="/method/", lang="en",
@@ -662,7 +662,7 @@ def llms() -> str:
 ## Source
 - [The published documents]({ORDNER}): 38 documents - the network laws and
   contracts plus one README per application. The code extract that stood here
-  until 6 August 2026 is no longer published
+  until 6 August 2026 is no longer part of the current tree
 - [This site's own source]({SELBST}): the build script behind the figure in every footer
 - [Interactive system map]({HOST}/karte/): self-contained, no external calls
 
@@ -672,10 +672,10 @@ def llms() -> str:
   outside capital, no offer to anyone. Public since 23 July 2026; cut back to a
   document set on 6 August 2026.
 - The six figures this site leads with are listed at {HOST}/numbers/ with the
-  method that produced each one and the date it was measured. Three of them can
-  no longer be checked from outside: the commit count is private and stated as a
-  floor for that reason, and the two code figures were measured against the
-  extract that was withdrawn on 6 August 2026. Each says so in its own entry.
+  method that produced each one and the date it was measured. Three of them
+  cannot be checked against the current tree: the commit count is private and stated
+  as a floor for that reason, and the two code figures were measured against the
+  extract that left the current tree on 6 August 2026. Each says so in its own entry.
 - German entry page: {HOST}/de/
 """
 
@@ -1098,7 +1098,7 @@ def check_mini_karte() -> list[str]:
         # A pattern that matches nothing reads exactly like a clean run.
         return [f"the system map yields {len(koepfe)} application header port(s) "
                 f"and {len(knoten)} diagram node port(s) - its markup has changed "
-                "and the mini map can no longer be checked against it"]
+                "and the mini map cannot be checked against it any more"]
     if koepfe != knoten:
         return ["the system map disagrees with itself about which ports belong to "
                 f"an application: its cards say {sorted(koepfe)}, its own diagram "

@@ -20,7 +20,7 @@
 ## Source
 - [The published documents](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 38 documents - the network laws and
   contracts plus one README per application. The code extract that stood here
-  until 6 August 2026 is no longer published
+  until 6 August 2026 is no longer part of the current tree
 - [This site's own source](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web): the build script behind the figure in every footer
 - [Interactive system map](https://worldofdizzi.com/karte/): self-contained, no external calls
 
@@ -30,8 +30,8 @@
   outside capital, no offer to anyone. Public since 23 July 2026; cut back to a
   document set on 6 August 2026.
 - The six figures this site leads with are listed at https://worldofdizzi.com/numbers/ with the
-  method that produced each one and the date it was measured. Three of them can
-  no longer be checked from outside: the commit count is private and stated as a
-  floor for that reason, and the two code figures were measured against the
-  extract that was withdrawn on 6 August 2026. Each says so in its own entry.
+  method that produced each one and the date it was measured. Three of them
+  cannot be checked against the current tree: the commit count is private and stated
+  as a floor for that reason, and the two code figures were measured against the
+  extract that left the current tree on 6 August 2026. Each says so in its own entry.
 - German entry page: https://worldofdizzi.com/de/

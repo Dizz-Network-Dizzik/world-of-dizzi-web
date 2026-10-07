@@ -2065,3 +2065,15 @@ viewing
 
 # 2026-09-10 (2) — README „Check it“, Satz zur git-abgeleiteten Dateimenge (jedes Wort vor der Aufnahme gelesen)
 root
+
+# 2026-10-08 WA 212 — README-Absatz zur Umformulierung, /numbers/-Beschreibung (jedes Wort vor der Aufnahme gelesen)
+brought
+embedded
+jointly
+operator
+proprietorship
+publicly
+responsible
+rewording
+sole
+statistics
