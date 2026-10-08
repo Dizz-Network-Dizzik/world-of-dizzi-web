@@ -144,8 +144,8 @@ PAGES: list[dict] = [
         src="journey.html", out="journey/index.html", path="/journey/", lang="en",
         title="Journey — dated milestones | the world of dizzi",
         desc="From the first trading validation nights in June 2026 to the "
-             "public extract of 23 July and its curation down to documents on "
-             "6 August — every node dated.",
+             "public extract of 23 July and the site in October 2026 — every "
+             "node dated.",
     ),
     dict(
         src="vision.html", out="vision/index.html", path="/vision/", lang="en",

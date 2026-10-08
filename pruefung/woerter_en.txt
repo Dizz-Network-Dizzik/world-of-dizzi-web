@@ -2077,3 +2077,26 @@ responsible
 rewording
 sole
 statistics
+
+# 2026-10-08 — Journey-Timeline bis Oktober (acht Knoten; jedes Wort vor der Aufnahme gelesen)
+blocklist
+comparing
+covers
+decimal
+delivery
+discovered
+evening
+faults
+forwards
+governance
+hit
+october
+repositories
+reworded
+screens
+switch
+toolkit
+turned
+twin
+watches
+wording
