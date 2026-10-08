@@ -1946,3 +1946,6 @@ soweit
 verantwortlichkeit
 welchen
 zwecken
+
+# 2026-10-08 — Sprachlink „Deutsch · Startseite“ auf Seiten ohne Zwilling (Fix der Sprachumstellung; das Wort vor der Aufnahme gelesen)
+startseite

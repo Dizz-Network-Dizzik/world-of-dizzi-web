@@ -310,6 +310,11 @@ T = {
         MAP="System map",
         MAPMINI="Mini map",
         LANGLINK='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a>',
+        # A page without a twin says where the switch really leads: the front door.
+        LANGLINK_START='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch · Startseite</a>',
+        HOME="/",
+        HL_DE=' hreflang="de"',
+        HL_EN="",
         SOURCE="Documents",
         FOOT_CLAIM="Documents public, code private. All rights reserved.",
         FOOT_STATUS="Independent project — incorporation ahead.",
@@ -328,6 +333,10 @@ T = {
         MAP="System-Karte",
         MAPMINI="Mini-Karte",
         LANGLINK='<a class="nav-lang" href="/" lang="en" hreflang="en">English</a>',
+        LANGLINK_START='<a class="nav-lang" href="/" lang="en" hreflang="en">English · home page</a>',
+        HOME="/de/",
+        HL_DE="",
+        HL_EN=' hreflang="en"',
         SOURCE="Dokumente",
         FOOT_CLAIM="Dokumente öffentlich, Code privat. Alle Rechte "
                    "vorbehalten.",
@@ -337,7 +346,7 @@ T = {
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Datenschutz",
         FOOT_TOP="Nach oben",
-        FOOT_BUILT=f'Gebacken von einem <a href="/numbers/#baecker">{BAKER_ZEILEN}-'
+        FOOT_BUILT=f'Gebacken von einem <a href="/numbers/#baecker" hreflang="en">{BAKER_ZEILEN}-'
                    "Zeilen-Python-Skript</a>. Keine Cookies, keine Tracker, keine "
                    "externen Aufrufe.",
     ),
@@ -397,26 +406,36 @@ def fill(tpl: str, values: dict) -> str:
 def nav_html(page: dict) -> str:
     lang = page["lang"]
     idx = 2 if lang == "de" else 1
+    # The menu names the English path. On a German page an entry whose German
+    # twin exists leads to that twin; a link that still changes the language
+    # says so with hreflang, so the reader is not surprised by the switch.
+    zw = {p["alt"]: p["path"] for p in PAGES if p.get("alt") and p["lang"] == lang}
+    sp = {p["path"]: p["lang"] for p in PAGES}
     items = []
     for path, en, de in NAV:
         label = de if lang == "de" else en
+        ziel = zw.get(path, path)
         # A page and its other-language twin are the same entry in the menu, so
         # the German twin marks the English entry rather than marking nothing.
-        hier = path in (page["path"], page.get("alt"))
+        hier = page["path"] in (path, ziel)
         cur = ' aria-current="page"' if hier else ""
-        items.append(f'<li><a href="{path}"{cur}>{label}</a></li>')
+        hl = f' hreflang="{sp[ziel]}"' if sp.get(ziel, lang) != lang else ""
+        items.append(f'<li><a href="{ziel}"{cur}{hl}>{label}</a></li>')
     # One entry, two targets. The map at /karte/ is a single heavy page drawn
     # for a wide screen; /mini-karte/ is the same system distilled for a phone.
     # Which of the two is in the document flow is decided by one CSS pair -
     # .nur-breit / .nur-schmal - and by nothing else: no script, no redirect,
     # no guess about the device. Both <li> are always in the markup, so a
     # crawler and a printout see both.
+    hl_de = T[lang]["HL_DE"]
+    cur_k = ' aria-current="page"' if page["path"] == "/karte/" else ""
+    cur_m = ' aria-current="page"' if page["path"] == "/mini-karte/" else ""
     items.append(
-        f'<li class="nur-breit"><a class="nav-karte" href="/karte/">'
+        f'<li class="nur-breit"><a class="nav-karte" href="/karte/"{cur_k}{hl_de}>'
         f'{T[lang]["MAP"]}</a></li>'
     )
     items.append(
-        f'<li class="nur-schmal"><a class="nav-karte" href="/mini-karte/">'
+        f'<li class="nur-schmal"><a class="nav-karte" href="/mini-karte/"{cur_m}{hl_de}>'
         f'{T[lang]["MAPMINI"]}</a></li>'
     )
     _ = idx, en, de
@@ -489,7 +508,9 @@ def head_extras(page: dict) -> dict:
             f'<link rel="alternate" hreflang="{lg}" href="{HOST}{pt}">'
             for pt, lg in pairs
         ]
-        lines.append(f'<link rel="alternate" hreflang="x-default" href="{HOST}/">')
+        # x-default stays inside the pair: the English member of this twin.
+        xd = page["path"] if page["lang"] == "en" else page["alt"]
+        lines.append(f'<link rel="alternate" hreflang="x-default" href="{HOST}{xd}">')
         hreflang = "\n  ".join(lines) + "\n  "
 
     ld = ""
@@ -578,6 +599,9 @@ def build() -> dict[str, bytes]:
         # translation instead of back to the German front door.
         if page.get("langlink"):
             values["LANGLINK"] = page["langlink"]
+        elif not page.get("alt"):
+            # No twin: the switch leads to the other front door and says so.
+            values["LANGLINK"] = T[lang]["LANGLINK_START"]
         values.update(head_extras(page))
         body = read(SEITEN_DIR / page["src"])
         doc = fill(kopf + body + fuss, values)

@@ -82,7 +82,7 @@ works. The one exception is the copied system map at `/karte/`,
 which brings its own inline script and is the only page that talks to
 anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
 the offline view when nothing answers. Total for a first visit to the start
-page: **143,704 bytes** uncompressed — 26.4 KB markup, 85.2 KB stylesheet,
+page: **143,863 bytes** uncompressed — 26.4 KB markup, 85.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The latest change is a rewording, and it costs the start page 23 bytes. The
 sentences about the code extract now say exactly what the current tree holds:
