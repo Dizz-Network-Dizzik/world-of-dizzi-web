@@ -73,18 +73,27 @@ house, and read and released by him.*
 
 ## What it is
 
-Twenty pages of static HTML, one stylesheet, three subset web fonts and a
+Twenty-two pages of static HTML, one stylesheet, three subset web fonts and a
 Python baker that counts its own lines and writes the figure into the footer
 of every page — so the footer's number cannot drift away from the file it
 describes. **No JavaScript, no cookies, no trackers, no external request** —
 put the machine in airplane mode after the first load and every page still
-works. The one exception is the copied system map at `/karte/`,
-which brings its own inline script and is the only page that talks to
-anything: it asks `127.0.0.1:8200` whether a local core is running, and shows
-the offline view when nothing answers. Total for a first visit to the start
-page: **143,863 bytes** uncompressed — 26.4 KB markup, 85.2 KB stylesheet,
+works. Two pages are the exception to the first of those, and both are copied
+in rather than written here: the system map at `/karte/`, which brings its own
+inline script and is the only page that talks to anything — it asks
+`127.0.0.1:8200` whether a local core is running, and shows the offline view
+when nothing answers — and the game DizzCube at `/dizzcube/play/`, one
+self-contained file with a script of its own that opens no connection once
+loaded and stores nothing on the device. Total for a first visit to the start
+page: **149,199 bytes** uncompressed — 28.2 KB markup, 88.7 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is a rewording, and it costs the start page 23 bytes. The
+server compresses. The latest change is an addition: 5,336 bytes joined the
+first load on 9 October 2026 — 1,676 of markup for a band at the top of
+the start page that points at DizzCube, a game from this house, and for the menu
+entry that leads to it, and 3,660 of stylesheet for that band, for the
+keys on the new page and for a narrower gap in the menu, which keeps the header
+as it was now that the menu has one entry more. Before that came a
+rewording that cost the start page 23 bytes. In it, the
 sentences about the code extract now say exactly what the current tree holds:
 the extract is no longer part of it, and the figures measured in it cannot be
 checked against it. No figure changed. The same pass brought the two legal
@@ -329,7 +338,7 @@ is measured here, so the file behind it has to be reachable.
 | Build | `bake.py` — Python standard library only, no node, no npm |
 | Output | `dist/`, committed; Netlify publishes it with **no cloud build** |
 | Design | palette and typography taken from the system map in `statisch/karte/` |
-| Languages | English throughout, plus German pages: the entry page at `/de/`, the two legal pages, and the house pages `/balance/`, `/schwelle/`, `/deckel/`, `/deckel/kinder/` and `/dank/` |
+| Languages | English throughout, plus German pages: the entry page at `/de/`, the German twin of the game page at `/de/dizzcube/`, the two legal pages, and the house pages `/balance/`, `/schwelle/`, `/deckel/`, `/deckel/kinder/` and `/dank/` |
 | Hosting | Netlify free tier; `_headers` carries the CSP and the security headers |
 
 ## Build it
@@ -424,7 +433,8 @@ transitions, unguarded smooth scrolling, `target="_blank"` without
 `rel="noopener"`, `javascript:` URLs, any script that is not JSON-LD, anything
 pinned to a viewport edge while visible, `100vh` and `100dvh`, and meta refresh.
 It reads `seiten/`, `vorlagen/`, the stylesheet and `dist/`, and skips both
-copies of the system map, which is a mirror and brings its own script. Comments
+copies of the system map, which is a mirror and brings its own script, and the
+game at `dist/dizzcube/play/`, for the same reason. Comments
 are blanked before it matches, because the stylesheet quotes the forbidden
 declaration in the note that explains why it went: a watch that fired on its own
 explanation would be switched off within a week. `bake.py` calls it on the pages
@@ -468,7 +478,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **74 source links** against
+be resolved, and `check_snapshot_links` resolves all **76 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -478,7 +488,7 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 74 links break at once — and the claim on `/numbers/` that exactly one figure
+all 76 links break at once — and the claim on `/numbers/` that exactly one figure
 cannot be checked from outside quietly stops being true. It is the one link count
 on this page that no gate measures, and it has drifted twice already: it read 83
 until a count over the built site produced 72, and 74 from the travel pages until
@@ -502,6 +512,8 @@ statisch/             copied 1:1 into dist/
   bilder/             og.png, favicon.svg
   karte/index.html    the system map; edited only in dizz-network and mirrored
                       here — see "The system map" below
+  dizzcube/play/      the game DizzCube, one self-contained file; built outside
+                      this repository and copied in byte for byte
   _headers            CSP and security headers for Netlify
 pruefung/             the quality gate
 werkzeug/             one-off build tools (fonts, OG image) — not site dependencies
@@ -523,11 +535,12 @@ neither is a dependency of the site.
 
 ### The system map
 
-`statisch/karte/index.html` is the one page here that is not written here. It is
-authored in the `dizz-network` repository as `_netzwerk/SYSTEM_KARTE.html` and
-mirrored into this one, and it is the only page carrying inline script and style
-— the CSP relaxation for that is scoped to `/karte/*` in `statisch/_headers` and
-to nowhere else.
+`statisch/karte/index.html` is one of two pages here that are not written here;
+the other is the game under `statisch/dizzcube/play/`. The map is authored in the
+`dizz-network` repository as `_netzwerk/SYSTEM_KARTE.html` and mirrored into
+this one. The two are the only pages carrying inline script and style — the CSP
+relaxation for each is scoped to its own path in `statisch/_headers`, `/karte/*`
+and `/dizzcube/play/*`, and to nowhere else.
 
 The two files are **not** byte-identical, and the difference is deliberate: a
 handful of lines name internal working files and one term that does not belong

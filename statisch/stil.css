@@ -1530,3 +1530,63 @@ a,button,summary,label{-webkit-tap-highlight-color:transparent}
   .knoepfe .knopf.prim{background:var(--flaeche-h);
     box-shadow:var(--schatten)}
 }
+
+/* ==========================================================================
+   DizzCube on the two start pages (08.10.2026, the name 09.10.2026)
+   --------------------------------------------------------------------------
+   One appended block; nothing above this line was touched. The game of this
+   house gets a band inside the hero, between the opening line and the hero's
+   own buttons - the word it was built on asked for it at the very start,
+   thick and visible, so it stands on the first screen of a phone and of a
+   desk alike.
+
+   A class of its own and not a `.hinweis.balken`: a .hinweis inside a hero is
+   quietened on purpose on narrow screens (the rule at max-width:610px above),
+   and this band is meant to be seen. Its surface is --flaeche-h, whose two
+   stops are --panelh and --panel2; kontrast.py measures --tx, --tx2 and --cy
+   against both. The cube is an SVG with no text in it, so it may scale; the
+   words stay in HTML, where they reflow. No script, no image file, no inline
+   style - the same three rules as the rest of this sheet.                   */
+
+.band-spiel{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  column-gap:28px;align-items:center;max-width:860px;margin-top:30px;
+  padding:22px 24px 24px 28px;border:1px solid var(--cy);border-radius:var(--rad-l);
+  background:var(--flaeche-h);box-shadow:var(--schatten-h);overflow:hidden}
+.band-spiel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--grad)}
+.band-spiel>*{grid-column:1}
+.band-spiel>.bs-wuerfel{grid-column:2;grid-row:1 / span 3;width:124px;height:auto}
+.band-spiel .bs-titel{margin:0 0 10px;line-height:1.05}
+.band-spiel .bs-vor{display:block;margin-bottom:8px;font-size:12px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--cy)}
+.band-spiel .bs-name{display:block;font-size:clamp(34px,6vw,50px);font-weight:800;
+  letter-spacing:.06em;color:var(--tx)}
+.band-spiel p{margin:0;max-width:58ch;color:var(--tx2);font-size:1rem}
+.band-spiel .knoepfe{margin-top:18px}
+@media (prefers-reduced-motion:no-preference){
+  .hero .band-spiel{animation:auf .45s cubic-bezier(.22,.61,.36,1) .3s both}
+}
+@media (max-width:560px){
+  .band-spiel{column-gap:14px;padding:18px 18px 20px 22px}
+  .band-spiel>.bs-wuerfel{grid-row:1;width:64px;align-self:start}
+  .band-spiel>p,.band-spiel>.knoepfe{grid-column:1 / -1}
+  /* Two buttons share a row here instead of stacking full width, so the band
+     stays on the first screen; flex-wrap still parts them where the row is
+     too narrow for both, which is what happens at 320 pixels.               */
+  .band-spiel .knoepfe .knopf{width:auto;flex:1 1 auto;justify-content:center}
+}
+
+/* The menu gained its first entry with this block. Measured on 08.10.2026 at
+   1280 pixels and wider on the English pages: the row had no room left for one
+   entry more, so the language link fell to a row of its own and the header
+   grew. Two pixels less between entries give the room back; the links keep
+   their 11-pixel padding, so the underline under the current page still sits
+   where it did.                                                             */
+@media (min-width:769px){.nav ul{column-gap:2px}}
+
+/* The keys on /dizzcube/ and /de/dizzcube/: a key reads as a small raised cap,
+   not as a word in another typeface. --tx on --bg2 is a pair kontrast.py
+   already measures.                                                         */
+.tasten kbd{display:inline-block;min-width:1.7em;padding:0 6px;
+  border:1px solid var(--line2);border-radius:6px;background:var(--bg2);
+  color:var(--tx);text-align:center;line-height:1.5}

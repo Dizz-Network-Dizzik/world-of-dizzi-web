@@ -159,6 +159,29 @@ PAGES: list[dict] = [
         title="About & contact | the world of dizzi",
         desc="Who builds the world of dizzi, and how to get in touch.",
     ),
+    # DizzCube, a game from this house - on the word of the hand that holds the
+    # house (08.10.2026; the name on 09.10.2026): visible from the very start of
+    # the site. Two text pages, one per language, that say what the game is and
+    # how it is played; neither carries a script. The game itself is no entry of
+    # this list: it is one self-contained file under statisch/dizzcube/play/,
+    # built outside this repository and copied in verbatim like the system map -
+    # the second of the two pages on this site that bring a script of their own.
+    dict(
+        src="dizzcube.html", out="dizzcube/index.html", path="/dizzcube/", lang="en",
+        title="DizzCube — a game from this house | the world of dizzi",
+        desc="DizzCube, a game from this house: falling pieces on the four sides of a "
+             "cube. One file, in the browser, playable offline, nothing stored.",
+        alt="/de/dizzcube/", langlink='<a class="nav-lang" href="/de/dizzcube/" lang="de" '
+                                      'hreflang="de">Deutsch</a>',
+    ),
+    dict(
+        src="de-dizzcube.html", out="de/dizzcube/index.html", path="/de/dizzcube/", lang="de",
+        title="DizzCube — ein Spiel aus diesem Haus | the world of dizzi",
+        desc="DizzCube, ein Spiel aus diesem Haus: fallende Steine auf den vier Seiten "
+             "eines Würfels. Eine Datei, im Browser, offline spielbar, speichert nichts.",
+        alt="/dizzcube/", langlink='<a class="nav-lang" href="/dizzcube/" lang="en" '
+                                  'hreflang="en">English</a>',
+    ),
     # DRAFT - not to be published without David's word. The two entries below
     # are the same page in both languages; the third, further down, is the
     # variant that names a time window and is linked from nowhere.
@@ -286,6 +309,12 @@ PAGES: list[dict] = [
 # --------------------------------------------------------------------------
 
 NAV = [
+    # DizzCube leads the menu: the game of this house, first on the word of the
+    # hand that holds it (08.10.2026, "at the very start"; the name 09.10.2026).
+    # On a German page the entry leads to the German twin /de/dizzcube/, like
+    # every entry whose page has one - nav_html() derives that from the alt pair
+    # in PAGES.
+    ("/dizzcube/", "DizzCube", "DizzCube"),
     ("/system/", "System", "System"),
     ("/apps/", "Apps", "Apps"),
     ("/method/", "Method", "Methode"),
@@ -648,6 +677,12 @@ def sitemap() -> str:
         f'  <url>\n    <loc>{HOST}/karte/</loc>\n'
         f"    <priority>0.8</priority>\n  </url>"
     )
+    # The game is a copied file like the map and no entry of PAGES, so it is
+    # listed the same way: by hand, here (09.10.2026).
+    rows.append(
+        f'  <url>\n    <loc>{HOST}/dizzcube/play/</loc>\n'
+        f"    <priority>0.8</priority>\n  </url>"
+    )
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
@@ -682,6 +717,7 @@ def llms() -> str:
 - [Not knowing]({HOST}/deckel/): not having to understand everything, with the line of thinkers behind it - in German
 - [For children]({HOST}/deckel/kinder/): the same, for children from about eight - in German
 - [Thanks]({HOST}/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German
+- [DizzCube]({HOST}/dizzcube/): a game from this house - what it is and how it is played; German twin at {HOST}/de/dizzcube/
 
 ## Source
 - [The published documents]({ORDNER}): 38 documents - the network laws and
@@ -689,6 +725,7 @@ def llms() -> str:
   until 6 August 2026 is no longer part of the current tree
 - [This site's own source]({SELBST}): the build script behind the figure in every footer
 - [Interactive system map]({HOST}/karte/): self-contained, no external calls
+- [DizzCube, the game itself]({HOST}/dizzcube/play/): one self-contained file with its own script; once loaded it opens no connection and stores nothing
 
 ## Notes
 - Status: independent project, pre-incorporation. No revenue yet. Since 4 August

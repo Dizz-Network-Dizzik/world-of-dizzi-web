@@ -16,6 +16,7 @@
 - [Not knowing](https://worldofdizzi.com/deckel/): not having to understand everything, with the line of thinkers behind it - in German
 - [For children](https://worldofdizzi.com/deckel/kinder/): the same, for children from about eight - in German
 - [Thanks](https://worldofdizzi.com/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German
+- [DizzCube](https://worldofdizzi.com/dizzcube/): a game from this house - what it is and how it is played; German twin at https://worldofdizzi.com/de/dizzcube/
 
 ## Source
 - [The published documents](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot): 38 documents - the network laws and
@@ -23,6 +24,7 @@
   until 6 August 2026 is no longer part of the current tree
 - [This site's own source](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web): the build script behind the figure in every footer
 - [Interactive system map](https://worldofdizzi.com/karte/): self-contained, no external calls
+- [DizzCube, the game itself](https://worldofdizzi.com/dizzcube/play/): one self-contained file with its own script; once loaded it opens no connection and stores nothing
 
 ## Notes
 - Status: independent project, pre-incorporation. No revenue yet. Since 4 August

@@ -1,0 +1,3254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>DizzCube</title>
+<style>
+  /* DizzCube — single dark arcade world by choice. Tokens first, everything derives. */
+  :root{
+    color-scheme:dark;
+    --bg:#04060d; --bg-2:#080d1c; --ink:#e9edf7; --ink-soft:#aab4ca; --ink-dim:#7f8aa4; --ink-faint:#6e7893;
+    --line:rgba(159,176,201,.18); --panel:rgba(255,255,255,.035); --panel-2:rgba(255,255,255,.07);
+    --coral:#ff6b52; --gold:#ffc14a; --teal:#3ad6c7; --violet:#a77cff; --slate:#808aa0;
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+    font-family:var(--font);
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  input{font:inherit;color:inherit}
+  #view{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+  .hud{position:fixed;inset:0;pointer-events:none;font-variant-numeric:tabular-nums;
+    font-feature-settings:"tnum" 1}
+  .pad{position:absolute;padding:14px 16px}
+  .lbl{font-size:10px;letter-spacing:.20em;color:var(--ink-dim);text-transform:uppercase;font-weight:600}
+  .val{font-size:20px;font-weight:600;letter-spacing:.02em;line-height:1.15;
+    font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  .val.big{font-size:34px;font-weight:300;letter-spacing:-.01em}
+  .val.bump{animation:bump .42s cubic-bezier(.2,.8,.3,1)}
+  @keyframes bump{0%{transform:scale(1)}28%{transform:scale(1.11);filter:brightness(1.5)}100%{transform:scale(1)}}
+  .stat{margin-bottom:10px}
+  #left{left:0;top:0}
+  #right{right:0;top:0;text-align:right}
+  #mid{left:50%;top:0;transform:translateX(-50%);text-align:center}
+  #phase{font-size:11px;letter-spacing:.34em;color:#9aa5bd;font-weight:600;margin-bottom:6px;
+    min-height:13px;opacity:1;transition:opacity .18s ease}
+  #diffbadge{font-size:9.5px;letter-spacing:.22em;color:var(--ink-dim);font-weight:600;margin-bottom:6px;min-height:12px}
+  #diffbadge b{color:var(--ink-soft);font-weight:600}
+  .ringwrap{position:relative;width:76px;height:76px;margin:0 auto;overflow:hidden;
+    opacity:1;transform:scale(1);
+    transition:opacity .34s ease,transform .34s cubic-bezier(.2,.8,.3,1),height .34s ease}
+  .ringwrap.off{opacity:0;transform:scale(.86);height:0}
+  .ringwrap svg{display:block;transform:rotate(-90deg)}
+  #ringfg{filter:drop-shadow(0 0 5px rgba(233,237,247,.30))}
+  #ringnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:300;color:#dfe6f5;font-variant-numeric:tabular-nums}
+  #faceinfo{margin-top:8px;font-size:12px;color:var(--ink-soft);letter-spacing:.05em;
+    display:flex;align-items:center;gap:7px;justify-content:center;min-height:16px;
+    opacity:1;transition:opacity .22s ease}
+  .dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 10px currentColor;background:currentColor}
+  .fname{font-weight:600;letter-spacing:.14em}
+  #nowrap{margin-bottom:14px}
+  #nowcv{display:block;margin-left:auto;margin-top:4px}
+  .nexts{display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-top:5px}
+  .nexts canvas{display:block;opacity:1}
+  #pressure{margin-top:12px;font-size:10px;letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;font-weight:600;min-height:12px}
+  #pressure b{color:var(--slate);font-weight:600}
+  #bar{left:0;right:0;bottom:0;text-align:center;font-size:11px;color:#6f7a92;
+    letter-spacing:.06em;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));opacity:1;transition:opacity .22s ease}
+  #bar b{color:#aeb8ce;font-weight:600}
+  #credit{position:fixed;right:14px;bottom:10px;font-size:9.5px;color:var(--ink-faint);letter-spacing:.09em}
+  #toast{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);font-size:24px;
+    font-weight:600;letter-spacing:.10em;opacity:0;pointer-events:none;text-shadow:0 0 26px currentColor;white-space:nowrap}
+  #pausebtn{position:fixed;right:12px;bottom:34px;pointer-events:auto;font-size:10px;letter-spacing:.2em;
+    color:var(--ink-dim);border:1px solid var(--line);border-radius:999px;padding:6px 12px;display:none}
+  #pausebtn.on{display:block}
+
+  /* ---------- overlays ---------- */
+  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at 50% 42%,rgba(10,16,32,.78),rgba(3,5,11,.95));
+    backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:5;
+    opacity:1;visibility:visible;transition:opacity .45s ease,visibility 0s linear 0s;
+    padding:max(10px,env(safe-area-inset-top,0px)) 12px max(10px,env(safe-area-inset-bottom,0px))}
+  .overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .45s ease,visibility 0s linear .45s}
+  .card{width:100%;max-width:560px;padding:26px 30px;text-align:center;
+    transform:translateY(0) scale(1);transition:transform .5s cubic-bezier(.2,.8,.3,1)}
+  .overlay.hidden .card{transform:translateY(-10px) scale(.975)}
+  .card.wide{max-width:680px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:22px 22px 26px;
+    -webkit-user-select:text;user-select:text}
+  h1{font-size:clamp(40px,10vw,84px);font-weight:200;letter-spacing:.14em;margin-left:.14em;
+    line-height:1;background:linear-gradient(96deg,var(--coral),var(--gold) 17%,var(--teal) 33%,var(--violet) 50%,var(--teal) 67%,var(--gold) 83%,var(--coral));
+    background-size:200% 100%;animation:sheen 9s ease-in-out infinite;
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin-top:10px;font-size:13px;letter-spacing:.26em;color:#8b95ad}
+  .rules{margin-top:18px;font-size:13.5px;line-height:1.72;color:#9fa9c0;max-width:460px;
+    margin-left:auto;margin-right:auto}
+  .credit2{margin-top:22px;font-size:10px;color:var(--ink-faint);letter-spacing:.10em}
+  .gostats{margin:22px auto 0;display:grid;grid-template-columns:repeat(6,auto);gap:4px 18px;
+    justify-content:center}
+  .gostats .n{font-size:24px;font-weight:300;font-variant-numeric:tabular-nums}
+  .gostats .l{font-size:9px;letter-spacing:.18em;color:#727d94;text-transform:uppercase}
+  h2{font-size:clamp(28px,6vw,46px);font-weight:200;letter-spacing:.24em;margin-left:.24em;color:var(--ink)}
+  h3{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-dim);font-weight:600;margin:18px 0 10px}
+
+  /* tabs */
+  .tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px}
+  .tabs button{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink-dim);
+    padding:9px 12px;border-radius:999px;border:1px solid transparent;min-height:34px}
+  .tabs button.on{color:var(--ink);border-color:var(--line);background:var(--panel-2)}
+  .tabs button:focus-visible,.btn:focus-visible,.dcard:focus-visible,.chip:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .tab{display:none;text-align:left;margin-top:6px}
+  .tab.on{display:block}
+
+  /* mode + difficulty */
+  .modes{display:flex;justify-content:center;gap:8px;margin:14px 0 12px}
+  .modes button{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--ink-dim);
+    padding:8px 14px;border-radius:10px;border:1px solid var(--line);min-height:36px}
+  .modes button.on{color:var(--ink);background:var(--panel-2);border-color:rgba(159,176,201,.4)}
+  .modes small{display:block;font-size:9px;letter-spacing:.12em;color:var(--ink-faint);text-transform:none;margin-top:2px}
+  .scat{font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;color:var(--ink-dim);text-align:center;margin:2px 0 8px}
+  .dgrid{display:grid;grid-template-columns:1fr;gap:8px}
+  @media (min-width:600px){.dgrid{grid-template-columns:1fr 1fr}}
+  .dcard{text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);
+    border-left:3px solid var(--acc,var(--line));min-width:0;display:block;width:100%}
+  .dcard.on{background:var(--panel-2);border-color:var(--acc,var(--line));box-shadow:0 0 0 1px var(--acc,transparent) inset}
+  .dcard .nm{font-size:14px;font-weight:600;letter-spacing:.18em;color:var(--acc,var(--ink))}
+  .dcard .tg{font-size:11px;color:var(--ink-dim);letter-spacing:.06em;margin-left:8px}
+  .dcard .meta{font-size:11px;color:var(--ink-soft);margin-top:4px;font-variant-numeric:tabular-nums}
+  .dcard .meta b{color:var(--ink);font-weight:600}
+  .dcard .ds{font-size:12px;color:#9fa9c0;line-height:1.5;margin-top:6px}
+  .dcard .tr{font-size:10.5px;color:var(--ink-dim);margin-top:6px;letter-spacing:.04em}
+  .dcard .tr b{color:var(--ink-soft);font-weight:600;letter-spacing:.12em;font-size:9.5px;text-transform:uppercase}
+  .d0{--acc:var(--gold)}.d1{--acc:var(--coral)}.d2{--acc:var(--violet)}.d3{--acc:#f2f4f8}.d4{--acc:#5aa9ff}.d5{--acc:#ffffff}.dr{--acc:var(--teal)}
+  .d5 .nm,.chip.d5.on{text-shadow:0 0 10px rgba(255,255,255,.55)}
+  .btn{display:inline-block;font-size:12px;letter-spacing:.24em;font-weight:600;color:var(--ink);
+    padding:14px 26px;border-radius:12px;border:1px solid rgba(159,176,201,.4);background:var(--panel-2);min-height:44px;text-transform:uppercase}
+  .btn.primary{background:linear-gradient(96deg,rgba(255,107,82,.22),rgba(255,193,74,.22) 34%,rgba(58,214,199,.22) 66%,rgba(167,124,255,.22));
+    border-color:rgba(233,237,247,.35);box-shadow:0 0 30px rgba(58,214,199,.12)}
+  .btn.small{font-size:10px;padding:9px 14px;min-height:36px;letter-spacing:.18em}
+  .btnrow{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+  .hint{font-size:10.5px;color:var(--ink-faint);letter-spacing:.08em;margin-top:10px;text-align:center}
+
+  /* how to play */
+  .steps{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width:600px){.steps{grid-template-columns:1fr 1fr}}
+  .step{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);min-width:0}
+  .step .k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;color:var(--acc,var(--teal))}
+  .step p{font-size:12.5px;line-height:1.6;color:#9fa9c0;margin-top:6px}
+  .step p b{color:var(--ink);font-weight:600}
+  .s0{--acc:var(--coral)}.s1{--acc:var(--gold)}.s2{--acc:var(--teal)}.s3{--acc:var(--violet)}
+  /* shared edge, pure CSS: a gold column falls on the left board's last column, its twin appears on the right board */
+  .edgepair{display:flex;justify-content:center;margin:12px auto 0}
+  .eb{--c:16px;display:grid;grid-template-columns:repeat(5,var(--c));grid-template-rows:repeat(6,var(--c));gap:2px;padding:3px;
+    border:1px solid var(--line);background:rgba(0,0,0,.3);overflow:hidden}
+  .eb:first-child{border-right:2px solid rgba(255,193,74,.75);border-radius:6px 0 0 6px}
+  .eb:last-child{border-left:2px solid rgba(255,193,74,.75);border-radius:0 6px 6px 0}
+  .eb i{display:block;border-radius:2px}
+  .eb .c{background:var(--coral)}.eb .g{background:var(--gold)}.eb .t{background:var(--teal)}.eb .v{background:var(--violet)}
+  .tab.on .eb .fall{animation:efall 4s cubic-bezier(.55,0,1,.45) infinite}
+  .tab.on .eb .mir{animation:emir 4s ease-out infinite}
+  @keyframes efall{0%,12%{transform:translateY(calc(var(--c) * -4 - 8px));opacity:0}18%{opacity:1}40%,100%{transform:none;opacity:1}}
+  @keyframes emir{0%,40%{opacity:0;transform:scale(.4)}48%{opacity:1;transform:scale(1.15)}58%,100%{opacity:1;transform:none}}
+  .edgecap{margin-top:6px}
+  .keys{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:11.5px;color:#7a8499;margin-top:6px}
+  .keys b{color:#aeb8ce;font-weight:600;white-space:nowrap}
+  kbd{display:inline-block;font-family:inherit;font-size:.9em;font-weight:600;line-height:1;padding:.3em .5em;min-width:1.8em;
+    text-align:center;color:var(--ink);background:rgba(255,255,255,.07);border:1px solid rgba(159,176,201,.3);border-bottom-width:2px;border-radius:6px}
+
+  /* scores */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px}
+  .chip{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:var(--ink-dim);
+    padding:7px 11px;border-radius:999px;border:1px solid var(--line);min-height:32px}
+  .chip.on{color:var(--acc,var(--ink));border-color:var(--acc,var(--line));background:var(--panel-2)}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+  .tbl th{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);font-weight:600;text-align:left;padding:6px 6px;border-bottom:1px solid var(--line)}
+  .tbl td{padding:7px 6px;border-bottom:1px solid rgba(159,176,201,.09);color:var(--ink-soft);white-space:nowrap}
+  .tbl td.n{text-align:right}
+  .tbl td.nm{color:var(--ink);font-weight:600;max-width:9ch;overflow:hidden;text-overflow:ellipsis}
+  .tbl tr.me td{color:var(--ink);background:rgba(58,214,199,.07)}
+  .tbl .mode{font-size:9px;letter-spacing:.12em;border:1px solid var(--line);border-radius:6px;padding:1px 5px;color:var(--ink-dim)}
+  .tbl .mode.daily{color:var(--gold);border-color:rgba(255,193,74,.4)}
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .empty{font-size:12px;color:var(--ink-dim);text-align:center;padding:18px 0}
+  .ci{display:inline-block;font-weight:600;color:var(--teal)}
+
+  /* settings */
+  .set{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(159,176,201,.09)}
+  .set .t{font-size:13px;color:var(--ink)}
+  .set .d{font-size:11px;color:var(--ink-dim);margin-top:2px;line-height:1.4}
+  .sw{width:46px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--panel);position:relative;flex:none}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--ink-dim);transition:transform .2s ease,background .2s ease}
+  .sw.on{background:rgba(58,214,199,.18);border-color:rgba(58,214,199,.5)}
+  .sw.on::after{transform:translateX(20px);background:var(--teal)}
+  .inp{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink);width:100%;max-width:220px;min-height:40px}
+  .inp:focus{outline:2px solid var(--teal);outline-offset:1px}
+
+  /* game over */
+  .prof{margin:18px auto 0;max-width:420px;text-align:left}
+  .prow{display:grid;grid-template-columns:7.2rem 1fr 2.6rem;gap:10px;align-items:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-top:7px}
+  .pbar{height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+  .pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--violet));transition:width .8s cubic-bezier(.2,.8,.3,1)}
+  .prow .pv{text-align:right;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .cibig{margin-top:16px;font-size:11px;letter-spacing:.22em;color:var(--ink-dim);text-transform:uppercase}
+  .cibig b{display:block;font-size:44px;font-weight:200;color:var(--teal);letter-spacing:0;margin-top:2px;font-variant-numeric:tabular-nums}
+  .namerow{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .namerow label{font-size:10px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase}
+  .rankline{margin-top:10px;font-size:12px;color:var(--gold);letter-spacing:.12em;min-height:16px}
+  .tbl td.mode-cell{white-space:nowrap}
+
+  /* lane KC: one-line lead, level dots, coach, colour match, profile, history trend, toasts */
+  .lead{margin:12px auto 0;max-width:440px;font-size:13px;line-height:1.55;color:var(--ink-soft);letter-spacing:.02em}
+  .dcard .lvdots{float:right;display:flex;gap:3px;margin-top:5px}
+  .dcard .lvdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.12)}
+  .dcard .lvdots i.on{background:var(--acc,var(--ink))}
+  .cinote{display:block;margin-top:2px;font-size:10px;letter-spacing:.10em;text-transform:none;color:var(--ink-dim)}
+  .formula{line-height:1.5;max-width:440px;margin-left:auto;margin-right:auto}
+  .trendcap{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);text-align:center;margin-top:12px}
+  .trend{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:56px;max-width:320px;margin:4px auto 12px}
+  .trend i{flex:1;min-width:3px;max-width:14px;border-radius:2px 2px 0 0;background:linear-gradient(var(--teal),var(--violet));opacity:.85}
+  #dailyLbl{white-space:pre-line}
+  .trend i:last-child{opacity:1;box-shadow:0 0 8px rgba(58,214,199,.5)}
+  .chip.dtoday{--acc:var(--gold)}
+  .tbl tr.gap td{border-bottom:0;padding:2px 6px;color:var(--ink-faint)}
+  #toast{white-space:pre;text-align:center;line-height:1.25}
+  #bar b.coach{color:var(--gold);font-weight:600}
+  #faceinfo{flex-wrap:wrap;row-gap:2px}
+  #faceinfo > span{white-space:nowrap}
+  #faceinfo .cmatch{color:var(--ink);flex-basis:100%;text-align:center}
+  @media (max-width:599px){
+    .dcard{padding:10px 12px}
+    .dcard .ds,.dcard .tr{display:none}
+    .dcard.on .ds,.dcard.on .tr{display:block}
+    #toast{font-size:18px}
+  }
+  @media (prefers-reduced-motion:reduce){.eb .fall,.eb .mir{animation:none}}
+
+  @media (max-width:640px){
+    .pad{padding:9px 11px}
+    .val.big{font-size:26px}.val{font-size:16px}
+    .ringwrap{width:58px;height:58px}#ringnum{font-size:17px}
+    #bar{font-size:9.5px}
+    #credit{display:none}
+    .card{padding:18px 16px}
+    .card.wide{padding:16px 14px 22px}
+    .gostats{grid-template-columns:repeat(3,auto);gap:8px 18px}
+    #pausebtn{bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .val.bump{animation:none}.pbar i{transition:none}
+  }
+  /* ---------- the dress (v2.5): room, aura, vignette, title, ring, score ---------- */
+  body{background:linear-gradient(#080d1c,#05070f 55%,#020308);animation:fadein .6s ease-out}
+  @keyframes fadein{from{opacity:0}}
+  /* the room glows faintly in the colour of the side in play; it sits under the transparent canvas */
+  #aura{position:fixed;inset:0;pointer-events:none}
+  #aura i{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
+  #aura i.on{opacity:1}
+  #aura .a0{background:radial-gradient(ellipse 60% 50% at 50% 55%,rgba(255,107,82,.10),transparent 70%)}
+  #aura .a1{background:radial-gradient(ellipse 60% 50% at 50% 55%,rgba(255,193,74,.09),transparent 70%)}
+  #aura .a2{background:radial-gradient(ellipse 60% 50% at 50% 55%,rgba(58,214,199,.09),transparent 70%)}
+  #aura .a3{background:radial-gradient(ellipse 60% 50% at 50% 55%,rgba(167,124,255,.10),transparent 70%)}
+  /* the vignette the canvas used to paint every frame, now composited once */
+  #vig{position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(circle 80vmax at 50% 49%,rgba(0,0,0,0) 14vmin,rgba(0,0,0,.22) calc(6.3vmin + 44vmax),rgba(0,0,0,.76) 80vmax)}
+  @keyframes sheen{0%,100%{background-position:0 0}50%{background-position:100% 0}}
+  /* the menu lets the cube show above the card */
+  #menu{background:radial-gradient(ellipse at 50% 18%,rgba(10,16,32,.35),rgba(3,5,11,.93) 62%)}
+  .ringwrap.urgent{animation:ringwarm 1s ease-in-out infinite}
+  @keyframes ringwarm{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.07);opacity:.78}}
+  /* the score counts up in CSS: a registered property carries the number */
+  @property --n{syntax:"<integer>";inherits:false;initial-value:0}
+  .count{transition:--n 1.2s cubic-bezier(.2,.8,.3,1);counter-reset:n var(--n)}
+  .count::after{content:counter(n)}
+  @media (prefers-reduced-motion:reduce){
+    body,h1,.ringwrap.urgent{animation:none}
+    #aura i,.count{transition:none}
+  }
+  /* ---------- Lane KB (WA 212): phone board, touch, safe area, focus ---------- */
+  #left{left:env(safe-area-inset-left,0px);top:env(safe-area-inset-top,0px)}
+  #right{right:env(safe-area-inset-right,0px);top:env(safe-area-inset-top,0px)}
+  #mid{top:env(safe-area-inset-top,0px)}
+  #pausebtn{right:calc(12px + env(safe-area-inset-right,0px))}
+  .modes button:focus-visible,.sw:focus-visible,.dcard:focus-visible,#pausebtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .pset{max-width:300px;margin:16px auto 0;text-align:left;border-bottom:0}
+  .ringwrap svg{width:100%;height:100%}         /* the 76 px ring scales with its box instead of being cut at 58 px */
+  @media (pointer:coarse){
+    #pausebtn{top:calc(8px + env(safe-area-inset-top,0px));left:calc(8px + env(safe-area-inset-left,0px));right:auto;bottom:auto;
+      width:44px;height:44px;padding:0;font-size:0;border-radius:50%;background:rgba(4,6,13,.5)}
+    #pausebtn.on{display:flex;align-items:center;justify-content:center}
+    #pausebtn::before{content:"";width:4px;height:14px;border-left:4px solid var(--ink-soft);border-right:4px solid var(--ink-soft);box-sizing:content-box;padding:0 2px}
+    #left{top:calc(48px + env(safe-area-inset-top,0px))}
+  }
+  @media (max-aspect-ratio:4/5){
+    .nexts{flex-direction:row;justify-content:flex-end;gap:4px}
+    #nowrap{margin-bottom:8px}
+  }
+  @media (max-height:500px){
+    #diffbadge{display:none}
+    #mid{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;column-gap:10px;padding-top:8px;padding-bottom:0}
+    #phase{margin-bottom:0}
+    .ringwrap{margin:0;width:58px;height:58px}
+    #ringnum{font-size:17px}
+    .ringwrap.off{width:0}
+    #bar{right:auto;max-width:calc(50vw - 41vh - 8px);text-align:left}
+    #faceinfo{margin-top:0}
+    .stat{margin-bottom:4px}
+    #nowrap{margin-bottom:6px}
+    #pressure{margin-top:6px}
+  }
+  @media (max-width:640px),(pointer:coarse) and (max-height:500px){
+    .lbl,.gostats .l,.tbl th,.dcard .tr b,.modes small{font-size:11px}
+  }
+  /* ---------- Lane KJ (WA 212): joker field, joker panel, step 5 ---------- */
+  #jokerBtn{display:none;pointer-events:auto;text-align:left;min-width:56px;min-height:44px;padding:0 12px 0 0;border-radius:10px}
+  #jokerBtn.show{display:block}
+  #jokerBtn .lbl,#jokerBtn .val{display:block}
+  #jokerBtn .val{color:var(--ink-dim)}
+  #jokerBtn.ready .lbl{color:#fff}
+  #jokerBtn.ready .val{color:#fff;text-shadow:0 0 12px rgba(255,255,255,.5)}
+  #jokerBtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  #jokerPick{position:fixed;left:50%;bottom:calc(40px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;
+    pointer-events:auto;width:max-content;max-width:calc(100vw - 24px);padding:12px 14px 10px;border-radius:16px;text-align:center;
+    border:1px solid rgba(255,255,255,.32);background:rgba(6,9,18,.86);box-shadow:0 0 30px rgba(255,255,255,.07);
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);transition:opacity .18s ease,visibility 0s linear 0s}
+  #jokerPick.hidden{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility 0s linear .18s}
+  #jokerPick .jt{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:#fff;margin-bottom:9px}
+  .jtiles{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:372px;margin:0 auto}
+  .jtiles button{position:relative;width:48px;height:48px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
+    display:flex;align-items:center;justify-content:center}
+  .jtiles button:hover,.jtiles button:focus-visible{border-color:rgba(255,255,255,.6);background:var(--panel-2);outline:none}
+  .jtiles canvas{display:block}
+  .jtiles small{position:absolute;left:5px;top:3px;font-size:9px;font-weight:600;color:var(--ink-dim)}
+  #jokerPick .jh{font-size:10px;letter-spacing:.08em;color:var(--ink-dim);margin-top:9px}
+  .s4{--acc:#f2f4f8}
+  @media (min-width:600px){.step.s4{grid-column:1/-1}}
+  @media (max-width:420px){.jtiles{max-width:210px}}
+  @media (prefers-reduced-motion:reduce){#jokerPick,#jokerPick.hidden{transition:none}}
+  /* ---------- Lane KN (WA 212): the hard drop lands with weight; only the board view moves, the HUD stays still ---------- */
+  #view.thud{animation:thud .12s ease-out}
+  @keyframes thud{0%{transform:translateY(0)}38%{transform:translateY(var(--thud,2.4px))}72%{transform:translateY(calc(var(--thud,2.4px) * -0.15))}100%{transform:translateY(0)}}
+  @media (prefers-reduced-motion:reduce){#view.thud{animation:none}}
+  /* ---------- v3 lane HG (WA 212): the colour symbols switch ---------- */
+  .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none}
+  .seg button{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--ink-dim);padding:0 11px;min-height:36px;min-width:44px}
+  .seg button.on{color:var(--ink);background:rgba(58,214,199,.18)}
+  .seg button:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  /* ---------- web edition (lane KD, WA 213): legal notice and privacy on the menu card, tap-sized;
+     the card is a menu, never over the board in play ---------- */
+  .legal{display:flex;justify-content:flex-end;gap:2px;margin:-10px -8px 4px 0}
+  .legal a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:0 10px;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--ink-soft);
+    text-decoration:underline;text-underline-offset:3px;border-radius:999px}
+  .legal a:hover{color:var(--ink)}
+  .legal a:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  .nojs{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;text-align:center;font-size:14px;line-height:1.5;color:var(--ink)}
+</style>
+</head>
+<body>
+<noscript><p class="nojs">This game needs JavaScript. The file can be downloaded and opened offline.</p></noscript>
+<div id="aura" aria-hidden="true"><i class="a0"></i><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<canvas id="view"></canvas>
+<div id="vig" aria-hidden="true"></div>
+
+<div class="hud">
+  <div class="pad" id="left">
+    <div class="stat"><div class="lbl">Score</div><div class="val big count" id="sScore" style="--n:0"></div></div>
+    <div class="stat"><div class="lbl">Lines</div><div class="val" id="sLines">0</div></div>
+    <div class="stat"><div class="lbl">Pure</div><div class="val" id="sPure">0</div></div>
+    <div class="stat"><div class="lbl">Level</div><div class="val" id="sLevel">1</div></div>
+    <button type="button" class="stat" id="jokerBtn" aria-label="Joker: pick the next shape"><span class="lbl">Joker</span><span class="val" id="sJoker">×0</span></button>
+  </div>
+
+  <div class="pad" id="mid">
+    <div id="diffbadge"></div>
+    <div id="phase">ORBIT</div>
+    <div class="ringwrap" id="ringwrap">
+      <svg width="76" height="76" viewBox="0 0 76 76">
+        <circle cx="38" cy="38" r="31" fill="none" stroke="rgba(255,255,255,.09)" stroke-width="3"/>
+        <circle id="ringfg" cx="38" cy="38" r="31" fill="none" stroke="#e9edf7" stroke-width="3"
+                stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="0"/>
+      </svg>
+      <div id="ringnum">10</div>
+    </div>
+    <div id="faceinfo"></div>
+  </div>
+
+  <div class="pad" id="right">
+    <div id="nowrap">
+      <div class="lbl">This piece</div>
+      <canvas id="nowcv" width="96" height="96"></canvas>
+    </div>
+    <div class="lbl" id="nextlbl">Next</div>
+    <div class="nexts" id="nexts"></div>
+    <div id="pressure"></div>
+  </div>
+
+  <div class="pad" id="bar"></div>
+  <button id="pausebtn" type="button" aria-label="Pause">PAUSE</button>
+</div>
+
+<div id="toast"></div>
+<div id="jokerPick" class="hidden" role="dialog" aria-label="Joker: pick the next shape">
+  <div class="jt">Pick the next shape</div>
+  <div class="jtiles" id="jokerTiles"></div>
+  <div class="jh">1–7 or tap · Esc or J keeps the joker</div>
+</div>
+<div id="credit">by David · Build Day 2026 · v3-web</div>
+
+<!-- ---------- MENU ---------- -->
+<div class="overlay" id="menu">
+  <div class="card wide">
+    <nav class="legal" aria-label="Legal notice and privacy"><a href="/impressum/">Impressum</a><a href="/datenschutz/">Privacy</a></nav>
+    <h1>DizzCube</h1>
+    <div class="sub">fall in 2D · think in 3D</div>
+    <p class="lead">Turn the cube, pick a side, drop the piece. Match the side's colour to score more.</p>
+    <nav class="tabs" id="tabs">
+      <button type="button" data-tab="play" class="on">Play</button>
+      <button type="button" data-tab="how">How to play</button>
+      <button type="button" data-tab="scores">Scores</button>
+      <button type="button" data-tab="settings">Settings</button>
+      <button type="button" data-tab="about">About</button>
+    </nav>
+
+    <section class="tab on" id="tab-play">
+      <div class="modes">
+        <button type="button" id="modeFree" class="on">Free play<small>random pieces</small></button>
+        <button type="button" id="modeDaily">Daily cube<small id="dailyLbl">same pieces for everyone today</small></button>
+      </div>
+      <div class="btnrow" style="margin-top:4px"><button type="button" class="btn primary" id="startBtn">Start</button></div>
+      <div class="hint" id="startHint">Enter starts · 1 to 6 picks a level · Esc pauses</div>
+      <h3 style="text-align:center">Pick your level</h3>
+      <div class="dgrid" id="dgrid"></div>
+    </section>
+
+    <section class="tab" id="tab-how">
+      <div class="steps">
+        <div class="step s0"><div class="k">1 · Orbit</div><p>The cube's four sides are four falling-block boards. Between two pieces you have a few seconds to <b>turn the cube</b> and pick the side the next piece falls on. Drag, swipe or use the arrows. Tap, click or press Enter to lock the side. If the ring runs out, the side you are looking at is taken.</p></div>
+        <div class="step s1"><div class="k">2 · Drop</div><p>The chosen side flattens into a 2D board. Move, rotate, soft drop, hard drop. The lock delay forgives a late nudge, but only a few times.</p></div>
+        <div class="step s2"><div class="k">3 · Edges are shared</div><p>The vertical edges belong to <b>two sides at once</b>. The last column of one board is the first column of the next. A row cleared here takes the edge cell of the neighbour with it. That is where the 3D thinking lives.</p>
+          <div class="edgepair" aria-hidden="true">
+            <div class="eb"><i class="c" style="grid-area:6/1"></i><i class="c" style="grid-area:6/2"></i><i class="c" style="grid-area:6/3"></i><i class="c" style="grid-area:6/4"></i>
+              <i class="c" style="grid-area:5/1"></i><i class="c" style="grid-area:5/2"></i><i class="v" style="grid-area:5/4"></i><i class="c" style="grid-area:4/2"></i>
+              <i class="g fall" style="grid-area:4/5"></i><i class="g fall" style="grid-area:5/5"></i><i class="g fall" style="grid-area:6/5"></i></div>
+            <div class="eb"><i class="g mir" style="grid-area:4/1"></i><i class="g mir" style="grid-area:5/1"></i><i class="g mir" style="grid-area:6/1"></i>
+              <i class="t" style="grid-area:6/2"></i><i class="t" style="grid-area:6/3"></i><i class="t" style="grid-area:6/5"></i><i class="t" style="grid-area:5/3"></i></div>
+          </div>
+          <p class="hint edgecap">the gold column sits on the shared edge: it belongs to both boards</p></div>
+        <div class="step s3"><div class="k">4 · Colour is the score</div><p>Every side has a colour. A piece in the <b>colour of its side</b> scores extra. A whole row in the side's colour is a <b>pure row</b> and scores most. Higher levels charge you for the wrong colour, push <b>pressure rows</b> up from below (grey, one hole), hide the queue and spin the cube after every piece.</p></div>
+        <div class="step s4"><div class="k">5 · Jokers</div><p>Every ten pieces earn a <b>joker</b>, fewer on the fast levels (each level card says how often). In the orbit press <b>J</b> or tap the joker field: the ring stops and you pick the shape of the coming piece, in its colour; a joker you do not use stays with you.</p></div>
+      </div>
+      <h3>Controls</h3>
+      <div class="keys">
+        <b>Orbit</b><span>Drag or <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> rotate · wheel zoom · <kbd>Enter</kbd> or click locks the side</span>
+        <b>Drop</b><span><kbd>←</kbd><kbd>→</kbd> move · <kbd>↑</kbd> or <kbd>X</kbd> rotate · <kbd>Z</kbd> counter · <kbd>↓</kbd> soft drop · <kbd>Space</kbd> hard drop</span>
+        <b>Touch</b><span>Swipe to turn, tap to lock the side · in drop: swipe sideways to move, tap to rotate, swipe down to hard drop</span>
+        <b>Pause</b><span><kbd>Esc</kbd> or <kbd>P</kbd> · the ring and gravity stop</span>
+        <b>Joker</b><span><kbd>J</kbd> joker · <kbd>1</kbd>–<kbd>7</kbd> pick a shape · <kbd>Esc</kbd> keeps it · or tap the joker field</span>
+        <b>Menu</b><span><kbd>1</kbd>–<kbd>6</kbd> level · <kbd>Enter</kbd> starts</span>
+        <b>Sound</b><span><kbd>M</kbd> mute and unmute, also during a game</span>
+        <b>Tap zones</b><span>in drop: a tap on the right half rotates clockwise, on the left half counter-clockwise</span>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-scores">
+      <div class="scat" id="scoreCat">DizzCube scores</div>
+      <div class="chips" id="scoreChips"></div>
+      <div id="scoreTrend"></div>
+      <div class="tblwrap" id="scoreTbl"></div>
+      <div class="btnrow">
+        <button type="button" class="btn small" id="copyBtn">Copy scores as text</button>
+        <button type="button" class="btn small" id="resetBtn">Reset scores</button>
+      </div>
+      <div class="hint" id="scoreHint">Scores last only while this page is open. Copy them to keep them.</div>
+    </section>
+
+    <section class="tab" id="tab-settings">
+      <div class="set"><div><div class="t">Player name</div><div class="d">Up to 12 characters. Goes on the score list.</div></div><input class="inp" id="nameInp" maxlength="24" autocomplete="off" spellcheck="false" aria-label="Player name"></div>
+      <div class="set"><div><div class="t">Sound</div><div class="d">Small synthesised clicks and chimes. No files, nothing loads.</div></div><button type="button" class="sw" id="swSound" role="switch" aria-checked="true" aria-label="Sound"></button></div>
+      <div class="set"><div><div class="t">Haptics</div><div class="d">A short buzz on lock and clear, where the phone allows it.</div></div><button type="button" class="sw" id="swHaptic" role="switch" aria-checked="true" aria-label="Haptics"></button></div>
+      <div class="set"><div><div class="t">Height hints</div><div class="d">Shows "full to row" while you orbit. Grandmaster and Sage hide it regardless.</div></div><button type="button" class="sw on" id="swHints" role="switch" aria-checked="true" aria-label="Height hints"></button></div>
+      <div class="set"><div><div class="t">First-game hints</div><div class="d">Four gold hints in the bottom line during the first pieces of your next game.</div></div><button type="button" class="sw" id="swCoach" role="switch" aria-checked="false" aria-label="First-game hints"></button></div>
+      <div class="set"><div><div class="t">Colour symbols</div><div class="d">A second channel for colour-blind play: a small shape on each cell.</div></div><div class="seg" id="segSym" role="radiogroup" aria-label="Colour symbols"><button type="button" role="radio" data-v="on">On</button><button type="button" role="radio" data-v="off">Off</button></div></div>
+    </section>
+
+    <section class="tab" id="tab-about">
+      <p class="rules" style="text-align:left;max-width:none">DizzCube was built together with an artificial intelligence: one file, no server, no account, no tracking. Scores last only while this page is open. Copy them to keep them.</p>
+      <h3>What it asks for</h3>
+      <p class="rules" style="text-align:left;max-width:none;margin-top:0">Mental rotation and orientation (which side is which after the cube turns), planning under a timer (where does this piece help most), working memory (what the hidden sides look like), inhibition (the obvious side is often the wrong one) and rule switching between the orbit and the drop. The play index at the end of a game is a playful self-measure built from your own decisions in that one game. It is not a test and not a clinical score.</p>
+      <h3>Credits</h3>
+      <p class="rules" style="text-align:left;max-width:none;margin-top:0">Idea, rules and release: David · built together with an artificial intelligence · Build Day 2026. Version 2, October 2026: start menu, five levels, score list, daily cube, play profile, sound. Version 2.6: six levels from Journeyman to Lightning, and jokers. Using a joker is your own choice; in the daily cube the order of the pieces stays the same for everyone. Version 3.0-web, October 2026: the four-sided cube for the web, with colour symbols; nothing is stored, nothing is loaded.</p>
+      <div class="btnrow"><button type="button" class="btn small" id="exportBtn">Copy everything as JSON</button></div>
+      <div class="hint" id="aboutHint"></div>
+    </section>
+  </div>
+</div>
+
+<!-- ---------- PAUSE ---------- -->
+<div class="overlay hidden" id="pauseScreen">
+  <div class="card">
+    <h2>PAUSED</h2>
+    <p class="rules">The ring and gravity are stopped. The cube keeps its secret.</p>
+    <div class="set pset"><div><div class="t">Sound</div><div class="d">Key M switches it on and off.</div></div><button type="button" class="sw" id="swSoundP" role="switch" aria-checked="true" aria-label="Sound"></button></div>
+    <div class="btnrow"><button type="button" class="btn primary" id="resumeBtn">Resume</button><button type="button" class="btn" id="quitBtn">Menu</button></div>
+  </div>
+</div>
+
+<!-- ---------- GAME OVER ---------- -->
+<div class="overlay hidden" id="overScreen">
+  <div class="card wide">
+    <h2>GAME OVER</h2>
+    <p class="rules" id="overWhy">There was no room left on the side you chose.</p>
+    <div class="gostats">
+      <div class="n" id="gScore">0</div><div class="n" id="gLines">0</div><div class="n" id="gPure">0</div>
+      <div class="n" id="gLevel">1</div><div class="n" id="gPieces">0</div><div class="n" id="gTime">0:00</div>
+      <div class="l">Score</div><div class="l">Lines</div><div class="l">Pure</div>
+      <div class="l">Level</div><div class="l">Pieces</div><div class="l">Time</div>
+    </div>
+    <div class="rankline" id="rankline"></div>
+    <div class="cibig">Play index<b id="ciNum">0</b><span class="cinote">a playful self-measure of this one game, not a test</span></div>
+    <div class="prof">
+      <div class="prow"><span>Speed</span><div class="pbar"><i id="pbSpeed"></i></div><span class="pv" id="pvSpeed">0</span></div>
+      <div class="prow"><span>Colour</span><div class="pbar"><i id="pbCol"></i></div><span class="pv" id="pvCol">0</span></div>
+      <div class="prow"><span>Spread</span><div class="pbar"><i id="pbSpr"></i></div><span class="pv" id="pvSpr">0</span></div>
+      <div class="prow"><span>Planning</span><div class="pbar"><i id="pbPlan"></i></div><span class="pv" id="pvPlan">0</span></div>
+      <div class="prow"><span>Orientation</span><div class="pbar"><i id="pbOri"></i></div><span class="pv" id="pvOri">0</span></div>
+      <div class="prow"><span>Endurance</span><div class="pbar"><i id="pbEnd"></i></div><span class="pv" id="pvEnd">0</span></div>
+    </div>
+    <div class="hint formula" id="profFormula"></div>
+    <div id="overTrend"></div>
+    <div class="hint" id="profHint"></div>
+    <div class="namerow"><label for="overName">Name</label><input class="inp" id="overName" maxlength="24" autocomplete="off" spellcheck="false"></div>
+    <div class="btnrow"><button type="button" class="btn primary" id="againBtn">Play again</button><button type="button" class="btn" id="menuBtn">Menu</button></div>
+    <div class="credit2">by David · Build Day 2026 · v3-web</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+
+/* ------------------------------------------------------------------
+   DizzCube - a falling-block game whose playfield is the outer shell of a cube.
+   Single file, no dependencies, canvas 2D with a hand rolled
+   perspective projection and painter sorted voxel cubes.
+   v2 adds: start menu, five difficulty levels, personal score list,
+   daily seeded cube, play profile, pause, synth sound, haptics.
+   3.0-web: the four-sided cube for a web page; nothing is stored, nothing is loaded.
+   ------------------------------------------------------------------ */
+
+/* ---------- difficulty ------------------------------------------- */
+
+/* v2.6: Apprentice left the ladder, Oracle and Lightning joined it. "old" is the number a level
+   had (or would have had) before: it keeps every daily cube and every stored score readable. */
+var DIFFS = [
+  { id: "journeyman", old: 1, name: "JOURNEYMAN", tag: "the original", cls: "d0",
+    desc: "Ten seconds to turn, three ahead, ghost on. The Build Day rules, untouched.",
+    trains: "orientation · planning · colour discipline",
+    orbit: 10, startLevel: 1, previews: 3, ghost: true, pressure: 0, spin: false, penalty: 0, hints: true, mult: 1.0, lock: 0.30, weight: 1.0, joker: 10 },
+  { id: "master", old: 2, name: "MASTER", tag: "pressure from below", cls: "d1",
+    desc: "Seven seconds to turn, two ahead, faster gravity from the start. Every twelve pieces a grey pressure row rises on a random side.",
+    trains: "planning under time · working memory of four boards",
+    orbit: 7, startLevel: 3, previews: 2, ghost: true, pressure: 12, spin: false, penalty: 0, hints: true, mult: 1.4, lock: 0.26, weight: 1.15, joker: 10 },
+  { id: "grandmaster", old: 3, name: "GRANDMASTER", tag: "no ghost, no mercy", cls: "d2",
+    desc: "Five seconds to turn, one ahead, no ghost, no height hint. A wrong colour costs points. Pressure every eight pieces.",
+    trains: "mental rotation · inhibition · precision",
+    orbit: 5, startLevel: 5, previews: 1, ghost: false, pressure: 8, spin: false, penalty: 15, hints: false, mult: 1.9, lock: 0.24, weight: 1.3, joker: 12 },
+  { id: "sage", old: 4, name: "SAGE", tag: "blind · spun · timed", cls: "d3",
+    desc: "Four seconds to turn, nothing ahead, no ghost. After every piece the cube spins to a random side and you find your bearings again. Pressure every six pieces.",
+    trains: "rotation under disorientation · working memory · decision speed",
+    orbit: 4, startLevel: 6, previews: 0, ghost: false, pressure: 6, spin: true, penalty: 20, hints: false, mult: 2.6, lock: 0.22, weight: 1.5, joker: 14 },
+  { id: "oracle", old: 5, name: "ORACLE", tag: "two seconds", cls: "d4",
+    desc: "Two seconds to turn, nothing ahead, no ghost. The cube spins after every piece. Pressure every five pieces, a wrong colour costs 25.",
+    trains: "decision speed · orientation at a glance · inhibition",
+    orbit: 2, startLevel: 7, previews: 0, ghost: false, pressure: 5, spin: true, penalty: 25, hints: false, mult: 3.4, lock: 0.20, weight: 1.7, joker: 16 },
+  { id: "lightning", old: 6, name: "LIGHTNING", tag: "one second", cls: "d5",
+    desc: "One second to turn, nothing ahead, no ghost. The cube spins after every piece. Pressure every four pieces, a wrong colour costs 30.",
+    trains: "orientation at a glance · decision speed · calm under the clock",
+    orbit: 1, startLevel: 8, previews: 0, ghost: false, pressure: 4, spin: true, penalty: 30, hints: false, mult: 4.5, lock: 0.18, weight: 1.9, joker: 20 }
+];
+/* the old numbering, index = old number; scores and history remember the id */
+var LEGACY = ["apprentice", "journeyman", "master", "grandmaster", "sage", "oracle", "lightning"];
+function lvlIdx(id) { for (var i = 0; i < DIFFS.length; i++) if (DIFFS[i].id === id) return i; return -1; }
+function lvlName(id) { var i = lvlIdx(id); return i >= 0 ? DIFFS[i].name : (id === "apprentice" ? "APPRENTICE (retired)" : String(id || "?").toUpperCase()); }
+function lvlOf(e) { return typeof e.lvl === "string" ? e.lvl : (LEGACY[e.diff] || "level" + e.diff); }
+function keepDiff() { settings.lvl = DIFFS[diffIdx].id; settings.diff = DIFFS[diffIdx].old; saveSettings(); }
+var diffIdx = 0, DIFF = DIFFS[0];
+var daily = false;
+
+/* ---------- settings + storage ----------------------------------- */
+
+var SKEY = "dizzcube.settings", BKEY = "dizzcube.scores";
+/* web edition: no browser storage at all. Settings, scores and history live in this one tab (MEM)
+   and are gone when it closes. */
+var MEM = Object.create(null);
+function memGet(k) { return k in MEM ? MEM[k] : null; }
+function memSet(k, v) { MEM[k] = String(v); }
+function memDel(k) { delete MEM[k]; }
+var settings = { name: "YOU", sound: true, haptics: true, hints: true, diff: 1, lvl: "journeyman", symbols: "off" };
+var board = [];
+var storageOk = true;                           // false once the browser refuses to keep anything
+var HKEY = "dizzcube.history", hist = {};         // last 30 play indices per level, independent of the score list
+function loadStore() {
+  settings.diff = 1; settings.lvl = "journeyman"; settings.tut = null;   // a first visit starts on Journeyman; null = coach state not known yet
+  try {
+    var s = JSON.parse(memGet(SKEY) || "null");
+    if (s && typeof s === "object") {
+      if (typeof s.name === "string") settings.name = cleanName(s.name);
+      if (typeof s.sound === "boolean") settings.sound = s.sound;
+      if (typeof s.haptics === "boolean") settings.haptics = s.haptics;
+      if (typeof s.hints === "boolean") settings.hints = s.hints;
+      if (typeof s.tut === "boolean") settings.tut = s.tut;
+      if (s.symbols === "on" || s.symbols === "off") settings.symbols = s.symbols;   // v3 lane HG
+      /* v2.6 keeps the level as an id; an older number maps onto the new ladder (0 = Apprentice, now Journeyman) */
+      var sl = typeof s.lvl === "string" ? s.lvl : (typeof s.diff === "number" ? LEGACY[s.diff] : "");
+      if (sl === "apprentice") sl = "journeyman";
+      if (lvlIdx(sl) >= 0) { settings.lvl = sl; settings.diff = DIFFS[lvlIdx(sl)].old; }
+    }
+  } catch (e) {}
+  try {
+    var b = JSON.parse(memGet(BKEY) || "null");
+    if (b && b.entries && b.entries.length !== undefined) board = b.entries.filter(validEntry);
+    for (var bi = 0; bi < board.length; bi++) board[bi].lvl = lvlOf(board[bi]);   // old entries get their id; Apprentice stays, retired
+  } catch (e) { board = []; }
+  try {
+    var h = JSON.parse(memGet(HKEY) || "null");
+    if (h && typeof h === "object") for (var k in h) {
+      var hk = (String(parseInt(k, 10)) === k && LEGACY[+k]) ? LEGACY[+k] : k;   // old keys were numbers
+      if (Array.isArray(h[k])) hist[hk] = histTrim((hist[hk] || []).concat(h[k].filter(histOk)));   // v3 lane HG: { ci, sides }, 30 per category
+    }
+  } catch (e) { hist = {}; }
+  if (settings.tut === null) settings.tut = board.length > 0;   // played before the coach existed: no coach
+}
+function saveSettings() { try { memSet(SKEY, JSON.stringify(settings)); } catch (e) { storageOk = false; } }
+function saveBoard() { try { memSet(BKEY, JSON.stringify({ v: 3, entries: board })); } catch (e) { storageOk = false; } }
+function validEntry(e) {
+  return e && typeof e.score === "number" && (typeof e.diff === "number" || typeof e.lvl === "string") && typeof e.name === "string";
+}
+function cleanName(s) {
+  s = Array.from(String(s || "").replace(/[\u0000-\u001f<>]/g, "").trim()).slice(0, 12).join("").trim();   // code points: an emoji is never cut in half
+  return s || "YOU";
+}
+function pad2(n) { return (n < 10 ? "0" : "") + n; }
+function todayKey() { var d = new Date(); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+
+/* ---------- history, daily best, rank line, coach (lane KC) ------ */
+
+/* v3 lane HG: a history entry is { ci, sides }; an old plain number is a four-sided game. Each category keeps its last 30. */
+function histOk(x) { return typeof x === "number" || (!!x && typeof x.ci === "number"); }
+function histSides(x) { return typeof x === "number" ? 4 : (x.sides === 6 ? 6 : 4); }
+function histCi(x) { return typeof x === "number" ? x : x.ci; }
+function histTrim(a) {
+  var n = {}, out = [], i, s;
+  for (i = a.length - 1; i >= 0; i--) { s = histSides(a[i]); n[s] = (n[s] || 0) + 1; if (n[s] <= 30) out.push(a[i]); }
+  return out.reverse();
+}
+function pushHistory(d, ci, sides) {
+  hist[d] = histTrim((hist[d] || []).concat([{ ci: ci, sides: sides === 6 ? 6 : 4 }]));
+  try { memSet(HKEY, JSON.stringify(hist)); } catch (e) { storageOk = false; }
+}
+/* the trend comes from the history ring, never from the score list: the list keeps only the peaks.
+   v3 lane HG: only the games of one category, the one in the menu or the one just played */
+function trendHtml(d, sides) {
+  var s = sides || catSides(), all = hist[d] || [], a = [], i;
+  for (i = 0; i < all.length; i++) if (histSides(all[i]) === s) a.push(histCi(all[i]));
+  if (a.length < 2) return "";
+  var h = '<div class="trendcap">play index · last ' + a.length + ' games on ' + lvlName(d) + '</div>' +
+          '<div class="trend" role="img" aria-label="Play index, last ' + a.length + ' games">';
+  for (i = 0; i < a.length; i++) h += '<i style="height:' + Math.max(4, Math.min(100, a[i])) + '%"></i>';
+  return h + '</div>';
+}
+function dailyBestToday(d) {
+  var b = 0, k = todayKey();
+  for (var i = 0; i < board.length; i++) {
+    var e = board[i];
+    if (e.mode === "daily" && e.date === k && e.lvl === DIFFS[d].id && (e.sides || 4) === catSides() && e.score > b) b = e.score;
+  }
+  return b;
+}
+function lvDots(i) {
+  var h = '<span class="lvdots" aria-hidden="true">';
+  for (var k = 0; k < DIFFS.length; k++) h += '<i' + (k <= i ? ' class="on"' : '') + '></i>';
+  return h + '</span>';
+}
+function rankLine(entry, rank, prevBest) {
+  var d = lvlName(entry.lvl), rl;
+  if (rank > 0 && rank <= 10) rl = "#" + rank + " on " + d;
+  else if (rank > 10) rl = "#" + rank + " of your " + d + " games";
+  else rl = "outside your best 25 on " + d;
+  if (prevBest > 0 && entry.score > prevBest) rl = "NEW BEST · +" + (entry.score - prevBest) + " · " + rl;
+  if (entry.mode === "daily") rl += " · daily cube " + entry.date;
+  return rl;
+}
+function formulaLine() {
+  var w = DIFF.weight.toFixed(2).replace(/0$/, "");
+  return "Index = 25% speed · 20% colour · 15% spread · 15% planning · 15% orientation · 10% endurance, × " + w +
+         " on " + DIFF.name + ". It measures this one game, nothing more.";
+}
+
+var COACH_KEYS = [
+  "Turn the cube with drag or arrows. Enter or a click locks the side you face.",
+  "Pick the side in the piece's colour: that scores extra.",
+  "Outer columns belong to two sides. A piece there fills the neighbour too.",
+  "A whole row in the side's colour is a pure row. It scores most."];
+var COACH_TOUCH = [
+  "Swipe to turn the cube. A tap locks the side you face, even mid-spin.",
+  COACH_KEYS[1], COACH_KEYS[2], COACH_KEYS[3]];
+/* gold hints for the first four pieces of the first game, then never again (Settings can bring them back) */
+function coachHtml(inGame) {
+  if (!inGame || settings.tut || !st) return "";
+  if (st.pieces >= 4) { settings.tut = true; saveSettings(); syncCoachSw(); return ""; }
+  var t = phase === "orbit" ? (coarse ? COACH_TOUCH : COACH_KEYS)[st.pieces]
+        : (coarse ? "Swipe sideways to move · tap rotates · swipe down drops" : "← → move · ↑ rotate · Space drops");
+  return '<b class="coach">' + esc(t) + '</b>';
+}
+function syncCoachSw() {
+  var sw = document.getElementById("swCoach");
+  if (!sw) return;
+  sw.classList.toggle("on", !settings.tut); sw.setAttribute("aria-checked", String(!settings.tut));
+}
+
+/* ---------- seeded random ---------------------------------------- */
+
+var rngState = 1, rngWState = 1;
+var runSeed = 0;                                // the seed of the running game, goes into the score entry
+function seedRng(s) { rngState = (s >>> 0) || 1; rngWState = ((s ^ 0x9E3779B9) >>> 0) || 1; runSeed = rngState; }
+function mix(st) {
+  st = st + 0x6D2B79F5 | 0;
+  var t = Math.imul(st ^ st >>> 15, 1 | st);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  return [st, ((t ^ t >>> 14) >>> 0) / 4294967296];
+}
+/* two streams from one seed: pieces (bag, colours) and world (pressure side, hole, Sage spin).
+   Every world event draws a fixed number of values, so the daily cube stays identical for everyone. */
+function rng() { var r = mix(rngState | 0); rngState = r[0]; return r[1]; }
+function rngW() { var r = mix(rngWState | 0); rngWState = r[0]; return r[1]; }
+function dailySeed() { var d = new Date(), x = (d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate()) * 7 + DIFFS[diffIdx].old; return x >>> 0; }   // the old number: every level keeps its daily cube
+
+/* ---------- sound + haptics -------------------------------------- */
+
+var AC = null;
+function ac() {
+  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; } }
+  /* iOS also knows "interrupted" (a call, the app in the background): anything not running gets a resume */
+  if (AC && AC.state !== "running" && AC.state !== "closed") {
+    try { var rp = AC.resume(); if (rp && rp.catch) rp.catch(function () {}); } catch (e) {}
+  }
+  return AC;
+}
+/* one master bus with a soft compressor, so stacked chimes never clip */
+var MASTER = null, lastMoveSfx = 0, faceToneSel = -1;
+function bus(a) {
+  if (!MASTER || MASTER.context !== a) {
+    try {
+      var comp = a.createDynamicsCompressor();
+      comp.threshold.value = -18; comp.ratio.value = 4;
+      MASTER = a.createGain(); MASTER.gain.value = 0.9;
+      MASTER.connect(comp); comp.connect(a.destination);
+    } catch (e) { MASTER = null; return a.destination; }
+  }
+  return MASTER;
+}
+/* every side has its note (C D E G): the cube can be heard as well as seen */
+var FACE_NOTE = [261.63, 293.66, 329.63, 392.00];
+/* a tone with a little life in it: +/-1.5 % pitch, placed left or right by the column */
+function tonePan(f, dur, type, vol, pan) {
+  if (!settings.sound) return;
+  var a = ac(); if (!a) return;
+  var fv = f * (0.985 + Math.random() * 0.03);
+  if (!a.createStereoPanner) { tone(fv, dur, type, vol); return; }
+  try {
+    var o = a.createOscillator(), g = a.createGain(), p = a.createStereoPanner(), t = a.currentTime;
+    o.type = type || "sine"; o.frequency.value = fv;
+    p.pan.value = Math.max(-0.8, Math.min(0.8, pan || 0));
+    o.connect(g); g.connect(p); p.connect(bus(a));
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol || 0.05, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.start(t); o.stop(t + dur + 0.03);
+  } catch (e) {}
+}
+function tone(f, dur, type, vol, when) {
+  if (!settings.sound) return;
+  var a = ac(); if (!a) return;
+  try {
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type || "sine"; o.frequency.value = f;
+    o.connect(g); g.connect(bus(a));
+    var t = a.currentTime + (when || 0);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol || 0.08, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.start(t); o.stop(t + dur + 0.03);
+  } catch (e) {}
+}
+function sfx(k) {
+  switch (k) {
+    case "move": {                                 // held keys repeat at 25 Hz, the click does not
+      var nowMs = performance.now();
+      if (nowMs - lastMoveSfx < 70) break;
+      lastMoveSfx = nowMs;
+      tonePan(420, 0.035, "square", 0.02, piece ? (piece.col - 4) / 5 : 0); break;
+    }
+    case "rotate": tonePan(560, 0.05, "triangle", 0.035, piece ? (piece.col - 4) / 5 : 0); break;
+    case "lock": tone(120 + 9 * faceHeight(activeFace), 0.09, "sine", 0.09); break;   // a higher stack, a higher thud
+    case "commit": tone(330, 0.08, "sine", 0.05); break;
+    case "clear": tone(523, 0.12, "triangle", 0.07); tone(659, 0.12, "triangle", 0.07, 0.08); tone(784, 0.18, "triangle", 0.07, 0.16); break;
+    case "pure": {                                // the chord stands on the note of the side that was cleared
+      var rb = FACE_NOTE[clearFace] * 2;
+      tone(rb, 0.18, "sine", 0.08); tone(rb * 1.25, 0.18, "sine", 0.08, 0.07); tone(rb * 1.5, 0.18, "sine", 0.08, 0.14); tone(rb * 2, 0.28, "sine", 0.08, 0.21); break;
+    }
+    case "pressure": tone(110, 0.28, "sawtooth", 0.05); break;
+    case "tick": tone(660 + (3 - Math.min(3, Math.ceil(Math.max(0, orbitLeft)))) * 110, 0.03, "square", 0.025); break;   // 3 2 1 climbs
+    case "over": tone(220, 0.3, "sine", 0.08); tone(165, 0.45, "sine", 0.08, 0.25); break;
+    case "ui": tone(700, 0.03, "square", 0.02); break;
+    case "joker": tone(880, 0.07, "sine", 0.04); tone(1318.5, 0.16, "sine", 0.04, 0.06); break;   // a small bright pair
+    case "face": tone(FACE_NOTE[selFace] * 2, 0.06, "sine", 0.022); break;
+  }
+}
+var gestured = false;                          // browsers refuse vibration before the first real tap or key
+function buzz(ms) { if (gestured && settings.haptics && navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} } }
+
+/* ---------- geometry constants ---------------------------------- */
+
+var N = 10;              // cells per cube axis
+var COLS = 10;           // columns of one side board
+var ROWS = 10;           // rows of one side board (inside the cube)
+var RING = 36;           // cells on the perimeter of one horizontal slice
+var SPAWN = ROWS + 2;    // lowest cell of a fresh piece (above the cube)
+var MAXROW = ROWS + 5;   // safety bound for piece cells
+
+/* The four side boards form a closed ring of 36 perimeter cells.
+   Each board owns 10 consecutive ring cells, so neighbouring boards
+   physically share their outer columns (col 9 of a board == col 0 of
+   the next one). Nothing else is needed to make the edges shared. */
+var FACES = [
+  { name: "NORTH", start: 0,  yaw: Math.PI,      nx: 0,  ny: 0, nz: -1 },
+  { name: "WEST",  start: 9,  yaw: -Math.PI / 2, nx: -1, ny: 0, nz: 0 },
+  { name: "SOUTH", start: 18, yaw: 0,            nx: 0,  ny: 0, nz: 1 },
+  { name: "EAST",  start: 27, yaw: Math.PI / 2,  nx: 1,  ny: 0, nz: 0 }
+];
+
+/* colour per side, chosen to stay separable without hue vision; index 6 = pressure.
+   Index 4 and 5 (pearl, azure) are unused here; they keep the pressure colour on index 6. */
+var COLORS = [
+  { rgb: [255, 107, 82],  css: "#ff6b52" },  // coral   - north
+  { rgb: [255, 193, 74],  css: "#ffc14a" },  // gold    - west
+  { rgb: [58, 214, 199],  css: "#3ad6c7" },  // teal    - south
+  { rgb: [167, 124, 255], css: "#a77cff" },  // violet  - east
+  { rgb: [238, 241, 248], css: "#eef1f8" },  // pearl   - unused
+  { rgb: [63, 140, 255],  css: "#3f8cff" },  // azure   - unused
+  { rgb: [128, 138, 160], css: "#808aa0" }   // slate   - pressure rows
+];
+var PRESSURE_COLOR = 6;
+
+/* the cube has four sides; SIDES stays 4 (the play profile divides by it) */
+var SIDES = 4;
+
+function ringIndex(face, col) { return (FACES[face].start + col) % RING; }
+
+/* ring cell -> cube column/depth coordinates (x, z in 0..9) */
+function ringX(r) {
+  r = ((r % RING) + RING) % RING;
+  if (r <= 9) return 9 - r;
+  if (r <= 18) return 0;
+  if (r <= 27) return r - 18;
+  return 9;
+}
+function ringZ(r) {
+  r = ((r % RING) + RING) % RING;
+  if (r <= 9) return 0;
+  if (r <= 18) return r - 9;
+  if (r <= 27) return 9;
+  return 36 - r;
+}
+
+/* Unit vector along the growing column of a face, = cross(worldUp, normal).
+   Column 0 of a face sits on the left when that face is seen head on. */
+function faceUx(f) { return FACES[f].nz; }
+function faceUz(f) { return -FACES[f].nx; }
+
+/* the seven pieces, matrix row 0 is the top row of the piece */
+var SHAPES = {
+  I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+  O: [[1,1],[1,1]],
+  T: [[0,1,0],[1,1,1],[0,0,0]],
+  S: [[0,1,1],[1,1,0],[0,0,0]],
+  Z: [[1,1,0],[0,1,1],[0,0,0]],
+  J: [[1,0,0],[1,1,1],[0,0,0]],
+  L: [[0,0,1],[1,1,1],[0,0,0]]
+};
+var TYPES = ["I", "O", "T", "S", "Z", "J", "L"];
+
+/* ---------- state ------------------------------------------------ */
+
+var grid = new Uint8Array(ROWS * RING);   // 0 empty, else colour index + 1
+var pulse = new Float32Array(ROWS * RING);
+
+var phase = "title";      // title | orbit | intro | drop | lock | clear | over
+var score = 0, lines = 0, pureRows = 0, level = 1;
+var orbitLeft = 0, introT = 0, lockT = 0, clearT = 0, fallT = 0;
+var holdT = 0, SPAWN_HOLD = 1.0;               // v3: a fresh piece rests this long at the far edge before it falls (his word 08.10.)
+var INTRO_DUR = 0.46, LOCK_DUR = 0.12, CLEAR_DUR = 0.20;
+
+/* feel: delayed auto shift, auto repeat rate, lock delay with a capped
+   number of resets - the values a falling-block player expects under the fingers */
+var DAS = 0.17, ARR = 0.04;
+var MAX_LOCK_RESETS = 15;
+var lockDelayT = 0, lockResets = 0, grounded = false;
+
+var selFace = 0, activeFace = 0;
+var piece = null, current = null, queue = [], bag = [];
+var clearRows = [], clearFace = 0;
+var gameOver = false;
+var userTouched = false;
+var simMode = false;
+var paused = false;
+/* prefers-reduced-motion, followed live: short camera cuts, no drift, no sparks */
+var reduceMotion = false;
+try {
+  var rmq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  reduceMotion = rmq.matches;
+  var rmSet = function (e) { reduceMotion = e.matches; };
+  if (rmq.addEventListener) rmq.addEventListener("change", rmSet); else if (rmq.addListener) rmq.addListener(rmSet);
+} catch (e) {}
+var gridVersion = 0;      // bumped whenever a cell changes, drives the sort cache
+var piecesLocked = 0;
+var lastTick = -1;
+
+var toastText = "", toastColor = "#fff", toastT = 0;
+
+/* per game statistics, feed the play profile */
+var st = null;
+function resetStats() {
+  st = { pieces: 0, matches: 0, faces: [0, 0, 0, 0], decisions: [], timeouts: 0, hard: 0,
+         combo: 0, maxCombo: 0, time: 0, pressures: 0, penalties: 0, chains: 0,
+         turned: 0, turnedHits: 0, startFace: -1, jokers: 0, jokersEarned: 0, jokersUsed: 0 };
+  closeJoker(false);
+}
+resetStats();
+
+/* ---------- camera ----------------------------------------------- */
+
+var TITLE_LOOKY = -2.2;                         // in the menu the cube rises above the card
+var cam = { yaw: 0.72, pitch: 0.42, dist: 34, zoom: 1, lookY: TITLE_LOOKY };
+var camAnim = { t: 0, dur: 0, from: null, to: null };
+var camPos = [0, 0, 0], AX = [1, 0, 0], AY = [0, 1, 0], AZ = [0, 0, 1];
+var focal = 600;
+
+/* The drop view sits far away with a matching zoom, so the perspective is
+   almost orthographic and the active side reads as a flat 2D board. */
+var DROP_DIST = 160, DROP_PITCH = 0.10;
+
+/* 0 = free 3D orbit look, 1 = flat board look. Everything that has to change
+   between the two views is faded with this one value, so nothing pops. */
+var focus = 0;
+var zoomTarget = 1;
+var spinYaw = 0, spinPitch = 0;      // drag momentum
+
+var cv = document.getElementById("view");
+var ctx = cv.getContext("2d");
+var W = 1, H = 1, halfW = 0, halfH = 0, dpr = 1;
+
+function baseScale() { return Math.min(W, H) / 17.6; }
+/* board height target: ~81% of the window, never wider than ~56% of it */
+/* on a tall phone the width rules: there the board takes ~42% of the height
+   and sits lower, between the HUD and the thumb bar */
+function portrait() { return H > W * 1.25; }
+function dropCell() { return portrait() ? Math.min(H * 0.060, (W - 32) * 0.096) : Math.min(H * 0.0785, W * 0.0543); }
+function dropZoom() { return dropCell() / baseScale(); }
+
+function resize() {
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(320, window.innerWidth);
+  H = Math.max(320, window.innerHeight);
+  cv.width = Math.round(W * dpr);
+  cv.height = Math.round(H * dpr);
+  cv.style.width = W + "px";
+  cv.style.height = H + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  halfW = W / 2; halfH = H / 2;
+  if (camAnim.dur === 0 && (phase === "drop" || phase === "intro" || phase === "lock" || phase === "clear")) {
+    cam.zoom = zoomTarget = dropZoom();
+  }
+  invalidateOrder();
+  if (typeof paintPreviews === "function") paintPreviews();
+}
+window.addEventListener("resize", resize);
+
+var centerY = 0;                               // screen y of the look point; drops a little in the portrait board view
+function setupCamera() {
+  centerY = halfH + focus * (portrait() ? H * 0.06 : 0);
+  var cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+  var cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+  var dx = cp * sy, dy = sp, dz = cp * cy;            // target -> camera
+  camPos[0] = dx * cam.dist;
+  camPos[1] = cam.lookY + dy * cam.dist;
+  camPos[2] = dz * cam.dist;
+  var fx = -dx, fy = -dy, fz = -dz;                   // forward
+  /* v3 (lane HB): closed basis, no cross product with world up, so it stays whole at +-90 degrees
+     (straight onto the lid or the floor). For |pitch| < pi/2 these are the same vectors as before. */
+  AX[0] = cy; AX[1] = 0; AX[2] = -sy;                 // right
+  AY[0] = -sp * sy; AY[1] = cp; AY[2] = -sp * cy;     // up = right x forward
+  AZ[0] = fx; AZ[1] = fy; AZ[2] = fz;
+  focal = baseScale() * cam.zoom * cam.dist;
+}
+
+var pj = [0, 0, 0];
+function project(x, y, z, out) {
+  var vx = x - camPos[0], vy = y - camPos[1], vz = z - camPos[2];
+  var d = vx * AZ[0] + vy * AZ[1] + vz * AZ[2];
+  if (d < 0.35) { out[2] = -1; return false; }
+  var s = focal / d;
+  out[0] = halfW + (vx * AX[0] + vy * AX[1] + vz * AX[2]) * s;
+  out[1] = centerY - (vx * AY[0] + vy * AY[1] + vz * AY[2]) * s;
+  out[2] = d;
+  return true;
+}
+
+function camDir() {
+  var cp = Math.cos(cam.pitch);
+  return [cp * Math.sin(cam.yaw), Math.sin(cam.pitch), cp * Math.cos(cam.yaw)];
+}
+
+function flyTo(to, dur) {
+  camAnim.from = { yaw: cam.yaw, pitch: cam.pitch, dist: cam.dist, zoom: cam.zoom, lookY: cam.lookY };
+  var t = to.yaw;
+  while (t - cam.yaw > Math.PI) t -= 2 * Math.PI;
+  while (t - cam.yaw < -Math.PI) t += 2 * Math.PI;
+  camAnim.to = { yaw: t, pitch: to.pitch, dist: to.dist, zoom: to.zoom, lookY: to.lookY };
+  camAnim.t = 0; camAnim.dur = reduceMotion ? Math.min(dur, 0.12) : dur;   // a cut instead of a swing
+  zoomTarget = to.zoom;
+  spinYaw = spinPitch = 0;
+  settle.on = false;
+}
+/* Taking over during a flight frees the turn at once, but distance, zoom and
+   height still glide to where the flight was going, so the cube never stays
+   half way between the board view and the orbit view. */
+var settle = { on: false, dist: 34, lookY: 0 };
+function stopFly() {
+  if (camAnim.dur > 0 && camAnim.to) {
+    settle.on = true; settle.dist = camAnim.to.dist; settle.lookY = camAnim.to.lookY; zoomTarget = camAnim.to.zoom;
+  } else if (!settle.on) zoomTarget = cam.zoom;
+  camAnim.dur = 0;
+}
+
+function updateCam(dt) {
+  /* view blend, frame rate independent */
+  var want = (phase === "intro" || phase === "drop" || phase === "lock" || phase === "clear") ? 1 : 0;
+  focus += (want - focus) * (1 - Math.exp(-dt / 0.14));
+  if (Math.abs(want - focus) < 0.0015) focus = want;
+
+  if (camAnim.dur > 0) {
+    camAnim.t += dt;
+    var k = Math.min(1, camAnim.t / camAnim.dur);
+    var e = 1 - Math.pow(1 - k, 3);                 // cubic ease out
+    var a = camAnim.from, b = camAnim.to;
+    cam.yaw = a.yaw + (b.yaw - a.yaw) * e;
+    cam.pitch = a.pitch + (b.pitch - a.pitch) * e;
+    cam.dist = a.dist + (b.dist - a.dist) * e;
+    cam.zoom = a.zoom + (b.zoom - a.zoom) * e;
+    cam.lookY = a.lookY + (b.lookY - a.lookY) * e;
+    if (k >= 1) camAnim.dur = 0;
+  } else {
+    /* drag momentum with exponential damping */
+    if (spinYaw !== 0 || spinPitch !== 0) {
+      cam.yaw += spinYaw * dt;
+      cam.pitch += spinPitch * dt;
+      var damp = Math.exp(-dt * 3.4);
+      spinYaw *= damp; spinPitch *= damp;
+      if (Math.abs(spinYaw) < 0.005) spinYaw = 0;
+      if (Math.abs(spinPitch) < 0.005) spinPitch = 0;
+    }
+    /* wheel zoom eases towards its target instead of snapping */
+    if (Math.abs(zoomTarget - cam.zoom) > 0.0004) {
+      cam.zoom += (zoomTarget - cam.zoom) * (1 - Math.exp(-dt / 0.10));
+    } else cam.zoom = zoomTarget;
+    if (settle.on) {
+      var ks = 1 - Math.exp(-dt / 0.12);
+      cam.dist += (settle.dist - cam.dist) * ks; cam.lookY += (settle.lookY - cam.lookY) * ks;
+      if (Math.abs(settle.dist - cam.dist) < 0.02) { cam.dist = settle.dist; cam.lookY = settle.lookY; settle.on = false; }
+    }
+  }
+  /* v3 (lane HB): the orbit limit is 1.30.
+     It holds only while no flight runs and only in orbit, title and over: a flight is never cut. */
+  if (camAnim.dur === 0 && (phase === "orbit" || phase === "title" || phase === "over")) {
+    var pm = pitchMax();
+    if (cam.pitch > pm) { cam.pitch = pm; if (spinPitch > 0) spinPitch = 0; }
+    if (cam.pitch < -pm) { cam.pitch = -pm; if (spinPitch < 0) spinPitch = 0; }
+  } else if (cam.pitch > Math.PI / 2) cam.pitch = Math.PI / 2;   // v3 M3 (lane HC): drop phases and flights stop at +-pi/2
+  else if (cam.pitch < -Math.PI / 2) cam.pitch = -Math.PI / 2;
+}
+function pitchMax() { return 1.30; }
+
+/* ---------- board helpers ---------------------------------------- */
+
+function cellAt(face, col, row) {
+  if (col < 0 || col >= COLS) return 1;            // wall
+  if (row < 0) return 1;                           // floor
+  if (row >= ROWS) return 0;                       // free air above the cube
+  return grid[row * RING + ringIndex(face, col)];
+}
+function setCell(face, col, row, v) {
+  if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
+  var i = row * RING + ringIndex(face, col);
+  grid[i] = v;
+  pulse[i] = v ? 1 : 0;
+  gridVersion++;
+}
+function faceHeight(face) {
+  var row, c;
+  for (row = ROWS - 1; row >= 0; row--) {
+    for (c = 0; c < COLS; c++) if (grid[row * RING + ringIndex(face, c)]) return row + 1;
+  }
+  return 0;
+}
+
+/* a grey row with one hole rises from the floor of one side; the rows above
+   it move up. Refused when that side is already full to the top. The hole is
+   handed in, so refusing a side never changes the random stream. */
+function pressureRow(face, hole) {
+  var c, row, p;
+  for (c = 0; c < COLS; c++) if (grid[(ROWS - 1) * RING + ringIndex(face, c)]) return false;
+  for (c = 0; c < COLS; c++) {
+    p = ringIndex(face, c);
+    for (row = ROWS - 1; row > 0; row--) {
+      grid[row * RING + p] = grid[(row - 1) * RING + p];
+      pulse[row * RING + p] = pulse[(row - 1) * RING + p];
+    }
+    grid[p] = (c === hole) ? 0 : (PRESSURE_COLOR + 1);
+    pulse[p] = (c === hole) ? 0 : 1;
+  }
+  gridVersion++;
+  return true;
+}
+
+/* ---------- pieces ------------------------------------------------ */
+
+function refillBag() {
+  bag = TYPES.slice();
+  for (var i = bag.length - 1; i > 0; i--) {
+    var j = Math.floor(rng() * (i + 1));
+    var t = bag[i]; bag[i] = bag[j]; bag[j] = t;
+  }
+}
+function newPiece() {
+  if (!bag.length) refillBag();
+  return { type: bag.pop(), color: Math.floor(rng() * 4) };
+}
+function rotCW(m) {
+  var n = m.length, r = [], i, j;
+  for (i = 0; i < n; i++) { r.push([]); for (j = 0; j < n; j++) r[i].push(m[n - 1 - j][i]); }
+  return r;
+}
+function cellsOf(p) {
+  var out = [], n = p.m.length, r, c;
+  for (r = 0; r < n; r++) for (c = 0; c < n; c++) {
+    if (p.m[r][c]) out.push([p.col + c, p.row + (n - 1 - r)]);
+  }
+  return out;
+}
+function fits(p) {
+  var cs = cellsOf(p), i;
+  for (i = 0; i < cs.length; i++) {
+    if (cs[i][1] > MAXROW) return false;
+    if (cellAt(p.face, cs[i][0], cs[i][1])) return false;
+  }
+  return true;
+}
+function lowestRow(p) {
+  var cs = cellsOf(p), lo = 1e9, i;
+  for (i = 0; i < cs.length; i++) if (cs[i][1] < lo) lo = cs[i][1];
+  return lo;
+}
+
+function spawnPiece(def, face) {
+  var m = SHAPES[def.type].map(function (r) { return r.slice(); });
+  var n = m.length;
+  var p = { type: def.type, color: def.color, m: m, face: face, col: Math.floor((COLS - n) / 2), row: 0 };
+  p.row = SPAWN - (lowestRow({ m: m, col: 0, row: 0, face: face }) - 0);
+  return p;
+}
+
+/* a successful nudge while the piece already rests refreshes the lock
+   timer, but only a limited number of times so it cannot be stalled */
+function touchLock() {
+  if (grounded && lockResets < MAX_LOCK_RESETS) { lockResets++; lockDelayT = 0; }
+}
+function canFall() {
+  if (!piece) return false;
+  return fits({ m: piece.m, col: piece.col, row: piece.row - 1, face: piece.face });
+}
+
+function tryMove(dc, dr) {
+  if (!piece) return false;
+  var t = { m: piece.m, col: piece.col + dc, row: piece.row + dr, face: piece.face };
+  if (!fits(t)) return false;
+  piece.col = t.col; piece.row = t.row;
+  if (dr === 0) { touchLock(); sfx("move"); }
+  return true;
+}
+function tryRotate(dir) {
+  if (!piece) return false;
+  var m = piece.m;
+  var r = dir > 0 ? rotCW(m) : rotCW(rotCW(rotCW(m)));
+  var kicks = [0, -1, 1, -2, 2];
+  for (var i = 0; i < kicks.length; i++) {
+    var t = { m: r, col: piece.col + kicks[i], row: piece.row, face: piece.face };
+    if (fits(t)) { piece.m = r; piece.col = t.col; touchLock(); sfx("rotate"); return true; }
+  }
+  return false;
+}
+function ghostRow() {
+  if (!piece) return 0;
+  var t = { m: piece.m, col: piece.col, row: piece.row, face: piece.face };
+  while (true) { t.row--; if (!fits(t)) { t.row++; break; } }
+  return t.row;
+}
+
+/* ---------- game flow --------------------------------------------- */
+
+function pickFace() {
+  var d = camDir(), best = 0, bv = -9;
+  for (var i = 0; i < 4; i++) {
+    var v = FACES[i].nx * d[0] + FACES[i].ny * d[1] + FACES[i].nz * d[2];
+    if (v > bv) { bv = v; best = i; }
+  }
+  return best;
+}
+
+function gain(n) { var g = Math.round(n * DIFF.mult); score += g; return g; }
+
+function commitFace() {
+  if (orbitLeft > 0.001) st.decisions.push(DIFF.orbit - orbitLeft); else st.timeouts++;
+  if (selFace !== st.startFace) { st.turned++; if (current.color === selFace) st.turnedHits++; }   // turned away and still found the colour
+  activeFace = selFace;
+  piece = spawnPiece(current, activeFace);
+  current = queue.shift();
+  queue.push(newPiece());
+  phase = "intro"; introT = 0; fallT = 0;
+  paintPreviews();                              // after the phase change: the "this piece" box shows the falling piece, not the next one
+  lockDelayT = 0; lockResets = 0; grounded = false;
+  sfx("commit");
+  flyTo({ yaw: FACES[activeFace].yaw, pitch: DROP_PITCH, dist: DROP_DIST, zoom: dropZoom(), lookY: 0 },
+        INTRO_DUR);
+}
+
+function gravityInterval() {
+  return Math.max(0.09, 0.8 * Math.pow(0.86, level - 1));
+}
+
+function lockPiece() {
+  var cs = cellsOf(piece), i, over = false;
+  for (i = 0; i < cs.length; i++) if (cs[i][1] >= ROWS) over = true;
+  for (i = 0; i < cs.length; i++) setCell(piece.face, cs[i][0], cs[i][1], piece.color + 1);
+  st.pieces++; st.faces[piece.face]++; piecesLocked++;
+  if (piece.color === piece.face) {
+    st.matches++;
+    showToast("COLOUR MATCH +" + gain(25), COLORS[piece.color].css);
+  } else if (DIFF.penalty > 0 && !over) {
+    score = Math.max(0, score - DIFF.penalty); st.penalties++;
+    showToast("WRONG COLOUR −" + DIFF.penalty, "#8b95ad");
+  }
+  if (DIFF.joker > 0 && piecesLocked % DIFF.joker === 0 && !over) {
+    st.jokers++; st.jokersEarned++;
+    showToast("JOKER +1", "#ffffff"); sfx("joker");
+  }
+  if (over) gameOver = true;
+  piece = null;
+  grounded = false; lockDelayT = 0; lockResets = 0;
+  phase = "lock"; lockT = 0;
+  sfx("lock"); buzz(18);
+}
+
+function compactWall(p, kill) {                 // = the v2.6 column loop of finishClear
+  var col = [], colp = [], row;
+  for (row = 0; row < ROWS; row++) {
+    if (!kill[row]) { col.push(grid[row * RING + p]); colp.push(pulse[row * RING + p]); }
+  }
+  while (col.length < ROWS) { col.push(0); colp.push(0); }
+  for (row = 0; row < ROWS; row++) { grid[row * RING + p] = col[row]; pulse[row * RING + p] = colp[row]; }
+}
+
+/* full rows of one side, with their pure-row flag */
+function fullRowsOn(face) {
+  var out = [], row, c, v, full, pure;
+  for (row = 0; row < ROWS; row++) {
+    full = true; pure = true;
+    for (c = 0; c < COLS; c++) {
+      v = grid[row * RING + ringIndex(face, c)];
+      if (!v) { full = false; break; }
+      if (v !== face + 1) pure = false;
+    }
+    if (full) out.push({ row: row, pure: pure });
+  }
+  return out;
+}
+
+/* scoring of a set of full rows on one side; label marks a chain clear on a neighbour */
+function scoreRows(rows, face, label) {
+  var n = rows.length, i, rn = 0;
+  st.combo++; if (st.combo > st.maxCombo) st.maxCombo = st.combo;
+  var base = [0, 100, 300, 500, 800][n];
+  var comboBonus = st.combo > 1 ? 50 * (st.combo - 1) : 0;
+  var chainBonus = label ? 150 * n : 0;
+  var got = gain(base + comboBonus + chainBonus);
+  lines += n;
+  for (i = 0; i < n; i++) if (rows[i].pure) rn++;
+  var rgot = 0;
+  if (rn) { pureRows += rn; rgot = gain(500 * rn); }
+  level = DIFF.startLevel + Math.floor(lines / 10);
+  var head = (label ? label + " · " : "") + (n === 4 ? "DizzCube!" : n + " ROW" + (n > 1 ? "S" : "")) + " +" + got;
+  var tail = (rn ? " · " + (rn > 1 ? rn + "× " : "") + "PURE ROW +" + rgot : "") + (st.combo > 1 ? " · COMBO ×" + st.combo : "");
+  showToast(head + tail, rn ? COLORS[face].css : "#e9edf7");
+  if (rn) { sfx("pure"); buzz([30, 40, 60]); } else { sfx("clear"); buzz(30); }
+  if (typeof burstRow === "function") for (i = 0; i < n; i++) burstRow(face, rows[i].row, rows[i].pure ? face : PRESSURE_COLOR, rows[i].pure ? 12 : 4);
+}
+
+function afterLock() {
+  if (gameOver) { endGame(); return; }
+  clearFace = activeFace;
+  clearRows = fullRowsOn(clearFace);
+  if (!clearRows.length) {
+    /* the shared edge column may have completed a row on a neighbour: it clears now, as an edge clear */
+    var nb = [(activeFace + 1) % 4, (activeFace + 3) % 4];
+    for (var i = 0; i < 2; i++) {
+      var rows = fullRowsOn(nb[i]);
+      if (rows.length) { clearFace = nb[i]; clearRows = rows; st.chains++; scoreRows(rows, clearFace, "EDGE"); phase = "clear"; clearT = 0; return; }
+    }
+    st.combo = 0; toOrbit(); return;
+  }
+  scoreRows(clearRows, clearFace, "");
+  phase = "clear"; clearT = 0;
+}
+
+function finishClear() {
+  var kill = {}, i, c, row, p;
+  for (i = 0; i < clearRows.length; i++) kill[clearRows[i].row] = true;
+  for (c = 0; c < COLS; c++) compactWall(ringIndex(clearFace, c), kill);
+  clearRows = [];
+  gridVersion++;
+  /* chain: a shared edge column may have completed a row on a neighbour; it clears now, with a bonus */
+  var nb = [(clearFace + 1) % 4, (clearFace + 3) % 4];
+  for (i = 0; i < 2; i++) {
+    var rows = fullRowsOn(nb[i]);
+    if (rows.length) { clearFace = nb[i]; clearRows = rows; st.chains++; scoreRows(rows, clearFace, "CHAIN"); phase = "clear"; clearT = 0; return; }
+  }
+  toOrbit();
+}
+
+function toOrbit() {
+  phase = "orbit";
+  orbitLeft = DIFF.orbit;
+  lastTick = -1;
+  userTouched = false;
+  /* pressure: after the clear settled, so the board you see is the board you get */
+  if (DIFF.pressure > 0 && piecesLocked > 0 && piecesLocked % DIFF.pressure === 0) {
+    /* side and hole are drawn once; the search for a free side draws nothing more */
+    var pf = Math.floor(rngW() * 4), hole = Math.floor(rngW() * COLS), placed = -1;
+    for (var pk = 0; pk < 4 && placed < 0; pk++) if (pressureRow((pf + pk) % 4, hole)) placed = (pf + pk) % 4;
+    if (placed >= 0) { st.pressures++; showToast("PRESSURE · " + FACES[placed].name, COLORS[PRESSURE_COLOR].css); sfx("pressure"); buzz(50); }
+    else { overReason = "The pressure found no free side. The cube is full."; endGame(); return; }
+  }
+  /* Sage and the faster levels spin onto a random side; every spin draws three world values, as in v2.6 */
+  if (DIFF.spin) {
+    var sf = Math.floor(rngW() * 4);
+    flyTo({ yaw: FACES[sf].yaw + (rngW() - 0.5) * 1.5, pitch: 0.18 + rngW() * 0.5, dist: 34, zoom: 1, lookY: 0 }, 0.55);
+  } else {
+    flyTo({ yaw: FACES[activeFace].yaw + 0.62, pitch: 0.40, dist: 34, zoom: 1, lookY: 0 }, 0.46);
+  }
+  selFace = pickFace();
+  st.startFace = DIFF.spin ? -1 : activeFace;   // the side this orbit starts on (Sage spins away: every pick counts)
+  paintPreviews();                              // back in orbit: "this piece" is the one that falls next
+}
+
+/* ---------- play profile ----------------------------------------- */
+
+function profile() {
+  var n = Math.max(1, st.pieces);
+  var avgDec = DIFF.orbit;
+  if (st.decisions.length) {
+    var s = 0; for (var i = 0; i < st.decisions.length; i++) s += st.decisions[i];
+    avgDec = s / st.decisions.length;
+  }
+  var decided = st.decisions.length / Math.max(1, st.decisions.length + st.timeouts);
+  var match = st.matches / n;
+  /* fast only counts when it also fits: an instant Enter on the wrong colour is not speed */
+  var speed = Math.max(0, Math.min(1, (1 - avgDec / DIFF.orbit) * 0.7 + decided * 0.3)) * (0.4 + 0.6 * match);
+  var tot = 0, H = 0, f;
+  for (f = 0; f < SIDES; f++) tot += st.faces[f];
+  if (tot > 0) for (f = 0; f < SIDES; f++) { var p = st.faces[f] / tot; if (p > 0) H -= p * Math.log(p); }
+  var balance = H / Math.log(SIDES);
+  var plan = Math.min(1, pureRows / Math.max(2, n / 10));       // planning = pure rows only, colour has its own bar
+  var orient = st.turned ? st.turnedHits / st.turned : 0;      // colour found after turning away from the start side
+  var endurance = Math.min(1, n / 80);
+  var raw = 0.25 * speed + 0.20 * match + 0.15 * balance + 0.15 * plan + 0.15 * orient + 0.10 * endurance;
+  var ci = Math.round(Math.min(100, 100 * raw * DIFF.weight));
+  if (st.pieces < 5) ci = Math.min(ci, 10 * st.pieces);
+  return { speed: speed, match: match, balance: balance, spread: balance, plan: plan, orient: orient, endurance: endurance,
+           ci: ci, avgDec: avgDec, decided: decided };
+}
+
+function fmtTime(s) { s = Math.round(s); return Math.floor(s / 60) + ":" + pad2(s % 60); }
+
+function endGame() {
+  phase = "over";
+  sfx("over"); buzz([60, 60, 120]);
+  var pr = profile();
+  var entry = { name: settings.name, score: score, lines: lines, pureRows: pureRows, level: level,
+                pieces: st.pieces, secs: Math.round(st.time), date: daily ? dailyKeyStart : todayKey(),
+                mode: daily ? "daily" : "free", diff: DIFF.old, lvl: DIFF.id, ci: pr.ci, t: Date.now(),
+                v: "3.0-web", sides: SIDES, seed: runSeed,
+                p: [pr.speed, pr.match, pr.spread, pr.plan, pr.orient, pr.endurance].map(function (x) { return Math.round(x * 100); }) };
+  var prevBest = laneBest(entry);               // before the push: the best this lane had until now
+  lastEntry = entry;
+  board.push(entry);
+  trimBoard();
+  saveBoard();
+  var rank = rankOf(entry);
+  pushHistory(DIFF.id, pr.ci, SIDES);           // v3 lane HG: the history knows its category
+  scoreView = DIFF.id;                          // the score tab opens on the level just played
+
+  document.getElementById("overWhy").textContent = overReason || "There was no room left on the side you chose.";
+  document.getElementById("gScore").textContent = score;
+  document.getElementById("gLines").textContent = lines;
+  document.getElementById("gPure").textContent = pureRows;
+  document.getElementById("gLevel").textContent = level;
+  document.getElementById("gPieces").textContent = st.pieces;
+  document.getElementById("gTime").textContent = fmtTime(st.time);
+  document.getElementById("rankline").textContent = rankLine(entry, rank, prevBest);
+  document.getElementById("ciNum").textContent = pr.ci;
+  setBar("Speed", pr.speed); setBar("Col", pr.match); setBar("Spr", pr.spread);
+  setBar("Plan", pr.plan); setBar("Ori", pr.orient); setBar("End", pr.endurance);
+  document.getElementById("profFormula").textContent = formulaLine();
+  document.getElementById("overTrend").innerHTML = trendHtml(DIFF.id, SIDES);
+  document.getElementById("profHint").textContent =
+    "decided in " + pr.avgDec.toFixed(1) + " s on average · " + Math.round(pr.match * 100) + "% colour matches · " +
+    st.timeouts + " ring timeouts · max combo " + st.maxCombo + (st.pressures ? " · " + st.pressures + " pressure rows" : "") + (st.chains ? " \u00b7 " + st.chains + " edge and chain clears" : "");
+  if (st.jokersEarned) document.getElementById("profHint").textContent += " · jokers used " + st.jokersUsed + "/" + st.jokersEarned;
+  var ni = document.getElementById("overName");
+  ni.value = settings.name;
+  document.getElementById("overScreen").classList.remove("hidden");
+  document.getElementById("pausebtn").classList.remove("on");
+  flyTo({ yaw: cam.yaw + 0.9, pitch: 0.55, dist: 40, zoom: 0.92, lookY: 0 }, 1.1);
+  focusEl("againBtn");
+}
+var lastEntry = null, overReason = "";
+function setBar(k, v) {
+  document.getElementById("pb" + k).style.width = Math.round(v * 100) + "%";
+  document.getElementById("pv" + k).textContent = Math.round(v * 100);
+}
+
+/* ---------- score list -------------------------------------------- */
+
+/* a lane is one level in one mode; a daily cube only competes with the same day */
+/* an entry without "sides" is a four-sided game */
+function catSides() { return 4; }
+function sameLane(a, b) {
+  return a.lvl === b.lvl && (a.mode || "free") === (b.mode || "free") && (a.mode !== "daily" || a.date === b.date) && (a.sides || 4) === (b.sides || 4);
+}
+function laneBest(entry) {
+  var b = 0;
+  for (var i = 0; i < board.length; i++) if (board[i] !== entry && sameLane(board[i], entry) && board[i].score > b) b = board[i].score;
+  return b;
+}
+function trimBoard() {
+  board.sort(function (a, b) { return b.score - a.score || a.t - b.t; });
+  var keep = [], count = {};
+  for (var i = 0; i < board.length; i++) {
+    var e = board[i];
+    var ck = e.lvl + "/" + (e.sides || 4); if ((count[ck] || 0) < 25) { keep.push(e); count[ck] = (count[ck] || 0) + 1; }
+  }
+  board = keep;
+}
+function rankOf(entry) {
+  var r = 0;
+  for (var i = 0; i < board.length; i++) {
+    if (!sameLane(board[i], entry)) continue;
+    r++;
+    if (board[i] === entry) return r;
+  }
+  return 0;
+}
+function bestFor(d) {
+  var b = 0;
+  for (var i = 0; i < board.length; i++) if (board[i].lvl === DIFFS[d].id && (board[i].sides || 4) === catSides() && board[i].score > b) b = board[i].score;
+  return b;
+}
+
+/* ---------- start / menu ------------------------------------------ */
+
+var dailyKeyStart = "";
+function startGame() {
+  DIFF = DIFFS[diffIdx];
+  dailyKeyStart = todayKey();                   // the day the cube was dealt, kept even past midnight
+  seedRng(daily ? dailySeed() : ((Date.now() ^ (Math.random() * 1e9)) >>> 0));
+  grid.fill(0); pulse.fill(0);
+  gridVersion++;
+  score = 0; lines = 0; pureRows = 0; level = DIFF.startLevel;
+  gameOver = false; piece = null; clearRows = []; piecesLocked = 0; overReason = "";
+  lockDelayT = 0; lockResets = 0; grounded = false; paused = false;
+  resetStats();
+  bag = []; refillBag();
+  queue = [newPiece(), newPiece(), newPiece()];
+  current = newPiece();
+  activeFace = 0;
+  cam.yaw = 0.72; cam.pitch = 0.42; cam.dist = 34; cam.zoom = 1; cam.lookY = 0;
+  spinYaw = spinPitch = 0; zoomTarget = 1; focus = 0;
+  camAnim.dur = 0; settle.on = false;           // a fresh game cuts any flight, nothing settles
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("overScreen").classList.add("hidden");
+  document.getElementById("pauseScreen").classList.add("hidden");
+  document.getElementById("pausebtn").classList.add("on");
+  applyPreviewCount();
+  paintPreviews();
+  phase = "orbit"; orbitLeft = DIFF.orbit; lastTick = -1; userTouched = false;
+  selFace = pickFace();
+  st.startFace = selFace;                       // orientation is measured against the side the orbit starts on
+  lastHud = {};
+  if (settings.sound) ac();                     // no audio context at all while the sound is off
+}
+
+function toMenu() {
+  phase = "title";
+  flyTo({ yaw: cam.yaw + 0.4, pitch: 0.42, dist: 34, zoom: 1, lookY: TITLE_LOOKY }, 0.9);
+  paused = false; closeJoker(false);
+  document.getElementById("overScreen").classList.add("hidden");
+  document.getElementById("pauseScreen").classList.add("hidden");
+  document.getElementById("pausebtn").classList.remove("on");
+  scoreView = DIFFS[diffIdx].id;
+  renderDiffCards();
+  renderScores();
+  document.getElementById("menu").classList.remove("hidden");
+  focusEl("startBtn");
+}
+
+function togglePause(on) {
+  var inGame = (phase === "orbit" || phase === "intro" || phase === "drop" || phase === "lock" || phase === "clear");
+  if (!inGame) return;
+  if (on === undefined) on = !paused;
+  paused = !!on;
+  var ps = document.getElementById("pauseScreen");
+  if (paused) ps.classList.remove("hidden"); else ps.classList.add("hidden");
+  /* the keyboard lands on Resume; leaving the pause takes the focus off the hidden buttons */
+  if (paused) { syncSound(); focusEl("resumeBtn"); }
+  else if (document.activeElement && ps.contains(document.activeElement)) document.activeElement.blur();
+  held = {}; repeatDir = 0;
+  sfx("ui");
+}
+
+/* toasts within 0.35 s of each other stack (newest last, at most three lines) instead of wiping each other */
+function showToast(t, c) {
+  if (toastT > 1.0 && toastText) toastText = (toastText + "\n" + t).split("\n").slice(-3).join("\n");
+  else { toastText = t; toastColor = c; }
+  toastT = 1.35;
+}
+
+/* ---------- update ------------------------------------------------ */
+
+var held = {};
+var repeatT = 0, repeatDir = 0;
+
+function update(dt) {
+  updateCam(dt);
+  if (toastT > 0) toastT = Math.max(0, toastT - dt);
+  var dec = dt * 3.6, i;
+  for (i = 0; i < pulse.length; i++) if (pulse[i] > 0) pulse[i] = Math.max(0, pulse[i] - dec);
+
+  if (phase === "orbit" || phase === "intro" || phase === "drop" || phase === "lock" || phase === "clear") st.time += dt;
+
+  if (phase === "orbit") {
+    if (!userTouched && camAnim.dur === 0 && !reduceMotion) cam.yaw += 0.025 * dt;
+    selFace = pickFace();
+    if (selFace !== faceToneSel) { if (userTouched && camAnim.dur === 0) sfx("face"); faceToneSel = selFace; }
+    /* the ring only runs once the camera has arrived, or as soon as the player takes over */
+    if ((camAnim.dur === 0 || userTouched) && !jokerOpen) orbitLeft -= dt;   // a joker being chosen stops the ring
+    var tk = Math.ceil(Math.max(0, orbitLeft));
+    if (tk !== lastTick) { if (lastTick !== -1 && tk <= 3 && tk > 0) sfx("tick"); lastTick = tk; }
+    if (orbitLeft <= 0) { orbitLeft = 0; commitFace(); }
+  } else if (phase === "intro") {
+    introT += dt;
+    if (introT >= INTRO_DUR) { phase = "drop"; fallT = 0; holdT = SPAWN_HOLD; }   // then the piece rests
+  } else if (phase === "drop") {
+    /* delayed auto shift, then a steady auto repeat */
+    if (repeatDir !== 0) {
+      repeatT -= dt;
+      var rg = 0;
+      while (repeatT <= 0 && rg++ < 12) { tryMove(repeatDir, 0); repeatT += ARR; }
+    }
+    /* v3 (his word 08.10.): the piece rests at the far edge for SPAWN_HOLD seconds; moving and turning are
+       allowed meanwhile, soft drop ends the rest at once, hard drop never waits */
+    if (held.soft) holdT = 0;
+    if (holdT > 0 && piece) { holdT = Math.max(0, holdT - dt); fallT = 0; }
+    else {
+      var g = gravityInterval();
+      var iv = held.soft ? Math.min(0.035, g) : (lowestRow(piece) >= ROWS ? Math.min(0.09, g) : g);
+      fallT += dt;
+      var guard = 0;
+      while (fallT >= iv && piece && guard++ < 40) {
+        fallT -= iv;
+        if (!tryMove(0, -1)) { fallT = 0; break; }
+      }
+    }
+    /* lock delay: resting is not locking, a nudge buys time (capped) */
+    if (piece) {
+      if (canFall()) { grounded = false; lockDelayT = 0; }
+      else {
+        if (!grounded) { grounded = true; lockDelayT = 0; }
+        lockDelayT += dt;
+        if (lockDelayT >= DIFF.lock) lockPiece();
+      }
+    }
+  } else if (phase === "lock") {
+    lockT += dt;
+    if (lockT >= LOCK_DUR) afterLock();
+  } else if (phase === "clear") {
+    clearT += dt;
+    if (clearT >= CLEAR_DUR) finishClear();
+  }
+}
+
+/* ---------- colour shading ---------------------------------------- */
+
+/* face order of a voxel cube: +X, -X, +Y, -Y, +Z, -Z */
+var FNORM = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+var FQUAD = [[1,3,7,5],[0,4,6,2],[2,6,7,3],[0,1,5,4],[4,5,7,6],[0,2,3,1]];
+var LIGHT = (function () { var l = [0.35, 0.85, 0.40], n = Math.hypot(l[0], l[1], l[2]);
+  return [l[0] / n, l[1] / n, l[2] / n]; })();
+/* Half lambert, but the four vertical sides keep a brightness floor so every
+   board stays readable head on, whichever way it points. */
+function buildShade() {
+  return FNORM.map(function (n, i) {
+    var d = n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2];
+    var s = 0.30 + 0.85 * (0.5 + 0.5 * d);
+    if (i !== 2 && i !== 3) s = Math.max(s, 0.78);
+    return s;
+  });
+}
+var SHADE = buildShade();
+function shadeTable(k) {
+  return COLORS.map(function (c) {
+    return SHADE.map(function (s) {
+      return "rgb(" + Math.min(255, Math.round(c.rgb[0] * s * k)) + "," +
+                      Math.min(255, Math.round(c.rgb[1] * s * k)) + "," +
+                      Math.min(255, Math.round(c.rgb[2] * s * k)) + ")";
+    });
+  });
+}
+var SHADED = shadeTable(1);
+
+/* Depth haze for everything that is not part of the active board. The lit
+   colour is pushed almost all the way into a cold, dark tone and then drawn
+   at low opacity, so the back structure stays readable as a mass but can
+   never be mistaken for a cell of the board in front of it. */
+var HAZE = [22, 29, 48];
+var fogTbl = null, fogTblK = -1;
+function fogTable(k) {
+  if (k === fogTblK) return fogTbl;
+  fogTblK = k;
+  fogTbl = COLORS.map(function (c) {
+    return SHADE.map(function (s) {
+      var o = [c.rgb[0] * s, c.rgb[1] * s, c.rgb[2] * s];
+      return "rgb(" + Math.round(o[0] + (HAZE[0] - o[0]) * k) + "," +
+                      Math.round(o[1] + (HAZE[1] - o[1]) * k) + "," +
+                      Math.round(o[2] + (HAZE[2] - o[2]) * k) + ")";
+    });
+  });
+  return fogTbl;
+}
+
+function tinted(ci, fi, t) {
+  var c = COLORS[ci].rgb, s = SHADE[fi];
+  var r = Math.min(255, Math.round(c[0] * s + (255 - c[0] * s) * t));
+  var g = Math.min(255, Math.round(c[1] * s + (255 - c[1] * s) * t));
+  var b = Math.min(255, Math.round(c[2] * s + (255 - c[2] * s) * t));
+  return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+/* ---------- voxel drawing ----------------------------------------- */
+
+var cx8 = new Float64Array(8), cy8 = new Float64Array(8);
+var ok8 = new Uint8Array(8);
+
+/* stroke styles are rebuilt once per frame, not once per face */
+var edgeTop = "rgba(255,255,255,0.40)", edgeSide = "rgba(255,255,255,0.10)", edgeOn = true;
+var edgeGlass = "rgba(255,255,255,0.30)", glassOn = true;   // light top rim on the side faces of clear cells
+
+/* mask: bit i set means face i is hidden by a solid neighbour cell.
+   fog 0 = solid and outlined, fog 1 = flat haze with no outline at all. */
+function drawVoxel(x, y, z, ci, h, tint, alpha, fog, mask) {
+  var i, dx, dy, dz;
+  for (i = 0; i < 8; i++) {
+    dx = x + ((i & 1) ? h : -h);
+    dy = y + ((i & 2) ? h : -h);
+    dz = z + ((i & 4) ? h : -h);
+    ok8[i] = project(dx, dy, dz, pj) ? 1 : 0;
+    cx8[i] = pj[0]; cy8[i] = pj[1];
+  }
+  for (i = 0; i < 8; i++) if (!ok8[i]) return;
+  if (alpha !== 1) ctx.globalAlpha = alpha;
+  var table = fog > 0 ? fogTable(fog) : SHADED;
+  var outline = edgeOn && fog < 0.86;
+  for (i = 0; i < 6; i++) {
+    if (mask & (1 << i)) continue;
+    var nn = FNORM[i];
+    var d = nn[0] * (camPos[0] - x) + nn[1] * (camPos[1] - y) + nn[2] * (camPos[2] - z);
+    if (d <= h) continue;
+    var q = FQUAD[i];
+    ctx.beginPath();
+    ctx.moveTo(cx8[q[0]], cy8[q[0]]);
+    ctx.lineTo(cx8[q[1]], cy8[q[1]]);
+    ctx.lineTo(cx8[q[2]], cy8[q[2]]);
+    ctx.lineTo(cx8[q[3]], cy8[q[3]]);
+    ctx.closePath();
+    ctx.fillStyle = tint > 0 ? tinted(ci, i, tint) : table[ci][i];
+    ctx.fill();
+    if (outline) {
+      ctx.strokeStyle = (i === 2) ? edgeTop : edgeSide;
+      ctx.lineWidth = (i === 2) ? 1.1 : 0.7;
+      ctx.stroke();
+    }
+    if (glassOn && fog === 0 && i !== 2 && i !== 3) {
+      /* glass: the top rim of a side face catches the light (corner bit 2 = +Y) */
+      var ea = -1, eb = -1;
+      for (var kk = 0; kk < 4; kk++) if (q[kk] & 2) { if (ea < 0) ea = q[kk]; else eb = q[kk]; }
+      ctx.beginPath();
+      ctx.moveTo(cx8[ea], cy8[ea]);
+      ctx.lineTo(cx8[eb], cy8[eb]);
+      ctx.strokeStyle = edgeGlass;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+  if (symF >= 0) symVox(x, y, z, h, mask, ci, false);   // v3 lane HG: the falling piece
+  if (alpha !== 1) ctx.globalAlpha = 1;
+}
+
+/* v3 lane HA: drawVoxel with a colour per face, read from VIEW_COL at offset cb.
+   With one colour on all faces this draws exactly what drawVoxel draws.
+   The falling piece keeps drawVoxel. */
+function drawVoxelF(x, y, z, cb, h, tint, alpha, fog, mask) {
+  var i, dx, dy, dz;
+  for (i = 0; i < 8; i++) {
+    dx = x + ((i & 1) ? h : -h);
+    dy = y + ((i & 2) ? h : -h);
+    dz = z + ((i & 4) ? h : -h);
+    ok8[i] = project(dx, dy, dz, pj) ? 1 : 0;
+    cx8[i] = pj[0]; cy8[i] = pj[1];
+  }
+  for (i = 0; i < 8; i++) if (!ok8[i]) return;
+  if (alpha !== 1) ctx.globalAlpha = alpha;
+  var table = fog > 0 ? fogTable(fog) : SHADED;
+  var outline = edgeOn && fog < 0.86;
+  for (i = 0; i < 6; i++) {
+    if (mask & (1 << i)) continue;
+    var nn = FNORM[i];
+    var d = nn[0] * (camPos[0] - x) + nn[1] * (camPos[1] - y) + nn[2] * (camPos[2] - z);
+    if (d <= h) continue;
+    var q = FQUAD[i], ci = VIEW_COL[cb + i];
+    ctx.beginPath();
+    ctx.moveTo(cx8[q[0]], cy8[q[0]]);
+    ctx.lineTo(cx8[q[1]], cy8[q[1]]);
+    ctx.lineTo(cx8[q[2]], cy8[q[2]]);
+    ctx.lineTo(cx8[q[3]], cy8[q[3]]);
+    ctx.closePath();
+    ctx.fillStyle = tint > 0 ? tinted(ci, i, tint) : table[ci][i];
+    ctx.fill();
+    if (outline) {
+      ctx.strokeStyle = (i === 2) ? edgeTop : edgeSide;
+      ctx.lineWidth = (i === 2) ? 1.1 : 0.7;
+      ctx.stroke();
+    }
+    if (glassOn && fog === 0 && i !== 2 && i !== 3) {
+      var ea = -1, eb = -1;
+      for (var kk = 0; kk < 4; kk++) if (q[kk] & 2) { if (ea < 0) ea = q[kk]; else eb = q[kk]; }
+      ctx.beginPath();
+      ctx.moveTo(cx8[ea], cy8[ea]);
+      ctx.lineTo(cx8[eb], cy8[eb]);
+      ctx.strokeStyle = edgeGlass;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+  if (symF >= 0) symCell(x, y, z, h, mask, cb);   // v3 lane HG: a cell of the board in play
+  if (alpha !== 1) ctx.globalAlpha = 1;
+}
+
+function drawWireVoxel(x, y, z, ci, h) {
+  var i;
+  for (i = 0; i < 8; i++) {
+    ok8[i] = project(x + ((i & 1) ? h : -h), y + ((i & 2) ? h : -h), z + ((i & 4) ? h : -h), pj) ? 1 : 0;
+    cx8[i] = pj[0]; cy8[i] = pj[1];
+  }
+  for (i = 0; i < 8; i++) if (!ok8[i]) return;
+  ctx.strokeStyle = "rgba(" + COLORS[ci].rgb.join(",") + ",0.42)";
+  ctx.lineWidth = 1.2;
+  for (i = 0; i < 6; i++) {
+    var nn = FNORM[i];
+    var d = nn[0] * (camPos[0] - x) + nn[1] * (camPos[1] - y) + nn[2] * (camPos[2] - z);
+    if (d <= h) continue;
+    var q = FQUAD[i];
+    ctx.beginPath();
+    ctx.moveTo(cx8[q[0]], cy8[q[0]]);
+    ctx.lineTo(cx8[q[1]], cy8[q[1]]);
+    ctx.lineTo(cx8[q[2]], cy8[q[2]]);
+    ctx.lineTo(cx8[q[3]], cy8[q[3]]);
+    ctx.closePath();
+    ctx.stroke();
+  }
+  if (symF >= 0) symVox(x, y, z, h, 0, ci, true);    // v3 lane HG: the ghost, faint
+}
+
+/* ---------- v3 lane HG: colour symbols, a second channel for colour-blind play (shapes: lane HE, regie note WA 212) ----------
+   coral triangle · gold dot · teal square · violet diamond · pearl ring · azure bar · slate two strokes.
+   Units of r (0.32 x the shorter projected edge, none below a 16 px edge), centre (0,0), y down. Ink: light on violet,
+   azure and slate, dark on coral, gold, teal and pearl. The ghost carries a faint one.
+   Only on the board in play (cells, falling piece, ghost) and in the previews; never in the orbit, not on the joker tiles.
+   settings.symbols: "on" · "off" (the default). */
+var SYM = [
+  { k: 0, p: [0, -1, 1, 0.75, -1, 0.75] },                            // 0 coral   triangle
+  { k: 1, rr: 0.5 },                                                  // 1 gold    dot
+  { k: 0, p: [-0.72, -0.72, 0.72, -0.72, 0.72, 0.72, -0.72, 0.72] },  // 2 teal    square
+  { k: 0, p: [0, -1, 1, 0, 0, 1, -1, 0] },                            // 3 violet  diamond
+  { k: 2, rr: 0.8, w: 0.3 },                                          // 4 pearl   ring
+  { k: 0, p: [-0.95, -0.3, 0.95, -0.3, 0.95, 0.3, -0.95, 0.3] },      // 5 azure   bar (a triangle down would echo the fall chevrons)
+  { k: 3, c: [-0.55, 0.55], w: 0.32 }                                 // 6 slate   two strokes
+];
+var SYM_LIGHT = [0, 0, 0, 1, 0, 1, 1];          // 1 = light ink (pearl white) on that colour
+function drawSymbol(g, ci, cx, cy, r) {
+  var s = SYM[ci], i, p, c, x0, x1;
+  if (!s || !(r >= 2)) return;
+  g.beginPath();
+  if (s.k === 0) {
+    p = s.p;
+    g.moveTo(cx + p[0] * r, cy + p[1] * r);
+    for (i = 2; i < p.length; i += 2) g.lineTo(cx + p[i] * r, cy + p[i + 1] * r);
+    g.closePath(); g.fill();
+  } else if (s.k === 1) {
+    g.arc(cx, cy, s.rr * r, 0, 2 * Math.PI); g.fill();
+  } else if (s.k === 2) {
+    g.lineWidth = s.w * r; g.arc(cx, cy, s.rr * r, 0, 2 * Math.PI); g.stroke();
+  } else {
+    g.lineWidth = s.w * r;
+    for (i = 0; i < s.c.length; i++) {
+      c = s.c[i]; x0 = Math.max(-1, c - 1); x1 = Math.min(1, c + 1);
+      g.moveTo(cx + x0 * r, cy + (c - x0) * r); g.lineTo(cx + x1 * r, cy + (c - x1) * r);
+    }
+    g.stroke();
+  }
+}
+function symOn() { return settings.symbols === "on"; }
+var SYM_FN = [5, 1, 4, 0, 2, 3];                 // FNORM index of the outward face of each side: N W S E TOP BOTTOM
+var symF = -1, symK = 0;                         // the face that carries the symbol this pass (-1 = none), its fade
+function symSet(on) {
+  symF = -1;
+  if (!on || !symOn()) return;
+  symK = Math.max(0, Math.min(1, (focus - 0.5) * 2));   // fades in with the board view, like the backing plate
+  if (symK > 0.02) symF = SYM_FN[activeFace];
+}
+function symInk(g, ci, cx, cy, r, hollow, k) {
+  if (ci < 0 || ci > 6 || !(r >= 2)) return;
+  var a0 = g.globalAlpha;
+  g.globalAlpha = a0 * (hollow ? 0.35 : 0.55) * k;
+  g.fillStyle = g.strokeStyle = hollow ? COLORS[ci].css : (SYM_LIGHT[ci] ? "#eef1f8" : "#04060d");
+  drawSymbol(g, ci, cx, cy, r);
+  g.globalAlpha = a0;
+}
+/* the face symF of the voxel just drawn (corners still in cx8 / cy8), if it is drawn and faces the camera */
+function symVox(x, y, z, h, mask, ci, hollow) {
+  var i = symF, nn = FNORM[i], q = FQUAD[i];
+  if (mask & (1 << i)) return;
+  if (nn[0] * (camPos[0] - x) + nn[1] * (camPos[1] - y) + nn[2] * (camPos[2] - z) <= h) return;
+  var e = Math.min(Math.hypot(cx8[q[1]] - cx8[q[0]], cy8[q[1]] - cy8[q[0]]), Math.hypot(cx8[q[2]] - cx8[q[1]], cy8[q[2]] - cy8[q[1]]));
+  if (e < 16) return;                              // below a 16 px edge: no symbol
+  symInk(ctx, ci, (cx8[q[0]] + cx8[q[1]] + cx8[q[2]] + cx8[q[3]]) / 4, (cy8[q[0]] + cy8[q[1]] + cy8[q[2]] + cy8[q[3]]) / 4, 0.32 * e, hollow, symK);
+}
+function symCell(x, y, z, h, mask, cb) {          // a face without a colour (-1) carries no symbol
+  var c = VIEW_COL[cb + symF];
+  if (c >= 0) symVox(x, y, z, h, mask, c, false);
+}
+
+/* ---------- hull -------------------------------------------------- */
+
+var HH = 5;   // half size of the cube in world units
+var HQUAD = [[1,3,7,5],[0,4,6,2],[2,6,7,3],[0,1,5,4],[4,5,7,6],[0,2,3,1]];
+var hx = new Float64Array(8), hy = new Float64Array(8), hok = new Uint8Array(8);
+
+/* map hull face index -> board face index (or -1 for top/bottom) */
+var HULL2FACE = [3, 1, -1, -1, 2, 0];   // +X east, -X west, +Y, -Y, +Z south, -Z north
+
+function projectHull() {
+  for (var i = 0; i < 8; i++) {
+    hok[i] = project((i & 1) ? HH : -HH, (i & 2) ? HH : -HH, (i & 4) ? HH : -HH, pj) ? 1 : 0;
+    hx[i] = pj[0]; hy[i] = pj[1];
+  }
+}
+function hullFacePath(i) {
+  var q = HQUAD[i];
+  if (!hok[q[0]] || !hok[q[1]] || !hok[q[2]] || !hok[q[3]]) return false;
+  ctx.beginPath();
+  ctx.moveTo(hx[q[0]], hy[q[0]]);
+  ctx.lineTo(hx[q[1]], hy[q[1]]);
+  ctx.lineTo(hx[q[2]], hy[q[2]]);
+  ctx.lineTo(hx[q[3]], hy[q[3]]);
+  ctx.closePath();
+  return true;
+}
+function hullVisible(i) {
+  var n = FNORM[i];
+  return (n[0] * camPos[0] + n[1] * (camPos[1]) + n[2] * camPos[2]) > HH;
+}
+/* Fresnel like term: 0 head on, 1 at a grazing angle. Glass gets brighter
+   towards its silhouette, which is what makes the hull read as a shell. */
+function hullFresnel(i) {
+  var n = FNORM[i];
+  var vx = camPos[0] - n[0] * HH, vy = camPos[1] - n[1] * HH, vz = camPos[2] - n[2] * HH;
+  var l = Math.hypot(vx, vy, vz) || 1;
+  var c = (n[0] * vx + n[1] * vy + n[2] * vz) / l;
+  if (c < 0) c = 0; else if (c > 1) c = 1;
+  return 1 - c;
+}
+
+function drawHull(front, k) {
+  if (k <= 0.02) return;
+  for (var i = 0; i < 6; i++) {
+    if (hullVisible(i) !== front) continue;
+    if (!hullFacePath(i)) continue;
+    var bf = HULL2FACE[i];
+    var fr = hullFresnel(i);
+    var rim = 0.30 * fr * fr * k;             // grazing edge lift
+    if (bf >= 0) {
+      var c = COLORS[bf].rgb;
+      ctx.fillStyle = "rgba(" + c.join(",") + "," + ((front ? 0.035 : 0.055) + 0.06 * fr * fr) * k + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(" + c.join(",") + "," + (front ? 0.30 : 0.16) * k + ")";
+    } else if (i === 2) {
+      ctx.fillStyle = "rgba(226,234,250," + ((front ? 0.05 : 0.08) + 0.05 * fr * fr) * k + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(226,234,250," + 0.26 * k + ")";
+    } else {
+      ctx.fillStyle = "rgba(36,42,58," + (front ? 0.28 : 0.42) * k + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(120,132,158," + 0.22 * k + ")";
+    }
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    if (rim > 0.012) {
+      ctx.strokeStyle = "rgba(232,240,255," + rim.toFixed(3) + ")";
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+  }
+}
+
+/* ---------- ground ------------------------------------------------ */
+
+var FLOOR_Y = -HH - 0.30;
+var fp = [0, 0, 0];
+
+/* A barely there plane under the cube: a wide grid and a soft pool of
+   light, so the object has somewhere to stand instead of floating in void. */
+function drawFloor(k) {
+  if (k <= 0.02) return;
+  var i, u, a, b;
+  ctx.strokeStyle = "rgba(122,146,198," + (0.055 * k).toFixed(3) + ")";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (i = -8; i <= 8; i++) {
+    u = i * 2;
+    if (project(u, FLOOR_Y, -16, fp)) { a = [fp[0], fp[1]]; } else continue;
+    if (project(u, FLOOR_Y, 16, fp)) { ctx.moveTo(a[0], a[1]); ctx.lineTo(fp[0], fp[1]); }
+  }
+  for (i = -8; i <= 8; i++) {
+    u = i * 2;
+    if (project(-16, FLOOR_Y, u, fp)) { b = [fp[0], fp[1]]; } else continue;
+    if (project(16, FLOOR_Y, u, fp)) { ctx.moveTo(b[0], b[1]); ctx.lineTo(fp[0], fp[1]); }
+  }
+  ctx.stroke();
+
+  /* contact pool, sized from the projected footprint of the cube */
+  if (!project(0, FLOOR_Y, 0, fp)) return;
+  var ccx = fp[0], ccy = fp[1], rx = 0, ry = 0, s, t;
+  for (i = 0; i < 4; i++) {
+    s = (i & 1) ? 7.2 : -7.2; t = (i & 2) ? 7.2 : -7.2;
+    if (!project(s, FLOOR_Y, t, fp)) return;
+    rx = Math.max(rx, Math.abs(fp[0] - ccx));
+    ry = Math.max(ry, Math.abs(fp[1] - ccy));
+  }
+  if (rx < 4 || ry < 2) return;
+  var col = COLORS[phase === "orbit" || phase === "title" ? selFace : activeFace].rgb;
+  ctx.save();
+  ctx.translate(ccx, ccy);
+  ctx.scale(rx, Math.max(ry, rx * 0.16));
+  var g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+  g.addColorStop(0, "rgba(" + col.join(",") + "," + (0.055 * k).toFixed(3) + ")");
+  g.addColorStop(0.42, "rgba(126,150,205," + (0.075 * k).toFixed(3) + ")");
+  g.addColorStop(1, "rgba(126,150,205,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(0, 0, 1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/* outline of one board face, glowing */
+function faceOutline(f, colorCss, width, glow) {
+  var F = FACES[f];
+  var ux = faceUx(f), uz = faceUz(f);
+  var ox = F.nx * HH, oz = F.nz * HH;
+  var pts = [[-5, -5], [5, -5], [5, 5], [-5, 5]], i, p = [0, 0, 0], first = true;
+  ctx.beginPath();
+  for (i = 0; i < 4; i++) {
+    var u = pts[i][0], v = pts[i][1];
+    if (!project(ox + ux * u, v, oz + uz * u, p)) { return; }
+    if (first) { ctx.moveTo(p[0], p[1]); first = false; } else ctx.lineTo(p[0], p[1]);
+  }
+  ctx.closePath();
+  /* the glow is two wide faint strokes under the line; a canvas blur shadow costs far more */
+  var a0 = ctx.globalAlpha;
+  ctx.strokeStyle = colorCss;
+  ctx.lineJoin = "round";
+  if (glow) {
+    ctx.globalAlpha = a0 * 0.05; ctx.lineWidth = width + glow * 0.9; ctx.stroke();
+    ctx.globalAlpha = a0 * 0.12; ctx.lineWidth = width + glow * 0.4; ctx.stroke();
+  }
+  ctx.globalAlpha = a0; ctx.lineWidth = width; ctx.stroke();
+  ctx.lineJoin = "miter";
+}
+
+/* Lane KN: the seam. Column 0 and column 9 of a side belong to its neighbours too, so a thin line in
+   the neighbour's colour runs just outside that edge (left = the side before, right = the side after).
+   The line sits off the corner along the face normal and the face axis alike: in the drop it reads as
+   a line beside the board, in the orbit as a line along the shared corner. One path per side, no blur. */
+var SEAM_OFF = 0.2, knA = [0, 0, 0], knB = [0, 0, 0];
+function drawSeams(f, a) {
+  if (a <= 0.01) return;
+  var F = FACES[f], ux = faceUx(f), uz = faceUz(f), d = HH + SEAM_OFF, s, u;
+  ctx.globalAlpha = a; ctx.lineWidth = 2;
+  for (s = 0; s < 2; s++) {
+    u = s ? 5 + SEAM_OFF : -5 - SEAM_OFF;
+    if (!project(F.nx * d + ux * u, -5, F.nz * d + uz * u, knA) ||
+        !project(F.nx * d + ux * u, 5, F.nz * d + uz * u, knB)) continue;
+    ctx.strokeStyle = COLORS[s ? (f + 1) % 4 : (f + 3) % 4].css;
+    ctx.beginPath(); ctx.moveTo(knA[0], knA[1]); ctx.lineTo(knB[0], knB[1]); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* Lane KN: the pure vein. A row of the side in play with 6 or more cells, all in the side's own colour
+   and none foreign, gets a faint breathing line in that colour on the board plane, under the cells, so
+   it shows in the slots still open. Checked only when the grid changes (one flag per row), drawn only
+   where hints are on. Reduced motion: still, alpha 0.25. One path per row. */
+var veinVer = -1, veinFace = -1, veinAny = false, veinRow = new Uint8Array(ROWS);
+function drawVeins(f, a) {
+  if (a <= 0.01 || !(DIFF.hints && settings.hints)) return;
+  var row, c, n, v;
+  if (veinVer !== gridVersion || veinFace !== f) {
+    veinVer = gridVersion; veinFace = f; veinAny = false;
+    for (row = 0; row < ROWS; row++) {
+      n = 0;
+      for (c = 0; c < COLS; c++) {
+        v = grid[row * RING + ringIndex(f, c)];
+        if (!v) continue;
+        if (v !== f + 1) { n = -1; break; }
+        n++;
+      }
+      veinRow[row] = (n >= 6 && n < COLS) ? 1 : 0;
+      if (veinRow[row]) veinAny = true;
+    }
+  }
+  if (!veinAny) return;
+  var F = FACES[f], ux = faceUx(f), uz = faceUz(f), ox = F.nx * 4.02, oz = F.nz * 4.02;
+  var breath = reduceMotion ? 0.25 : 0.25 + 0.10 * Math.sin(performance.now() * (2 * Math.PI / 1600));
+  ctx.globalAlpha = a * breath; ctx.strokeStyle = COLORS[f].css; ctx.lineWidth = 2;
+  for (row = 0; row < ROWS; row++) {
+    if (!veinRow[row]) continue;
+    if (!project(ox - ux * 5, row - 4.8, oz - uz * 5, knA) || !project(ox + ux * 5, row - 4.8, oz + uz * 5, knB)) continue;
+    ctx.beginPath(); ctx.moveTo(knA[0], knA[1]); ctx.lineTo(knB[0], knB[1]); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* Flat backing plate just behind the active layer: it mutes whatever shows
+   through from the far sides and gives the board a surface to sit on. */
+function facePanel(f, alpha) {
+  var F = FACES[f];
+  var ux = faceUx(f), uz = faceUz(f);
+  var off = 3.98;
+  var ox = F.nx * off, oz = F.nz * off;
+  var pts = [[-5.04, -5.04], [5.04, -5.04], [5.04, 5.04], [-5.04, 5.04]];
+  var p = [0, 0, 0], i;
+  ctx.beginPath();
+  for (i = 0; i < 4; i++) {
+    if (!project(ox + ux * pts[i][0], pts[i][1], oz + uz * pts[i][0], p)) return;
+    if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+  }
+  ctx.closePath();
+  ctx.fillStyle = "rgba(5,8,17," + alpha.toFixed(3) + ")";
+  ctx.fill();
+}
+
+/* 2D style grid on a face; off is the distance of the plane from the centre */
+function faceGrid(f, alpha, off) {
+  var F = FACES[f];
+  var ux = faceUx(f), uz = faceUz(f);
+  var ox = F.nx * off, oz = F.nz * off;
+  var p = [0, 0, 0], q = [0, 0, 0], i;
+  ctx.strokeStyle = "rgba(210,222,245," + (0.13 * alpha).toFixed(3) + ")";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (i = 0; i <= COLS; i++) {
+    var u = i - 5;
+    if (project(ox + ux * u, -5, oz + uz * u, p) && project(ox + ux * u, 5, oz + uz * u, q)) {
+      ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+    }
+  }
+  for (i = 0; i <= ROWS; i++) {
+    var v = i - 5;
+    if (project(ox + ux * -5, v, oz + uz * -5, p) && project(ox + ux * 5, v, oz + uz * 5, q)) {
+      ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+    }
+  }
+  ctx.stroke();
+}
+
+/* ---------- sparks + light cut (row clears) ------------------------ */
+
+/* A fixed pool, nothing is allocated while playing. Sparks live in screen
+   space; Math.random is used on purpose, the seeded stream stays untouched. */
+var PMAX = 320, pN = 0, frameDt = 0;
+var spX = new Float32Array(PMAX), spY = new Float32Array(PMAX), spVX = new Float32Array(PMAX),
+    spVY = new Float32Array(PMAX), spL = new Float32Array(PMAX), spG = new Float32Array(PMAX),
+    spC = new Uint8Array(PMAX);
+var spW = [0, 0, 0], spS = [0, 0, 0], spS2 = [0, 0, 0];
+
+function burstRow(face, row, ci, per) {
+  if (reduceMotion) return;
+  setupCamera();                                  // update() runs before render(): use this frame's camera
+  cellWorld(face, 0, row, spW);
+  if (!project(spW[0], spW[1], spW[2], spS)) return;
+  cellWorld(face, 1, row, spW);
+  if (!project(spW[0], spW[1], spW[2], spS2)) return;
+  /* speeds follow the size of a cell on screen, so a phone gets the same picture */
+  var sc = Math.max(0.45, Math.min(1.6, Math.hypot(spS2[0] - spS[0], spS2[1] - spS[1]) / 40));
+  for (var c = 0; c < COLS; c++) {
+    cellWorld(face, c, row, spW);
+    if (!project(spW[0], spW[1], spW[2], spS)) continue;
+    for (var k = 0; k < per && pN < PMAX; k++, pN++) {
+      var a = Math.random() * 6.2832, v = (60 + Math.random() * 170) * sc;
+      spX[pN] = spS[0] + (Math.random() - 0.5) * 12 * sc;
+      spY[pN] = spS[1] + (Math.random() - 0.5) * 8 * sc;
+      spVX[pN] = Math.cos(a) * v;
+      spVY[pN] = Math.sin(a) * v - 140 * sc;
+      spL[pN] = 0.45 + Math.random() * 0.4;
+      spG[pN] = sc;
+      spC[pN] = ci;
+    }
+  }
+}
+
+function drawParticles(dt) {
+  if (!pN) return;
+  if (reduceMotion) { pN = 0; return; }
+  ctx.globalCompositeOperation = "lighter";
+  for (var i = 0; i < pN; i++) {
+    spL[i] -= dt;
+    if (spL[i] <= 0) {                            // swap the last one in, keeps the pool dense
+      pN--;
+      spX[i] = spX[pN]; spY[i] = spY[pN]; spVX[i] = spVX[pN]; spVY[i] = spVY[pN];
+      spL[i] = spL[pN]; spG[i] = spG[pN]; spC[i] = spC[pN];
+      i--; continue;
+    }
+    spVY[i] += 520 * spG[i] * dt;
+    spX[i] += spVX[i] * dt; spY[i] += spVY[i] * dt;
+    var s = (1.5 + spL[i] * 3) * Math.min(1.2, spG[i] + 0.2);
+    ctx.globalAlpha = Math.min(1, spL[i] * 2.2) * (spC[i] === PRESSURE_COLOR ? 0.5 : 1);
+    ctx.fillStyle = COLORS[spC[i]].css;
+    ctx.fillRect(spX[i] - s / 2, spY[i] - s / 2, s, s);
+  }
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
+}
+
+/* light cut: a white line across the middle of a dissolving row, fading with it */
+function drawClearLine(face, row, ct) {          // the v2.6 wall cut, word for word
+  var F = FACES[face], ux = faceUx(face), uz = faceUz(face);
+  var y = row - 4.5 + ct * 0.35, ox = F.nx * 5, oz = F.nz * 5;
+  if (!project(ox - ux * 5, y, oz - uz * 5, spS) || !project(ox + ux * 5, y, oz + uz * 5, spS2)) return;
+  var a = 1 - ct;
+  ctx.globalCompositeOperation = "lighter";
+  ctx.strokeStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.moveTo(spS[0], spS[1]);
+  ctx.lineTo(spS2[0], spS2[1]);
+  ctx.globalAlpha = 0.18 * a; ctx.lineWidth = 9; ctx.stroke();
+  ctx.globalAlpha = 0.9 * a; ctx.lineWidth = 2; ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
+}
+
+/* ---------- render ------------------------------------------------ */
+
+/* ---- v3 lane HA: the derived view ----------------------------------
+   The walls (grid, the ring) turn into the voxels that are drawn; rebuilt when the stack changes.
+   VIEW_OCC   the voxel holds a cell (painter sort, neighbour mask)
+   VIEW_COL   colour per voxel face, FNORM order +X -X +Y -Y +Z -Z
+   VIEW_WI    wall slot of the voxel (grid index) or -1
+   VIEW_LIST  voxels in painter push order: by row and ring as in v2.6
+   VIEW_PULSE pulse of the voxel when it was last drawn */
+var VIEW_OCC = new Uint8Array(1000);
+var VIEW_COL = new Int8Array(6000);
+var VIEW_PULSE = new Float32Array(1000);
+var VIEW_WI = new Int16Array(1000);
+var VIEW_LIST = new Int16Array(1000), VIEW_N = 0;
+var occ = VIEW_OCC;                               // neighbourMask reads this, unchanged
+var killVox = new Uint8Array(1000);               // voxels of the rows being cleared, built in render
+
+/* ---- painter order cache -----------------------------------------
+   Sorting 400 voxels every frame is the one thing that costs real time
+   here, and the order only changes when the camera turns or the stack
+   changes. Both are tracked, so most frames just replay the last order. */
+var order = new Int32Array(1000);                 // v3 lane HA: keys are voxel indices
+var depthBuf = new Float64Array(1000);
+var idxTmp = [];
+var orderLen = 0;
+var sortCam = { yaw: 1e9, pitch: 0, dist: 0, lookY: 0 }, sortGrid = -1;
+
+function invalidateOrder() { sortGrid = -1; }
+function sortDepth(a, b) { return depthBuf[b] - depthBuf[a]; }
+
+function ensureOrder() {
+  if (sortGrid === gridVersion &&
+      Math.abs(cam.yaw - sortCam.yaw) < 0.004 &&
+      Math.abs(cam.pitch - sortCam.pitch) < 0.004 &&
+      Math.abs(cam.dist - sortCam.dist) < 0.05 &&
+      Math.abs(cam.lookY - sortCam.lookY) < 0.02) return;
+  sortCam.yaw = cam.yaw; sortCam.pitch = cam.pitch;
+  sortCam.dist = cam.dist; sortCam.lookY = cam.lookY;
+  sortGrid = gridVersion;
+  idxTmp.length = 0;
+  for (var k0 = 0; k0 < VIEW_N; k0++) {          // v3 lane HA: every voxel of the view, walls first in the v2.6 order
+    var i = VIEW_LIST[k0];
+    var x = ((i / 100) | 0) - 4.5 - camPos[0], y = (((i / 10) | 0) % 10) - 4.5 - camPos[1], z = (i % 10) - 4.5 - camPos[2];
+    depthBuf[i] = x * AZ[0] + y * AZ[1] + z * AZ[2];
+    idxTmp.push(i);
+  }
+  idxTmp.sort(sortDepth);
+  orderLen = idxTmp.length;
+  for (var k = 0; k < orderLen; k++) order[k] = idxTmp[k];
+}
+
+function cellWorld(face, col, row, out) {       // the wall frame: origin at ring start, columns along (nz, -nx)
+  var F = FACES[face], s = F.start;
+  out[0] = ringX(s) + col * F.nz + row * 0 - 4.5;
+  out[1] = 0 + col * 0 + row * 1 - 4.5;
+  out[2] = ringZ(s) + col * -F.nx + row * 0 - 4.5;
+}
+
+var tmpW = [0, 0, 0];
+
+function neighbourMask(ix, iy, iz) {
+  var m = 0;
+  if (ix < 9 && occ[(ix + 1) * 100 + iy * 10 + iz]) m |= 1;
+  if (ix > 0 && occ[(ix - 1) * 100 + iy * 10 + iz]) m |= 2;
+  if (iy < 9 && occ[ix * 100 + (iy + 1) * 10 + iz]) m |= 4;
+  if (iy > 0 && occ[ix * 100 + (iy - 1) * 10 + iz]) m |= 8;
+  if (iz < 9 && occ[ix * 100 + iy * 10 + iz + 1]) m |= 16;
+  if (iz > 0 && occ[ix * 100 + iy * 10 + iz - 1]) m |= 32;
+  return m;
+}
+
+/* v3 lane HA: wall slots in the v2.6 push order, so the cube sorts and draws exactly as before;
+   a wall cell keeps one colour on all six faces. */
+function buildView() {
+  var row, r, i, v, k, b, w;
+  VIEW_OCC.fill(0); VIEW_COL.fill(-1); VIEW_WI.fill(-1); VIEW_N = 0;
+  for (row = 0; row < ROWS; row++) {
+    for (r = 0; r < RING; r++) {
+      i = row * RING + r;
+      if (!grid[i]) continue;
+      v = ringX(r) * 100 + row * 10 + ringZ(r);
+      VIEW_OCC[v] = 1; VIEW_WI[v] = i; VIEW_LIST[VIEW_N++] = v;
+    }
+  }
+  for (k = 0; k < VIEW_N; k++) {
+    v = VIEW_LIST[k]; b = v * 6;
+    w = grid[VIEW_WI[v]] - 1;
+    VIEW_COL[b] = w; VIEW_COL[b + 1] = w; VIEW_COL[b + 2] = w;
+    VIEW_COL[b + 3] = w; VIEW_COL[b + 4] = w; VIEW_COL[b + 5] = w;
+  }
+}
+
+/* v3 lane HA: the voxels of the rows being cleared (wall rows are level) */
+function buildKill() {
+  var i, c, r;
+  killVox.fill(0);
+  for (i = 0; i < clearRows.length; i++) {
+    for (c = 0; c < COLS; c++) {
+      r = ringIndex(clearFace, c);
+      killVox[ringX(r) * 100 + clearRows[i].row * 10 + ringZ(r)] = 1;
+    }
+  }
+}
+
+var occGrid = -1;
+function ensureOcc() {
+  if (occGrid === gridVersion) return;
+  occGrid = gridVersion;
+  buildView();
+}
+
+/* one pass over the cached order; want = 1 draws only the active board,
+   want = 0 only everything behind it, want = -1 draws the lot in order.
+   v3 lane HA: the order holds voxels. A voxel is on the active board when it lies in
+   that plane AND holds a slot of that board; kill marks the voxels being cleared. */
+function drawCells(want, fog, ct, kill) {
+  var k, idx, ix, iy, iz, wi, pl;
+  symSet(want === 1);                             // v3 lane HG: symbols only on the board in play
+  for (k = 0; k < orderLen; k++) {
+    idx = order[k];
+    if (!VIEW_OCC[idx]) continue;
+    ix = (idx / 100) | 0; iy = ((idx / 10) | 0) % 10; iz = idx % 10;
+    var onActive = isOnFace(idx, activeFace);
+    if (want === 1 && !onActive) continue;
+    if (want === 0 && onActive) continue;
+    wi = VIEW_WI[idx];
+    pl = wi >= 0 ? pulse[wi] : 0;
+    VIEW_PULSE[idx] = pl;
+    var h = 0.46 + 0.10 * pl;
+    var tint = pl * 0.55;
+    var x = ix - 4.5, y = iy - 4.5, z = iz - 4.5;
+    var al = 1, fg = 0, mask = neighbourMask(ix, iy, iz);
+    if (pl > 0) mask = 0;                       // pulsing cells grow past their neighbours
+    if (kill && kill[idx]) {
+      h = 0.46 * (1 - 0.75 * ct); tint = Math.min(1, ct * 1.6); al = 1 - 0.55 * ct; mask = 0;
+      y += ct * 0.35;                            // the row lifts off as it dissolves
+    } else if (!onActive && fog > 0) {
+      fg = fog; al = 1 - 0.76 * fog;
+    }
+    drawVoxelF(x, y, z, idx * 6, h, tint, al, fg, mask);
+  }
+  symF = -1;
+}
+
+var pieceOrd = [0, 1, 2, 3], pieceD = [0, 0, 0, 0];
+var pieceXYZ = new Float64Array(12);
+
+function render() {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);                      // the room behind is CSS now (body, #aura); the canvas stays transparent
+
+  setupCamera();
+  projectHull();
+  ensureOcc();
+  ensureOrder();
+
+  var i;
+
+  /* haze strength and hull strength follow the single view blend */
+  var fog = 0.86 * focus;
+  var hullK = 1 - 0.55 * focus;
+  var se = 1 - focus * 0.15;
+  edgeTop = "rgba(255,255,255," + (0.40 * se).toFixed(3) + ")";
+  edgeSide = "rgba(255,255,255," + (0.10 * se).toFixed(3) + ")";
+  edgeGlass = "rgba(255,255,255," + (0.30 * se).toFixed(3) + ")";
+  edgeOn = true;
+
+  drawFloor(1 - focus);
+  drawHull(false, hullK);
+
+  var killMap = null;
+  if (phase === "clear") { buildKill(); killMap = killVox; }   // v3 lane HA: voxels, not rows
+  var ct = phase === "clear" ? Math.min(1, clearT / CLEAR_DUR) : 0;
+
+  /* Once the camera is nearly head on, the active side is the frontmost
+     surface, so the stack can be split into "behind" and "board" with a
+     backing plate between them. Before that a single sorted pass is used. */
+  var split = focus > 0.5;
+  if (split) {
+    drawCells(0, fog, ct, killMap);
+    facePanel(activeFace, 0.34 * (focus - 0.5) * 2);
+    faceGrid(activeFace, 0.55 + 1.15 * focus, 4.02);
+    drawVeins(activeFace, (focus - 0.5) * 2);
+    drawCells(1, fog, ct, killMap);
+  } else {
+    drawCells(-1, fog, ct, killMap);
+  }
+
+  /* falling piece + ghost, depth sorted among themselves */
+  var ghost = null;
+  if (piece && (phase === "drop" || phase === "intro")) {
+    var gr = ghostRow();
+    if (gr < piece.row) ghost = gr;
+    var cs = cellsOf(piece), nc = Math.min(4, cs.length);
+    for (i = 0; i < nc; i++) {
+      cellWorld(piece.face, cs[i][0], cs[i][1], tmpW);
+      pieceXYZ[i * 3] = tmpW[0]; pieceXYZ[i * 3 + 1] = tmpW[1]; pieceXYZ[i * 3 + 2] = tmpW[2];
+      pieceD[i] = (tmpW[0] - camPos[0]) * AZ[0] + (tmpW[1] - camPos[1]) * AZ[1] +
+                  (tmpW[2] - camPos[2]) * AZ[2];
+      pieceOrd[i] = i;
+    }
+    for (i = 1; i < nc; i++) {                  // insertion sort, far to near
+      var key = pieceOrd[i], j = i - 1;
+      while (j >= 0 && pieceD[pieceOrd[j]] < pieceD[key]) { pieceOrd[j + 1] = pieceOrd[j]; j--; }
+      pieceOrd[j + 1] = key;
+    }
+    symSet(true);                               // v3 lane HG: the falling piece and its ghost carry the symbol too
+    for (i = 0; i < nc; i++) {
+      var o = pieceOrd[i];
+      if (pieceD[o] < 0.5) continue;
+      drawVoxel(pieceXYZ[o * 3], pieceXYZ[o * 3 + 1], pieceXYZ[o * 3 + 2],
+                piece.color, 0.47, 0.10, 1, 0, 0);
+    }
+  }
+
+  /* ghost outline on top of everything inside the cube */
+  if (ghost !== null && DIFF.ghost) {
+    var n = piece.m.length, rr, cc;
+    for (rr = 0; rr < n; rr++) for (cc = 0; cc < n; cc++) {
+      if (!piece.m[rr][cc]) continue;
+      cellWorld(piece.face, piece.col + cc, ghost + (n - 1 - rr), tmpW);
+      drawWireVoxel(tmpW[0], tmpW[1], tmpW[2], piece.color, 0.47);
+    }
+  }
+
+  symF = -1;
+  if (killMap) for (i = 0; i < clearRows.length; i++) drawClearLine(clearFace, clearRows[i].row, ct);
+  drawParticles(frameDt);
+
+  drawHull(true, hullK);
+
+  if (focus < 0.995) {
+    ctx.globalAlpha = 1 - focus;
+    faceOutline(selFace, COLORS[selFace].css, 2.2, 22);
+    faceGrid(selFace, 0.55, HH + 0.06);
+    ctx.globalAlpha = 1;
+  }
+  if (focus > 0.005) {
+    ctx.globalAlpha = focus;
+    faceOutline(activeFace, COLORS[activeFace].css, 1.8, 16);
+    ctx.globalAlpha = 1;
+  }
+  /* Lane KN: the shared edges, faint at the aimed side in the orbit, clearer beside the board in the drop */
+  if (focus < 0.995) drawSeams(selFace, 0.30 * (1 - focus));
+  if (focus > 0.5) drawSeams(activeFace, 0.55 * (focus - 0.5) * 2);
+}
+
+/* v3 lane HA: plane test on a voxel index (x*100 + y*10 + z); edges and corners belong to each of their sides */
+function isOnFace(vox, face) {
+  switch (face) {
+    case 0: return vox % 10 === 0;                  // NORTH  z = 0
+    case 1: return vox < 100;                       // WEST   x = 0
+    case 2: return vox % 10 === 9;                  // SOUTH  z = 9
+    default: return vox >= 900;                     // EAST   x = 9
+  }
+}
+
+/* ---------- HUD ---------------------------------------------------- */
+
+var elScore = document.getElementById("sScore"), elLines = document.getElementById("sLines");
+var elPure = document.getElementById("sPure"), elLevel = document.getElementById("sLevel");
+var elPhase = document.getElementById("phase"), elRing = document.getElementById("ringfg");
+var elRingN = document.getElementById("ringnum"), elFace = document.getElementById("faceinfo");
+var elBar = document.getElementById("bar"), elToast = document.getElementById("toast");
+var elRingWrap = document.getElementById("ringwrap"), elDiff = document.getElementById("diffbadge");
+var elPress = document.getElementById("pressure"), elNextLbl = document.getElementById("nextlbl");
+var RINGLEN = 2 * Math.PI * 31;
+var WARM = "#ff6b52";                             // the ring in its last three seconds
+var auraEls = document.querySelectorAll("#aura i");
+var lastHud = {};
+var coarse = false;
+try { coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches; } catch (e) {}
+
+function hudText(el, t) { if (lastHud[el.id] !== t) { lastHud[el.id] = t; el.textContent = t; } }
+var barCoach = "";                              // set in updateHud; while it is not empty the coach owns the bottom line
+function hudHtml(el, t) { if (el === elBar && barCoach) t = barCoach; if (lastHud["h_" + el.id] !== t) { lastHud["h_" + el.id] = t; el.innerHTML = t; } }
+
+/* a number that changed gets one short beat, nothing more */
+function hudNum(el, t) {
+  if (lastHud[el.id] === t) return;
+  var first = lastHud[el.id] === undefined;
+  lastHud[el.id] = t;
+  el.textContent = t;
+  if (first) return;
+  el.classList.remove("bump");
+  void el.offsetWidth;
+  el.classList.add("bump");
+}
+
+/* the score counts up by itself: a registered CSS property carries the
+   number and CSS animates it; the script only sets the target */
+function hudCount(el, n) {
+  if (lastHud[el.id] === n) return;
+  var first = lastHud[el.id] === undefined;
+  lastHud[el.id] = n;
+  if (first) el.style.transition = "none";      // a new game starts at its value, it does not count down
+  el.style.setProperty("--n", String(n));
+  if (first) { void el.offsetWidth; el.style.transition = ""; return; }
+  el.classList.remove("bump");
+  void el.offsetWidth;
+  el.classList.add("bump");
+}
+/* the room behind the cube takes the colour of the side; touched only on a change */
+function setAura(f) {
+  if (lastHud.aura === f) return;
+  lastHud.aura = f;
+  for (var q = 0; q < auraEls.length; q++) auraEls[q].classList.toggle("on", q === f);
+}
+function setUrgent(on) {
+  if (lastHud.urgent === on) return;
+  lastHud.urgent = on;
+  elRingWrap.classList.toggle("urgent", on);
+}
+
+/* the phase word crossfades instead of switching hard */
+var phaseTxt = null, phaseTimer = 0;
+function setPhaseLabel(t) {
+  if (phaseTxt === t) return;
+  phaseTxt = t;
+  elPhase.style.opacity = "0";
+  clearTimeout(phaseTimer);
+  phaseTimer = setTimeout(function () {
+    elPhase.textContent = t;
+    elPhase.style.opacity = t ? "1" : "0";
+  }, 180);
+}
+function showRing(on) {
+  if (on === lastHud.ring) return;
+  lastHud.ring = on;
+  if (on) elRingWrap.classList.remove("off"); else elRingWrap.classList.add("off");
+}
+
+/* size is the CSS size in px; never read it back off the element, the
+   backing store is a multiple of it. */
+function drawPiece(cvs, def, pad, size) {
+  var g = cvs.getContext("2d");
+  var s = Math.min(2, window.devicePixelRatio || 1);
+  var want = Math.round(size * s);
+  if (cvs.width !== want) { cvs.width = want; cvs.height = want; }
+  cvs.style.width = size + "px";
+  cvs.style.height = size + "px";
+  var wcss = size;
+  g.setTransform(want / size, 0, 0, want / size, 0, 0);
+  g.clearRect(0, 0, wcss, wcss);
+  if (!def) return;
+  var m = SHAPES[def.type], n = m.length, i, j;
+  var minc = 9, maxc = -1, minr = 9, maxr = -1;
+  for (i = 0; i < n; i++) for (j = 0; j < n; j++) if (m[i][j]) {
+    if (j < minc) minc = j; if (j > maxc) maxc = j;
+    if (i < minr) minr = i; if (i > maxr) maxr = i;
+  }
+  var bw = maxc - minc + 1, bh = maxr - minr + 1;
+  var cell = Math.floor(Math.min((wcss - pad * 2) / bw, (wcss - pad * 2) / bh));
+  var ox = (wcss - bw * cell) / 2, oy = (wcss - bh * cell) / 2;
+  var c = COLORS[def.color].rgb, sym = symOn() && cell - 2 >= 16 && jkCvs.indexOf(cvs) < 0;   // v3 lane HG: previews yes, joker tiles no
+  for (i = minr; i <= maxr; i++) for (j = minc; j <= maxc; j++) {
+    if (!m[i][j]) continue;
+    var x = ox + (j - minc) * cell, y = oy + (i - minr) * cell;
+    g.fillStyle = "rgba(" + c.join(",") + ",0.92)";
+    g.fillRect(x + 1, y + 1, cell - 2, cell - 2);
+    g.strokeStyle = "rgba(255,255,255,0.34)";
+    g.lineWidth = 1;
+    g.strokeRect(x + 1.5, y + 1.5, cell - 3, cell - 3);
+    if (sym) symInk(g, def.color, x + cell / 2, y + cell / 2, 0.32 * (cell - 2), false, 1);
+  }
+}
+
+var nowCv = document.getElementById("nowcv");
+var nextsBox = document.getElementById("nexts");
+var nextCvs = [];
+for (var _i = 0; _i < 3; _i++) {
+  var _c = document.createElement("canvas");
+  _c.setAttribute("width", "48"); _c.setAttribute("height", "48");
+  nextsBox.appendChild(_c); nextCvs.push(_c);
+}
+function applyPreviewCount() {
+  for (var i = 0; i < 3; i++) nextCvs[i].style.display = i < DIFF.previews ? "block" : "none";
+  elNextLbl.style.display = DIFF.previews > 0 ? "block" : "none";
+  elNextLbl.textContent = DIFF.previews > 0 ? "Next" : "";
+}
+
+function paintPreviews() {
+  var small = W < 640;
+  var nowSize = small ? 60 : 96, nextSize = small ? 32 : 48;
+  /* while a piece falls, "this piece" is that piece; the next one stays in the queue
+     (on blind levels nothing ahead is shown, as promised) */
+  var nowDef = (piece && (phase === "intro" || phase === "drop")) ? { type: piece.type, color: piece.color } : current;
+  drawPiece(nowCv, nowDef, small ? 7 : 10, nowSize);
+  for (var i = 0; i < 3; i++) drawPiece(nextCvs[i], i < DIFF.previews ? queue[i] : null, small ? 5 : 7, nextSize);
+}
+
+function updateHud() {
+  hudCount(elScore, score);
+  hudNum(elLines, String(lines));
+  hudNum(elPure, String(pureRows));
+  hudNum(elLevel, String(level));
+  jokerHud();
+  setAura((phase === "orbit" || phase === "title") ? selFace : activeFace);
+  if (phase !== "orbit") setUrgent(false);
+
+  var inGame = (phase !== "title" && phase !== "over");
+  barCoach = coachHtml(inGame);
+  hudHtml(elDiff, !inGame ? "" : "<b>" + DIFF.name + "</b> · ×" + DIFF.mult.toFixed(1) + (daily ? " · DAILY" : ""));
+  if (inGame && DIFF.pressure > 0) {
+    var left = DIFF.pressure - (piecesLocked % DIFF.pressure);
+    hudHtml(elPress, "pressure in <b>" + left + "</b>");
+  } else hudHtml(elPress, "");
+
+  if (phase === "orbit") {
+    setPhaseLabel(paused ? "PAUSED" : (jokerOpen ? "JOKER" : "ORBIT"));
+    showRing(true);
+    var frac = Math.max(0, orbitLeft) / DIFF.orbit;
+    elRing.setAttribute("stroke-dashoffset", (RINGLEN * (1 - frac)).toFixed(2));
+    var warm = orbitLeft > 0 && orbitLeft <= 3;
+    elRing.setAttribute("stroke", warm ? WARM : COLORS[selFace].css);
+    setUrgent(warm && !paused && !jokerOpen);
+    hudText(elRingN, String(Math.ceil(Math.max(0, orbitLeft))));
+    var F = FACES[selFace];
+    var hintOn = DIFF.hints && settings.hints;
+    hudHtml(elFace, '<span class="dot" style="color:' + COLORS[selFace].css + '"></span>' +
+      '<span class="fname" style="color:' + COLORS[selFace].css + '">' + F.name + '</span>' +
+      (hintOn ? '<span>full to row ' + faceHeight(selFace) + '</span>' : '') +
+      (current && current.color === selFace ? '<span class="cmatch">colour match</span>' : ''));
+    hudHtml(elBar, coarse ? '<b>Swipe</b> to turn · <b>tap</b> locks the side'
+                          : '<b>Drag</b> or <b>← → ↑ ↓</b> rotate · <b>Wheel</b> zoom · <b>Enter</b> / click locks the side');
+  } else if (phase === "over") {
+    showRing(false);
+    setPhaseLabel("GAME OVER");
+    hudHtml(elFace, "");
+    hudHtml(elBar, "");
+  } else if (phase === "title") {
+    showRing(false);
+    setPhaseLabel("");
+    hudHtml(elFace, "");
+    hudHtml(elBar, "");
+  } else {
+    setPhaseLabel(paused ? "PAUSED" : "DROP");
+    showRing(false);
+    hudHtml(elFace, '<span class="dot" style="color:' + COLORS[activeFace].css + '"></span>' +
+      '<span class="fname" style="color:' + COLORS[activeFace].css + '">' + FACES[activeFace].name + '</span>');
+    hudHtml(elBar, coarse ? '<b>Swipe</b> sideways to move · <b>drag down</b> soft drop · <b>flick down</b> hard drop · <b>tap left/right</b> rotates'
+                          : '<b>← →</b> move · <b>↑ / X</b> rotate · <b>Z</b> counter · <b>↓</b> soft · <b>Space</b> hard drop');
+  }
+
+  if (toastT > 0) {
+    hudText(elToast, toastText);                // DOM only when the text changes
+    elToast.style.color = toastColor;
+    var a = toastT > 1.0 ? (1.35 - toastT) / 0.35 : Math.min(1, toastT / 0.6);
+    elToast.style.opacity = String(Math.max(0, Math.min(1, a)));
+    elToast.style.transform = "translate(-50%,-50%) scale(" + (0.94 + 0.06 * Math.min(1, toastT)) + ")";
+  } else if (elToast.style.opacity !== "0") {
+    elToast.style.opacity = "0";
+  }
+}
+
+/* ---------- joker (lane KJ, v2.6) --------------------------------- */
+/* Every DIFF.joker locked pieces earn one. In the orbit it stops the ring and lets you pick the
+   shape of the coming piece, in the colour it already has. The bag is never touched, so the daily
+   cube deals the same order to everyone. Unused jokers stay for the rest of the game. */
+var jokerOpen = false;
+var elJk = document.getElementById("jokerBtn"), elJkN = document.getElementById("sJoker");
+var elJkPick = document.getElementById("jokerPick"), elJkTiles = document.getElementById("jokerTiles");
+var jkCvs = [];
+(function () {
+  for (var i = 0; i < TYPES.length; i++) {
+    var b = document.createElement("button"), n = document.createElement("small"), c = document.createElement("canvas");
+    b.type = "button"; b.setAttribute("data-t", TYPES[i]); b.setAttribute("aria-label", "Shape " + TYPES[i] + ", key " + (i + 1));
+    n.textContent = String(i + 1); c.setAttribute("width", "40"); c.setAttribute("height", "40");
+    b.appendChild(n); b.appendChild(c); elJkTiles.appendChild(b); jkCvs.push(c);
+  }
+})();
+function openJoker() {
+  if (jokerOpen || phase !== "orbit" || paused || !st || st.jokers <= 0 || !current) return false;
+  jokerOpen = true;
+  /* one cell size for all seven tiles (8 px): the padding follows the width of the shape */
+  for (var i = 0; i < TYPES.length; i++) drawPiece(jkCvs[i], { type: TYPES[i], color: current.color }, TYPES[i] === "I" ? 4 : (TYPES[i] === "O" ? 12 : 8), 40);
+  elJkPick.classList.remove("hidden");
+  sfx("ui");
+  return true;
+}
+function closeJoker(sound) {
+  jokerOpen = false;
+  var el = document.getElementById("jokerPick");
+  if (el) el.classList.add("hidden");
+  if (sound) sfx("ui");
+}
+function useJoker(t) {
+  if (!jokerOpen || phase !== "orbit" || !current || !SHAPES[t] || !st || st.jokers <= 0) return false;
+  current.type = t; st.jokers--; st.jokersUsed++;
+  closeJoker(false);
+  paintPreviews();
+  sfx("joker");
+  return true;
+}
+/* the field under LEVEL: shown in a game, lit when a joker can be played right now */
+function jokerHud() {
+  var n = st ? st.jokers : 0, inGame = phase !== "title" && phase !== "over";
+  var show = inGame || (phase === "over" && n > 0);
+  if (lastHud.jkShow !== show) { lastHud.jkShow = show; elJk.classList.toggle("show", show); }
+  var ready = show && phase === "orbit" && n > 0 && !paused && !jokerOpen;
+  if (lastHud.jkReady !== ready) { lastHud.jkReady = ready; elJk.classList.toggle("ready", ready); elJk.setAttribute("aria-disabled", String(!ready)); }
+  hudNum(elJkN, "×" + n);
+}
+elJk.addEventListener("click", function () { if (jokerOpen) closeJoker(true); else openJoker(); elJk.blur(); });
+elJkTiles.addEventListener("click", function (e) {
+  var b = e.target.closest ? e.target.closest("button[data-t]") : null;
+  if (b) useJoker(b.getAttribute("data-t"));
+});
+
+/* ---------- menu DOM ---------------------------------------------- */
+
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+/* every start from the menu, Play again and Enter */
+function beginGame() {
+  startGame();
+}
+function renderDiffCards() {
+  var box = document.getElementById("dgrid"), html = "", i;
+  for (i = 0; i < DIFFS.length; i++) {
+    var d = DIFFS[i], best = bestFor(i);
+    html += '<button type="button" class="dcard ' + d.cls + (i === diffIdx ? ' on' : '') + '" data-d="' + i + '" aria-pressed="' + (i === diffIdx) + '">' +
+      lvDots(i) + '<span class="nm">' + (i + 1) + ' · ' + d.name + '</span><span class="tg">' + esc(d.tag) + '</span>' +
+      '<div class="meta"><b>' + d.orbit + ' s</b> to turn · <b>×' + d.mult.toFixed(1) + '</b> score · start level ' + d.startLevel + ' · joker every ' + d.joker +
+      (best ? ' · best <b>' + best + '</b>' : '') + '</div>' +
+      '<div class="ds">' + esc(d.desc) + '</div>' +
+      '<div class="tr"><b>asks for</b> ' + esc(d.trains) + '</div></button>';
+  }
+  box.innerHTML = html;
+  document.getElementById("modeFree").classList.toggle("on", !daily);
+  document.getElementById("modeDaily").classList.toggle("on", daily);
+  var db = dailyBestToday(diffIdx), nm = DIFFS[diffIdx].name;
+  document.getElementById("dailyLbl").textContent = "same pieces for everyone · " + todayKey() + (db ? "\ntoday's best " + db : "");
+  document.getElementById("startBtn").textContent = "Start · " + nm.charAt(0) + nm.slice(1).toLowerCase();
+}
+
+var scoreView = "journeyman";                   // a level id; "today" = today's daily cubes
+function renderScores() {
+  var chips = document.getElementById("scoreChips"), html = "", i;
+  var cs = catSides(), sc = document.getElementById("scoreCat");
+  if (sc) sc.textContent = "DizzCube scores";
+  for (i = 0; i < DIFFS.length; i++) {
+    html += '<button type="button" class="chip ' + DIFFS[i].cls + (DIFFS[i].id === scoreView ? ' on' : '') + '" data-s="' + DIFFS[i].id + '">' + DIFFS[i].name + '</button>';
+  }
+  /* Apprentice left the ladder in v2.6: its games stay and keep a chip of their own, only while there are any */
+  if (board.some(function (x) { return x.lvl === "apprentice" && (x.sides || 4) === cs; }))
+    html += '<button type="button" class="chip dr' + (scoreView === "apprentice" ? ' on' : '') + '" data-s="apprentice">APPRENTICE (retired)</button>';
+  html += '<button type="button" class="chip dtoday' + (scoreView === "today" ? ' on' : '') + '" data-s="today">Daily today</button>';
+  chips.innerHTML = html;
+  document.getElementById("scoreHint").textContent = "Scores last only while this page is open. Copy them to keep them.";
+  var dayView = scoreView === "today", k = todayKey();
+  document.getElementById("scoreTrend").innerHTML = dayView ? "" : trendHtml(scoreView);
+  var rows = [], e;
+  for (i = 0; i < board.length; i++) {
+    e = board[i];
+    if ((e.sides || 4) === cs && (dayView ? (e.mode === "daily" && e.date === k) : e.lvl === scoreView)) rows.push(e);
+  }
+  var t = document.getElementById("scoreTbl");
+  if (!rows.length) {
+    t.innerHTML = '<div class="empty">' + (dayView ? "No daily cube played today yet."
+                                                   : "No games on " + lvlName(scoreView) + " yet. The first one goes here.") + '</div>';
+    return;
+  }
+  function row(e, r) {
+    var tag = dayView ? lvlName(e.lvl).toLowerCase() : (e.mode === "daily" ? "daily" : "free");
+    return '<tr' + (lastEntry === e ? ' class="me"' : '') + '><td class="n">' + r + '</td><td class="nm">' + esc(e.name) + '</td><td class="n">' + e.score +
+           '</td><td class="n">' + e.lines + '</td><td class="n">' + e.pureRows + '</td><td class="n">' + e.level + '</td><td class="n"><span class="ci">' + (e.ci || 0) +
+           '</span></td><td class="mode-cell"><span class="mode' + (e.mode === "daily" ? ' daily' : '') + '">' + tag + '</span></td><td>' + esc(e.date || "") + '</td></tr>';
+  }
+  var h = '<table class="tbl"><tr><th>#</th><th>Name</th><th style="text-align:right">Score</th><th style="text-align:right">Lines</th><th style="text-align:right">Pure</th><th style="text-align:right">Lvl</th><th style="text-align:right">Index</th><th>' + (dayView ? "Level" : "Mode") + '</th><th>Day</th></tr>';
+  for (i = 0; i < rows.length && i < 10; i++) h += row(rows[i], i + 1);
+  var mi = lastEntry ? rows.indexOf(lastEntry) : -1;
+  if (mi >= 10) h += '<tr class="gap"><td colspan="9">…</td></tr>' + row(lastEntry, mi + 1);   // your last game, even below the top ten
+  h += '</table>';
+  t.innerHTML = h;
+}
+
+/* one section per level and cube size; an entry without "sides" is a four-sided game */
+function scoresAsText() {
+  var out = "DizzCube scores · " + todayKey() + " · player " + settings.name + "\n";
+  var sizes = [], d, k, i;
+  for (i = 0; i < board.length; i++) { var sz = board[i].sides || 4; if (sizes.indexOf(sz) < 0) sizes.push(sz); }
+  sizes.sort(function (a, b) { return a - b; });
+  var ids = DIFFS.map(function (x) { return x.id; }).concat(["apprentice"]);   // retired games are copied too
+  for (k = 0; k < sizes.length; k++) for (d = 0; d < ids.length; d++) {
+    var rows = board.filter(function (e) { return e.lvl === ids[d] && (e.sides || 4) === sizes[k]; });
+    if (!rows.length) continue;
+    out += "\n## " + lvlName(ids[d]) + " · " + sizes[k] + " sides\n";
+    for (i = 0; i < rows.length && i < 10; i++) {
+      var e = rows[i];
+      out += (i + 1) + ". " + e.name + " — " + e.score + " pts · " + e.lines + " lines · " + e.pureRows + " pure · lvl " + e.level +
+             " · index " + (e.ci || 0) + " · " + (e.mode === "daily" ? "daily " : "free ") + (e.date || "") + "\n";
+    }
+  }
+  return out;
+}
+
+function copyText(txt, hintEl, okMsg) {
+  var done = function (ok) { hintEl.textContent = ok ? okMsg : "Copy failed here. Select and copy by hand:"; if (!ok) { var ta = document.createElement("textarea"); ta.value = txt; ta.className = "inp"; ta.style.maxWidth = "100%"; ta.style.height = "120px"; hintEl.appendChild(document.createElement("br")); hintEl.appendChild(ta); ta.select(); } };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); });
+    else done(false);
+  } catch (e) { done(false); }
+}
+
+/* focus without the page jumping; harmless when the element is hidden */
+function focusEl(id) {
+  var el = document.getElementById(id); if (!el) return;
+  try { el.focus({ preventScroll: true }); } catch (e) { try { el.focus(); } catch (e2) {} }
+}
+/* v3 lane HG: colour symbols, "on" · "off"; the previews repaint at once */
+function setSymbols(v) {
+  if (v !== "on" && v !== "off") return false;
+  settings.symbols = v; saveSettings(); syncSym(); paintPreviews();
+  return true;
+}
+function syncSym() {
+  var b = document.querySelectorAll("#segSym button"), i, on;
+  for (i = 0; i < b.length; i++) { on = b[i].getAttribute("data-v") === (settings.symbols || "off"); b[i].classList.toggle("on", on); b[i].setAttribute("aria-checked", String(on)); }
+}
+function wireSym() {
+  var seg = document.getElementById("segSym"); if (!seg) return;
+  syncSym();
+  seg.addEventListener("click", function (e) { var b = e.target.closest ? e.target.closest("button[data-v]") : null; if (b && setSymbols(b.getAttribute("data-v"))) sfx("ui"); });
+}
+/* sound on and off from anywhere: key M, the pause screen, the settings tab */
+function syncSound() {
+  var ids = ["swSound", "swSoundP"];
+  for (var i = 0; i < ids.length; i++) {
+    var sw = document.getElementById(ids[i]); if (!sw) continue;
+    sw.classList.toggle("on", !!settings.sound); sw.setAttribute("aria-checked", String(!!settings.sound));
+  }
+}
+function setSound(on) {
+  settings.sound = !!on; saveSettings(); syncSound();
+  if (settings.sound) sfx("ui");
+  if (phase !== "title" && phase !== "over") showToast(settings.sound ? "SOUND ON" : "SOUND OFF", "#8b95ad");
+}
+/* the menu tabs as a real tab list: roles, the selected state, arrow keys move between them */
+function syncTabsAria() {
+  var tabs = document.getElementById("tabs"); if (!tabs) return;
+  var all = tabs.querySelectorAll("button[data-tab]");
+  for (var i = 0; i < all.length; i++) all[i].setAttribute("aria-selected", String(all[i].classList.contains("on")));
+}
+function wireTabsAria() {
+  var tabs = document.getElementById("tabs"); if (!tabs) return;
+  tabs.setAttribute("role", "tablist"); tabs.setAttribute("aria-label", "Menu");
+  var all = tabs.querySelectorAll("button[data-tab]");
+  for (var i = 0; i < all.length; i++) {
+    var b = all[i], name = b.getAttribute("data-tab"), sec = document.getElementById("tab-" + name);
+    b.setAttribute("role", "tab");
+    if (!b.id) b.id = "tabbtn-" + name;
+    if (sec) { b.setAttribute("aria-controls", sec.id); sec.setAttribute("role", "tabpanel"); sec.setAttribute("aria-labelledby", b.id); }
+  }
+  syncTabsAria();
+  tabs.addEventListener("click", syncTabsAria);
+  tabs.addEventListener("keydown", function (e) {
+    if (phase !== "title" || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
+    var b = e.target && e.target.closest ? e.target.closest("button[data-tab]") : null; if (!b) return;
+    var list = Array.prototype.slice.call(tabs.querySelectorAll("button[data-tab]")), i = list.indexOf(b);
+    if (i < 0) return;
+    var nb = list[(i + (e.key === "ArrowRight" ? 1 : -1) + list.length) % list.length];
+    e.preventDefault();
+    try { nb.focus({ preventScroll: true }); } catch (err) { nb.focus(); }
+    nb.click();
+  });
+}
+
+function wireMenu() {
+  var tabs = document.getElementById("tabs");
+  tabs.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-tab]"); if (!b) return;
+    var all = tabs.querySelectorAll("button"), i;
+    for (i = 0; i < all.length; i++) all[i].classList.toggle("on", all[i] === b);
+    var secs = document.querySelectorAll(".tab");
+    for (i = 0; i < secs.length; i++) secs[i].classList.toggle("on", secs[i].id === "tab-" + b.getAttribute("data-tab"));
+    if (b.getAttribute("data-tab") === "scores") renderScores();
+    sfx("ui");
+  });
+  document.getElementById("dgrid").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-d]"); if (!b) return;
+    diffIdx = parseInt(b.getAttribute("data-d"), 10); keepDiff();
+    renderDiffCards(); sfx("ui");
+  });
+  document.getElementById("modeFree").addEventListener("click", function () { daily = false; renderDiffCards(); sfx("ui"); });
+  document.getElementById("modeDaily").addEventListener("click", function () { daily = true; renderDiffCards(); sfx("ui"); });
+  document.getElementById("startBtn").addEventListener("click", function () { beginGame(); });
+  document.getElementById("scoreChips").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-s]"); if (!b) return;
+    scoreView = b.getAttribute("data-s"); renderScores(); sfx("ui");
+  });
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    copyText(scoresAsText(), document.getElementById("scoreHint"), "Copied. Paste it anywhere you keep things.");
+  });
+  var resetArmed = false;
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    var b = this;
+    if (!resetArmed) { resetArmed = true; b.textContent = "Tap again to erase all scores"; setTimeout(function () { resetArmed = false; b.textContent = "Reset scores"; }, 4000); return; }
+    board = []; lastEntry = null; saveBoard(); resetArmed = false;
+    hist = {}; try { memDel(HKEY); } catch (e) {}
+    b.textContent = "Reset scores"; renderScores(); renderDiffCards();
+  });
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    copyText(JSON.stringify({ dizzcube: 2, exported: new Date().toISOString(), settings: settings, scores: board, history: hist }, null, 1),
+             document.getElementById("aboutHint"), "Copied as JSON.");
+  });
+  syncCoachSw();
+  document.getElementById("swCoach").addEventListener("click", function () {
+    settings.tut = !settings.tut; saveSettings(); syncCoachSw(); sfx("ui");
+  });
+  var ni = document.getElementById("nameInp");
+  ni.value = settings.name;
+  ni.addEventListener("change", function () { settings.name = cleanName(ni.value); ni.value = settings.name; saveSettings(); });
+  function wireSwitch(id, key) {
+    var sw = document.getElementById(id);
+    sw.classList.toggle("on", !!settings[key]); sw.setAttribute("aria-checked", String(!!settings[key]));
+    sw.addEventListener("click", function () {
+      settings[key] = !settings[key]; saveSettings();
+      sw.classList.toggle("on", settings[key]); sw.setAttribute("aria-checked", String(settings[key]));
+      if (key === "sound" && settings.sound) sfx("ui");
+    });
+  }
+  wireSwitch("swSound", "sound"); wireSwitch("swHaptic", "haptics"); wireSwitch("swHints", "hints");
+  wireSym();                                    // v3 lane HG
+
+  document.getElementById("pausebtn").addEventListener("click", function () { togglePause(); });
+  document.getElementById("resumeBtn").addEventListener("click", function () { togglePause(false); });
+  document.getElementById("quitBtn").addEventListener("click", function () { paused = false; toMenu(); });
+  document.getElementById("againBtn").addEventListener("click", function () { beginGame(); });
+  document.getElementById("menuBtn").addEventListener("click", function () { toMenu(); });
+  var on = document.getElementById("overName");
+  on.addEventListener("change", function () {
+    settings.name = cleanName(on.value); on.value = settings.name; saveSettings();
+    if (lastEntry) { lastEntry.name = settings.name; saveBoard(); }
+  });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) togglePause(true); });
+  /* a window that loses focus never sees the keyup: release every key, pause a running game */
+  window.addEventListener("blur", function () {
+    held = {}; repeatDir = 0; ptr.down = false;
+    if (!paused) togglePause(true);
+  });
+  /* the pause screen has its own sound switch, kept in step with the one in settings */
+  document.getElementById("swSoundP").addEventListener("click", function () { setSound(!settings.sound); });
+  document.getElementById("swSound").addEventListener("click", syncSound);
+  syncSound();
+  /* no vibration API (iOS): the haptics switch would do nothing, so it is not shown */
+  if (!navigator.vibrate) { var hs = document.getElementById("swHaptic"); if (hs && hs.parentNode) hs.parentNode.style.display = "none"; }
+  wireTabsAria();
+}
+
+/* ---------- input -------------------------------------------------- */
+
+function onKeyDown(e) {
+  var k = e.key;
+  if (e.isTrusted) gestured = true;
+  var tag = (e.target && e.target.tagName) || "";
+  if (tag === "INPUT" || tag === "TEXTAREA") { if (k === "Enter") e.target.blur(); return; }
+  var isSpace = (k === " " || k === "Spacebar" || e.code === "Space");
+  /* a key held down after a hard drop must not lock the next side or restart a game */
+  if (e.repeat && (k === "Enter" || isSpace || k === "Escape" || k === "p" || k === "P")) { e.preventDefault(); return; }
+  if ((k === "m" || k === "M") && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) { setSound(!settings.sound); return; }
+
+  if (phase === "title") {
+    if (tag === "BUTTON") return;                 // the focused menu button handles Enter and Space itself
+    if (k === "Enter") { e.preventDefault(); beginGame(); return; }
+    if (k.length === 1 && k >= "1" && k <= "6") { diffIdx = parseInt(k, 10) - 1; keepDiff(); renderDiffCards(); }
+    return;
+  }
+  if (phase === "over") {
+    if (tag === "BUTTON") return;
+    if (k === "Enter") { e.preventDefault(); beginGame(); }
+    else if (k === "Escape") { toMenu(); }
+    return;
+  }
+  if (jokerOpen && !paused) {                   // the joker panel owns the keys: 1-7 pick, Esc or J keep the joker
+    e.preventDefault();
+    if (k.length === 1 && k >= "1" && k <= "7") useJoker(TYPES[parseInt(k, 10) - 1]);
+    else if ((k === "Escape" || k === "j" || k === "J") && !e.repeat) closeJoker(true);
+    else if (k === "p" || k === "P") togglePause();
+    return;
+  }
+  if (k === "Escape" || k === "p" || k === "P") { e.preventDefault(); togglePause(); return; }
+  if (paused) return;
+  if (phase === "orbit") {
+    if (k === "ArrowLeft") { userTouched = true; stopFly(); cam.yaw += 0.09; e.preventDefault(); }
+    else if (k === "ArrowRight") { userTouched = true; stopFly(); cam.yaw -= 0.09; e.preventDefault(); }
+    else if (k === "ArrowUp") { userTouched = true; stopFly(); cam.pitch = Math.min(pitchMax(), cam.pitch + 0.06); e.preventDefault(); }
+    else if (k === "ArrowDown") { userTouched = true; stopFly(); cam.pitch = Math.max(-pitchMax(), cam.pitch - 0.06); e.preventDefault(); }
+    else if (k === "Enter" || isSpace) { e.preventDefault(); commitFace(); }
+    else if ((k === "j" || k === "J") && !e.repeat) { e.preventDefault(); openJoker(); }
+    return;
+  }
+  if (phase === "drop" || phase === "intro") {
+    if (k === "ArrowLeft") { e.preventDefault(); if (!held.left) { held.left = 1; tryMove(-1, 0); repeatDir = -1; repeatT = DAS; } }
+    else if (k === "ArrowRight") { e.preventDefault(); if (!held.right) { held.right = 1; tryMove(1, 0); repeatDir = 1; repeatT = DAS; } }
+    else if (k === "ArrowDown") { e.preventDefault(); held.soft = 1; }
+    else if (k === "ArrowUp" || k === "x" || k === "X") { e.preventDefault(); tryRotate(1); }
+    else if (k === "z" || k === "Z") { e.preventDefault(); tryRotate(-1); }
+    else if (isSpace) { e.preventDefault(); hardDrop(); }
+  } else if (isSpace || k === "ArrowDown" || k === "ArrowUp" || k === "ArrowLeft" || k === "ArrowRight") {
+    e.preventDefault();
+  }
+}
+function onKeyUp(e) {
+  var k = e.key;
+  if (k === "ArrowLeft") { held.left = 0; if (repeatDir === -1) repeatDir = held.right ? 1 : 0; }
+  else if (k === "ArrowRight") { held.right = 0; if (repeatDir === 1) repeatDir = held.left ? -1 : 0; }
+  else if (k === "ArrowDown") { held.soft = 0; }
+}
+window.addEventListener("keydown", onKeyDown, { passive: false });
+window.addEventListener("keyup", onKeyUp);
+
+/* Lane KN: the hard drop lands with weight. The board view (#view only, the HUD stays still) dips by up
+   to 2.4 px (1.6 px on touch), deeper the further the piece fell, and springs back within 0.12 s: a CSS
+   keyframe on the class .thud, removed on animationend. Off under prefers-reduced-motion. No extra drawing. */
+var thudAt = 0;
+function thud(rows) {
+  if (reduceMotion) return;
+  var now = performance.now();
+  if (cv.classList.contains("thud")) {
+    if (now - thudAt < 250) return;                       // still landing
+    cv.classList.remove("thud"); void cv.offsetWidth;     // a stale class (missed animationend) restarts cleanly
+  }
+  thudAt = now;
+  cv.style.setProperty("--thud", ((coarse ? 1.6 : 2.4) * Math.min(1, 0.3 + rows / 12)).toFixed(2) + "px");
+  cv.classList.add("thud");
+}
+cv.addEventListener("animationend", function (e) { if (e.animationName === "thud") cv.classList.remove("thud"); });
+function hardDrop() {
+  if (!piece) return;
+  var guard = 0;
+  while (tryMove(0, -1) && guard++ < 60) { /* fall through */ }
+  st.hard++;
+  thud(guard);
+  lockPiece();
+}
+
+/* pointer: trackball in orbit, gestures in drop */
+var ptr = { down: false, x: 0, y: 0, sx: 0, sy: 0, t: 0, mt: 0, moved: 0, accX: 0, accY: 0,
+            dropped: false, fromDrop: false, vx: 0, vy: 0 };
+
+window.addEventListener("pointerdown", function (e) { if (e.isTrusted) gestured = true; }, { capture: true, passive: true });
+cv.addEventListener("pointerdown", function (e) {
+  if (phase === "title" || phase === "over" || paused || jokerOpen) return;
+  ptr.down = true; ptr.x = ptr.sx = e.clientX; ptr.y = ptr.sy = e.clientY;
+  ptr.t = ptr.mt = performance.now(); ptr.moved = 0; ptr.accX = 0; ptr.accY = 0; ptr.dropped = false;
+  ptr.fromDrop = (phase !== "orbit");           // a gesture that began on the board never turns the cube or picks a side
+  ptr.vx = ptr.vy = 0;
+  spinYaw = spinPitch = 0;          // grabbing stops the spin, it never jumps
+  if (cv.setPointerCapture) { try { cv.setPointerCapture(e.pointerId); } catch (err) {} }
+});
+cv.addEventListener("pointermove", function (e) {
+  if (!ptr.down) return;
+  var dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
+  ptr.x = e.clientX; ptr.y = e.clientY;
+  ptr.moved += Math.abs(dx) + Math.abs(dy);
+  if (phase === "orbit") {
+    if (ptr.dropped || ptr.fromDrop) return;    // the rest of a board swipe must not spin the cube
+    userTouched = true; stopFly();
+    cam.yaw -= dx * 0.0075;
+    cam.pitch = Math.max(-pitchMax(), Math.min(pitchMax(), cam.pitch + dy * 0.006));
+    /* keep a smoothed pointer speed so the cube can keep turning on release */
+    var now = performance.now(), gap = Math.max(8, now - ptr.mt);
+    ptr.mt = now;
+    var iy = -dx * 0.0075 / (gap / 1000), ip = dy * 0.006 / (gap / 1000);
+    ptr.vx += (iy - ptr.vx) * 0.45;
+    ptr.vy += (ip - ptr.vy) * 0.45;
+  } else if ((phase === "drop" || phase === "intro") && !ptr.dropped) {
+    var tdy = e.clientY - ptr.sy, tdx = e.clientX - ptr.sx;
+    var cpx = dropCell() * 1.03, el = Math.max(1, performance.now() - ptr.t);
+    /* a quick flick down is the hard drop; a slow drag down is the soft drop, one cell per cell of finger travel */
+    if (tdy > 2.5 * cpx && tdy > Math.abs(tdx) * 1.4 && tdy / el > 0.55) { ptr.dropped = true; hardDrop(); return; }
+    if (Math.abs(tdy) > Math.abs(tdx)) {
+      ptr.accY = Math.max(0, ptr.accY + dy);
+      while (ptr.accY >= cpx) { ptr.accY -= cpx; if (tryMove(0, -1)) fallT = 0; else { ptr.accY = 0; break; } }
+    }
+    ptr.accX += dx;
+    var step = Math.max(18, cpx * 1.05);
+    while (ptr.accX >= step) { ptr.accX -= step; tryMove(1, 0); }
+    while (ptr.accX <= -step) { ptr.accX += step; tryMove(-1, 0); }
+  }
+}, { passive: true });
+function endPointer(e) {
+  if (!ptr.down) return;
+  ptr.down = false;
+  var quick = (performance.now() - ptr.t) < 320 && ptr.moved < 14;
+  if (!quick) {
+    if (phase === "orbit" && performance.now() - ptr.mt < 90) {
+      spinYaw = Math.max(-4.5, Math.min(4.5, ptr.vx));
+      spinPitch = Math.max(-2.5, Math.min(2.5, ptr.vy));
+    }
+    return;
+  }
+  if (phase === "orbit") { if (!ptr.fromDrop) commitFace(); }
+  /* a tap left of the middle turns counter clockwise, right of it clockwise */
+  else if ((phase === "drop" || phase === "intro") && !ptr.dropped) tryRotate(e.clientX < W / 2 ? -1 : 1);
+}
+cv.addEventListener("pointerup", endPointer);
+cv.addEventListener("pointercancel", function () { ptr.down = false; });
+
+cv.addEventListener("wheel", function (e) {
+  if (phase !== "orbit") return;
+  e.preventDefault();
+  userTouched = true; stopFly();
+  zoomTarget = Math.max(0.62, Math.min(1.85, zoomTarget * Math.exp(-e.deltaY * 0.0011)));
+}, { passive: false });
+
+/* ---------- main loop ---------------------------------------------- */
+
+var last = performance.now();
+var perfAcc = 0, perfN = 0, perfMax = 0;          // frame cost, read with DIZZCUBE.perf()
+function frame(now) {
+  requestAnimationFrame(frame);                   // first: one bad frame must never stop the loop
+  var dt = (now - last) / 1000;
+  last = now;
+  if (dt > 0.12) dt = 0.12;
+  if (dt < 0) dt = 0;
+  frameDt = paused ? 0 : dt;
+  var t0 = performance.now();
+  try {
+    if (!simMode && phase !== "title" && !paused) update(dt);
+    else if (!simMode) updateCam(dt);
+    if (phase === "title" && !reduceMotion) { cam.yaw += 0.10 * dt; }
+    render();
+    updateHud();
+  } catch (err) {
+    if (!frame.err) { frame.err = 1; console.error(err); }
+  }
+  var ms = performance.now() - t0;
+  perfAcc += ms; perfN++; if (ms > perfMax) perfMax = ms;
+}
+
+loadStore();
+diffIdx = Math.max(0, lvlIdx(settings.lvl)); DIFF = DIFFS[diffIdx]; scoreView = DIFF.id;
+wireMenu();
+renderDiffCards();
+renderScores();
+applyPreviewCount();
+resize();
+paintPreviews();
+requestAnimationFrame(frame);
+
+/* ---------- test handle -------------------------------------------
+   Small debug surface so a browser script can drive the game
+   deterministically (headless checks, no wall clock waiting).      */
+window.DIZZCUBE = {
+  version: "3.0-web",
+  get phase() { return phase; },
+  get score() { return score; },
+  get lines() { return lines; },
+  get pureRows() { return pureRows; },
+  get level() { return level; },
+  get gameOver() { return gameOver; },
+  get piece() { return piece; },
+  get current() { return current; },
+  get selFace() { return selFace; },
+  get activeFace() { return activeFace; },
+  get sides() { return SIDES; },
+  get hold() { return holdT; },
+  setHold: function (s) { SPAWN_HOLD = Math.max(0, +s || 0); },
+  cellWorld: function (f, c, r) { var o = [0, 0, 0]; cellWorld(f, c, r, o); return o; },
+  /* lane HA hooks: the derived view, a test camera, quiet pulses, a voxel on screen (CSS px) */
+  view: function () { ensureOcc(); return { occ: VIEW_OCC, col: VIEW_COL, pulse: VIEW_PULSE, n: VIEW_N }; },
+  camSet: function (o) { stopFly(); if (o.yaw !== undefined) cam.yaw = o.yaw; if (o.pitch !== undefined) cam.pitch = o.pitch; if (o.dist) cam.dist = o.dist; },
+  calm: function () { pulse.fill(0); },
+  screenOf: function (x, y, z) { setupCamera(); var p = [0, 0, 0]; return project(x - 4.5, y - 4.5, z - 4.5, p) ? [p[0], p[1]] : null; },
+  get paused() { return paused; },
+  get diff() { return DIFF; },
+  get daily() { return daily; },
+  get stats() { return st; },
+  get board() { return board; },
+  get piecesLocked() { return piecesLocked; },
+  /* lane KJ hooks: the ring, the joker */
+  get orbitLeft() { return orbitLeft; },
+  get jokerOpen() { return jokerOpen; },
+  joker: function () { return openJoker(); },
+  pickJoker: function (t) { return useJoker(t); },
+  /* Lane KB hooks: camera, held keys, sound, the active board on screen */
+  get cam() { return { dist: cam.dist, zoom: cam.zoom, pitch: cam.pitch, yaw: cam.yaw, lookY: cam.lookY, flying: camAnim.dur > 0, settling: settle.on }; },
+  get held() { return held; },
+  get sound() { return settings.sound; },
+  boardRect: function () {
+    setupCamera();
+    var f = (phase === "orbit" || phase === "title") ? selFace : activeFace, F = FACES[f];
+    var ux = faceUx(f), uz = faceUz(f), p = [0, 0, 0], x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, i;
+    var pts = [[-5, -5], [5, -5], [5, 5], [-5, 5]];
+    for (i = 0; i < 4; i++) {
+      if (!project(F.nx * HH + ux * pts[i][0], pts[i][1], F.nz * HH + uz * pts[i][0], p)) return null;
+      x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]);
+    }
+    return { x: x0, y: y0, w: x1 - x0, h: y1 - y0, cell: (y1 - y0) / ROWS, centerY: centerY, portrait: portrait(), dropCell: dropCell() };
+  },
+  get particles() { return pN; },
+  /* frame cost in ms since the last call (update + render + HUD, script side) */
+  perf: function () {
+    var r = { avg: perfAcc / Math.max(1, perfN), max: perfMax, n: perfN };
+    perfAcc = perfN = perfMax = 0;
+    return r;
+  },
+  glass: function (on) { glassOn = !!on; },
+  /* Lane KN: cost of seam + vein in ms per draw at the current view; scanDraw empties the row cache each time */
+  knCost: function (n) {
+    n = n || 400; setupCamera();
+    var i, t0 = performance.now();
+    for (i = 0; i < n; i++) { drawSeams(activeFace, 0.55); drawVeins(activeFace, 1); }
+    var draw = (performance.now() - t0) / n;
+    t0 = performance.now();
+    for (i = 0; i < n; i++) { veinVer = -1; drawVeins(activeFace, 1); }
+    return { draw: draw, scanDraw: (performance.now() - t0) / n };
+  },
+  /* the side that matters right now: aimed at in orbit, played on in drop */
+  get face() { return (phase === "orbit" || phase === "title") ? selFace : activeFace; },
+  get next() {
+    return queue.map(function (p) { return { type: p.type, color: p.color }; });
+  },
+  grid: grid,
+  FACES: FACES,
+  DIFFS: DIFFS,
+  ringIndex: ringIndex,
+  cellAt: cellAt,
+  faceHeight: faceHeight,
+  profile: profile,
+  set: function (face, col, row, colorIdx) { setCell(face, col, row, colorIdx + 1); },
+  setPiece: function (t) { if (current && SHAPES[t]) current.type = t; paintPreviews(); },
+  /* aim at a side and lock it in one call; ghost row of the falling piece */
+  dropOn: function (f) { if (phase !== "orbit") return false; window.DIZZCUBE.lookAt(f); commitFace(); return true; },
+  get ghost() { return piece ? ghostRow() : null; },
+  lookAt: function (f) { stopFly(); cam.yaw = FACES[f].yaw; cam.pitch = 0.35; selFace = pickFace(); },
+  /* v3 lane HB hook: camera basis (optionally at a given yaw / pitch, no clamp) */
+  camBasis: function (yaw, pitch) { if (yaw !== undefined) { stopFly(); cam.yaw = yaw; cam.pitch = pitch; } setupCamera(); return { AX: AX.slice(), AY: AY.slice(), AZ: AZ.slice() }; },
+  sim: function (on) { simMode = !!on; },
+  advance: function (sec) { var s = 0; while (s < sec) { update(1 / 120); s += 1 / 120; } },
+  setDiff: function (i) { diffIdx = Math.max(0, Math.min(DIFFS.length - 1, i | 0)); DIFF = DIFFS[diffIdx]; renderDiffCards(); },
+  setDaily: function (on) { daily = !!on; renderDiffCards(); },
+  pressure: pressureRow,
+  fullRowsOn: fullRowsOn,
+  rngW: rngW,
+  commit: commitFace,
+  hardDrop: hardDrop,
+  pause: togglePause,
+  menu: toMenu,
+  start: startGame,
+  /* lane HD hook (v3 M5): seed of the running game */
+  get seed() { return runSeed; },
+  /* lane HF hooks (v3 M4): the active board of a test lock, the lock itself */
+  setActive: function (f) { activeFace = f | 0; },
+  afterLock: function () { afterLock(); return phase; },
+  setLocked: function (n) { piecesLocked = n | 0; },
+  get overReason() { return overReason; },
+  /* lane HG hooks (v3 M6): colour symbols, the aura, a sound, the side notes */
+  get symbols() { return settings.symbols || "off"; },
+  set symbols(v) { setSymbols(v); },
+  symOn: function () { return symOn(); },
+  aura: function (f) { setAura(f); var a = document.querySelector("#aura i.on"); return a ? a.className : ""; },
+  sfx: function (k) { sfx(k); return true; },
+  faceNote: function (f) { return FACE_NOTE[f]; }
+};
+
+})();
+</script>
+</body>
+</html>

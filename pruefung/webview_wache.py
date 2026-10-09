@@ -67,6 +67,11 @@ judging it by these rules would report faults nobody in this repository may
 fix. Every narrow screen is sent to seiten/mini-karte.html instead, and that
 one is checked like any other page.
 
+dist/dizzcube/play/ is NOT checked either, since 09.10.2026, for the same reason:
+the game DizzCube is one self-contained file built outside this repository and
+copied in byte for byte, and it brings its own script. The two pages that
+describe it, /dizzcube/ and /de/dizzcube/, are written here and checked here.
+
     python pruefung/webview_wache.py          exit 0 clean, 1 findings, 2 nothing checked
     python pruefung/webview_wache.py <root>   check a copy of the tree instead -
                                               this is how the red proof is run:
@@ -357,7 +362,12 @@ def art(rel: str) -> str:
 
 
 def ohne_karte(rel: str) -> bool:
-    return "karte" not in Path(rel).parts
+    # The game at dizzcube/play/ goes the way of the map - added 09.10.2026: one
+    # file built outside this repository and copied in byte for byte, with a
+    # script of its own, so these rules would report faults nobody here may fix.
+    # Its text pages /dizzcube/ and /de/dizzcube/ are read like every other page.
+    teile = Path(rel).parts
+    return "karte" not in teile and tuple(teile[:2]) != ("dizzcube", "play")
 
 
 def sammeln(wurzel: Path, mit_dist: bool = True) -> list[Quelle]:
@@ -414,7 +424,8 @@ def main(argv: list[str]) -> int:
 
     q_src = sum(1 for q in quellen if not q.name.startswith("dist/"))
     print(f"webview watch - {len(quellen)} files ({q_src} sources, "
-          f"{len(quellen) - q_src} baked), statisch/karte/ and dist/karte/ excluded\n")
+          f"{len(quellen) - q_src} baked), statisch/karte/, dist/karte/ and "
+          "dist/dizzcube/play/ excluded\n")
 
     punkte = pruefe(quellen)
     schlecht = 0

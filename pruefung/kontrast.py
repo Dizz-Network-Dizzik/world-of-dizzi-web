@@ -61,6 +61,11 @@ PAIRS = [
     ("cy",     "panel",  4.5, "links inside a card, law-quote kicker"),
     ("cy",     "bg2",    4.5, "map link in the navigation"),
     ("cy",     "panelh", 4.5, "focus ring and button hover"),
+    # The DizzCube band on the two start pages (09.10.2026) is painted with
+    # --flaeche-h, which runs from --panelh down to --panel2. Text on --panelh
+    # is measured above; the band's kicker line in --cy on the lower stop was
+    # not, and a surface a reader sees must not be one the gate does not.
+    ("cy",     "panel2", 4.5, "kicker line of the DizzCube band, lower stop"),
     ("green",  "bg",     3.0, "status LED, done marker"),
     ("green",  "panel",  3.0, "done marker inside a card"),
     ("amber",  "bg",     3.0, "amber accent, Dizz Money section"),

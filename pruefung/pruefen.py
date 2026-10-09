@@ -209,8 +209,15 @@ def check(path: Path, rel: str) -> list[str]:
 
 
 def main() -> int:
+    # The game at dizzcube/play/ is skipped like the system map, and for the same
+    # reason - added 09.10.2026, when it became the second page this site copies
+    # in verbatim with a script of its own: it is built outside this repository
+    # and never edited here, so a finding in it is one nobody here may fix. Its
+    # text pages /dizzcube/ and /de/dizzcube/ are checked like every other page.
     pages = sorted(
-        p for p in DIST.rglob("*.html") if "karte" not in p.relative_to(DIST).parts
+        p for p in DIST.rglob("*.html")
+        if "karte" not in p.relative_to(DIST).parts
+        and p.relative_to(DIST).parts[:2] != ("dizzcube", "play")
     )
     total = 0
     for path in pages:

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DizzCube — a game from this house | the world of dizzi</title>
+  <meta name="description" content="DizzCube, a game from this house: falling pieces on the four sides of a cube. One file, in the browser, playable offline, nothing stored.">
+  <link rel="canonical" href="https://worldofdizzi.com/dizzcube/">
+  <link rel="alternate" hreflang="en" href="https://worldofdizzi.com/dizzcube/">
+  <link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/dizzcube/">
+  <link rel="alternate" hreflang="x-default" href="https://worldofdizzi.com/dizzcube/">
+  <meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="the world of dizzi">
+  <meta property="og:title" content="DizzCube — a game from this house | the world of dizzi">
+  <meta property="og:description" content="DizzCube, a game from this house: falling pieces on the four sides of a cube. One file, in the browser, playable offline, nothing stored.">
+  <meta property="og:url" content="https://worldofdizzi.com/dizzcube/">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://worldofdizzi.com/bilder/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="the world of dizzi — dark title card with the numbers 10 applications, 2,600+ commits, ~100,000 lines of Python, 2,667 tests">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/bilder/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/schrift/chakra-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/schrift/orbitron-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/stil.css">
+  </head>
+<body id="top">
+<a class="skip" href="#inhalt">Skip to content</a>
+<div class="fortschritt" aria-hidden="true"></div>
+
+<header class="kopf">
+  <div class="wrap">
+    <a class="marke" href="/">the world of dizzi</a>
+    <input class="menu-schalter" type="checkbox" id="menu-schalter" autocomplete="off">
+    <label class="menu-knopf" for="menu-schalter">Menu</label>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        <li><a href="/dizzcube/" aria-current="page">DizzCube</a></li>
+        <li><a href="/system/">System</a></li>
+        <li><a href="/apps/">Apps</a></li>
+        <li><a href="/method/">Method</a></li>
+        <li><a href="/numbers/">Numbers</a></li>
+        <li><a href="/journey/">Journey</a></li>
+        <li><a href="/vision/">Vision</a></li>
+        <li><a href="/balance/" hreflang="de">Balance</a></li>
+        <li><a href="/schwelle/" hreflang="de">Threshold</a></li>
+        <li><a href="/deckel/" hreflang="de">Not Knowing</a></li>
+        <li><a href="/dank/" hreflang="de">Thanks</a></li>
+        <li><a href="/travel/">Travel</a></li>
+        <li><a href="/about/">About</a></li>
+        <li class="nur-breit"><a class="nav-karte" href="/karte/" hreflang="de">System map</a></li>
+        <li class="nur-schmal"><a class="nav-karte" href="/mini-karte/" hreflang="de">Mini map</a></li>
+        <li><a class="nav-lang" href="/de/dizzcube/" lang="de" hreflang="de">Deutsch</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">A game from this house</p>
+    <h1>DizzCube · fall in 2D, think in 3D</h1>
+    <p class="lede">You play on a surface and think in a cube. Four sides, every one
+      of them playable — in the browser, in a single file: no network once it has
+      loaded; it stores nothing and sends nothing.</p>
+    <div class="knoepfe">
+      <a class="knopf prim" href="/dizzcube/play/">Play <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+      <a class="knopf" href="/dizzcube/play/index.html" download="dizzcube.html">Download the file <span class="pfeil" aria-hidden="true">&#8595;</span></a>
+    </div>
+    <p class="notiz">The game lives on its own page, <code>/dizzcube/play/</code>.
+      That page is the second exception to this site’s no-JavaScript rule: it
+      carries the game’s own script, opens no further connection once loaded, and
+      stores nothing on your device.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What it is</h2>
+    <ul class="liste lang eng">
+      <li><b>Four sides, one cube.</b> Each side of the cube is a board of its own,
+        and the vertical edges belong to two sides at once: a row cleared on one side
+        takes the edge cell of its neighbour with it. That is where the thinking in
+        three dimensions lives.</li>
+      <li><b>One file.</b> The whole game is one HTML file. Nothing is loaded
+        afterwards.</li>
+      <li><b>Offline.</b> Once it has loaded it needs no network — airplane mode is
+        enough.</li>
+      <li><b>No data.</b> No account, no sign-in, no audience measurement. Nothing is
+        stored on your device, and while you play, nothing leaves it. Scores last
+        only while the page is open; copy them to keep them.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How to play</h2>
+    <p class="lang eng">Between two pieces you turn the cube and pick the side the
+      next piece falls on; on that side you move, rotate and drop it — a piece in
+      the colour of its side scores extra, a full row clears, and the game ends when
+      the side you chose has no room left.</p>
+    <ul class="liste tasten eng">
+      <li><b>Keyboard.</b> The arrow keys turn the cube and <kbd>Enter</kbd> locks
+        the side; then <kbd>←</kbd> <kbd>→</kbd> move, <kbd>↑</kbd> or <kbd>X</kbd>
+        rotates, <kbd>Z</kbd> rotates back, <kbd>↓</kbd> drops softly and
+        <kbd>Space</kbd> drops at once. <kbd>Esc</kbd> or <kbd>P</kbd> pauses.</li>
+      <li><b>Touch.</b> Swipe to turn the cube, tap to lock the side; then swipe
+        sideways to move, tap to rotate — the right half turns clockwise, the left
+        half the other way — and swipe down to drop.</li>
+      <li><b>Levels.</b> Six, from Journeyman — ten seconds to turn, three pieces
+        shown ahead — to Lightning: one second, nothing ahead, and the cube spins
+        after every piece.</li>
+    </ul>
+    <div class="knoepfe">
+      <a class="knopf prim" href="/dizzcube/play/">Play <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What comes next</h2>
+    <p class="lang eng">An extension is being built — no date on a public page.</p>
+    <p class="notiz">Idea, rules and release: David · built together with an
+      artificial intelligence · Build Day 2026</p>
+  </div>
+</section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap">
+    <div class="fuss-oben">
+      <a class="marke" href="/">the world of dizzi</a>
+      <nav aria-label="Legal">
+        <ul>
+          <li><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot" rel="noopener">Documents &#8599;</a></li>
+          <li class="nur-breit"><a href="/karte/" hreflang="de">System map</a></li>
+          <li class="nur-schmal"><a href="/mini-karte/" hreflang="de">Mini map</a></li>
+          <li><a class="nav-lang" href="/de/dizzcube/" lang="de" hreflang="de">Deutsch</a></li>
+          <li><a href="/impressum/" hreflang="de">Impressum</a></li>
+          <li><a href="/datenschutz/" hreflang="de">Privacy</a></li>
+          <li><a href="#top">Back to top <span aria-hidden="true">&#8593;</span></a></li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="fuss-sozial" aria-label="Profiles">
+      <ul>
+        <li><a href="https://x.com/DavidKrause188" rel="me noopener">X &#8599;</a></li>
+        <li><a href="https://www.instagram.com/dizz_network_dizzik/" rel="me noopener">Instagram &#8599;</a></li>
+      </ul>
+    </nav>
+    <p class="fuss-status"><a href="/vision/">Independent project — incorporation ahead.</a></p>
+    <div class="fuss-fein">
+      <p>Documents public, code private. All rights reserved.</p>
+      <p>Built with a <a href="/numbers/#baecker">1382-line Python baker</a>. No cookies, no trackers, no external requests.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
