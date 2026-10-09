@@ -614,7 +614,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
   <a class="lnk" href="#ki">KI: lokal vs. extern</a>
   <a class="lnk" href="#vernetzung">Vernetzung</a>
   <a class="lnk" href="#sicherheit">Sicherheit</a>
-  <a class="lnk" href="PROJEKT_STAND.html" title="Interaktiver Projektstand">📊 Projektstand</a>
+  <!-- Projektstand: nur im Haus (die Datei liegt nicht in diesem Repo) -->
   <button class="tgl" id="tgl">☾</button>
 </div></nav>
 
@@ -1946,7 +1946,7 @@ footer{padding:40px 0 70px;color:var(--tx3);font-size:13px;border-top:1px solid 
 
   // ---- optionaler Live-Health-Watch (Default offline-fähig, bricht nie) ----
   (function(){
-    var el=document.getElementById('livehw'); if(!el) return;
+    var el=document.getElementById('livehw'); if(!el) return; if(location.hostname!=='127.0.0.1' && location.hostname!=='localhost'){ el.textContent='○ Health-Watch · offline (Default-Sicht)'; el.className='livehw off'; return; }
     var ctrl=('AbortController' in window) ? new AbortController() : null;
     var to=ctrl ? setTimeout(function(){ try{ctrl.abort();}catch(_){} },1600) : null;
     try{
