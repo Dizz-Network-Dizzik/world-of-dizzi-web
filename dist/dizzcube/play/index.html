@@ -346,6 +346,10 @@
   .legal a:hover{color:var(--ink)}
   .legal a:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
   .nojs{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;text-align:center;font-size:14px;line-height:1.5;color:var(--ink)}
+  /* v3.1 lane SK: the score card; its preview is a visible canvas */
+  #skScreen{z-index:6}#skScreen .card{max-width:500px;padding:14px 14px 16px}#skScreen h3{margin:0 0 10px;text-align:center}
+  #skCard{display:block;max-width:100%;max-height:calc(100vh - 210px);max-height:calc(100dvh - 210px);margin:0 auto;border-radius:14px;border:1px solid var(--line)}
+  #skScreen .btnrow{margin-top:14px}#skSay{min-height:14px;margin-top:4px}
 </style>
 </head>
 <body>
@@ -397,7 +401,7 @@
   <div class="jtiles" id="jokerTiles"></div>
   <div class="jh">1–7 or tap · Esc or J keeps the joker</div>
 </div>
-<div id="credit">by David · Build Day 2026 · v3-web</div>
+<div id="credit">by David · Build Day 2026 · v3.1-web</div>
 
 <!-- ---------- MENU ---------- -->
 <div class="overlay" id="menu">
@@ -522,8 +526,19 @@
     <div id="overTrend"></div>
     <div class="hint" id="profHint"></div>
     <div class="namerow"><label for="overName">Name</label><input class="inp" id="overName" maxlength="24" autocomplete="off" spellcheck="false"></div>
-    <div class="btnrow"><button type="button" class="btn primary" id="againBtn">Play again</button><button type="button" class="btn" id="menuBtn">Menu</button></div>
-    <div class="credit2">by David · Build Day 2026 · v3-web</div>
+    <div class="btnrow"><button type="button" class="btn primary" id="againBtn">Play again</button><button type="button" class="btn" id="skBtn">Share score</button><button type="button" class="btn" id="menuBtn">Menu</button></div>
+    <div class="credit2">by David · Build Day 2026 · v3.1-web</div>
+  </div>
+</div>
+
+<!-- ---------- SCORE CARD (v3.1 lane SK): drawn on this device, passed on only by the player ---------- -->
+<div class="overlay hidden" id="skScreen" role="dialog" aria-modal="true" aria-labelledby="skTitle">
+  <div class="card">
+    <h3 id="skTitle">Score card</h3>
+    <canvas id="skCard" width="1080" height="1350" role="img" aria-label="Score card"></canvas>
+    <div class="btnrow"><button type="button" class="btn primary" id="skGo">Save image</button><button type="button" class="btn" id="skClose">Close</button></div>
+    <div class="hint" id="skNote">Made on this device. Nothing leaves it until you share it.</div>
+    <div class="hint" id="skSay" aria-live="polite"></div>
   </div>
 </div>
 
@@ -3131,6 +3146,130 @@ applyPreviewCount();
 resize();
 paintPreviews();
 requestAnimationFrame(frame);
+
+/* ---------- v3.1 lane SK: the score card, drawn on this device; shared only by the player (share sheet, else a
+   short-lived blob link). Nothing is kept, nothing is sent. */
+var SK_URL = "worldofdizzi.com/dizzcube", skScreen = document.getElementById("skScreen"), skCv = document.getElementById("skCard"),
+  skGoBtn = document.getElementById("skGo"), skCloseBtn = document.getElementById("skClose"), skOpenNow = false, skUrls = [], skFields = [];
+function skCss(n, d) { var v = ""; try { v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); } catch (e) {} return v || d; }
+function skFirst(el) {
+  for (var n = el ? el.firstChild : null; n; n = n.nextSibling) if (n.nodeType === 3 && n.nodeValue.trim()) return n.nodeValue.trim();
+  return el ? el.textContent.trim() : "";
+}
+function skMark() { return skFirst(document.querySelector("#menu h1")) || document.title; }
+function skFile() { return (skMark().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "score") + "-score.png"; }
+function skLevel(e) { var i = lvlIdx(e.lvl); return i >= 0 ? DIFFS[i] : DIFF; }
+function skLabel(i, d) { var l = document.querySelectorAll("#overScreen .gostats .l")[i]; return ((l && l.textContent.trim()) || d).toUpperCase(); }
+/* centred, letter-spaced text (fill null: measure only) */
+function skLine(g, s, y, sp, fill) {
+  var ch = Array.from(s), w = -sp, i, x;
+  for (i = 0; i < ch.length; i++) w += g.measureText(ch[i]).width + sp;
+  if (fill === null) return w;
+  x = 540 - w / 2; g.fillStyle = typeof fill === "function" ? fill(x, w) : fill;
+  for (i = 0; i < ch.length; i++) { g.fillText(ch[i], x, y); x += g.measureText(ch[i]).width + sp; }
+  skFields.push(s); return w;
+}
+/* the cube as the board view drew it (the room behind is CSS) */
+function skCrop() {
+  var w = cv.width, h = cv.height, d, x, y, x0 = w, y0 = h, x1 = -1, y1 = -1, p;
+  try { d = cv.getContext("2d").getImageData(0, 0, w, h).data; } catch (e) { return null; }
+  for (y = 0; y < h; y += 2) for (x = 0; x < w; x += 2) if (d[(y * w + x) * 4 + 3] > 24) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  if (x1 - x0 < 16 || y1 - y0 < 16) return null;
+  p = Math.round(Math.max(x1 - x0, y1 - y0) * 0.04); x0 = Math.max(0, x0 - p); y0 = Math.max(0, y0 - p);
+  return { x: x0, y: y0, w: Math.min(w - 1, x1 + p) - x0 + 1, h: Math.min(h - 1, y1 + p) - y0 + 1 };
+}
+function skDraw() {
+  var e = lastEntry, g = skCv.getContext("2d"), F = skCss("--font", "sans-serif"), M = " \u00b7 ", i, k, y = 1172;
+  var ink = skCss("--ink", "#e9edf7"), soft = skCss("--ink-soft", "#aab4ca"), dim = skCss("--ink-dim", "#7f8aa4"), gold = skCss("--gold", "#ffc14a");
+  var tint = [skCss("--coral", "#ff6b52"), gold, skCss("--teal", "#3ad6c7"), skCss("--violet", "#a77cff")];
+  skFields = []; g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.shadowBlur = 0; g.textAlign = "left";
+  g.fillStyle = skCss("--bg", "#04060d"); g.fillRect(0, 0, 1080, 1350);
+  [[540, 560, 820, "rgba(22,34,66,0.95)", 1], [120, 140, 420, tint[0], .09], [980, 160, 420, tint[3], .09], [100, 1230, 420, tint[1], .09], [960, 1220, 420, tint[2], .09]].forEach(function (r) {
+    var q = g.createRadialGradient(r[0], r[1], 0, r[0], r[1], r[2]); q.addColorStop(0, r[3]); q.addColorStop(1, "rgba(4,6,13,0)");
+    g.globalAlpha = r[4]; g.fillStyle = q; g.fillRect(0, 0, 1080, 1350);
+  });
+  g.globalAlpha = 1; g.strokeStyle = "rgba(159,176,201,0.22)"; g.lineWidth = 2; g.beginPath();
+  if (g.roundRect) g.roundRect(28, 28, 1024, 1294, 40); else g.rect(28, 28, 1024, 1294);
+  g.stroke();
+  var wm = skMark(), em = 0.2, fs = 112, cs;
+  try { cs = getComputedStyle(document.querySelector("#menu h1")); em = (parseFloat(cs.letterSpacing) || 0) / parseFloat(cs.fontSize); } catch (e1) {}
+  g.font = "200 " + fs + "px " + F; k = skLine(g, wm, 0, em * fs, null);
+  if (k > 900) { fs = Math.floor(fs * 900 / k); g.font = "200 " + fs + "px " + F; }
+  skLine(g, wm, 160, em * fs, function (x, w) {
+    var l = g.createLinearGradient(x, 0, x + w, 0);
+    tint.concat(tint[2], tint[1], tint[0]).forEach(function (c, j) { l.addColorStop(j / 6, c); });
+    return l;
+  });
+  var cats = document.querySelectorAll(".cats button"), sub = [];
+  if (cats.length > 1) sub.push(skFirst(cats[e.sides === 6 ? 1 : 0]));
+  sub.push(e.mode === "daily" ? skFirst(document.getElementById("modeDaily")) + M + e.date : skFirst(document.getElementById("modeFree")));
+  g.font = "600 30px " + F;
+  for (i = 0; i < sub.length; i++) skLine(g, sub[i], (sub.length > 1 ? 220 : 232) + i * 44, 4, dim);
+  var c = skCrop(), s;
+  if (c) {
+    s = Math.min(800 / c.w, 520 / c.h); g.imageSmoothingQuality = "high";
+    g.drawImage(cv, c.x, c.y, c.w, c.h, 540 - c.w * s / 2, 550 - c.h * s / 2, c.w * s, c.h * s);
+  }
+  var D = skLevel(e), n = document.querySelectorAll("#overScreen .gostats .n"), pb = laneBest(e);
+  var nm = cleanName((document.getElementById("overName") || {}).value || e.name);
+  g.font = "600 26px " + F; skLine(g, skLabel(0, "Score"), 868, 6, dim);
+  g.font = "300 150px " + F; g.shadowColor = "rgba(255,193,74,0.35)"; g.shadowBlur = 36; skLine(g, String(e.score), 1000, 2, ink); g.shadowBlur = 0;
+  g.font = "600 40px " + F; skLine(g, D.name + M + D.tag, 1072, 5, gold);
+  g.font = "500 30px " + F; skLine(g, skLabel(1, "Lines") + " " + e.lines + M + skLabel(2, "Pure") + " " + (n[2] ? n[2].textContent.trim() : 0), 1124, 4, soft);
+  if (pb > 0 && e.score > pb) { g.font = "700 28px " + F; skLine(g, "NEW BEST" + M + "+" + (e.score - pb), y, 6, gold); y += 44; }
+  g.font = "500 28px " + F; skLine(g, todayKey() + (nm !== cleanName("") ? M + nm : ""), y, 3, soft);
+  if (SK_URL) { g.font = "600 30px " + F; skLine(g, SK_URL, 1252, 3, tint[2]); }
+  g.font = "22px " + F; skLine(g, document.getElementById("credit").textContent.trim(), 1296, 2, skCss("--ink-faint", "#6e7893"));
+  skCv.setAttribute("data-fields", JSON.stringify(skFields)); skCv.setAttribute("data-cube", c ? "board" : "none");
+  skCv.setAttribute("aria-label", skFields.join(M));
+}
+function skSay(s) { document.getElementById("skSay").textContent = s; }
+function skCan(f) {
+  try { f = f || [new File([new Uint8Array(8)], skFile(), { type: "image/png" })]; return !!(navigator.share && navigator.canShare && navigator.canShare({ files: f })); }
+  catch (e) { return false; }
+}
+function skPng() {
+  var u = skCv.toDataURL("image/png"), b = atob(u.slice(u.indexOf(",") + 1)), a = new Uint8Array(b.length);
+  for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i);
+  try { return new File([a], skFile(), { type: "image/png" }); } catch (e) { return new Blob([a], { type: "image/png" }); }
+}
+function skOpen() {
+  if (phase !== "over" || !lastEntry) return;
+  skDraw(); skSay(""); skGoBtn.textContent = skCan() ? "Share" : "Save image";
+  skScreen.classList.remove("hidden"); skOpenNow = true; focusEl("skGo");
+}
+function skFree() { while (skUrls.length) URL.revokeObjectURL(skUrls.pop()); }
+function skSave(f) {
+  var u = URL.createObjectURL(f), a = document.createElement("a");
+  a.href = u; a.download = skFile(); a.style.display = "none";
+  skScreen.appendChild(a); a.click(); skScreen.removeChild(a);
+  skUrls.push(u); setTimeout(skFree, 1500); skSay("Saved as " + a.download + ".");
+}
+function skGo() {
+  if (!skOpenNow) return;
+  var f = skPng(), D = skLevel(lastEntry), wm = skMark(), p = null;
+  if (f.name && skCan([f])) {
+    try { p = navigator.share({ files: [f], title: wm, text: wm + " \u00b7 " + lastEntry.score + " \u00b7 " + D.name + (SK_URL ? " \u00b7 " + SK_URL : "") }); } catch (e) { p = null; }
+  }
+  if (p && p.then) p.then(function () { skSay("Shared."); }, function (err) { if (err && err.name === "AbortError") skSay(""); else skSave(f); });
+  else skSave(f);
+}
+function skClose() {
+  if (!skOpenNow) return;
+  skOpenNow = false; skScreen.classList.add("hidden"); setTimeout(skFree, 1500); focusEl("skBtn");
+}
+/* while open, the card owns the keys: Esc closes, Tab stays on its buttons */
+window.addEventListener("keydown", function (e) {
+  if (!skOpenNow) return;
+  var b = [skGoBtn, skCloseBtn], i = b.indexOf(document.activeElement);
+  if (e.key === "Escape") skClose();
+  else if (e.key === "Tab") b[i === 0 ? 1 : 0].focus();
+  else if (i >= 0) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+}, true);
+document.getElementById("skBtn").addEventListener("click", skOpen);
+skGoBtn.addEventListener("click", skGo);
+skCloseBtn.addEventListener("click", skClose);
 
 /* ---------- test handle -------------------------------------------
    Small debug surface so a browser script can drive the game
