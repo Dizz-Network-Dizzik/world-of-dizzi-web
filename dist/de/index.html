@@ -114,19 +114,18 @@
   </div>
   <div class="wrap">
     <p class="strich" role="presentation"></p>
-    <h1>Ein Mensch. Zehn Anwendungen. Eine Architektur.</h1>
-    <p class="lede">Ein lokal-first KI-Netzwerk für ein ganzes Leben – gebaut von einem
-      einzelnen Menschen, der KI-Bau-Chats nach geschriebenem Gesetz führt.</p>
 
     <div class="band-spiel">
-      <svg class="bs-wuerfel" role="img" aria-hidden="true" viewBox="0 0 120 120" fill="none">
-        <path d="M60 8 L106 34 L60 60 L14 34 Z" fill="#2ee6d6" fill-opacity=".16"></path>
-        <path d="M14 34 L60 60 L60 112 L14 86 Z" fill="#8b6cff" fill-opacity=".26"></path>
-        <path d="M60 60 L106 34 L106 86 L60 112 Z" fill="#ff3ea5" fill-opacity=".2"></path>
-        <path d="M44.7 16.7 L90.7 42.7 M29.3 25.3 L75.3 51.3 M75.3 16.7 L29.3 42.7 M90.7 25.3 L44.7 51.3 M29.3 42.7 L29.3 94.7 M44.7 51.3 L44.7 103.3 M14 51.3 L60 77.3 M14 68.7 L60 94.7 M75.3 51.3 L75.3 103.3 M90.7 42.7 L90.7 94.7 M60 77.3 L106 51.3 M60 94.7 L106 68.7" stroke="#e8ebf2" stroke-opacity=".22" stroke-width="1"></path>
-        <path d="M60 60 L44.7 51.3 L44.7 68.7 L60 77.3 Z M60 60 L75.3 51.3 L75.3 68.7 L60 77.3 Z" fill="#f5b942" fill-opacity=".8"></path>
-        <path d="M60 8 L106 34 L106 86 L60 112 L14 86 L14 34 Z M60 60 L60 112 M60 60 L14 34 M60 60 L106 34" stroke="#2ee6d6" stroke-width="1.6" stroke-linejoin="round"></path>
-      </svg>
+      <div class="wl-wuerfel" aria-hidden="true">
+        <div class="wl-koerper">
+          <span class="wl-f wl-f1"></span>
+          <span class="wl-f wl-f2"></span>
+          <span class="wl-f wl-f3"></span>
+          <span class="wl-f wl-f4"></span>
+          <span class="wl-f wl-f5"></span>
+          <span class="wl-f wl-f6"></span>
+        </div>
+      </div>
       <h2 class="bs-titel"><span class="bs-vor">Ein Spiel aus diesem Haus –</span> <span class="bs-name">DizzCube</span></h2>
       <p>Fallende Steine auf den vier Seiten eines Würfels: Würfel drehen, Seite wählen,
         Stein fallen lassen. Eine Datei, im Browser, nichts wird gespeichert.</p>
@@ -136,25 +135,14 @@
       </div>
     </div>
 
+    <h1 class="mt-xl">Ein Mensch. Zehn Anwendungen. Eine Architektur.</h1>
+    <p class="lede">Ein Netz aus Anwendungen für ein ganzes Leben, das auf einem Rechner
+      läuft – gebaut von einem Menschen, gemeinsam mit einer künstlichen Intelligenz.</p>
+
     <div class="knoepfe">
-      <a class="knopf prim" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot" rel="noopener">Dokumente ansehen <span class="pfeil" aria-hidden="true">&#8599;</span></a>
       <a class="knopf nur-breit" href="/karte/">System-Karte öffnen <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       <a class="knopf nur-schmal" href="/mini-karte/">Die kleine Karte öffnen <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
-
-    <p class="leiste">
-      <b>Snapshot</b>
-      <span class="trenner" aria-hidden="true">&#9656;</span>
-      <span><i class="led" aria-hidden="true"></i>Juli 2026</span>
-      <span><i class="led" aria-hidden="true"></i>10 Apps</span>
-      <span><i class="led" aria-hidden="true"></i>Core :8200</span>
-      <span><i class="led" aria-hidden="true"></i>2.667 Tests</span>
-      <span><i class="led vio" aria-hidden="true"></i>vor der Gründung</span>
-    </p>
-    <p class="notiz">Messwerte aus dem Juli 2026, keine Live-Anzeige – diese Seite
-      fragt nichts ab. Der Code hinter der Testzahl ist
-      <a href="/numbers/#dateien" hreflang="en">nicht mehr im aktuellen Stand (englisch)
-      &#8594;</a></p>
   </div>
 </section>
 
@@ -171,346 +159,42 @@
 
 <section>
   <div class="wrap">
-    <p class="kicker">Gemessen, nicht behauptet</p>
-    <h2>Die Zahlen – und wie jede einzelne gezählt wurde</h2>
-    <ul class="zahlen reveal tief">
-      <li class="zahl"><b>10</b><span>Anwendungen – der Core und neun weitere<a class="beleg" href="/numbers/#apps"><span aria-hidden="true">&#8594;</span><span class="vh">Wie die zehn gezählt wurden</span></a></span></li>
-      <li class="zahl"><b>2.600+</b><span>Commits im privaten Arbeits-Repository hinter diesem Auszug<a class="beleg" href="/numbers/#commits"><span aria-hidden="true">&#8594;</span><span class="vh">Wie die Commits gezählt wurden und warum diese Zahl eine Untergrenze ist</span></a></span></li>
-      <li class="zahl"><b>~100.000</b><span>Zeilen Python in 632 Dateien<a class="beleg" href="/numbers/#python"><span aria-hidden="true">&#8594;</span><span class="vh">Wie Zeilen und Dateien gezählt wurden</span></a></span></li>
-      <li class="zahl"><b>2.667</b><span>Test-Funktionen in 309 Dateien<a class="beleg" href="/numbers/#tests"><span aria-hidden="true">&#8594;</span><span class="vh">Wie die Test-Funktionen gezählt wurden</span></a></span></li>
-    </ul>
-
-    <div class="tafel-rahmen mt-m">
-      <table class="tafel">
-        <caption>Dieselben vier Zahlen – und was zum Nachprüfen noch da ist.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Zahl</th>
-            <th scope="col">Wo sie nachprüfbar ist</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="a-green">
-            <th scope="row">10 Anwendungen</th>
-            <td>In den veröffentlichten Dokumenten – eine Tabelle im Ordner-README nennt sie.</td>
-          </tr>
-          <tr class="a-steel">
-            <th scope="row">2.600+ Commits</th>
-            <td>Nirgends. Das Arbeits-Repository ist privat; deshalb steht die Zahl als Untergrenze da.</td>
-          </tr>
-          <tr class="a-amber">
-            <th scope="row">~100.000 Zeilen Python</th>
-            <td>Nicht mehr im aktuellen Stand. Der Code-Auszug, in dem sie gemessen wurde, gehört seit dem 6. August 2026 nicht mehr dazu.</td>
-          </tr>
-          <tr class="a-amber">
-            <th scope="row">2.667 Test-Funktionen</th>
-            <td>Nicht mehr im aktuellen Stand. Derselbe Auszug, derselbe Tag.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="notiz">Die letzten drei bleiben mit Datum stehen, statt still zu
-      verschwinden. Das sage ich lieber, als eine Zahl etwas andeuten zu lassen, was sie
-      nicht meint.</p>
-
-    <div class="knoepfe">
-      <a class="knopf" href="/numbers/" hreflang="en">Die sechs Zahlen mit ihrer Zählweise (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">Was es zusammenhält</p>
-    <h2>Drei Entscheidungen, alles Weitere folgt</h2>
-    <div class="karten reveal tief">
-      <article class="karte">
-        <h3>Lokal-first</h3>
-        <p>Der Core läuft offline. Cloud-Dienste sind zuschaltbare Konnektoren,
-          jederzeit abschaltbar.</p>
+    <h2>Wo anfangen</h2>
+    <div class="karten wl-wege tief">
+      <article class="karte wl-weg wl-spiel">
+        <svg class="wl-ikon" role="img" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <path d="M12 2.5 L20.5 7.25 L20.5 16.75 L12 21.5 L3.5 16.75 L3.5 7.25 Z M12 12 L12 21.5 M12 12 L3.5 7.25 M12 12 L20.5 7.25"></path>
+          <path d="M12 12 L16.25 9.6 L16.25 14.4 L12 16.75 Z" fill="currentColor" fill-opacity=".45" stroke="none"></path>
+        </svg>
+        <h3>Spielen</h3>
+        <p>Sofort ins Spiel – auf jedem Gerät.</p>
+        <a class="wl-los" href="/dizzcube/play/" hreflang="en">DizzCube starten <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       </article>
-      <article class="karte">
-        <h3>Vertrags-getrieben</h3>
-        <p>Ein geschriebener App-Vertrag, zehn Anwendungen, die auf ihn hin gebaut sind. Wer
-          ihn beantwortet, erscheint von selbst im Dashboard.</p>
+      <article class="karte wl-weg wl-verstehen">
+        <svg class="wl-ikon" role="img" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="10.5" cy="10.5" r="6.5"></circle>
+          <path d="M15.4 15.4 L21 21 M7.5 10.5 A3 3 0 0 1 10.5 7.5"></path>
+        </svg>
+        <h3>Verstehen</h3>
+        <p>Wer dieses Haus baut, was die zehn Anwendungen tun und wo man zu lesen
+          beginnt.</p>
+        <a class="wl-los" href="/about/" hreflang="en">Kontakt und Überblick (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       </article>
-      <article class="karte">
-        <h3>Ehrlich per Gesetz</h3>
-        <p>Ein nicht gemessener Wert wird als „nicht gemessen“ ausgegeben, nie als
-          Null. Dieselbe Regel gilt für diese Website.</p>
+      <article class="karte wl-weg wl-bauen">
+        <svg class="wl-ikon" role="img" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <rect x="3" y="13" width="8" height="8" rx="1.2"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="1.2"></rect>
+          <rect x="8" y="3" width="8" height="8" rx="1.2" fill="currentColor" fill-opacity=".35"></rect>
+        </svg>
+        <h3>Bauen</h3>
+        <p>Geschriebene Gesetze vor dem Code – und vor jedem unumkehrbaren Schritt
+          entscheidet ein Mensch.</p>
+        <a class="wl-los" href="/method/" hreflang="en">Die Methode (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       </article>
     </div>
-    <div class="knoepfe">
-      <a class="knopf" href="/system/#entscheidungen" hreflang="en">Alle drei ausführlich, mit dem, was sie kosten (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
+    <p class="quellen mt-l">Weiterlesen (englisch): <a href="/system/" hreflang="en">System</a><span class="trenn" aria-hidden="true">·</span><a href="/apps/" hreflang="en">Apps</a><span class="trenn" aria-hidden="true">·</span><a href="/numbers/" hreflang="en">Zahlen</a><span class="trenn" aria-hidden="true">·</span><a href="/journey/" hreflang="en">Chronik</a><span class="trenn" aria-hidden="true">·</span><a href="/vision/" hreflang="en">Vision</a></p>
   </div>
 </section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">Die Gestalt</p>
-    <h2>Jede läuft allein. Ein Vertrag verbindet sie.</h2>
-    <p class="dach">Jede Anwendung hat ihren eigenen Port, ihre eigene Datenbank und
-      ihre eigene Oberfläche. Der Core vermittelt – er schreibt nie von sich aus nach
-      außen.</p>
-
-    <figure class="figur reveal tief mt-l">
-      <div class="buehne">
-      <svg viewBox="0 0 640 380" role="img" aria-labelledby="ring-t ring-d" width="640" height="380">
-        <title id="ring-t">Das Netz auf einen Blick</title>
-        <desc id="ring-d">Der Dizzi-Core auf Port 8200 sitzt in der Mitte. Neun
-          Anwendungen sitzen auf einem Ring um ihn herum: Money 8210, Communication
-          8218, Creating 8214, Memory 8212, Management 8213, News 8216, Healthy 8217,
-          Admin 8222 und Trading 8137. Jede ist mit dem Core verbunden, nicht mit den
-          anderen.</desc>
-        <circle cx="320" cy="190" r="120" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"></circle>
-        <g stroke="rgba(255,255,255,.16)" stroke-width="1" fill="none">
-          <path d="M320 190 Q336 130 320 70"></path>
-          <path d="M320 190 Q395 157 451.8 98.1"></path>
-          <path d="M320 190 Q423 196 521.9 169.2"></path>
-          <path d="M320 190 Q404 235 497.5 250"></path>
-          <path d="M320 190 Q342 255 390.1 302.8"></path>
-          <path d="M320 190 Q271 238 249.9 302.8"></path>
-          <path d="M320 190 Q226 205 142.5 250"></path>
-          <path d="M320 190 Q221 164 118.1 169.2"></path>
-          <path d="M320 190 Q263 131 188.2 98.1"></path>
-        </g>
-        <circle cx="320" cy="190" r="62" fill="#111726" stroke="#8b6cff" stroke-width="1.5"></circle>
-        <circle class="ring-halo" cx="320" cy="190" r="76" fill="none" stroke="rgba(139,108,255,.28)" stroke-width="1"></circle>
-        <text x="320" y="185" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="17" font-weight="700" fill="#e8ebf2">Core</text>
-        <text x="320" y="205" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#9aa4b6">:8200</text>
-
-        <g font-family="ui-monospace, monospace" font-size="12.5" fill="#9aa4b6">
-          <circle cx="320" cy="70" r="7" fill="#080b12" stroke="#f5b942" stroke-width="2"></circle>
-          <text x="320" y="52" text-anchor="middle" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Money</text>
-          <text x="320" y="94" text-anchor="middle">:8210</text>
-
-          <circle cx="451.8" cy="98.1" r="7" fill="#080b12" stroke="#38bdf8" stroke-width="2"></circle>
-          <text x="468" y="94" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Comm.</text>
-          <text x="468" y="110">:8218</text>
-
-          <circle cx="521.9" cy="169.2" r="7" fill="#080b12" stroke="#ff3ea5" stroke-width="2"></circle>
-          <text x="538" y="165" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Creating</text>
-          <text x="538" y="181">:8214</text>
-
-          <circle cx="497.5" cy="250" r="7" fill="#080b12" stroke="#2ee6d6" stroke-width="2"></circle>
-          <text x="514" y="246" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Memory</text>
-          <text x="514" y="262">:8212</text>
-
-          <circle cx="390.1" cy="302.8" r="7" fill="#080b12" stroke="#8b6cff" stroke-width="2"></circle>
-          <text x="406" y="299" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Mgmt</text>
-          <text x="406" y="315">:8213</text>
-
-          <circle cx="249.9" cy="302.8" r="7" fill="#080b12" stroke="#fb923c" stroke-width="2"></circle>
-          <text x="234" y="299" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">News</text>
-          <text x="234" y="315" text-anchor="end">:8216</text>
-
-          <circle cx="142.5" cy="250" r="7" fill="#080b12" stroke="#36d399" stroke-width="2"></circle>
-          <text x="126" y="246" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Healthy</text>
-          <text x="126" y="262" text-anchor="end">:8217</text>
-
-          <circle cx="118.1" cy="169.2" r="7" fill="#080b12" stroke="#9aa4b6" stroke-width="2"></circle>
-          <text x="102" y="165" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Admin</text>
-          <text x="102" y="181" text-anchor="end">:8222</text>
-
-          <circle cx="188.2" cy="98.1" r="7" fill="#080b12" stroke="#f2645a" stroke-width="2"></circle>
-          <text x="172" y="94" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Trading</text>
-          <text x="172" y="110" text-anchor="end">:8137</text>
-        </g>
-      </svg>
-      </div>
-      <figcaption>Neun Anwendungen auf einem Ring um einen Core.</figcaption>
-    </figure>
-
-    <div class="tafel-rahmen mt-l">
-      <table class="tafel">
-        <caption>Die zehn, jede auf ihrem eigenen Port. Jeder Name führt zu ihrem
-          Abschnitt auf der Anwendungs-Seite (englisch).</caption>
-        <thead>
-          <tr>
-            <th scope="col">Anwendung</th>
-            <th scope="col">Was sie tut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="a-vio"><th scope="row"><a href="/apps/#core" hreflang="en">Dizzi-Core</a> <span class="chip">:8200</span></th><td>KI-Orchestrator, Panel-Registry, MCP-Hub, Health-Watch.</td></tr>
-          <tr class="a-amber"><th scope="row"><a href="/apps/#money" hreflang="en">Dizz Money</a> <span class="chip">:8210</span></th><td>Finanzen, Ledger-Kern, deutsche Steuer-Übermittlung.</td></tr>
-          <tr class="a-blue"><th scope="row"><a href="/apps/#communication" hreflang="en">Dizz Communication</a> <span class="chip">:8218</span></th><td>Ein Posteingang, kluge Kontakte, Termin-Erkennung.</td></tr>
-          <tr class="a-mag"><th scope="row"><a href="/apps/#creating" hreflang="en">Dizz Creating</a> <span class="chip">:8214</span></th><td>Medien-Werkbank über eine gemeinsame GPU-Warteschlange.</td></tr>
-          <tr class="a-cy"><th scope="row"><a href="/apps/#memory" hreflang="en">Dizz Memory</a> <span class="chip">:8212</span></th><td>Markdown-Tresor, Volltextsuche, Retrieval.</td></tr>
-          <tr class="a-vio"><th scope="row"><a href="/apps/#management" hreflang="en">Dizz Management</a> <span class="chip">:8213</span></th><td>KI-Agenten-Verwaltung, Autonomie-Treppe, Netz-Posteingang.</td></tr>
-          <tr class="a-orange"><th scope="row"><a href="/apps/#news" hreflang="en">Dizz News</a> <span class="chip">:8216</span></th><td>Sektor-Überblick, Quellen-Dedup, Beobachtungslisten.</td></tr>
-          <tr class="a-green"><th scope="row"><a href="/apps/#healthy" hreflang="en">Dizz Healthy</a> <span class="chip">:8217</span></th><td>Messwerte, Training, Wearables – sensibelste Klasse.</td></tr>
-          <tr class="a-steel"><th scope="row"><a href="/apps/#admin" hreflang="en">Dizz Admin</a> <span class="chip">:8222</span></th><td>Tresor, Projekte, Geschäft, Studium, Fristen.</td></tr>
-          <tr class="a-coral"><th scope="row"><a href="/apps/#trading" hreflang="en">Dizz Trading</a> <span class="chip">:8137</span></th><td>Autonome Bot-Flotte mit hartem Menschen-Gate.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-l" id="fuenf">
-      <h3>Was man damit tun kann – fünf Dinge</h3>
-      <p class="dach">Das Netz läuft auf einem Rechner, für den einen Menschen, der es gebaut
-        hat; verkauft wird davon noch nichts.</p>
-      <ol class="liste mt-m">
-        <li><b>Geld</b> – Kontodaten nur lesend holen, sortieren, Budgets führen, die deutsche
-          Steuer vorbereiten; ohne Menschen bewegt sich kein Cent.</li>
-        <li><b>Nachrichten</b> – E-Mail und Messenger in einem Posteingang lesen; Termine
-          werden im Text erkannt.</li>
-        <li><b>Wissen</b> – Notizen als einfache Dateien ablegen und alle auf einmal
-          durchsuchen.</li>
-        <li><b>Neuigkeiten</b> – ein Überblick nach Sektoren aus ausgewählten Quellen, jedes
-          Ereignis einmal.</li>
-        <li><b>Papierkram</b> – Projekte, Studium und Fristen an einem Ort, nach Lebensbereich
-          geordnet.</li>
-      </ol>
-      <p class="dach">Immer gilt: Die Assistenten schlagen vor, der Mensch entscheidet.</p>
-    </div>
-
-    <div class="knoepfe">
-      <a class="knopf prim nur-breit" href="/karte/">System-Karte öffnen <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf prim nur-schmal" href="/mini-karte/">Die kleine Karte öffnen <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf" href="/apps/" hreflang="en">Alle zehn im Detail (englisch) <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">Die Methode</p>
-    <h2>Gesetze vor Code</h2>
-    <p class="dach">Ein Mensch führt Regie. Ein verwaltender Chat hält den Gesamtstand,
-      getrennte Bau-Chats erledigen die Arbeit – sie sprechen nicht miteinander, sondern
-      über geschriebene Übergabe-Dokumente.</p>
-
-    <ol class="fluss mt-l">
-      <li class="a-cy">
-        <p class="fl-t">Die Assistenten schlagen vor</p>
-        <p class="fl-b">Sie beobachten und entwerfen. Noch wirkt nichts.</p>
-      </li>
-      <li class="a-vio">
-        <p class="fl-t">Ein Mensch entscheidet</p>
-        <p class="fl-b">Ein anderer Endpunkt, eine frische Anmeldung, ein Eintrag im
-          Protokoll.</p>
-      </li>
-      <li class="a-mag">
-        <p class="fl-t">Erst dann Wirkung</p>
-        <p class="fl-b">Geld, Veröffentlichen, Löschen – die drei unumkehrbaren
-          Schritte.</p>
-      </li>
-    </ol>
-
-    <div class="raster mt-l">
-      <div>
-        <blockquote class="gesetz">
-          <span class="lk">Gesetz 2 · Ehrlichkeit</span>
-          <p>„Ehrliche Bewertungen. Motto: ‚Wir finden gemeinsam den besten Weg.‘ Bei
-            eigenen Zweifeln: offen sagen, nicht schönreden.“</p>
-          <footer>docs/01_GRUNDGESETZE.md, Gesetz 2<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
-        </blockquote>
-      </div>
-      <div>
-        <blockquote class="gesetz">
-          <span class="lk">Gesetz 11 · Ruhe vor Hast</span>
-          <p>„Im Zweifelsfall lieber eine Sekunde länger prüfen oder noch einmal
-            überdenken, bevor gehandelt wird. […] ‚Schnell bitte‘ setzt Sorgfalt nie
-            außer Kraft: erst kurz Lage, Kollisionen und Reihenfolge prüfen, dann
-            liefern. Die Struktur trägt — nicht die Eile.“</p>
-          <footer>docs/01_GRUNDGESETZE.md, Gesetz 11 – gekürzt<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
-        </blockquote>
-      </div>
-    </div>
-    <p class="quellen"><a href="/method/" hreflang="en">Die Methode im Detail (englisch) &#8594;</a></p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">Die Arbeitsweise</p>
-    <h2>Der Weg eines Arbeitspakets</h2>
-    <p class="dach">Sechs Stationen zwischen der ersten geschriebenen Zeile und dem
-      Merge – jede eine Regel mit einem Dokument dahinter.</p>
-    <ol class="bahn reveal tief mt-l">
-      <li class="a-mag">
-        <h3>Der Auftrag steht vor der Arbeit</h3>
-        <p>Ein Paket beginnt als Datei: Ziel, Ausgangs-Commit, verbotene Züge und das
-          Gate, das es bestehen muss.</p>
-      </li>
-      <li class="a-mag">
-        <h3>Die Spur steht im Dokument</h3>
-        <p>Unabhängige Pakete laufen gleichzeitig, jedes in einem eigenen Arbeitsbaum
-          auf einem eigenen Zweig.</p>
-      </li>
-      <li class="a-vio">
-        <h3>Die Freigabe kommt vor der Nacht</h3>
-        <p>Ein unbeaufsichtigter Lauf trägt seine Freigaben schriftlich. Erst bestätigt
-          ein Mensch, dann arbeitet die Maschine allein durch.</p>
-      </li>
-      <li class="a-vio">
-        <h3>Zweimal sauber hintereinander</h3>
-        <p>Der Abschlussblock ist eine Schleife, kein Häkchen: fertig ist erst nach zwei
-          sauberen Durchläufen in Folge.</p>
-      </li>
-      <li class="a-cy">
-        <h3>Es endet in einem Dokument</h3>
-        <p>Das Letzte, was ein Paket erzeugt, ist ein Übergabe-Blatt. Der nächste Chat
-          startet beim Blatt.</p>
-      </li>
-      <li class="a-cy">
-        <h3>Der Überblick bleibt beim Menschen</h3>
-        <p>Nach einem großen Paket verlangen die Regeln eine große Kontrollrunde über
-          alles.</p>
-      </li>
-    </ol>
-    <p class="hinweis mt-l">Diese Website ist nach denselben Regeln
-      entstanden: erst aufgeschrieben, in einem eigenen Arbeitsbaum gebaut, an einem
-      Gate aus benannten Skripten gemessen – und nicht eher fertig, als bis dieses Gate
-      zweimal hintereinander sauber war.</p>
-    <p class="quellen mt-m"><a href="/method/#weg" hreflang="en">Die sechs Stationen ausführlich (englisch) &#8594;</a><span class="trenn">·</span><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot/docs" rel="noopener">Die Netz-Dokumente im Repository &#8599;</a></p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">Weiterlesen</p>
-    <h2>Die Tiefen-Seiten (englisch)</h2>
-    <ul class="bento mt-m">
-      <li><a class="a-cy kachel" href="/system/" hreflang="en"><span class="kn">Das System</span><span class="kt">Architektur, App-Vertrag, geteilte Kern-Bibliothek, Sicherheitslage.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-amber kachel" href="/apps/" hreflang="en"><span class="kn">Die zehn Apps</span><span class="kt">Je App: Problem, Entscheidung, Ergebnis – mit gemessenen Testzahlen, außer bei Creating.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-vio kachel" href="/method/" hreflang="en"><span class="kn">Die Methode</span><span class="kt">Gesetze, Verträge, Recherche, das Orchester der Bau-Chats.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-steel kachel" href="/numbers/" hreflang="en"><span class="kn">Die Zahlen</span><span class="kt">Sechs Zahlen, jede mit ihrer Zählweise und ihren Grenzen.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-green kachel" href="/journey/" hreflang="en"><span class="kn">Die Chronik</span><span class="kt">Meilensteine seit Juni 2026 – jeder Knoten ein datiertes Dokument.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li><a class="a-mag kachel" href="/vision/" hreflang="en"><span class="kn">Vom Projekt zur Firma</span><span class="kt">Stand, Skalierung, was ich öffne – ehrlich benannt.</span><span class="kf">Lesen &#8594;</span></a></li>
-      <li class="nur-breit"><a class="a-blue kachel" href="/karte/"><span class="kn">Die System-Karte</span><span class="kt">Interaktiv, self-contained, keine externen Aufrufe.</span><span class="kf">Öffnen &#8594;</span></a></li>
-      <li class="nur-schmal"><a class="a-blue kachel" href="/mini-karte/"><span class="kn">Die kleine Karte</span><span class="kt">Dieselbe Wahrheit, ein Zehntel der Last – für die Hand gebaut.</span><span class="kf">Öffnen &#8594;</span></a></li>
-    </ul>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">Stand</p>
-    <h2>Wo das Projekt heute steht</h2>
-    <ul class="liste lang">
-      <li><b>Noch kein Umsatz.</b> Es wurde nichts verkauft; es gibt keine Kunden.</li>
-      <li><b>Seit dem 4. August 2026 handelt ein kleiner Teil der Flotte mit meinem
-        eigenen Geld.</b> Handel auf eigene Rechnung, kein Fremdkapital, kein Angebot
-        an irgendjemanden. Auf dieser Seite stehen keine Ergebnisse: Diese Website
-        zeigt, wie das System gebaut ist, nicht was es verdient.</li>
-    </ul>
-    <p class="dach">Dieselben zwei Punkte stehen auf Englisch auf
-      <a href="/vision/" hreflang="en">Vom Projekt zur Firma &#8594;</a></p>
-  </div>
-</section>
-
-<div class="band">
-  <div class="wrap">
-    <div class="hinweis balken">
-      <p><b>Unabhängiges Projekt – Gründung in Vorbereitung.</b>
-        Erste Gespräche mit Partnern und Investoren sind willkommen.</p>
-      <a class="knopf" href="/vision/" hreflang="en">Vom Projekt zur Firma <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</div>
 </main>
 
 <footer class="fuss">

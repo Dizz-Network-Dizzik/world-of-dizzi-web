@@ -85,9 +85,13 @@ inline script and is the only page that talks to anything — it asks
 when nothing answers — and the game DizzCube at `/dizzcube/play/`, one
 self-contained file with a script of its own that opens no connection once
 loaded and stores nothing on the device. Total for a first visit to the start
-page: **149,199 bytes** uncompressed — 28.2 KB markup, 88.7 KB stylesheet,
+page: **141,079 bytes** uncompressed — 14.9 KB markup, 94.2 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is an addition: 5,336 bytes joined the
+server compresses. The latest change is a cut: on 10 October 2026 the start
+page lost 8,120 bytes on a first load. The long page gave way to a short one,
+a band, one sentence, one button and three paths in, while 5,614 bytes of
+stylesheet joined for the cube that turns and for the three cards. Before
+that, 5,336 bytes joined the
 first load on 9 October 2026 — 1,676 of markup for a band at the top of
 the start page that points at DizzCube, a game from this house, and for the menu
 entry that leads to it, and 3,660 of stylesheet for that band, for the
@@ -478,7 +482,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **76 source links** against
+be resolved, and `check_snapshot_links` resolves all **70 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -488,7 +492,7 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 76 links break at once — and the claim on `/numbers/` that exactly one figure
+all 70 links break at once — and the claim on `/numbers/` that exactly one figure
 cannot be checked from outside quietly stops being true. It is the one link count
 on this page that no gate measures, and it has drifted twice already: it read 83
 until a count over the built site produced 72, and 74 from the travel pages until

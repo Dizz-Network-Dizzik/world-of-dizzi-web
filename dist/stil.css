@@ -1590,3 +1590,106 @@ a,button,summary,label{-webkit-tap-highlight-color:transparent}
 .tasten kbd{display:inline-block;min-width:1.7em;padding:0 6px;
   border:1px solid var(--line2);border-radius:6px;background:var(--bg2);
   color:var(--tx);text-align:center;line-height:1.5}
+
+
+/* ---- WL (WA 213, 10.10.2026): Startseite — Band-Würfel, Wege-Karten; Klassen wl- ---- */
+/* ==========================================================================
+   Lane WL (10.10.2026) - the start page, shorter: a cube that turns and three
+   ways in. A proposal to append to statisch/stil.css; nothing above this
+   block is changed, every class here starts with wl-.
+
+   No script, no image file, no inline style. Text keeps the three colours
+   kontrast.py already measures on these surfaces (--tx, --tx2, --cy); every
+   other colour here is an edge, a glow or a face of the cube and carries no
+   information. Every animation sits inside prefers-reduced-motion:
+   no-preference and is switched off again under reduce and on paper.
+   ========================================================================== */
+
+/* --- the cube in the DizzCube band: six faces, pure CSS --------------------
+   It takes the place of the flat SVG cube. The outer box floats, the inner
+   body turns - two transforms, two elements. Its footprint is the old
+   picture's: 124px on a desk, 64px on a phone.                              */
+.wl-wuerfel{--wl-k:96px;position:relative;width:var(--wl-k);height:var(--wl-k);
+  margin:14px;perspective:560px;pointer-events:none}
+.band-spiel>.wl-wuerfel{grid-column:2;grid-row:1 / span 3;align-self:center}
+.wl-koerper{position:absolute;inset:0;transform-style:preserve-3d;
+  transform:rotateX(-24deg) rotateY(-38deg)}
+.wl-f{position:absolute;inset:0;border:1.5px solid var(--cy);border-radius:5px;
+  background-color:rgba(46,230,214,.26);
+  background-image:linear-gradient(rgba(232,235,242,.16) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(232,235,242,.16) 1px,transparent 1px);
+  background-size:33.333% 33.333%}
+.wl-f1{transform:translateZ(calc(var(--wl-k) / 2));
+  border-color:var(--mag);background-color:rgba(255,62,165,.3)}
+.wl-f2{transform:rotateY(180deg) translateZ(calc(var(--wl-k) / 2));
+  border-color:var(--vio);background-color:rgba(139,108,255,.3)}
+.wl-f3{transform:rotateY(90deg) translateZ(calc(var(--wl-k) / 2))}
+.wl-f4{transform:rotateY(-90deg) translateZ(calc(var(--wl-k) / 2));
+  border-color:var(--amber);background-color:rgba(245,185,66,.24)}
+.wl-f5{transform:rotateX(90deg) translateZ(calc(var(--wl-k) / 2));
+  border-color:var(--green);background-color:rgba(54,211,153,.24)}
+.wl-f6{transform:rotateX(-90deg) translateZ(calc(var(--wl-k) / 2));
+  border-color:var(--blue);background-color:rgba(56,189,248,.24)}
+/* one falling piece on three of the faces - the game in one square each */
+.wl-f1::after,.wl-f3::after,.wl-f5::after{content:"";position:absolute;
+  width:33.333%;height:33.333%;border-radius:2px;background:rgba(245,185,66,.82)}
+.wl-f1::after{left:33.333%;top:66.666%}
+.wl-f3::after{left:0;top:33.333%}
+.wl-f5::after{left:66.666%;top:0}
+
+@media (prefers-reduced-motion:no-preference){
+  .wl-koerper{animation:wl-drehen 18s linear infinite}
+  .wl-wuerfel{animation:wl-schweben 3.6s ease-in-out infinite alternate}
+}
+@keyframes wl-drehen{
+  0%{transform:rotateX(-24deg) rotateY(-38deg)}
+  50%{transform:rotateX(-34deg) rotateY(142deg)}
+  100%{transform:rotateX(-24deg) rotateY(322deg)}}
+@keyframes wl-schweben{from{translate:0 -5px}to{translate:0 5px}}
+
+@media (max-width:560px){
+  .band-spiel>.wl-wuerfel{--wl-k:42px;grid-row:1;align-self:start;margin:11px}
+}
+
+/* --- the three ways: cards with a lit edge, like the band ------------------
+   The surface stays --flaeche, the one kontrast.py measures; the accent lives
+   in the border, the top line and the glow outside the card, never under the
+   text. The link is stretched over the whole card, so the card is the target
+   and the heading stays a heading.                                          */
+.wl-wege{margin-top:8px}
+.wl-spiel{--wl-a:var(--mag);--wl-rand:rgba(255,62,165,.45);--wl-glow:rgba(255,62,165,.5)}
+.wl-verstehen{--wl-a:var(--cy);--wl-rand:rgba(46,230,214,.42);--wl-glow:rgba(46,230,214,.45)}
+.wl-bauen{--wl-a:var(--vio);--wl-rand:rgba(139,108,255,.5);--wl-glow:rgba(139,108,255,.5)}
+.wl-weg{position:relative;overflow:hidden;padding:24px 22px 20px;
+  border-color:var(--wl-rand,var(--line2));
+  box-shadow:var(--schatten),inset 0 1px 0 rgba(255,255,255,.06),
+    0 14px 36px -28px var(--wl-glow,transparent);
+  transition:border-color var(--ueb),box-shadow var(--ueb),translate var(--ueb)}
+.wl-weg::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:var(--grad);opacity:.85}
+.wl-weg:hover,.wl-weg:focus-within{border-color:var(--wl-a,var(--cy));translate:0 -4px;
+  box-shadow:var(--schatten-h),0 0 0 1px var(--wl-a,var(--cy)),
+    0 22px 46px -22px var(--wl-glow,transparent)}
+.wl-ikon{display:block;width:46px;height:46px;padding:10px;margin-bottom:16px;
+  border:1px solid var(--wl-rand,var(--line2));border-radius:12px;
+  background:rgba(8,11,18,.55);color:var(--wl-a,var(--cy));
+  box-shadow:0 0 18px -6px var(--wl-glow,transparent);
+  transition:transform var(--ueb)}
+.wl-weg:hover .wl-ikon{transform:perspective(220px) rotateY(-20deg) rotateX(10deg)}
+.wl-los{display:inline-flex;align-items:center;gap:8px;min-height:44px;
+  font-family:var(--text);font-weight:600;font-size:1rem;color:var(--cy);
+  text-decoration:none}
+.wl-los:hover{color:var(--tx)}
+.wl-los::after{content:"";position:absolute;inset:0;z-index:1}
+.wl-los .pfeil{transition:translate var(--ueb)}
+.wl-weg:hover .wl-los .pfeil{translate:3px 0}
+
+/* stillness under reduced motion, and on paper */
+@media (prefers-reduced-motion:reduce){
+  .wl-koerper,.wl-wuerfel{animation:none!important}
+  .wl-weg:hover,.wl-weg:focus-within{translate:none}
+  .wl-weg:hover .wl-ikon{transform:none}
+}
+@media print{
+  .wl-koerper,.wl-wuerfel{animation:none!important}
+}

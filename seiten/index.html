@@ -51,19 +51,18 @@
   </div>
   <div class="wrap">
     <p class="strich" role="presentation"></p>
-    <h1>One person. Ten applications. One architecture.</h1>
-    <p class="lede">A local-first AI network for a whole life — built by a single human
-      directing AI build chats under written law.</p>
 
     <div class="band-spiel">
-      <svg class="bs-wuerfel" role="img" aria-hidden="true" viewBox="0 0 120 120" fill="none">
-        <path d="M60 8 L106 34 L60 60 L14 34 Z" fill="#2ee6d6" fill-opacity=".16"></path>
-        <path d="M14 34 L60 60 L60 112 L14 86 Z" fill="#8b6cff" fill-opacity=".26"></path>
-        <path d="M60 60 L106 34 L106 86 L60 112 Z" fill="#ff3ea5" fill-opacity=".2"></path>
-        <path d="M44.7 16.7 L90.7 42.7 M29.3 25.3 L75.3 51.3 M75.3 16.7 L29.3 42.7 M90.7 25.3 L44.7 51.3 M29.3 42.7 L29.3 94.7 M44.7 51.3 L44.7 103.3 M14 51.3 L60 77.3 M14 68.7 L60 94.7 M75.3 51.3 L75.3 103.3 M90.7 42.7 L90.7 94.7 M60 77.3 L106 51.3 M60 94.7 L106 68.7" stroke="#e8ebf2" stroke-opacity=".22" stroke-width="1"></path>
-        <path d="M60 60 L44.7 51.3 L44.7 68.7 L60 77.3 Z M60 60 L75.3 51.3 L75.3 68.7 L60 77.3 Z" fill="#f5b942" fill-opacity=".8"></path>
-        <path d="M60 8 L106 34 L106 86 L60 112 L14 86 L14 34 Z M60 60 L60 112 M60 60 L14 34 M60 60 L106 34" stroke="#2ee6d6" stroke-width="1.6" stroke-linejoin="round"></path>
-      </svg>
+      <div class="wl-wuerfel" aria-hidden="true">
+        <div class="wl-koerper">
+          <span class="wl-f wl-f1"></span>
+          <span class="wl-f wl-f2"></span>
+          <span class="wl-f wl-f3"></span>
+          <span class="wl-f wl-f4"></span>
+          <span class="wl-f wl-f5"></span>
+          <span class="wl-f wl-f6"></span>
+        </div>
+      </div>
       <h2 class="bs-titel"><span class="bs-vor">A game from this house —</span> <span class="bs-name">DizzCube</span></h2>
       <p>A game of falling pieces on the four sides of a cube: turn the cube, pick a
         side, drop the piece. One file, in the browser, nothing stored.</p>
@@ -73,24 +72,14 @@
       </div>
     </div>
 
+    <h1 class="mt-xl">One person. Ten applications. One architecture.</h1>
+    <p class="lede">A network of applications for a whole life, running on one machine —
+      built by one person together with an artificial intelligence.</p>
+
     <div class="knoepfe">
-      <a class="knopf prim" href="{{ORDNER}}" rel="noopener">Read the documents <span class="pfeil" aria-hidden="true">&#8599;</span></a>
       <a class="knopf nur-breit" href="/karte/">Open the system map <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       <a class="knopf nur-schmal" href="/mini-karte/" hreflang="de">Open the small map <span class="pfeil" aria-hidden="true">&#8594;</span></a>
     </div>
-
-    <p class="leiste">
-      <b>Snapshot</b>
-      <span class="trenner" aria-hidden="true">&#9656;</span>
-      <span><i class="led" aria-hidden="true"></i>July 2026</span>
-      <span><i class="led" aria-hidden="true"></i>10 apps</span>
-      <span><i class="led" aria-hidden="true"></i>core :8200</span>
-      <span><i class="led" aria-hidden="true"></i>2,667 tests</span>
-      <span><i class="led vio" aria-hidden="true"></i>pre-company</span>
-    </p>
-    <p class="notiz">Readings from July 2026, not a live feed — this page fetches
-      nothing. The code those test figures were counted in is
-      <a href="/numbers/#dateien">no longer part of the current tree &#8594;</a></p>
   </div>
 </section>
 
@@ -107,268 +96,39 @@
 
 <section>
   <div class="wrap">
-    <p class="kicker">Measured, not claimed</p>
-    <h2>The numbers, and how each one was counted</h2>
-    <ul class="zahlen reveal tief">
-      <li class="zahl"><b>10</b><span>applications — the core and nine around it<a class="beleg" href="/numbers/#apps"><span aria-hidden="true">&#8594;</span><span class="vh">How the ten were counted</span></a></span></li>
-      <li class="zahl"><b>2,600+</b><span>commits in the private working repository behind this snapshot<a class="beleg" href="/numbers/#commits"><span aria-hidden="true">&#8594;</span><span class="vh">How the commits were counted, and why this one is a floor</span></a></span></li>
-      <li class="zahl"><b>~100,000</b><span>lines of Python, across 632 files<a class="beleg" href="/numbers/#python"><span aria-hidden="true">&#8594;</span><span class="vh">How the lines and files were counted, and when</span></a></span></li>
-      <li class="zahl"><b>2,667</b><span>test functions in 309 files<a class="beleg" href="/numbers/#tests"><span aria-hidden="true">&#8594;</span><span class="vh">How the test functions were counted, and when</span></a></span></li>
-    </ul>
-
-    <div class="tafel-rahmen mt-m">
-      <table class="tafel">
-        <caption>The same four figures, and what a reader has left to check them against.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Figure</th>
-            <th scope="col">Where it can be checked</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="a-green">
-            <th scope="row">10 applications</th>
-            <td>In the published documents — a table in the folder README names them.</td>
-          </tr>
-          <tr class="a-steel">
-            <th scope="row">2,600+ commits</th>
-            <td>Nowhere. The working repository is private, which is why this one is written as a floor.</td>
-          </tr>
-          <tr class="a-amber">
-            <th scope="row">~100,000 lines of Python</th>
-            <td>Not in the current tree. The code extract it was measured in left it on 6 August 2026.</td>
-          </tr>
-          <tr class="a-amber">
-            <th scope="row">2,667 test functions</th>
-            <td>Not in the current tree. Same extract, same day.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="notiz">The last three stay on the page, dated, rather than quietly
-      disappearing. I would rather say that than let a number imply something it
-      doesn’t.</p>
-
-    <div class="knoepfe">
-      <a class="knopf" href="/numbers/">The six figures, each with its method <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf" href="/numbers/#dateien">What is published now, and what was <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">What holds it together</p>
-    <h2>Three decisions, everything else follows</h2>
-    <div class="karten reveal tief">
-      <article class="karte">
-        <h3>Local-first</h3>
-        <p>The core runs offline. Cloud services are opt-in connectors, switchable off
-          at any time.</p>
+    <h2>Where to start</h2>
+    <div class="karten wl-wege tief">
+      <article class="karte wl-weg wl-spiel">
+        <svg class="wl-ikon" role="img" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <path d="M12 2.5 L20.5 7.25 L20.5 16.75 L12 21.5 L3.5 16.75 L3.5 7.25 Z M12 12 L12 21.5 M12 12 L3.5 7.25 M12 12 L20.5 7.25"></path>
+          <path d="M12 12 L16.25 9.6 L16.25 14.4 L12 16.75 Z" fill="currentColor" fill-opacity=".45" stroke="none"></path>
+        </svg>
+        <h3>Play</h3>
+        <p>Straight into the game — on any device.</p>
+        <a class="wl-los" href="/dizzcube/play/">Start DizzCube <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       </article>
-      <article class="karte">
-        <h3>Contract-driven</h3>
-        <p>One written app contract, ten applications built to it. Answer it and the
-          dashboard picks the app up by itself.</p>
+      <article class="karte wl-weg wl-verstehen">
+        <svg class="wl-ikon" role="img" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="10.5" cy="10.5" r="6.5"></circle>
+          <path d="M15.4 15.4 L21 21 M7.5 10.5 A3 3 0 0 1 10.5 7.5"></path>
+        </svg>
+        <h3>Understand</h3>
+        <p>Who builds this house, what the ten applications do, and where to start
+          reading.</p>
+        <a class="wl-los" href="/about/">About and contact <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       </article>
-      <article class="karte">
-        <h3>Honest by law</h3>
-        <p>An unmeasured value is reported as unmeasured, never as a zero. The same
-          rule governs this website.</p>
+      <article class="karte wl-weg wl-bauen">
+        <svg class="wl-ikon" role="img" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <rect x="3" y="13" width="8" height="8" rx="1.2"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="1.2"></rect>
+          <rect x="8" y="3" width="8" height="8" rx="1.2" fill="currentColor" fill-opacity=".35"></rect>
+        </svg>
+        <h3>Build</h3>
+        <p>Written laws before code, and a human decision before every irreversible
+          step.</p>
+        <a class="wl-los" href="/method/">The method <span class="pfeil" aria-hidden="true">&#8594;</span></a>
       </article>
     </div>
-    <div class="knoepfe">
-      <a class="knopf" href="/system/#entscheidungen">All three in full, trade-offs included <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
+    <p class="quellen mt-l">Read on: <a href="/system/">System</a><span class="trenn" aria-hidden="true">·</span><a href="/apps/">Apps</a><span class="trenn" aria-hidden="true">·</span><a href="/numbers/">Numbers</a><span class="trenn" aria-hidden="true">·</span><a href="/journey/">Journey</a><span class="trenn" aria-hidden="true">·</span><a href="/vision/">Vision</a></p>
   </div>
 </section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">The shape of it</p>
-    <h2>A headless core, nine applications around it</h2>
-    <p class="dach">Every application owns its port, its database and its user
-      interface. The core orchestrates and relays — it never writes outward on its
-      own.</p>
-
-    <figure class="figur reveal tief mt-l">
-      <div class="buehne">
-      <svg viewBox="0 0 640 380" role="img" aria-labelledby="ring-t ring-d" width="640" height="380">
-        <title id="ring-t">The network at a glance</title>
-        <desc id="ring-d">Dizzi-Core on port 8200 sits in the middle. Nine
-          applications sit on one ring around it: Money 8210, Communication 8218,
-          Creating 8214, Memory 8212, Management 8213, News 8216, Healthy 8217, Admin
-          8222 and Trading 8137. Each is connected to the core, not to the others.</desc>
-        <circle cx="320" cy="190" r="120" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"></circle>
-        <g stroke="rgba(255,255,255,.16)" stroke-width="1" fill="none">
-          <path d="M320 190 Q336 130 320 70"></path>
-          <path d="M320 190 Q395 157 451.8 98.1"></path>
-          <path d="M320 190 Q423 196 521.9 169.2"></path>
-          <path d="M320 190 Q404 235 497.5 250"></path>
-          <path d="M320 190 Q342 255 390.1 302.8"></path>
-          <path d="M320 190 Q271 238 249.9 302.8"></path>
-          <path d="M320 190 Q226 205 142.5 250"></path>
-          <path d="M320 190 Q221 164 118.1 169.2"></path>
-          <path d="M320 190 Q263 131 188.2 98.1"></path>
-        </g>
-        <circle cx="320" cy="190" r="62" fill="#111726" stroke="#8b6cff" stroke-width="1.5"></circle>
-        <circle class="ring-halo" cx="320" cy="190" r="76" fill="none" stroke="rgba(139,108,255,.28)" stroke-width="1"></circle>
-        <text x="320" y="185" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="17" font-weight="700" fill="#e8ebf2">Core</text>
-        <text x="320" y="205" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#9aa4b6">:8200</text>
-
-        <g font-family="ui-monospace, monospace" font-size="12.5" fill="#9aa4b6">
-          <circle cx="320" cy="70" r="7" fill="#080b12" stroke="#f5b942" stroke-width="2"></circle>
-          <text x="320" y="52" text-anchor="middle" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Money</text>
-          <text x="320" y="94" text-anchor="middle">:8210</text>
-
-          <circle cx="451.8" cy="98.1" r="7" fill="#080b12" stroke="#38bdf8" stroke-width="2"></circle>
-          <text x="468" y="94" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Comm.</text>
-          <text x="468" y="110">:8218</text>
-
-          <circle cx="521.9" cy="169.2" r="7" fill="#080b12" stroke="#ff3ea5" stroke-width="2"></circle>
-          <text x="538" y="165" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Creating</text>
-          <text x="538" y="181">:8214</text>
-
-          <circle cx="497.5" cy="250" r="7" fill="#080b12" stroke="#2ee6d6" stroke-width="2"></circle>
-          <text x="514" y="246" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Memory</text>
-          <text x="514" y="262">:8212</text>
-
-          <circle cx="390.1" cy="302.8" r="7" fill="#080b12" stroke="#8b6cff" stroke-width="2"></circle>
-          <text x="406" y="299" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Mgmt</text>
-          <text x="406" y="315">:8213</text>
-
-          <circle cx="249.9" cy="302.8" r="7" fill="#080b12" stroke="#fb923c" stroke-width="2"></circle>
-          <text x="234" y="299" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">News</text>
-          <text x="234" y="315" text-anchor="end">:8216</text>
-
-          <circle cx="142.5" cy="250" r="7" fill="#080b12" stroke="#36d399" stroke-width="2"></circle>
-          <text x="126" y="246" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Healthy</text>
-          <text x="126" y="262" text-anchor="end">:8217</text>
-
-          <circle cx="118.1" cy="169.2" r="7" fill="#080b12" stroke="#9aa4b6" stroke-width="2"></circle>
-          <text x="102" y="165" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Admin</text>
-          <text x="102" y="181" text-anchor="end">:8222</text>
-
-          <circle cx="188.2" cy="98.1" r="7" fill="#080b12" stroke="#f2645a" stroke-width="2"></circle>
-          <text x="172" y="94" text-anchor="end" fill="#e8ebf2" font-family="Orbitron, sans-serif" font-size="14">Trading</text>
-          <text x="172" y="110" text-anchor="end">:8137</text>
-        </g>
-      </svg>
-      </div>
-      <figcaption>Nine applications on one ring around one headless core.</figcaption>
-    </figure>
-
-    <h3 class="mt-xl">Each one runs alone. One contract joins them.</h3>
-    <div class="tafel-rahmen mt-m">
-      <table class="tafel">
-        <caption>The ten, each on its own port. Every name leads to its section on the
-          applications page.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Application</th>
-            <th scope="col">What it does</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="a-vio"><th scope="row"><a href="/apps/#core">Dizzi-Core</a> <span class="chip">:8200</span></th><td>AI orchestrator, panel registry, MCP hub, health watch.</td></tr>
-          <tr class="a-amber"><th scope="row"><a href="/apps/#money">Dizz Money</a> <span class="chip">:8210</span></th><td>Finance manager, double-entry ledger, German tax filing.</td></tr>
-          <tr class="a-blue"><th scope="row"><a href="/apps/#communication">Dizz Communication</a> <span class="chip">:8218</span></th><td>Unified inbox, smart contacts, appointment detection.</td></tr>
-          <tr class="a-mag"><th scope="row"><a href="/apps/#creating">Dizz Creating</a> <span class="chip">:8214</span></th><td>Local media workbench over one shared GPU job queue.</td></tr>
-          <tr class="a-cy"><th scope="row"><a href="/apps/#memory">Dizz Memory</a> <span class="chip">:8212</span></th><td>Markdown vault, full-text search, retrieval.</td></tr>
-          <tr class="a-vio"><th scope="row"><a href="/apps/#management">Dizz Management</a> <span class="chip">:8213</span></th><td>AI agent administration, autonomy ladder, network inbox.</td></tr>
-          <tr class="a-orange"><th scope="row"><a href="/apps/#news">Dizz News</a> <span class="chip">:8216</span></th><td>Sector-structured digest, cross-source dedup, watchlists.</td></tr>
-          <tr class="a-green"><th scope="row"><a href="/apps/#healthy">Dizz Healthy</a> <span class="chip">:8217</span></th><td>Metrics, training, wearables — the most sensitive class.</td></tr>
-          <tr class="a-steel"><th scope="row"><a href="/apps/#admin">Dizz Admin</a> <span class="chip">:8222</span></th><td>Vault, projects, business, studies, deadlines.</td></tr>
-          <tr class="a-coral"><th scope="row"><a href="/apps/#trading">Dizz Trading</a> <span class="chip">:8137</span></th><td>Autonomous bot fleet with a hard human gate.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="knoepfe">
-      <a class="knopf prim nur-breit" href="/karte/">Open the system map <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf prim nur-schmal" href="/mini-karte/" hreflang="de">Open the small map <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf" href="/apps/">All ten in detail <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-      <a class="knopf" href="/system/">How the architecture works <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">The method</p>
-    <h2>Laws before code</h2>
-
-    <div class="reveal tief">
-      <blockquote class="gesetz">
-        <span class="lk">Law · human gates</span>
-        <p>“Nothing irreversible without a human. Money, publishing and deletion sit
-          behind explicit gates. The trading fleet proposes; a person decides.”</p>
-        <footer>Repository README, <em>Principles</em><a class="beleg" href="{{ORDNER}}#principles" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Source: the Principles section of the repository README</span></a></footer>
-      </blockquote>
-    </div>
-
-    <ol class="fluss mt-l">
-      <li class="a-cy">
-        <p class="fl-t">The assistants propose</p>
-        <p class="fl-b">They observe and suggest. Nothing has an effect yet.</p>
-      </li>
-      <li class="a-vio">
-        <p class="fl-t">A person decides</p>
-        <p class="fl-b">A different endpoint, a fresh authentication, an audit entry the
-          proposing side cannot edit.</p>
-      </li>
-      <li class="a-mag">
-        <p class="fl-t">Only then, it takes effect</p>
-        <p class="fl-b">Money, publishing and deletion — the three that are never
-          reversible.</p>
-      </li>
-    </ol>
-
-    <div class="knoepfe">
-      <a class="knopf" href="/method/">How this actually gets built <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <p class="kicker">The chronicle</p>
-    <h2>Dated, not narrated</h2>
-    <ol class="strahl reveal tief mt-l">
-      <li class="a-coral">
-        <span class="datum">8–25 June 2026</span>
-        <h3>Trading foundations and the validation nights</h3>
-        <p>Research protocols, Kelly sizing spec, system checks, dated night runs.</p>
-      </li>
-      <li class="a-cy">
-        <span class="datum">12 June 2026</span>
-        <h3>The app contract</h3>
-        <p>Summary endpoint, MCP server, single sign-on, settings module.</p>
-      </li>
-      <li class="a-vio">
-        <span class="datum">3–11 July 2026</span>
-        <h3>Agent direction, export contract, chronicle core</h3>
-        <p>Autonomy ladder T0–T3 with an emergency stop, the single app as a sellable
-          bundle, a chronicle kernel with its own audit core.</p>
-      </li>
-      <li class="a-green">
-        <span class="datum">23 July &#183; 6 August 2026</span>
-        <h3>Published, then curated down</h3>
-        <p>966 files of code as one commit — cut back on 6 August to 38 documents.</p>
-      </li>
-    </ol>
-    <div class="knoepfe">
-      <a class="knopf" href="/journey/">The full timeline <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<div class="band">
-  <div class="wrap">
-    <div class="hinweis balken">
-      <p><b>Independent project — incorporation ahead.</b>
-        I am opening early conversations with partners and investors.</p>
-      <a class="knopf" href="/vision/">From project to company <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-  </div>
-</div>
