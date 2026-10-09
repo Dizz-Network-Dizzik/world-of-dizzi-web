@@ -2100,3 +2100,15 @@ turned
 twin
 watches
 wording
+
+# 2026-10-09 — Use-Case-Block (/apps/, /de/) und In-short-Kästen (journey, numbers, system, method, apps) (jedes Wort vor der Aufnahme gelesen)
+breaking
+case
+filings
+happen
+picked
+plans
+prepare
+sale
+sorted
+yes
