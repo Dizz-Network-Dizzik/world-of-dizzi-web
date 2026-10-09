@@ -797,8 +797,6 @@ def ziele(extra: list[str]) -> dict[str, list]:
         print("dist/ is missing - run python bake.py first.", file=sys.stderr)
         raise SystemExit(2)
     for p in sorted(DIST.rglob("*.html")):
-        if "karte" in p.relative_to(DIST).parts:
-            continue    # byte-identical copy of the public system map, never edited here
         if p.relative_to(DIST).parts[:2] == ("dizzcube", "play"):
             continue    # the game, copied in byte for byte, never edited here - added 09.10.2026
         alle["dist/" + p.relative_to(DIST).as_posix()] = html_text(p)

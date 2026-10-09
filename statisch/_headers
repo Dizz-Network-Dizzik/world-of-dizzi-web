@@ -8,22 +8,11 @@
   Cross-Origin-Opener-Policy: same-origin
 
 # The pages this site writes ship no JavaScript at all, so `default-src 'none'`
-# already closes script execution and no script-src line is needed. Two pages
-# are copied in instead of written here - the system map and the game - and
-# each brings its own script; each has its own block below, scoped to its own
-# path and to nowhere else.
-
-/karte/*
-  Content-Security-Policy: default-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:*; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  X-Frame-Options: DENY
-
-# The system map is a byte-identical copy of _netzwerk/SYSTEM_KARTE.html from the
-# public repository. It is self-contained but carries inline style and script,
-# so the relaxation is scoped to this one path and nowhere else. Its optional
-# health watch probes http://127.0.0.1:8200 and falls back to the offline view
-# when nothing answers - which, on a public host, is always.
+# already closes script execution and no script-src line is needed. One page
+# is copied in instead of written here - the game - and it brings its own
+# script; it has its own block below, scoped to its own path and to nowhere
+# else. Until 10.10.2026 the large system map was a second such page; it is no
+# longer published, and its block left with it.
 
 /dizzcube/play/*
   Content-Security-Policy: default-src 'none'; script-src 'sha256-8ZrnzY1bvQZPtS1XJaay591NKjBi7oG8P70xRgtbMRM='; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

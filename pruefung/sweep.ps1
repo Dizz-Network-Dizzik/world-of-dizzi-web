@@ -83,23 +83,12 @@ if (-not $patterns.Count) {
   exit 2
 }
 
-# One exception is safe to name here, because it names nothing: the copied
-# system map is public in the other repository already. Every other exception
-# quotes a term and therefore lives with the terms, in the private list.
-#
-# Until 27.07.2026 this exception said the copy was byte-identical to
-# _netzwerk/SYSTEM_KARTE.html and that editing it was forbidden. The map had to
-# be rebuilt for phones on that day, so neither sentence is true any more, and a
-# reason that has stopped being true is worse than no reason: it is the sentence
-# nobody re-reads. What holds now is narrower and machine-checkable - the copy
-# differs from its source at exactly one known set of lines and nowhere else,
-# proved on every mirror run. See "The system map" in README.md.
-$exceptions += @{
-  pattern = '*'
-  path    = '*\karte\*'
-  match   = '*'
-  why     = 'mirrored from _netzwerk/SYSTEM_KARTE.html in dizz-network; never edited here, and the difference to its source is proved line for line on every mirror run. The vendor names it contains are not a leak this gate can close: the same names stand in the public showcase repository the map is copied from - measured 26.07.2026, whole-word, across its whole history: 22 files carry one, 15 another, in engine code, research notes and the MCP gateway. Scrubbing the copy here would hide nothing and would only make the two versions differ'
-}
+# Until 10.10.2026 one exception stood here that named nothing: the copied
+# system map, whose terms already stood in the public repository it was copied
+# from. The map left the website and this repository that day, so the
+# exception went with it - an exception for a file that is gone is an
+# allowlist entry waiting for the wrong file. Every other exception quotes a
+# term and therefore lives with the terms, in the private list.
 
 # This list is an allowlist, and an allowlist is a promise that nothing lands
 # outside it. The code snapshot did exactly that: 966 files moved into this

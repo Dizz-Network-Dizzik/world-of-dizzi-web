@@ -1,10 +1,11 @@
-<!-- The small map. /karte/ is one self-contained page of 181,002 bytes, drawn
-     for a desktop screen; on a phone it has never worked. This page is what a
-     narrow screen gets instead: 15,206 bytes of markup, a twelfth of it, which
-     is why the lede may say "a tenth of the load" and still understate the
-     saving. bake.py's check_mini_karte() holds the two together on every build,
-     so the small one cannot quietly fall behind the large one. Nothing here is
-     generated - it is written by hand, which is exactly why it needs a check. -->
+<!-- The system map of this site, written by hand. Until 10.10.2026 it stood
+     beside a large map, one self-contained page of 181,002 bytes drawn for a
+     desktop screen that never worked on a phone; that page is no longer
+     published, and this one is the map on every screen, at about a tenth of the
+     load. bake.py's check_mini_karte() holds it against the large map, read
+     where it is authored, outside this repository, on every build, so the small
+     one cannot quietly fall behind the large one. Nothing here is generated - it
+     is written by hand, which is exactly why it needs a check. -->
 <section class="hero klein">
   <div class="wrap">
     <p class="strich" role="presentation"></p>
@@ -12,9 +13,6 @@
     <h1>Das System auf einen Blick</h1>
     <p class="lede">Die große Systemkarte, destilliert für die Hand — dieselbe
       Wahrheit, ein Zehntel der Last.</p>
-    <div class="knoepfe">
-      <a class="knopf prim" href="/karte/">Die große Karte in voller Tiefe <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
   </div>
 </section>
 
@@ -174,12 +172,7 @@
 
 <section>
   <div class="wrap">
-    <div class="hinweis balken">
-      <p><b>Die ganze Karte gibt es weiterhin.</b> Sie bringt eigene Ebenen,
-        Verträge und eine Suche mit — und sie will einen breiten Bildschirm.</p>
-      <a class="knopf" href="/karte/">Die große Karte in voller Tiefe <span class="pfeil" aria-hidden="true">&#8594;</span></a>
-    </div>
-    <p class="notiz">Diese Mini-Karte wird parallel zur großen Karte gepflegt; ein
-      Bau-Check vergleicht beide bei jedem Backen. Stand: August 2026.</p>
+    <p class="notiz">Diese Karte wird parallel zur großen Systemkarte gepflegt, die im
+      Haus bleibt; ein Bau-Check vergleicht beide bei jedem Backen. Stand: August 2026.</p>
   </div>
 </section>

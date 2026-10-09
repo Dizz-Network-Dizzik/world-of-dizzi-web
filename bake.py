@@ -16,8 +16,9 @@ snapshot in snapshot/ and checks the two figures the README states about the
 built site - its first load in bytes and how many source links there are -
 against the files actually produced. A number nobody measures goes stale
 without anybody noticing; both of these already did once. The same run also
-holds the hand-written small map, seiten/mini-karte.html, against the copied
-system map it stands in for on a phone - see check_mini_karte(). And it holds
+holds the hand-written small map, seiten/mini-karte.html - since 10.10.2026 the
+one system map this site publishes - against the large map it distils, which is
+read from outside this repository - see check_mini_karte(). And it holds
 every page it has just built against the rules for in-app browsers - the
 WebViews inside Instagram and its kind - see check_webview(). And it refuses
 any half-merged text: a git conflict marker in a source, in a word list, in the
@@ -164,8 +165,9 @@ PAGES: list[dict] = [
     # the site. Two text pages, one per language, that say what the game is and
     # how it is played; neither carries a script. The game itself is no entry of
     # this list: it is one self-contained file under statisch/dizzcube/play/,
-    # built outside this repository and copied in verbatim like the system map -
-    # the second of the two pages on this site that bring a script of their own.
+    # built outside this repository and copied in verbatim - since 10.10.2026,
+    # when the large system map left the site, the one page here that brings a
+    # script of its own.
     dict(
         src="dizzcube.html", out="dizzcube/index.html", path="/dizzcube/", lang="en",
         title="DizzCube — a game from this house | the world of dizzi",
@@ -337,7 +339,6 @@ T = {
         NAVLABEL="Main",
         MENU="Menu",
         MAP="System map",
-        MAPMINI="Mini map",
         LANGLINK='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch</a>',
         # A page without a twin says where the switch really leads: the front door.
         LANGLINK_START='<a class="nav-lang" href="/de/" lang="de" hreflang="de">Deutsch · Startseite</a>',
@@ -360,7 +361,6 @@ T = {
         NAVLABEL="Haupt",
         MENU="Menü",
         MAP="System-Karte",
-        MAPMINI="Mini-Karte",
         LANGLINK='<a class="nav-lang" href="/" lang="en" hreflang="en">English</a>',
         LANGLINK_START='<a class="nav-lang" href="/" lang="en" hreflang="en">English · home page</a>',
         HOME="/de/",
@@ -450,22 +450,16 @@ def nav_html(page: dict) -> str:
         cur = ' aria-current="page"' if hier else ""
         hl = f' hreflang="{sp[ziel]}"' if sp.get(ziel, lang) != lang else ""
         items.append(f'<li><a href="{ziel}"{cur}{hl}>{label}</a></li>')
-    # One entry, two targets. The map at /karte/ is a single heavy page drawn
-    # for a wide screen; /mini-karte/ is the same system distilled for a phone.
-    # Which of the two is in the document flow is decided by one CSS pair -
-    # .nur-breit / .nur-schmal - and by nothing else: no script, no redirect,
-    # no guess about the device. Both <li> are always in the markup, so a
-    # crawler and a printout see both.
+    # One entry, one target (10.10.2026). /mini-karte/ is the system map this
+    # site publishes, on every screen; the large map it is distilled from left
+    # the site that day. Until then a CSS pair - .nur-breit / .nur-schmal - sent
+    # a wide screen to the large map and a narrow one to the small; with one map
+    # there is nothing left to choose.
     hl_de = T[lang]["HL_DE"]
-    cur_k = ' aria-current="page"' if page["path"] == "/karte/" else ""
-    cur_m = ' aria-current="page"' if page["path"] == "/mini-karte/" else ""
+    cur = ' aria-current="page"' if page["path"] == "/mini-karte/" else ""
     items.append(
-        f'<li class="nur-breit"><a class="nav-karte" href="/karte/"{cur_k}{hl_de}>'
+        f'<li><a class="nav-karte" href="/mini-karte/"{cur}{hl_de}>'
         f'{T[lang]["MAP"]}</a></li>'
-    )
-    items.append(
-        f'<li class="nur-schmal"><a class="nav-karte" href="/mini-karte/"{cur_m}{hl_de}>'
-        f'{T[lang]["MAPMINI"]}</a></li>'
     )
     _ = idx, en, de
     return "\n        ".join(items)
@@ -574,8 +568,9 @@ def strip_kommentare(doc: str, quelle: str) -> str:
     remember this, so the delivery drops all of them.
 
     Only the pages this file assembles come through here. The verbatim copies
-    out of statisch/ do not: /karte/ is a mirror of another repository and has
-    to stay byte for byte what that repository says. Nothing outside a
+    out of statisch/ do not: the game under dizzcube/play/ is built outside this
+    repository and has to stay byte for byte what was built - the hash of its
+    one script stands in _headers. Nothing outside a
     <!-- ... --> pair is touched either - the JSON-LD block, the <pre> code
     samples and every attribute come out unchanged.
 
@@ -673,12 +668,8 @@ def sitemap() -> str:
             f'  <url>\n    <loc>{HOST}{page["path"]}</loc>{alt}\n'
             f"    <priority>{prio}</priority>\n  </url>"
         )
-    rows.append(
-        f'  <url>\n    <loc>{HOST}/karte/</loc>\n'
-        f"    <priority>0.8</priority>\n  </url>"
-    )
-    # The game is a copied file like the map and no entry of PAGES, so it is
-    # listed the same way: by hand, here (09.10.2026).
+    # The game is a copied file and no entry of PAGES, so it is listed by hand,
+    # here (09.10.2026).
     rows.append(
         f'  <url>\n    <loc>{HOST}/dizzcube/play/</loc>\n'
         f"    <priority>0.8</priority>\n  </url>"
@@ -707,6 +698,7 @@ def llms() -> str:
 ## Start here
 - [The system]({HOST}/system/): architecture, the app contract, shared core library
 - [The ten applications]({HOST}/apps/): what each app does, and what is published
+- [The system map]({HOST}/mini-karte/): the whole system on one page - the ring around the core, the five layers, the ten applications and their ports - in German
 - [The method]({HOST}/method/): written laws, contracts, AI build-chat orchestration
 - [The numbers]({HOST}/numbers/): the six headline figures, each with its method
 - [Journey]({HOST}/journey/): dated milestones since June 2026
@@ -724,7 +716,6 @@ def llms() -> str:
   contracts plus one README per application. The code extract that stood here
   until 6 August 2026 is no longer part of the current tree
 - [This site's own source]({SELBST}): the build script behind the figure in every footer
-- [Interactive system map]({HOST}/karte/): self-contained, no external calls
 - [DizzCube, the game itself]({HOST}/dizzcube/play/): one self-contained file with its own script; once loaded it opens no connection and stores nothing
 
 ## Notes
@@ -781,8 +772,8 @@ def check_links(tree: dict[str, bytes]) -> list[str]:
     urls, ids = targets(tree)
     faults: list[str] = []
     for rel, data in sorted(tree.items()):
-        if not rel.endswith(".html") or rel.startswith("karte/"):
-            continue  # the map is a verbatim copy from the public repo
+        if not rel.endswith(".html"):
+            continue
         text = data.decode("utf-8")
         page_ids = set(ID_RE.findall(text))
         for raw in HREF_RE.findall(text):
@@ -811,7 +802,7 @@ def check_external(tree: dict[str, bytes]) -> list[str]:
     """No page may pull a subresource from another host. Airplane-mode proof."""
     faults = []
     for rel, data in sorted(tree.items()):
-        if not rel.endswith(".html") or rel.startswith("karte/"):
+        if not rel.endswith(".html"):
             continue
         text = data.decode("utf-8")
         refs = list(SRC_RE.findall(text))
@@ -1116,11 +1107,14 @@ def check_readme(tree: dict[str, bytes]) -> list[str]:
 # --------------------------------------------------------------------------
 # the small map has to keep up with the large one
 # --------------------------------------------------------------------------
-# statisch/karte/index.html is a mirror of another repository and is never
-# edited here. seiten/mini-karte.html says the same things by hand, in a tenth
-# of the bytes, and it is what every narrow screen is sent to instead of the
-# map. Two files that state the same facts and are maintained apart drift
-# apart; this is the machine that notices.
+# The large system map is authored in the dizz-network repository and is never
+# edited here. Since 10.10.2026 it is no longer published - not on the site and
+# not in this repository: seiten/mini-karte.html, which says the same things by
+# hand in a tenth of the bytes, is the one map the site carries. The large one
+# is read where it is authored, outside every public repository, like the
+# house's private words above (KARTE_QUELLE below), and a bake that cannot read
+# it fails instead of passing without a check. Two files that state the same
+# facts and are maintained apart drift apart; this is the machine that notices.
 #
 # The set of application ports is DERIVED from the map and never listed here.
 # A list would be wrong on the day an eleventh application arrives, and it
@@ -1140,19 +1134,27 @@ def check_readme(tree: dict[str, bytes]) -> list[str]:
 KARTE_PORT_KOPF = re.compile(r'<span class="port">:(\d{4})</span>')
 KARTE_PORT_KNOTEN = re.compile(r"pt:':(\d{4})'")
 MINI_PORT = re.compile(r":(\d{4})")
+# Where the large map is authored, next to this repository's folder - the same
+# kind of path as ESSENZ_SPERRE. Set DIZZI_SYSTEMKARTE to override it.
+KARTE_QUELLE = Path(
+    os.environ.get("DIZZI_SYSTEMKARTE")
+    or ROOT.parent / "dizz-network" / "_netzwerk" / "SYSTEM_KARTE.html"
+)
 
 
 def check_mini_karte() -> list[str]:
-    karte = STATISCH / "karte" / "index.html"
     mini = SEITEN_DIR / "mini-karte.html"
-    if not karte.exists():
-        return ["the system map statisch/karte/index.html is missing, so the "
-                "mini map cannot be checked against it"]
+    try:
+        text = KARTE_QUELLE.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as e:
+        # Fail closed, like the house's private words: a check that cannot see
+        # its source reads exactly like a pass.
+        return ["system map source outside the repository not readable - the "
+                f"mini map cannot be checked: {e}"]
     if not mini.exists():
-        return ["seiten/mini-karte.html is missing - it is where every narrow "
-                "screen is sent instead of the system map"]
+        return ["seiten/mini-karte.html is missing - it is the one system map "
+                "this site publishes"]
 
-    text = karte.read_text(encoding="utf-8")
     koepfe = set(KARTE_PORT_KOPF.findall(text))
     knoten = set(KARTE_PORT_KNOTEN.findall(text))
     if len(koepfe) < 2 or len(knoten) < 2:
@@ -1238,11 +1240,6 @@ def check_webview(tree: dict[str, bytes]) -> list[str]:
 #   dist/            the tree in file form. A plain bake writes it from the very
 #                    tree judged above; --check proves it equal to that tree in
 #                    compare(). Walking it too would only double every fault.
-#   statisch/karte/  the mirror of another repository. Unlike the WebView rules
-#                    it is NOT waived here - a marker in it would be published
-#                    like any other, and the fix is to copy the mirror again -
-#                    but it is judged as part of the tree, and naming the same
-#                    bytes twice helps nobody.
 #
 # Anything that does not decode as UTF-8 is skipped, and that is a derivation
 # rather than a guess: git does not write conflict markers into a file it
@@ -1289,7 +1286,7 @@ def merge_marker_quellen(ordner: Path | None = None) -> list[tuple[str, str]]:
     for pfad in sorted((ordner or ROOT).iterdir()):
         rel = pfad.relative_to(ROOT)
         if pfad.is_dir():
-            if rel.name in NICHT_GELESEN or rel.as_posix() == "statisch/karte":
+            if rel.name in NICHT_GELESEN:
                 continue
             quellen += merge_marker_quellen(pfad)
         elif pfad.is_file():

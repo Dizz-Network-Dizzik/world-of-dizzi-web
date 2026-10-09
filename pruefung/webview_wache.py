@@ -61,16 +61,15 @@ necessary rather than a habit:
                               page that waits for a redirect that never fires
                               looks exactly like a page that hung.
 
-statisch/karte/ and dist/karte/ are NOT checked. The system map is a mirror of
-another repository, it is never edited here, and it brings its own JavaScript -
-judging it by these rules would report faults nobody in this repository may
-fix. Every narrow screen is sent to seiten/mini-karte.html instead, and that
-one is checked like any other page.
+dist/dizzcube/play/ is NOT checked, since 09.10.2026: the game DizzCube is one
+self-contained file built outside this repository and copied in byte for byte,
+and it brings its own script - judging it by these rules would report faults
+nobody in this repository may fix. The two pages that describe it, /dizzcube/
+and /de/dizzcube/, are written here and checked here.
 
-dist/dizzcube/play/ is NOT checked either, since 09.10.2026, for the same reason:
-the game DizzCube is one self-contained file built outside this repository and
-copied in byte for byte, and it brings its own script. The two pages that
-describe it, /dizzcube/ and /de/dizzcube/, are written here and checked here.
+The large system map was excepted the same way until 10.10.2026, when it left
+the site. The one map published now is seiten/mini-karte.html, and it is
+checked like any other page.
 
     python pruefung/webview_wache.py          exit 0 clean, 1 findings, 2 nothing checked
     python pruefung/webview_wache.py <root>   check a copy of the tree instead -
@@ -361,13 +360,14 @@ def art(rel: str) -> str:
     return {".html": "html", ".css": "css"}.get(Path(rel).suffix.lower(), "")
 
 
-def ohne_karte(rel: str) -> bool:
-    # The game at dizzcube/play/ goes the way of the map - added 09.10.2026: one
-    # file built outside this repository and copied in byte for byte, with a
-    # script of its own, so these rules would report faults nobody here may fix.
-    # Its text pages /dizzcube/ and /de/dizzcube/ are read like every other page.
+def ohne_kopie(rel: str) -> bool:
+    # The game at dizzcube/play/ - added 09.10.2026: one file built outside this
+    # repository and copied in byte for byte, with a script of its own, so these
+    # rules would report faults nobody here may fix. Its text pages /dizzcube/
+    # and /de/dizzcube/ are read like every other page. Until 10.10.2026 the
+    # large system map was excepted here too; it is no longer published.
     teile = Path(rel).parts
-    return "karte" not in teile and tuple(teile[:2]) != ("dizzcube", "play")
+    return tuple(teile[:2]) != ("dizzcube", "play")
 
 
 def sammeln(wurzel: Path, mit_dist: bool = True) -> list[Quelle]:
@@ -385,7 +385,7 @@ def sammeln(wurzel: Path, mit_dist: bool = True) -> list[Quelle]:
     if mit_dist and (wurzel / "dist").is_dir():
         for pfad in sorted((wurzel / "dist").rglob("*")):
             rel = pfad.relative_to(wurzel / "dist").as_posix()
-            if pfad.is_file() and art(rel) and ohne_karte(rel):
+            if pfad.is_file() and art(rel) and ohne_kopie(rel):
                 quellen.append(Quelle(f"dist/{rel}",
                                       pfad.read_text(encoding="utf-8"), art(rel)))
     return quellen
@@ -400,7 +400,7 @@ def faults_fuer_bake(wurzel: Path, tree: dict[str, bytes]) -> list[str]:
     never show up in seiten/."""
     quellen = sammeln(wurzel, mit_dist=False)
     for rel in sorted(tree):
-        if art(rel) and ohne_karte(rel):
+        if art(rel) and ohne_kopie(rel):
             quellen.append(Quelle(f"dist/{rel}",
                                   tree[rel].decode("utf-8"), art(rel)))
     return [f"{p.kuerzel} {f.wo}: {f.was}" for p in pruefe(quellen) for f in p.funde]
@@ -424,8 +424,7 @@ def main(argv: list[str]) -> int:
 
     q_src = sum(1 for q in quellen if not q.name.startswith("dist/"))
     print(f"webview watch - {len(quellen)} files ({q_src} sources, "
-          f"{len(quellen) - q_src} baked), statisch/karte/, dist/karte/ and "
-          "dist/dizzcube/play/ excluded\n")
+          f"{len(quellen) - q_src} baked), dist/dizzcube/play/ excluded\n")
 
     punkte = pruefe(quellen)
     schlecht = 0

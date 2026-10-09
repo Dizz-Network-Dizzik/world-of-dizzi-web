@@ -6,6 +6,7 @@
 ## Start here
 - [The system](https://worldofdizzi.com/system/): architecture, the app contract, shared core library
 - [The ten applications](https://worldofdizzi.com/apps/): what each app does, and what is published
+- [The system map](https://worldofdizzi.com/mini-karte/): the whole system on one page - the ring around the core, the five layers, the ten applications and their ports - in German
 - [The method](https://worldofdizzi.com/method/): written laws, contracts, AI build-chat orchestration
 - [The numbers](https://worldofdizzi.com/numbers/): the six headline figures, each with its method
 - [Journey](https://worldofdizzi.com/journey/): dated milestones since June 2026
@@ -23,7 +24,6 @@
   contracts plus one README per application. The code extract that stood here
   until 6 August 2026 is no longer part of the current tree
 - [This site's own source](https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web): the build script behind the figure in every footer
-- [Interactive system map](https://worldofdizzi.com/karte/): self-contained, no external calls
 - [DizzCube, the game itself](https://worldofdizzi.com/dizzcube/play/): one self-contained file with its own script; once loaded it opens no connection and stores nothing
 
 ## Notes

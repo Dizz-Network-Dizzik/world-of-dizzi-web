@@ -78,17 +78,20 @@ Python baker that counts its own lines and writes the figure into the footer
 of every page — so the footer's number cannot drift away from the file it
 describes. **No JavaScript, no cookies, no trackers, no external request** —
 put the machine in airplane mode after the first load and every page still
-works. Two pages are the exception to the first of those, and both are copied
-in rather than written here: the system map at `/karte/`, which brings its own
-inline script and is the only page that talks to anything — it asks
-`127.0.0.1:8200` whether a local core is running, and shows the offline view
-when nothing answers — and the game DizzCube at `/dizzcube/play/`, one
+works. One page is the exception to the first of those, and it is copied in
+rather than written here: the game DizzCube at `/dizzcube/play/`, one
 self-contained file with a script of its own that opens no connection once
-loaded and stores nothing on the device. Total for a first visit to the start
-page: **141,079 bytes** uncompressed — 14.9 KB markup, 94.2 KB stylesheet,
+loaded and stores nothing on the device. Until 10 October 2026 the large system
+map was a second one; it is no longer published and no longer part of this
+repository, and the one map on the site is the small, hand-written one at
+`/mini-karte/`. Total for a first visit to the start
+page: **140,725 bytes** uncompressed — 14.4 KB markup, 94.3 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is a cut: on 10 October 2026 the start
-page lost 8,120 bytes on a first load. The long page gave way to a short one,
+server compresses. The latest change is a cut: on 10 October 2026 the large
+system map left the site, and 354 bytes of markup left the start page with
+it — one menu entry, one footer link and one button where there had been two of
+each. Before that, on the same day, the start page lost 8,120 bytes on a first
+load. The long page gave way to a short one,
 a band, one sentence, one button and three paths in, while 5,614 bytes of
 stylesheet joined for the cube that turns and for the three cards. Before
 that, 5,336 bytes joined the
@@ -140,9 +143,9 @@ stacked tables drop their desktop width floor instead of hiding a third of
 every sentence, anchors land with air above them, the menu arrives instead of
 appearing, taps get an answer, the primary button reads as the first step,
 and a back-to-top link closes every footer. The 3,082 before them — 2,567 of stylesheet, 515 of markup —
-are the small map: a second, hand-written map at `/mini-karte/` that stands in
-for the copied one on every screen under 769 pixels, and the CSS pair that
-decides which of the two a link points at. The 10,995 before them — 6,339 of
+are the small map: a second, hand-written map at `/mini-karte/` that stood in
+for the copied one on every screen under 769 pixels until 10 October 2026, and
+the CSS pair that decided which of the two a link pointed at. The 10,995 before them — 6,339 of
 stylesheet, 4,656 of markup — are the grove on the two front pages: three fronds, a singing bowl,
 two halves in balance, a band of water and the deep reveals, all of it CSS
 and SVG, none of it script. The last 272 bytes are the sentences the 6 August curation
@@ -341,7 +344,7 @@ is measured here, so the file behind it has to be reachable.
 |---|---|
 | Build | `bake.py` — Python standard library only, no node, no npm |
 | Output | `dist/`, committed; Netlify publishes it with **no cloud build** |
-| Design | palette and typography taken from the system map in `statisch/karte/` |
+| Design | palette and typography taken from the large system map, which is no longer part of this repository |
 | Languages | English throughout, plus German pages: the entry page at `/de/`, the German twin of the game page at `/de/dizzcube/`, the two legal pages, and the house pages `/balance/`, `/schwelle/`, `/deckel/`, `/deckel/kinder/` and `/dank/` |
 | Hosting | Netlify free tier; `_headers` carries the CSP and the security headers |
 
@@ -436,9 +439,8 @@ social apps, which draw their own bars over the page. Cross-document view
 transitions, unguarded smooth scrolling, `target="_blank"` without
 `rel="noopener"`, `javascript:` URLs, any script that is not JSON-LD, anything
 pinned to a viewport edge while visible, `100vh` and `100dvh`, and meta refresh.
-It reads `seiten/`, `vorlagen/`, the stylesheet and `dist/`, and skips both
-copies of the system map, which is a mirror and brings its own script, and the
-game at `dist/dizzcube/play/`, for the same reason. Comments
+It reads `seiten/`, `vorlagen/`, the stylesheet and `dist/`, and skips the
+game at `dist/dizzcube/play/`, which is copied in and brings its own script. Comments
 are blanked before it matches, because the stylesheet quotes the forbidden
 declaration in the note that explains why it went: a watch that fired on its own
 explanation would be switched off within a week. `bake.py` calls it on the pages
@@ -514,8 +516,6 @@ statisch/             copied 1:1 into dist/
   stil.css            one stylesheet, tokens at the top
   schrift/            three WOFF2 subsets + both OFL licence texts
   bilder/             og.png, favicon.svg
-  karte/index.html    the system map; edited only in dizz-network and mirrored
-                      here — see "The system map" below
   dizzcube/play/      the game DizzCube, one self-contained file; built outside
                       this repository and copied in byte for byte
   _headers            CSP and security headers for Netlify
@@ -539,26 +539,22 @@ neither is a dependency of the site.
 
 ### The system map
 
-`statisch/karte/index.html` is one of two pages here that are not written here;
-the other is the game under `statisch/dizzcube/play/`. The map is authored in the
-`dizz-network` repository as `_netzwerk/SYSTEM_KARTE.html` and mirrored into
-this one. The two are the only pages carrying inline script and style — the CSP
-relaxation for each is scoped to its own path in `statisch/_headers`, `/karte/*`
-and `/dizzcube/play/*`, and to nowhere else.
+Since 10 October 2026 the one map on this site is `/mini-karte/`, written by
+hand in `seiten/mini-karte.html`. The menu, the footer and the button on both
+start pages lead there, on every screen. The large system map it is drawn
+from is no longer published and no longer part of this repository: it is
+authored in the `dizz-network` repository as `_netzwerk/SYSTEM_KARTE.html` and
+stays there. `check_mini_karte()` reads it from there on every build, derives
+the application ports from it and fails when the small map and the large one
+disagree. Like the house's private words, it is read from outside this
+repository, and a bake that cannot read it fails rather than passing without a
+check: a clone can read everything here and bake nothing, which is deliberate.
+`DIZZI_SYSTEMKARTE` points the check at another copy.
 
-The two files are **not** byte-identical, and the difference is deliberate: a
-handful of lines name internal working files and one term that does not belong
-on a public page, and the mirrored copy carries those lines rewritten. Until
-27 July 2026 the README claimed byte-identity and told the reader never to edit
-the copy; both were true only because nobody had needed to change the map yet.
-
-What actually has to hold is narrower and checkable: *the copy differs from the
-source at exactly the known set of lines, and nowhere else.* The mirror is
-therefore never made by hand — a tool reads both files as they stood at the last
-commit, derives the rewrite map from that difference, applies it to the new
-source, and then proves the resulting difference is the same set as before,
-neither larger nor smaller. Editing this copy directly still gets you nothing but
-drift; edit the source and re-run the mirror.
+The game under `statisch/dizzcube/play/` is now the only page here that is not
+written here, and the only one carrying inline script and style — the CSP
+relaxation is scoped to its own path in `statisch/_headers`, `/dizzcube/play/*`,
+and to nowhere else.
 
 ### No inline styles, on purpose
 
