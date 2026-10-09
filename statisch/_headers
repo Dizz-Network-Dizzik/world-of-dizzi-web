@@ -26,7 +26,7 @@
 # when nothing answers - which, on a public host, is always.
 
 /dizzcube/play/*
-  Content-Security-Policy: default-src 'none'; script-src 'sha256-GgUot3rpxaCdOjQfj7AAdqhiG548/1rAhwgC93I7H1U='; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'sha256-8ZrnzY1bvQZPtS1XJaay591NKjBi7oG8P70xRgtbMRM='; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY

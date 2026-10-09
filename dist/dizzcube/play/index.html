@@ -973,7 +973,16 @@ function baseScale() { return Math.min(W, H) / 17.6; }
 /* on a tall phone the width rules: there the board takes ~42% of the height
    and sits lower, between the HUD and the thumb bar */
 function portrait() { return H > W * 1.25; }
-function dropCell() { return portrait() ? Math.min(H * 0.060, (W - 32) * 0.096) : Math.min(H * 0.0785, W * 0.0543); }
+/* v3.1 lane SZ (variant B): on a landscape screen taller than 500 px the drop view keeps the spawn rows (the piece rests
+   there first; their top edge sits up to 8.8 cells above the look point, 9.3 when six sides are played) SZ_TOP px below
+   the top edge (the HUD band, about 78 px, plus air) and the board SZ_BOT px above the bottom edge (the key line). Board
+   and spawn rows are centred together in that band: the board sits a little lower and stays as large as it can.
+   Portrait screens (phones) and short landscape screens keep their numbers. */
+var SZ_TOP = 108, SZ_BOT = 40, SZ_DOWN = 5.7;
+function szOn() { return !portrait() && H > 500; }
+function szUp() { return SIDES > 4 ? 9.3 : 8.8; }
+function dropCell() { return portrait() ? Math.min(H * 0.060, (W - 32) * 0.096) : Math.min(H * 0.0785, W * 0.0543, szOn() ? (H - SZ_TOP - SZ_BOT) / (szUp() + SZ_DOWN) : H); }
+function szShift() { return szOn() ? (SZ_TOP + H - SZ_BOT) / 2 + (szUp() - SZ_DOWN) / 2 * dropCell() - halfH : 0; }
 function dropZoom() { return dropCell() / baseScale(); }
 
 function resize() {
@@ -996,7 +1005,7 @@ window.addEventListener("resize", resize);
 
 var centerY = 0;                               // screen y of the look point; drops a little in the portrait board view
 function setupCamera() {
-  centerY = halfH + focus * (portrait() ? H * 0.06 : 0);
+  centerY = halfH + focus * (portrait() ? H * 0.06 : szShift());
   var cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
   var cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
   var dx = cp * sy, dy = sp, dz = cp * cy;            // target -> camera
