@@ -85,12 +85,16 @@ loaded and stores nothing on the device. Until 10 October 2026 the large system
 map was a second one; it is no longer published and no longer part of this
 repository, and the one map on the site is the small, hand-written one at
 `/mini-karte/`. Total for a first visit to the start
-page: **140,725 bytes** uncompressed — 14.4 KB markup, 94.3 KB stylesheet,
+page: **149,825 bytes** uncompressed — 16.3 KB markup, 101.3 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
-server compresses. The latest change is a cut: on 10 October 2026 the large
-system map left the site, and 354 bytes of markup left the start page with
-it — one menu entry, one footer link and one button where there had been two of
-each. Before that, on the same day, the start page lost 8,120 bytes on a first
+server compresses. The latest change, on 10 October 2026, is a second pass over the start
+page: on a phone the hero decor steps back and the three paths become
+compact row cards, on a desk a row of ten application tiles and three
+figures join — 1,972 bytes of markup and 7,128 bytes of stylesheet more on a
+first load. Before that, on the same day, the large system map left the
+site, and 354 bytes of markup left the start page with it — one menu entry,
+one footer link and one button where there had been two of each. Before
+that, on the same day, the start page lost 8,120 bytes on a first
 load. The long page gave way to a short one,
 a band, one sentence, one button and three paths in, while 5,614 bytes of
 stylesheet joined for the cube that turns and for the three cards. Before

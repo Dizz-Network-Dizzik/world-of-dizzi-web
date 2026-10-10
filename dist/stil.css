@@ -1693,3 +1693,128 @@ a,button,summary,label{-webkit-tap-highlight-color:transparent}
 @media print{
   .wl-koerper,.wl-wuerfel{animation:none!important}
 }
+
+/* ---- WL2 (WA 213, 10.10.2026): Startseite zweite Runde - Handy kompakt, Tisch reicher; Klassen wl- ---- */
+/* ==========================================================================
+   Lane WL2 (10.10.2026) - the start page, second pass: small on a phone,
+   a little richer on a desk. A proposal to append to statisch/stil.css after
+   the WL block; nothing above it is changed, every selector here carries a
+   wl- class. The two start pages carry .wl-start on the hero and .wl-welle on
+   the water band, so every rule that reaches into the grove or the band is
+   held to those two pages by construction.
+
+   Same three rules as the rest of the sheet: no script, no image file, no
+   inline style. Text keeps --tx, --tx2 and --cy, the colours kontrast.py
+   measures; an application's accent lives on an edge and a dot, never under
+   or in text. Every animation sits inside prefers-reduced-motion:
+   no-preference (the WL block already holds the cube's).
+   ========================================================================== */
+
+/* --- every word on the start page at 15 pixels or more --------------------
+   Measured: the band's eyebrow stood at 12px and the three buttons at 14px.
+   Held to the two start pages through .wl-start; the rest of the site keeps
+   its buttons as they are.                                                  */
+.wl-start .knopf{font-size:15px}
+.wl-start .band-spiel .bs-vor{font-size:15px;letter-spacing:.06em}
+
+/* --- the row of ten: one tile per application, in its accent ------------- */
+h2.wl-zeile-t{margin:40px 0 14px;font-size:clamp(17px,1.8vw,20px);
+  letter-spacing:.02em;color:var(--tx)}
+.wl-apps{display:grid;gap:10px;margin:0;padding:0;list-style:none;
+  grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr))}
+.wl-apps li{margin:0;min-width:0}
+.wl-app{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
+  justify-content:space-between;gap:2px 10px;min-height:48px;height:100%;
+  padding:12px 14px 12px 26px;border:1px solid var(--line);
+  border-left:3px solid var(--akz,var(--cy));border-radius:var(--rad-s);
+  background:var(--flaeche);color:var(--tx);text-decoration:none;
+  box-shadow:var(--schatten);
+  transition:background var(--ueb),border-color var(--ueb),translate var(--ueb),
+    box-shadow var(--ueb)}
+.wl-app::before{content:"";position:absolute;left:11px;top:50%;width:7px;height:7px;
+  margin-top:-3.5px;border-radius:50%;background:var(--akz,var(--cy));
+  box-shadow:0 0 8px -1px var(--akz,var(--cy))}
+.wl-app:hover,.wl-app:focus-visible{background:var(--flaeche-h);color:var(--tx);
+  border-color:var(--line2);border-left-color:var(--akz,var(--cy));translate:0 -2px;
+  box-shadow:var(--schatten-h),0 14px 30px -22px var(--akz,var(--cy))}
+.wl-app-n{font-family:var(--text);font-weight:600;font-size:15px;line-height:1.3}
+.wl-app-p{font-family:var(--mono);font-size:15px;line-height:1.3;color:var(--tx2);
+  font-variant-numeric:tabular-nums}
+
+/* --- three figures, each one link away from its method on /numbers/ ------ */
+.wl-zahlen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+  margin:0;padding:0;list-style:none}
+.wl-zahlen li{margin:0;min-width:0}
+.wl-zahl{display:flex;flex-direction:column;gap:6px;height:100%;padding:14px 4px 4px;
+  border-top:1px solid var(--line2);color:var(--tx);text-decoration:none}
+.wl-zahl b{font-family:var(--display);font-weight:800;line-height:1.05;
+  font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;color:var(--tx);
+  font-variant-numeric:tabular-nums}
+.wl-zahl span{font-size:15px;line-height:1.4;color:var(--tx2);transition:color var(--ueb)}
+.wl-zahl:hover span,.wl-zahl:focus-visible span{color:var(--tx)}
+
+/* --- a desk: the cube a little larger, the ten in two rows of five -------- */
+@media (min-width:900px){
+  .band-spiel>.wl-wuerfel{--wl-k:110px;margin:20px 24px 20px 16px}
+  .wl-apps{grid-template-columns:repeat(5,minmax(0,1fr))}
+  h2.wl-zeile-t{margin-top:48px}
+}
+
+/* --- a phone: the same words, drawn small ---------------------------------
+   Measured at 375 x 812 before this block: the hero alone ran to 779 pixels,
+   three quarters of it bowl, fronds and a three-line headline, and the three
+   ways took 785 pixels more. Here the grove keeps only the small balance mark,
+   the band tightens round its 42-pixel cube, the headline sets in two lines,
+   the water halves and each way becomes one row: icon, words, arrow.       */
+@media (max-width:560px){
+  .wl-start{padding-block:22px 30px}
+  .wl-start .strich{margin-bottom:12px}
+  .wl-start .zweig-a,.wl-start .zweig-b,.wl-start .zweig-c,
+  .wl-start .schale-lage{display:none}
+  .wl-start .einklang-lage{right:10px;top:12px;width:28px;opacity:.4}
+  .wl-start .band-spiel{margin-top:12px;padding:14px 14px 16px 18px;column-gap:10px}
+  .wl-start .band-spiel .bs-titel{margin-bottom:8px}
+  .wl-start .band-spiel .bs-vor{margin-bottom:4px}
+  .wl-start .band-spiel .bs-name{font-size:28px}
+  .wl-start .band-spiel>.wl-wuerfel{margin:8px 9px}
+  .wl-start .band-spiel>p{font-size:15px;line-height:1.5}
+  .wl-start .band-spiel .knoepfe{margin-top:12px;gap:10px}
+  .wl-start h1{margin-top:22px;max-width:none;font-size:clamp(19px,5.2vw,28px);
+    letter-spacing:-.02em}
+  .wl-start .lede{margin:10px 0 0;font-size:16px;line-height:1.5}
+  .wl-start .wrap>.knoepfe{margin-top:14px}
+  .wl-welle{height:22px;margin-top:-4px}
+
+  .wl-ziele{padding-top:26px}
+  /* the section heading stays below the headline in size, not above it */
+  .wl-ziele h2:first-child{margin-bottom:12px;font-size:18px}
+  .wl-wege{gap:10px;margin-top:0}
+  .wl-weg{display:grid;grid-template-columns:28px minmax(0,1fr) 22px;column-gap:12px;
+    align-items:center;padding:12px 10px 12px 14px;box-shadow:var(--schatten)}
+  .wl-weg::before{height:2px;opacity:.6}
+  .wl-weg .wl-ikon{grid-column:1;grid-row:1 / span 2;width:28px;height:28px;
+    padding:5px;margin:0;border-radius:8px;box-shadow:none}
+  .wl-weg h3{grid-column:2;grid-row:1;margin:0 0 2px;font-size:17px}
+  .wl-weg p{grid-column:2;grid-row:2;margin:0;font-size:15px;line-height:1.45}
+  .wl-weg .wl-los{grid-column:3;grid-row:1 / span 2;justify-content:flex-end;
+    min-height:44px;font-size:18px}
+  /* the label stays the link's name for every reader that reads; on a phone
+     only the arrow is drawn, and the whole row is the target               */
+  .wl-los-t{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap}
+
+  h2.wl-zeile-t{margin:26px 0 10px;font-size:17px}
+  /* the ten scroll sideways inside their own row; the page itself does not */
+  .wl-apps{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px}
+  .wl-apps li{flex:none}
+  .wl-app{min-height:44px;padding:9px 12px 9px 24px;gap:8px;flex-wrap:nowrap}
+  .wl-app::before{left:10px}
+  .wl-zahlen{grid-template-columns:minmax(0,1fr);gap:0}
+  .wl-zahl{flex-direction:row;align-items:baseline;gap:12px;padding:8px 2px}
+  .wl-zahl b{flex:none;min-width:64px;font-size:24px}
+}
+
+/* stillness under reduced motion: a tile does not rise */
+@media (prefers-reduced-motion:reduce){
+  .wl-app:hover,.wl-app:focus-visible{translate:none}
+}
