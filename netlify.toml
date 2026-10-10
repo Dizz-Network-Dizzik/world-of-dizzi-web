@@ -11,3 +11,11 @@
 [build.environment]
   # nothing to install; kept explicit so a future contributor sees the intent
   NETLIFY_USE_YARN = "false"
+
+# A missing German address answers with the German 404 page (10.10.2026). A file
+# that exists is always served first, so this rule only answers paths under /de/
+# that do not exist; every other missing path keeps /404.html as before.
+[[redirects]]
+  from = "/de/*"
+  to = "/de/404.html"
+  status = 404

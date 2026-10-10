@@ -120,6 +120,7 @@ PAGES: list[dict] = [
         desc="How ten applications behave like one: a headless core on :8200, "
              "the App Contract, the shared appkit library and read-only "
              "cross-connections.",
+        alt="/de/system/",
     ),
     dict(
         src="apps.html", out="apps/index.html", path="/apps/", lang="en",
@@ -127,12 +128,14 @@ PAGES: list[dict] = [
         desc="Core, money, communication, creating, memory, management, news, "
              "health, admin and a trading fleet — each on its own port, each "
              "with a source link.",
+        alt="/de/apps/",
     ),
     dict(
         src="numbers.html", out="numbers/index.html", path="/numbers/", lang="en",
         title="How the numbers were counted | the world of dizzi",
         desc="The six figures this site leads with — how each was counted, when it was "
              "measured, and which one cannot be checked publicly.",
+        alt="/de/zahlen/",
     ),
     dict(
         src="method.html", out="method/index.html", path="/method/", lang="en",
@@ -140,6 +143,7 @@ PAGES: list[dict] = [
         desc="Written law before code, contracts before features, research "
              "before decisions, an orchestra of AI build chats and human gates "
              "on everything irreversible.",
+        alt="/de/methode/",
     ),
     dict(
         src="journey.html", out="journey/index.html", path="/journey/", lang="en",
@@ -147,6 +151,7 @@ PAGES: list[dict] = [
         desc="From the first trading validation nights in June 2026 to the "
              "public extract of 23 July and the site in October 2026 — every "
              "node dated.",
+        alt="/de/chronik/",
     ),
     dict(
         src="vision.html", out="vision/index.html", path="/vision/", lang="en",
@@ -154,11 +159,13 @@ PAGES: list[dict] = [
         desc="Where the project stands, why the contract architecture scales, "
              "and what I am opening: early conversations with partners and "
              "investors.",
+        alt="/de/vision/",
     ),
     dict(
         src="about.html", out="about/index.html", path="/about/", lang="en",
         title="About & contact | the world of dizzi",
         desc="Who builds the world of dizzi, and how to get in touch.",
+        alt="/de/kontakt/",
     ),
     # DizzCube, a game from this house - on the word of the hand that holds the
     # house (08.10.2026; the name on 09.10.2026): visible from the very start of
@@ -270,6 +277,7 @@ PAGES: list[dict] = [
         # The same thanks stand in English in README.md. Text only.
         desc="Ein Dank in stolzem Maß: an die künstliche Intelligenz, mit der dieses Haus "
              "gebaut wird, und an die Menschen, die sie möglich gemacht haben. Ohne Namen.",
+        alt="/thanks/",
     ),
     dict(
         src="mini-karte.html", out="mini-karte/index.html", path="/mini-karte/",
@@ -277,12 +285,91 @@ PAGES: list[dict] = [
         title="Die Karte, klein | the world of dizzi",
         desc="Die große Systemkarte, destilliert für die Hand: der Netz-Ring, die "
              "fünf Schichten und die zehn Anwendungen mit ihren Ports.",
+        alt="/system-map/",
+    ),
+    # Twins, 10.10.2026, on the word of the hand that holds the house: choose the
+    # language once, and every page is reached in it. Each pair names the other
+    # in alt; zwilling() leads every menu, footer and language switch from that.
+    dict(
+        src="de-kontakt.html", out="de/kontakt/index.html", path="/de/kontakt/", lang="de",
+        title="Über mich & Kontakt | the world of dizzi",
+        desc="Wer the world of dizzi baut und wie man ihn erreicht.",
+        alt="/about/",
+    ),
+    dict(
+        src="de-vision.html", out="de/vision/index.html", path="/de/vision/", lang="de",
+        title="Vom Projekt zum Unternehmen | the world of dizzi",
+        desc="Wo das Projekt steht, warum die Vertrags-Architektur wächst und was ich "
+             "öffne: frühe Gespräche mit Partnern und Investoren.",
+        alt="/vision/",
+    ),
+    dict(
+        src="system-map.html", out="system-map/index.html", path="/system-map/", lang="en",
+        title="The map, small | the world of dizzi",
+        desc="The large system map, distilled for the hand: the network ring, the five "
+             "layers and the ten applications with their ports.",
+        alt="/mini-karte/",
+    ),
+    dict(
+        src="de-system.html", out="de/system/index.html", path="/de/system/", lang="de",
+        title="Architektur & der App-Vertrag | the world of dizzi",
+        desc="Wie zehn Anwendungen wie eine wirken: ein Kern auf :8200, der App-Vertrag, "
+             "die gemeinsame Bibliothek appkit und Querverbindungen, die nur lesen.",
+        alt="/system/",
+    ),
+    dict(
+        src="thanks.html", out="thanks/index.html", path="/thanks/", lang="en",
+        title="Thanks | the world of dizzi",
+        desc="Thanks in a proud measure: to the artificial intelligence this house is "
+             "built with, and to the people who made it possible. Without a name.",
+        alt="/dank/",
+    ),
+    dict(
+        src="de-chronik.html", out="de/chronik/index.html", path="/de/chronik/", lang="de",
+        title="Chronik — datierte Meilensteine | the world of dizzi",
+        desc="Von den ersten Nächten der Trading-Validierung im Juni 2026 bis zum "
+             "öffentlichen Auszug vom 23. Juli und zur Website im Oktober 2026 – jeder "
+             "Punkt datiert.",
+        alt="/journey/",
+    ),
+    # LEGAL TEXT, a translation: the German Impressum is authoritative and says so
+    # on this page too. The postal address stands in one place only - the
+    # authoritative version - and the translation links it.
+    dict(
+        src="legal-notice.html", out="legal-notice/index.html", path="/legal-notice/",
+        lang="en", title="Legal notice | the world of dizzi",
+        desc="Provider identification under section 5 DDG - an English translation; "
+             "the German version is authoritative.",
+        noindex=True, nomap=True,
+        alt="/impressum/",
+    ),
+    dict(
+        src="de-methode.html", out="de/methode/index.html", path="/de/methode/", lang="de",
+        title="Die Methode — wie das hier gebaut wird | the world of dizzi",
+        desc="Gesetz vor Code, Verträge vor Funktionen, Recherche vor Entscheidungen, "
+             "Bau-Chats der KI im Orchester und ein Mensch vor allem Unumkehrbaren.",
+        alt="/method/",
+    ),
+    dict(
+        src="de-apps.html", out="de/apps/index.html", path="/de/apps/", lang="de",
+        title="Die zehn Anwendungen | the world of dizzi",
+        desc="Kern, Geld, Kommunikation, Medien, Wissen, Agenten, Nachrichten, Gesundheit, "
+             "Verwaltung und eine Trading-Flotte – jede auf eigenem Port.",
+        alt="/apps/",
+    ),
+    dict(
+        src="de-zahlen.html", out="de/zahlen/index.html", path="/de/zahlen/", lang="de",
+        title="Wie die Zahlen gezählt wurden | the world of dizzi",
+        desc="Die sechs Zahlen, mit denen diese Website beginnt – wie jede gezählt wurde, "
+             "wann sie gemessen wurde und welche sich öffentlich nicht prüfen lässt.",
+        alt="/numbers/",
     ),
     dict(
         src="impressum.html", out="impressum/index.html", path="/impressum/",
         lang="de", title="Impressum | the world of dizzi",
         desc="Anbieterkennzeichnung nach § 5 DDG.",
         noindex=True, nomap=True,
+        alt="/legal-notice/",
     ),
     dict(
         src="datenschutz.html", out="datenschutz/index.html", path="/datenschutz/",
@@ -295,6 +382,14 @@ PAGES: list[dict] = [
         title="404 — not in the registry | the world of dizzi",
         desc="This panel is not in the registry.",
         noindex=True, nomap=True,
+        alt="/de/404.html",
+    ),
+    dict(
+        src="de-404.html", out="de/404.html", path="/de/404.html", lang="de",
+        title="404 — nicht in der Registry | the world of dizzi",
+        desc="Dieses Panel steht nicht in der Registry.",
+        noindex=True, nomap=True,
+        alt="/404.html",
     ),
 ]
 
@@ -333,6 +428,45 @@ NAV = [
     ("/about/", "About", "Kontakt"),
 ]
 
+# --------------------------------------------------------------------------
+# one language per visit (10.10.2026)
+# --------------------------------------------------------------------------
+# On the word of the hand that holds the house: set the language once, and
+# every page is reached in that language - no switching back and forth while
+# clicking through, on the phone least of all. Every link the chrome writes -
+# the menu, which on a phone is the same element folded away, the footer and
+# the language switch - goes through zwilling() below. It leads to the page in
+# the reader's language whenever that page exists, and it derives that from
+# the alt pairs in PAGES, never from a list kept here: a twin added to PAGES is
+# reached from every menu with no other edit. Where no twin exists yet, the
+# link still leaves the language, and then it says so - hreflang for the
+# machine and a visible "(EN)" or "(DE)" for the reader. Never a silent jump.
+
+SPRACHE = {p["path"]: p["lang"] for p in PAGES}
+ALT = {p["path"]: p["alt"] for p in PAGES if p.get("alt")}
+SPRUNG_MARKE = {"en": " (EN)", "de": " (DE)"}
+# The legal pages are authoritative in German. The footer leads to that version on
+# every page, one click away as before; a translation, where one exists, is
+# reached through the language switch of the legal page itself.
+BINDEND = {"/impressum/", "/datenschutz/"}
+
+
+def zwilling(ziel: str, lang: str) -> tuple[str, str, str]:
+    """(href, hreflang attribute, visible mark) for a link to `ziel` on a page
+    in `lang`. A fragment travels with the link: twins keep the same ids."""
+    pfad, raute, frag = ziel.partition("#")
+    zl = SPRACHE.get(pfad, lang)
+    if zl != lang and pfad not in BINDEND and SPRACHE.get(ALT.get(pfad, "")) == lang:
+        pfad, zl = ALT[pfad], lang
+    if zl == lang:
+        return pfad + raute + frag, "", ""
+    return pfad + raute + frag, f' hreflang="{zl}"', SPRUNG_MARKE[zl]
+
+
+def verweis(ziel: str, lang: str, text: str) -> str:
+    href, hl, marke = zwilling(ziel, lang)
+    return f'<a href="{href}"{hl}>{text}{marke}</a>'
+
 T = {
     "en": dict(
         SKIP="Skip to content",
@@ -353,8 +487,10 @@ T = {
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Privacy",
         FOOT_TOP="Back to top",
-        FOOT_BUILT=f'Built with a <a href="/numbers/#baecker">{BAKER_ZEILEN}-line '
-                   "Python baker</a>. No cookies, no trackers, no external requests.",
+        # The link inside is written per page by verweis(), like every link of
+        # the chrome, so a German twin of /numbers/ is reached the day it exists.
+        FOOT_BUILT="Built with a {{BAECKER}}. No cookies, no trackers, no external requests.",
+        BAECKER_TEXT=f"{BAKER_ZEILEN}-line Python baker",
     ),
     "de": dict(
         SKIP="Zum Inhalt springen",
@@ -375,9 +511,9 @@ T = {
         IMPRESSUM="Impressum",
         DATENSCHUTZ="Datenschutz",
         FOOT_TOP="Nach oben",
-        FOOT_BUILT=f'Gebacken von einem <a href="/numbers/#baecker" hreflang="en">{BAKER_ZEILEN}-'
-                   "Zeilen-Python-Skript</a>. Keine Cookies, keine Tracker, keine "
+        FOOT_BUILT="Gebacken von einem {{BAECKER}}. Keine Cookies, keine Tracker, keine "
                    "externen Aufrufe.",
+        BAECKER_TEXT=f"{BAKER_ZEILEN}-Zeilen-Python-Skript",
     ),
 }
 
@@ -434,34 +570,30 @@ def fill(tpl: str, values: dict) -> str:
 
 def nav_html(page: dict) -> str:
     lang = page["lang"]
-    idx = 2 if lang == "de" else 1
-    # The menu names the English path. On a German page an entry whose German
-    # twin exists leads to that twin; a link that still changes the language
-    # says so with hreflang, so the reader is not surprised by the switch.
-    zw = {p["alt"]: p["path"] for p in PAGES if p.get("alt") and p["lang"] == lang}
-    sp = {p["path"]: p["lang"] for p in PAGES}
+    # The menu names the path of the original page. zwilling() leads every entry
+    # to the page in this page's language where one exists; an entry that still
+    # changes the language says so, with hreflang and a visible mark. The phone
+    # menu is this same list, folded behind the menu button - one place for both.
     items = []
     for path, en, de in NAV:
         label = de if lang == "de" else en
-        ziel = zw.get(path, path)
+        ziel, hl, marke = zwilling(path, lang)
         # A page and its other-language twin are the same entry in the menu, so
-        # the German twin marks the English entry rather than marking nothing.
-        hier = page["path"] in (path, ziel)
+        # the twin marks the entry rather than marking nothing.
+        hier = page["path"] in (path, ziel.partition("#")[0])
         cur = ' aria-current="page"' if hier else ""
-        hl = f' hreflang="{sp[ziel]}"' if sp.get(ziel, lang) != lang else ""
-        items.append(f'<li><a href="{ziel}"{cur}{hl}>{label}</a></li>')
+        items.append(f'<li><a href="{ziel}"{cur}{hl}>{label}{marke}</a></li>')
     # One entry, one target (10.10.2026). /mini-karte/ is the system map this
     # site publishes, on every screen; the large map it is distilled from left
     # the site that day. Until then a CSS pair - .nur-breit / .nur-schmal - sent
     # a wide screen to the large map and a narrow one to the small; with one map
     # there is nothing left to choose.
-    hl_de = T[lang]["HL_DE"]
-    cur = ' aria-current="page"' if page["path"] == "/mini-karte/" else ""
+    ziel, hl, marke = zwilling("/mini-karte/", lang)
+    cur = ' aria-current="page"' if page["path"] in ("/mini-karte/", ziel) else ""
     items.append(
-        f'<li><a class="nav-karte" href="/mini-karte/"{cur}{hl_de}>'
-        f'{T[lang]["MAP"]}</a></li>'
+        f'<li><a class="nav-karte" href="{ziel}"{cur}{hl}>'
+        f'{T[lang]["MAP"]}{marke}</a></li>'
     )
-    _ = idx, en, de
     return "\n        ".join(items)
 
 
@@ -493,7 +625,7 @@ def sozial_fuss(lang: str) -> str:
             '      </ul>\n    </nav>' % (label, zeilen))
 
 
-def sozial_impressum() -> str:
+def sozial_impressum(lang: str = "de") -> str:
     """The section of the Impressum that names the profiles it also speaks for.
 
     The profile's name is the link text and the address sits in the href, not
@@ -512,6 +644,11 @@ def sozial_impressum() -> str:
         f'rel="me noopener">{html.escape(name)}</a></li>'
         for name, url in eintraege
     )
+    if lang == "en":
+        return ('      <h2 class="mt-xl">This legal notice also covers</h2>\n'
+                '      <ul class="liste">\n%s\n      </ul>\n'
+                '      <p>The same details apply to these profiles as to this '
+                'website.</p>\n' % zeilen)
     return ('      <h2 class="mt-xl">Dieses Impressum gilt auch für</h2>\n'
             '      <ul class="liste">\n%s\n      </ul>\n'
             '      <p>Für diese Profile gelten dieselben Angaben wie für diese '
@@ -615,16 +752,24 @@ def build() -> dict[str, bytes]:
             BAKERCODE=str(BAKER_CODE),
             SELBST=SELBST,
             SOZIAL=sozial_fuss(lang),
-            IMPRESSUM_SOZIAL=sozial_impressum(),
+            IMPRESSUM_SOZIAL=sozial_impressum(lang),
+            # The footer's own links, each led to the reader's language.
+            FUSS_KARTE=verweis("/mini-karte/", lang, T[lang]["MAP"]),
+            FUSS_IMPRESSUM=verweis("/impressum/", lang, T[lang]["IMPRESSUM"]),
+            FUSS_DATENSCHUTZ=verweis("/datenschutz/", lang, T[lang]["DATENSCHUTZ"]),
+            FUSS_STATUS=verweis("/vision/", lang, T[lang]["FOOT_STATUS"]),
+            BAECKER=verweis("/numbers/#baecker", lang, T[lang]["BAECKER_TEXT"]),
         )
-        # The language switch is one fixed string per language, which is right
-        # while every English page has the same German twin - the entry page.
-        # A page with a twin of its own says so here, so the switch leads to the
-        # translation instead of back to the German front door.
+        # The language switch leads to the same page in the other language -
+        # every page with a twin, not only the two front doors (10.10.2026). A
+        # page without one says where the switch really leads: the front door.
         if page.get("langlink"):
             values["LANGLINK"] = page["langlink"]
-        elif not page.get("alt"):
-            # No twin: the switch leads to the other front door and says so.
+        elif page.get("alt"):
+            o = "de" if lang == "en" else "en"
+            values["LANGLINK"] = (f'<a class="nav-lang" href="{page["alt"]}" lang="{o}" '
+                                  f'hreflang="{o}">{"Deutsch" if o == "de" else "English"}</a>')
+        else:
             values["LANGLINK"] = T[lang]["LANGLINK_START"]
         values.update(head_extras(page))
         body = read(SEITEN_DIR / page["src"])
@@ -698,7 +843,7 @@ def llms() -> str:
 ## Start here
 - [The system]({HOST}/system/): architecture, the app contract, shared core library
 - [The ten applications]({HOST}/apps/): what each app does, and what is published
-- [The system map]({HOST}/mini-karte/): the whole system on one page - the ring around the core, the five layers, the ten applications and their ports - in German
+- [The system map]({HOST}/mini-karte/): the whole system on one page - the ring around the core, the five layers, the ten applications and their ports - in German; English twin at {HOST}/system-map/
 - [The method]({HOST}/method/): written laws, contracts, AI build-chat orchestration
 - [The numbers]({HOST}/numbers/): the six headline figures, each with its method
 - [Journey]({HOST}/journey/): dated milestones since June 2026
@@ -708,7 +853,7 @@ def llms() -> str:
 - [The threshold]({HOST}/schwelle/): the ten laws of the house for people, without a name - in German
 - [Not knowing]({HOST}/deckel/): not having to understand everything, with the line of thinkers behind it - in German
 - [For children]({HOST}/deckel/kinder/): the same, for children from about eight - in German
-- [Thanks]({HOST}/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German
+- [Thanks]({HOST}/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German; English twin at {HOST}/thanks/
 - [DizzCube]({HOST}/dizzcube/): a game from this house - what it is and how it is played; German twin at {HOST}/de/dizzcube/
 
 ## Source
@@ -728,7 +873,10 @@ def llms() -> str:
   cannot be checked against the current tree: the commit count is private and stated
   as a floor for that reason, and the two code figures were measured against the
   extract that left the current tree on 6 August 2026. Each says so in its own entry.
-- German entry page: {HOST}/de/
+- German entry page: {HOST}/de/. Most pages have a twin in the other language; each
+  names it in the hreflang links of its head, and the language switch on the page
+  leads there. The legal pages are authoritative in German; an English translation of the
+  Impressum is at {HOST}/legal-notice/
 """
 
 

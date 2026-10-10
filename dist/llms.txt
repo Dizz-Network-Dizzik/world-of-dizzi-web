@@ -6,7 +6,7 @@
 ## Start here
 - [The system](https://worldofdizzi.com/system/): architecture, the app contract, shared core library
 - [The ten applications](https://worldofdizzi.com/apps/): what each app does, and what is published
-- [The system map](https://worldofdizzi.com/mini-karte/): the whole system on one page - the ring around the core, the five layers, the ten applications and their ports - in German
+- [The system map](https://worldofdizzi.com/mini-karte/): the whole system on one page - the ring around the core, the five layers, the ten applications and their ports - in German; English twin at https://worldofdizzi.com/system-map/
 - [The method](https://worldofdizzi.com/method/): written laws, contracts, AI build-chat orchestration
 - [The numbers](https://worldofdizzi.com/numbers/): the six headline figures, each with its method
 - [Journey](https://worldofdizzi.com/journey/): dated milestones since June 2026
@@ -16,7 +16,7 @@
 - [The threshold](https://worldofdizzi.com/schwelle/): the ten laws of the house for people, without a name - in German
 - [Not knowing](https://worldofdizzi.com/deckel/): not having to understand everything, with the line of thinkers behind it - in German
 - [For children](https://worldofdizzi.com/deckel/kinder/): the same, for children from about eight - in German
-- [Thanks](https://worldofdizzi.com/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German
+- [Thanks](https://worldofdizzi.com/dank/): whom the house thanks, in the measure the matter deserves, without a name - in German; English twin at https://worldofdizzi.com/thanks/
 - [DizzCube](https://worldofdizzi.com/dizzcube/): a game from this house - what it is and how it is played; German twin at https://worldofdizzi.com/de/dizzcube/
 
 ## Source
@@ -36,4 +36,7 @@
   cannot be checked against the current tree: the commit count is private and stated
   as a floor for that reason, and the two code figures were measured against the
   extract that left the current tree on 6 August 2026. Each says so in its own entry.
-- German entry page: https://worldofdizzi.com/de/
+- German entry page: https://worldofdizzi.com/de/. Most pages have a twin in the other language; each
+  names it in the hreflang links of its head, and the language switch on the page
+  leads there. The legal pages are authoritative in German; an English translation of the
+  Impressum is at https://worldofdizzi.com/legal-notice/

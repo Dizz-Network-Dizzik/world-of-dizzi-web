@@ -9,30 +9,44 @@
   </url>
   <url>
     <loc>https://worldofdizzi.com/system/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/system/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/system/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/apps/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/apps/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/apps/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/numbers/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/numbers/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/zahlen/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/method/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/method/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/methode/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/journey/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/journey/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/chronik/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/vision/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/vision/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/vision/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/about/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/kontakt/"/>
     <priority>0.8</priority>
   </url>
   <url>
@@ -83,10 +97,68 @@
   </url>
   <url>
     <loc>https://worldofdizzi.com/dank/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/dank/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/thanks/"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://worldofdizzi.com/mini-karte/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/mini-karte/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/system-map/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/kontakt/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/kontakt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/about/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/vision/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/vision/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/vision/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/system-map/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/system-map/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/mini-karte/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/system/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/system/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/system/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/thanks/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/thanks/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/dank/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/chronik/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/chronik/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/journey/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/methode/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/methode/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/method/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/apps/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/apps/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/apps/"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worldofdizzi.com/de/zahlen/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/zahlen/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://worldofdizzi.com/numbers/"/>
     <priority>0.8</priority>
   </url>
   <url>

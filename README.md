@@ -73,7 +73,7 @@ house, and read and released by him.*
 
 ## What it is
 
-Twenty-two pages of static HTML, one stylesheet, three subset web fonts and a
+Thirty-three pages of static HTML, one stylesheet, three subset web fonts and a
 Python baker that counts its own lines and writes the figure into the footer
 of every page — so the footer's number cannot drift away from the file it
 describes. **No JavaScript, no cookies, no trackers, no external request** —
@@ -85,7 +85,7 @@ loaded and stores nothing on the device. Until 10 October 2026 the large system
 map was a second one; it is no longer published and no longer part of this
 repository, and the one map on the site is the small, hand-written one at
 `/mini-karte/`. Total for a first visit to the start
-page: **149,825 bytes** uncompressed — 16.3 KB markup, 101.3 KB stylesheet,
+page: **149,796 bytes** uncompressed — 16.3 KB markup, 101.3 KB stylesheet,
 28.0 KB fonts, 0.7 KB favicon — and less than that over the wire, where the
 server compresses. The latest change, on 10 October 2026, is a second pass over the start
 page: on a phone the hero decor steps back and the three paths become
@@ -349,7 +349,7 @@ is measured here, so the file behind it has to be reachable.
 | Build | `bake.py` — Python standard library only, no node, no npm |
 | Output | `dist/`, committed; Netlify publishes it with **no cloud build** |
 | Design | palette and typography taken from the large system map, which is no longer part of this repository |
-| Languages | English throughout, plus German pages: the entry page at `/de/`, the German twin of the game page at `/de/dizzcube/`, the two legal pages, and the house pages `/balance/`, `/schwelle/`, `/deckel/`, `/deckel/kinder/` and `/dank/` |
+| Languages | English and German. Every page with a twin in the other language names it (hreflang, sitemap); the language switch leads to that twin, and the menu, which on a phone is the same list folded away, and the footer stay in the reader's language. A link to a page with no twin yet says so, with hreflang and a visible (EN) or (DE). The legal pages are authoritative in German; the footer leads there, and the English translation of the Impressum is one language switch away |
 | Hosting | Netlify free tier; `_headers` carries the CSP and the security headers |
 
 ## Build it
@@ -488,7 +488,7 @@ The source links used to be the one thing no gate here could check. They point
 at GitHub, `check_links` skips external targets by design, and they led into a
 second repository — so a file renamed over there left every gate green while
 the site linked into nothing. Since the snapshot moved in, the same links can
-be resolved, and `check_snapshot_links` resolves all **70 source links** against
+be resolved, and `check_snapshot_links` resolves all **126 source links** against
 `snapshot/` on every build: a missing file, a missing folder, a missing heading
 all fail it. It asks `git` what the folder holds rather than the disk, because
 this disk sees `Docs` and `docs` as one folder and knows files `git` has never
@@ -498,7 +498,7 @@ unnoticed.
 
 What that still does not cover: whether **this** repository stays public and
 keeps its name. Rename it or make it private and every gate stays green while
-all 70 links break at once — and the claim on `/numbers/` that exactly one figure
+all 126 links break at once — and the claim on `/numbers/` that exactly one figure
 cannot be checked from outside quietly stops being true. It is the one link count
 on this page that no gate measures, and it has drifted twice already: it read 83
 until a count over the built site produced 72, and 74 from the travel pages until

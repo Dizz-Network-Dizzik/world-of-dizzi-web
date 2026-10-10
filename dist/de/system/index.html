@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architektur &amp; der App-Vertrag | the world of dizzi</title>
+  <meta name="description" content="Wie zehn Anwendungen wie eine wirken: ein Kern auf :8200, der App-Vertrag, die gemeinsame Bibliothek appkit und Querverbindungen, die nur lesen.">
+  <link rel="canonical" href="https://worldofdizzi.com/de/system/">
+  <link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/system/">
+  <link rel="alternate" hreflang="en" href="https://worldofdizzi.com/system/">
+  <link rel="alternate" hreflang="x-default" href="https://worldofdizzi.com/system/">
+  <meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="the world of dizzi">
+  <meta property="og:title" content="Architektur &amp; der App-Vertrag | the world of dizzi">
+  <meta property="og:description" content="Wie zehn Anwendungen wie eine wirken: ein Kern auf :8200, der App-Vertrag, die gemeinsame Bibliothek appkit und Querverbindungen, die nur lesen.">
+  <meta property="og:url" content="https://worldofdizzi.com/de/system/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:image" content="https://worldofdizzi.com/bilder/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="the world of dizzi — dark title card with the numbers 10 applications, 2,600+ commits, ~100,000 lines of Python, 2,667 tests">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/bilder/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/schrift/chakra-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/schrift/orbitron-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/stil.css">
+  </head>
+<body id="top">
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+<div class="fortschritt" aria-hidden="true"></div>
+
+<header class="kopf">
+  <div class="wrap">
+    <a class="marke" href="/de/">the world of dizzi</a>
+    <input class="menu-schalter" type="checkbox" id="menu-schalter" autocomplete="off">
+    <label class="menu-knopf" for="menu-schalter">Menü</label>
+    <nav class="nav" aria-label="Haupt">
+      <ul>
+        <li><a href="/de/dizzcube/">DizzCube</a></li>
+        <li><a href="/de/system/" aria-current="page">System</a></li>
+        <li><a href="/de/apps/">Apps</a></li>
+        <li><a href="/de/methode/">Methode</a></li>
+        <li><a href="/de/zahlen/">Zahlen</a></li>
+        <li><a href="/de/chronik/">Chronik</a></li>
+        <li><a href="/de/vision/">Vision</a></li>
+        <li><a href="/balance/">Balance</a></li>
+        <li><a href="/schwelle/">Schwelle</a></li>
+        <li><a href="/deckel/">Der Deckel</a></li>
+        <li><a href="/dank/">Dank</a></li>
+        <li><a href="/de/reise/">Reise</a></li>
+        <li><a href="/de/kontakt/">Kontakt</a></li>
+        <li><a class="nav-karte" href="/mini-karte/">System-Karte</a></li>
+        <li><a class="nav-lang" href="/system/" lang="en" hreflang="en">English</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">Das System</p>
+    <h1>Zehn Anwendungen, die sich wie eine verhalten</h1>
+    <p class="lede">Ein Kern ohne eigene Oberfläche auf <code>:8200</code>, neun
+      Anwendungen um ihn herum und ein geschriebener Vertrag – maschinell geprüft in der
+      Testsammlung von sieben der zehn, bei jedem Lauf.</p>
+    <p class="hinweis mt-m"><b>Kurz gesagt</b><br>
+      Ein Kern in der Mitte, neun Anwendungen um ihn herum, jede mit eigenem Port und
+      eigenen Daten.<br>
+      Ein geschriebener Vertrag sagt, wie eine Anwendung andockt; wer ihn erfüllt, dessen
+      Anwendung erscheint von selbst.<br>
+      Daten bleiben, wo sie entstanden sind; alles, was nach außen wirkt, braucht das Ja
+      eines Menschen.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Die Schichten</h2>
+    <p class="dach">Dünne Hüllen zeigen denselben Kern, deshalb kann das ganze Netz
+      unverändert vom Rechner auf einen Server umziehen – Windows oder Linux.</p>
+
+    <div class="schichten reveal mt-l">
+      <div class="a-steel sch">
+        <p class="sch-t">Hüllen</p>
+        <p class="sch-b">Schreibtisch · Handy · Browser – keine Geschäftslogik in der Hülle.</p>
+      </div>
+      <div class="a-vio sch">
+        <p class="sch-t">Dizzi-Core <span class="chip">:8200</span></p>
+        <p class="sch-b">KI-Orchestrator · Panel-Registry · MCP-Hub · Gesundheits-Aufsicht ·
+          Dizzi-ID mit einmaliger Anmeldung. Ohne eigene Oberfläche: Er orchestriert;
+          von sich aus wirkt er nie nach außen.</p>
+      </div>
+      <div class="a-cy sch">
+        <p class="sch-t">Neun Anwendungen</p>
+        <ul class="sch-g">
+          <li>Money <span class="chip">:8210</span></li>
+          <li>Communication <span class="chip">:8218</span></li>
+          <li>Creating <span class="chip">:8214</span></li>
+          <li>Memory <span class="chip">:8212</span></li>
+          <li>Management <span class="chip">:8213</span></li>
+          <li>News <span class="chip">:8216</span></li>
+          <li>Healthy <span class="chip">:8217</span></li>
+          <li>Admin <span class="chip">:8222</span></li>
+          <li>Trading <span class="chip">:8137</span></li>
+        </ul>
+        <p class="sch-b">Jede ein Dienst mit eigener SQLite-Datenbank und eigener
+          Web-Oberfläche. Jede für sich lauffähig. Für sich <em>verkaufbar</em> zu sein, dafür
+          ist der Export-Vertrag da – das Werkzeug zum Verpacken selbst ist noch nicht
+          gebaut.</p>
+      </div>
+      <div class="a-mag sch">
+        <p class="sch-t">packages/appkit · packages/ui-kit</p>
+        <p class="sch-b">Gemeinsam unter allem: der Vertrag, die Anmeldung, die Sicherheit,
+          die Löschnachweise – und das Design-System.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="entscheidungen">
+  <div class="wrap">
+    <p class="kicker">Was es zusammenhält</p>
+    <h2>Drei Entscheidungen, alles andere folgt</h2>
+    <p class="dach">Die Startseite nennt die drei in je einer Zeile. Hier steht, wozu
+      jede wirklich verpflichtet – auch, was sie kostet.</p>
+    <div class="karten reveal mt-l">
+      <article class="karte">
+        <h3>Lokal zuerst</h3>
+        <p>Der Kern läuft ohne Netz. Dienste in der Cloud sind Anschlüsse, die man
+          einschalten muss – jederzeit abschaltbar und immer als Schritt nach außen
+          gezeigt. Das macht den Abgleich schwerer; diesen Preis habe ich bewusst gewählt,
+          denn die Daten gehören auf den Rechner, der sie erzeugt hat.</p>
+      </article>
+      <article class="karte">
+        <h3>Vom Vertrag her gebaut</h3>
+        <p>Ein geschriebener App-Vertrag, zehn Anwendungen danach gebaut. Wer den Vertrag
+          beantwortet, dessen Anwendung nimmt das Dashboard von selbst auf; der Assistent
+          erreicht sie ohne neue Anbindung, und niemand verdrahtet sie von Hand.</p>
+      </article>
+      <article class="karte">
+        <h3>Ehrlich per Gesetz</h3>
+        <p>Ehrlichkeit ist hier kein Tonfall, sondern eine geschriebene Regel, welcher der Code
+          gehorchen muss: Ein nicht gemessener Wert wird als nicht gemessen gemeldet, nie
+          als Null. Dieselbe Regel gilt für diese Website.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Der Mechanismus</p>
+    <h2>Der App-Vertrag</h2>
+    <div class="raster mt-m">
+      <div>
+        <p class="lang">Den Vertrag erfüllen, und die Anwendung erscheint. Ein Dienst, der
+          die Pflicht-Endpunkte beantwortet, meldet sich selbst im Dashboard an und wird für
+          den Assistenten erreichbar – niemand verdrahtet ihn von Hand.</p>
+        <p class="lang">Der Vertrag ist kein Dokument, das hofft, befolgt zu werden. Er wird
+          <b>maschinell durchgesetzt</b>: <code>appkit/conformance.py</code> läuft in der
+          Testsammlung von <b>sieben der zehn</b>. Der Kern von Creating ist in diesem
+          Auszug gar nicht enthalten; der Kern und die Trading-Flotte haben stattdessen
+          eigene Testsammlungen. Die Spezifikation sagt das selbst – wo Text und Code
+          einander widersprechen, gilt der Code.</p>
+        <p class="lang">Gemessen an der geschriebenen Spezifikation, <b>erfüllen neun der
+          zehn den Vertrag</b>. Der Kern – die Stelle, die ihn einsammelt – bleibt mit
+          Absicht außen vor, auf seinem eigenen Port.</p>
+        <ul class="liste">
+          <li><code>/api/summary</code> antwortet immer mit <b>HTTP 200</b>; der Zustand
+            steht in einem Feld <code>status</code> (<code>ok</code> · <code>leer</code> ·
+            <code>fehler</code>), nie in einem Fehlercode und nie in einer vorgetäuschten
+            Null.</li>
+          <li><code>/api/actions</code> trägt den Ablauf mit dem Menschen in der Schleife:
+            vorschlagen → freigeben oder ablehnen. Die KI gibt ihre eigene Aktion nie frei.</li>
+          <li><code>/api/account/export</code> und <code>/api/account/loeschen</code>
+            setzen die Datenrechte um – beide verlangen eine frische Anmeldung, beide
+            schließen im Fehlerfall.</li>
+          <li><code>/api/audit</code> zeichnet jede Aktion auf, die eine Wirkung hat.</li>
+        </ul>
+      </div>
+      <figure class="code oben">
+        <pre><span class="co"># every application around the core</span>
+<b>GET  /api/health</b>            <span class="co">heartbeat + contract version</span>
+<b>GET  /api/manifest</b>          <span class="co">machine-readable identity</span>
+<b>GET  /api/summary</b>           <span class="co">always 200, state in `status`</span>
+<b>GET  /api/settings</b>          <span class="co">typed, strict, audited</span>
+<b>GET  /api/account</b>           <span class="co">profile · tier · SSO state</span>
+<b>GET  /api/vault</b>             <span class="co">names only, never values</span>
+<b>GET  /api/audit</b>             <span class="co">every effect, logged</span>
+<b>POST /api/actions</b>           <span class="co">propose → human approves</span>
+<b>     /mcp</b>                   <span class="co">tool server for the assistant</span></pre>
+        <figcaption>Die Pflicht-Oberfläche, wie sie in
+          <code>docs/16_APP_VERTRAG_SPEC.md</code> festgelegt ist.<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/16_APP_VERTRAG_SPEC.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/16_APP_VERTRAG_SPEC.md</span></a></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Der gemeinsame Boden</p>
+    <h2>appkit – einmal geändert, überall wirksam</h2>
+    <p class="dach">Eine gemeinsame Bibliothek statt zehn Kopien derselben Idee.
+      Anmeldung, CSP-Härtung, Löschnachweise, Sicherheitslage, der Bereichs-Kanon. Wird
+      das Sicherheitsmodell besser, wird es in jeder Anwendung besser, welche die Bibliothek
+      einbindet – heute neun der zehn.</p>
+    <div class="karten reveal mt-l">
+      <article class="karte">
+        <h3>Identität in drei Stufen</h3>
+        <p><code>lokal</code> → <code>verifiziert</code> → <code>hochsicher</code>.
+          Wege, die eine Stufe verlangen, weisen ohne sie ab – <b>403, im Zweifel zu</b>.
+          Nichts ist aus Versehen offen.</p>
+      </article>
+      <article class="karte">
+        <h3>Tokens, ordentlich gemacht</h3>
+        <p>Ed25519 mit im Prüfer festgelegtem Algorithmus, PKCE verpflichtend,
+          Einmal-Codes mit 60 Sekunden Lebensdauer, rotierende Erneuerung mit Sperre der
+          ganzen Familie bei Wiederverwendung, Geheimnisse nur als Hash gespeichert.</p>
+      </article>
+      <article class="karte">
+        <h3>Ein Tresor, der schweigt</h3>
+        <p>Die Geheimnisse der Dienste liegen verschlüsselt neben der Datenbank der
+          Anwendung. Die HTTP-Oberfläche gibt <b>Namen zurück, nie Werte</b> – ein Leck in
+          einer Sicherung wird kein Leck von Zugangsdaten.</p>
+      </article>
+    </div>
+    <p class="dach mt-m">Die Bibliothek selbst ist <b>nicht Teil des aktuellen Stands</b>. Bis zum
+      6. August 2026 trug der Auszug ihren Code; der kuratierte Satz, der ihn ersetzt hat,
+      trägt den Vertrag, den die Bibliothek erfüllen muss – und das ist der Teil, über den
+      man streiten kann:</p>
+    <div class="knoepfe">
+      <a class="knopf" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/16_APP_VERTRAG_SPEC.md" rel="noopener">Der Vertrag, den sie umsetzt <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Zwischen den Anwendungen</p>
+    <h2>Querverbindungen, bewusst schmal</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Es gibt keinen zentralen Datensee. Jede Anwendung hält ihre eigenen
+          Daten und gibt nur über einen geschriebenen Vertrag etwas weiter – neunzehn davon,
+          nummeriert und festgelegt. Der Kern reicht weiter; er hört zu und protokolliert.</p>
+        <p class="lang">Die Einschränkung ist echt, und ich nehme sie an: Lokal zuerst macht
+          den Abgleich schwerer, und ein Relais, das nur liest, ist unbequemer, als es eine
+          gemeinsame Datenbank wäre. Diesen Tausch habe ich mit Absicht gemacht. Daten, die
+          ihre Quelle nie verlassen, können nicht von einem Ort abfließen, an dem sie nie
+          waren.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Regel der Querverbindungen</span>
+          <p>„Daten bleiben an ihrer Quelle; der Core reicht nur lesend weiter; alles mit
+            Wirkung nach außen braucht einen ausdrücklichen Schritt der Freigabe durch einen
+            Menschen.“</p>
+          <footer>docs/26 und docs/34 – die Übergabe-Verträge, V1 bis V19, hier sinngemäß<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/26_QUERVERBINDUNGEN.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/26_QUERVERBINDUNGEN.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Sicherheitslage</p>
+    <h2>An den eigenen Rechner gebunden, an jedem unumkehrbaren Schritt ein Tor</h2>
+    <ul class="liste lang">
+      <li><b>Jeder Dienst bindet an 127.0.0.1.</b> Sensible Anwendungen leiten Anfragen an
+        die KI im Normalfall <code>lokal_only</code> – diese Inhalte verlassen den Rechner
+        nie.</li>
+      <li><b>Der Browser steht außerhalb der Vertrauensgrenze.</b> Eine lokale Prüfung
+        hält den Host-Header gegen eine Erlaubnisliste und prüft den Origin bei jeder
+        schreibenden Methode – das verhindert DNS-Rebinding und blinde
+        seitenübergreifende Anfragen.</li>
+      <li><b>Mehrere Verteidigungslinien gegen das Netz.</b> Eine Sensor-Schicht sitzt
+        ganz außen und sieht auch abgewiesene Anfragen; ein Regelwerk und eine
+        Grundlinie der Last speisen eine Eskalationsleiter. Selbstständiges Drosseln ist
+        erlaubt; Abriegeln und Not-Aus sind Handlungen eines Menschen.</li>
+      <li><b>Echtes Geld ist eine eigene Klasse.</b> Handel auf Papier ist frei; eine echte
+        Überweisung verlangt die höchste Stufe. Seit dem <b>4. August 2026</b> handelt ein
+        kleiner Teil der Flotte mit meinem eigenen Geld, auf eigene Rechnung – hinter
+        diesem Tor.</li>
+      <li><b>Ehrliches Restrisiko.</b> Das Sicherheitskonzept nennt, was <em>nicht</em>
+        gelöst ist, und führt eine geordnete Liste offener Härtungen. Ein Bedrohungsmodell,
+        das nur Erfolge aufzählt, ist ein Werbeprospekt.</li>
+    </ul>
+    <p class="dach mt-m">Das Sicherheitskonzept selbst ist <b>nicht mehr Teil des aktuellen Stands</b>.
+      Es stand bis zum 6. August 2026 im Auszug und wurde mit Absicht herausgenommen: Ein
+      Dokument, das aufzählt, was noch nicht gehärtet ist, ist eine Landkarte für alle, die
+      genau das suchen. Das zu sagen ist besser, als den Link still zu streichen.</p>
+    <div class="knoepfe">
+      <a class="knopf" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/37_CSP_STRIKT_RECIPE.md" rel="noopener">Das Rezept für die strikte CSP <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+    <div class="hinweis balken">
+      <p><b>Die System-Karte zeigt es auf einer
+        Seite</b> – der Ring um den Kern, die fünf Schichten und die zehn
+        Anwendungen mit ihren Ports. Ohne Skript und ohne Aufrufe nach außen.</p>
+      <a class="knopf prim" href="/mini-karte/">System-Karte öffnen <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+    </div>
+    <p class="dach mt-m">Tiefer ins Repository:
+      <a class="zielgross" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/16_APP_VERTRAG_SPEC.md" rel="noopener">docs/16 – der App-Vertrag</a><span class="trenn">·</span>
+      <a class="zielgross" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/26_QUERVERBINDUNGEN.md" rel="noopener">docs/26 – Querverbindungen</a><span class="trenn">·</span>
+      <a class="zielgross" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/37_CSP_STRIKT_RECIPE.md" rel="noopener">docs/37 – das Rezept für die strikte CSP</a><span class="trenn">·</span>
+      <a class="zielgross" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/12_GESAMTVERSTAENDNIS.md" rel="noopener">docs/12 – das Ganze, ohne Vorwissen</a>
+    </p>
+  </div>
+</div>
+</main>
+
+<footer class="fuss">
+  <div class="wrap">
+    <div class="fuss-oben">
+      <a class="marke" href="/de/">the world of dizzi</a>
+      <nav aria-label="Rechtliches">
+        <ul>
+          <li><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot" rel="noopener">Dokumente &#8599;</a></li>
+          <li><a href="/mini-karte/">System-Karte</a></li>
+          <li><a class="nav-lang" href="/system/" lang="en" hreflang="en">English</a></li>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Datenschutz</a></li>
+          <li><a href="#top">Nach oben <span aria-hidden="true">&#8593;</span></a></li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="fuss-sozial" aria-label="Profile">
+      <ul>
+        <li><a href="https://x.com/DavidKrause188" rel="me noopener">X &#8599;</a></li>
+        <li><a href="https://www.instagram.com/dizz_network_dizzik/" rel="me noopener">Instagram &#8599;</a></li>
+      </ul>
+    </nav>
+    <p class="fuss-status"><a href="/de/vision/">Unabhängiges Projekt — Gründung in Vorbereitung.</a></p>
+    <div class="fuss-fein">
+      <p>Dokumente öffentlich, Code privat. Alle Rechte vorbehalten.</p>
+      <p>Gebacken von einem <a href="/de/zahlen/#baecker">1527-Zeilen-Python-Skript</a>. Keine Cookies, keine Tracker, keine externen Aufrufe.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

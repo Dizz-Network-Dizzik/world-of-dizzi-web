@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Die Methode — wie das hier gebaut wird | the world of dizzi</title>
+  <meta name="description" content="Gesetz vor Code, Verträge vor Funktionen, Recherche vor Entscheidungen, Bau-Chats der KI im Orchester und ein Mensch vor allem Unumkehrbaren.">
+  <link rel="canonical" href="https://worldofdizzi.com/de/methode/">
+  <link rel="alternate" hreflang="de" href="https://worldofdizzi.com/de/methode/">
+  <link rel="alternate" hreflang="en" href="https://worldofdizzi.com/method/">
+  <link rel="alternate" hreflang="x-default" href="https://worldofdizzi.com/method/">
+  <meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="the world of dizzi">
+  <meta property="og:title" content="Die Methode — wie das hier gebaut wird | the world of dizzi">
+  <meta property="og:description" content="Gesetz vor Code, Verträge vor Funktionen, Recherche vor Entscheidungen, Bau-Chats der KI im Orchester und ein Mensch vor allem Unumkehrbaren.">
+  <meta property="og:url" content="https://worldofdizzi.com/de/methode/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:image" content="https://worldofdizzi.com/bilder/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="the world of dizzi — dark title card with the numbers 10 applications, 2,600+ commits, ~100,000 lines of Python, 2,667 tests">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/bilder/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/schrift/chakra-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/schrift/orbitron-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/stil.css">
+  </head>
+<body id="top">
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+<div class="fortschritt" aria-hidden="true"></div>
+
+<header class="kopf">
+  <div class="wrap">
+    <a class="marke" href="/de/">the world of dizzi</a>
+    <input class="menu-schalter" type="checkbox" id="menu-schalter" autocomplete="off">
+    <label class="menu-knopf" for="menu-schalter">Menü</label>
+    <nav class="nav" aria-label="Haupt">
+      <ul>
+        <li><a href="/de/dizzcube/">DizzCube</a></li>
+        <li><a href="/de/system/">System</a></li>
+        <li><a href="/de/apps/">Apps</a></li>
+        <li><a href="/de/methode/" aria-current="page">Methode</a></li>
+        <li><a href="/de/zahlen/">Zahlen</a></li>
+        <li><a href="/de/chronik/">Chronik</a></li>
+        <li><a href="/de/vision/">Vision</a></li>
+        <li><a href="/balance/">Balance</a></li>
+        <li><a href="/schwelle/">Schwelle</a></li>
+        <li><a href="/deckel/">Der Deckel</a></li>
+        <li><a href="/dank/">Dank</a></li>
+        <li><a href="/de/reise/">Reise</a></li>
+        <li><a href="/de/kontakt/">Kontakt</a></li>
+        <li><a class="nav-karte" href="/mini-karte/">System-Karte</a></li>
+        <li><a class="nav-lang" href="/method/" lang="en" hreflang="en">English</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+<section class="hero klein">
+  <div class="wrap">
+    <p class="strich" role="presentation"></p>
+    <p class="kicker">Die Methode</p>
+    <h1>Wie ein Mensch zehn Anwendungen baut</h1>
+    <p class="lede">Nicht durch schnelleres Tippen. Sondern dadurch, dass die Regeln zuerst
+      aufgeschrieben werden – und dass sie auch dann nicht gebrochen werden, wenn es
+      bequem wäre.</p>
+    <p class="hinweis mt-m"><b>Kurz gesagt</b><br>
+      Die Regeln stehen vor dem Code fest und gelten auch dann, wenn ein Bruch schneller
+      wäre.<br>
+      Ein Mensch führt; Bau-Chats der KI erledigen die Arbeit und geben sie schriftlich
+      weiter, nicht im Gespräch.<br>
+      Geld, Veröffentlichen und Löschen geschehen nie ohne einen Menschen.</p>
+    <p class="dach mt-m">Alles auf dieser Seite beruht auf einer Datei im öffentlichen
+      Repository oder sagt, wohin diese Datei gegangen ist. Die Dokumente sind deutsch –
+      geschrieben, um benutzt zu werden, nicht um vorgezeigt zu werden –, und die Zitate
+      unten stehen in ihrem Wortlaut, mit der Quelle jedes Mal genannt.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Kapitel eins</p>
+    <h2 id="gesetz">Geschriebenes Gesetz vor dem Code</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Bevor es eine Architektur gab, gab es eine Datei mit verbindlichen
+          Arbeitsregeln, und jede Sitzung seither musste sie achten, ohne daran erinnert zu
+          werden. Es ist ein kurzes Dokument. Es ist auch der Grund, warum das System nicht
+          auseinanderlief, während ein einzelner Mensch zehn Anwendungen gebaut hat.</p>
+        <p class="lang">Die nützlichste dieser Regeln ist die über Ehrlichkeit, weil sie die
+          Software bindet und nicht nur den Autor. Ein Wert, der nie gemessen wurde, wird als
+          nicht gemessen gemeldet. Er wird nie zur Null, und eine Null wird nie zur
+          Behauptung.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz 2 · Ehrlichkeit</span>
+          <p>„Ehrliche Bewertungen. Motto: ‚Wir finden gemeinsam den besten Weg.‘ Bei
+            eigenen Zweifeln: offen sagen, nicht schönreden.“</p>
+          <footer>docs/01_GRUNDGESETZE.md, Gesetz 2<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz 4 · Qualität</span>
+          <p>„Code-Qualität = oberstes Gesetz. Strukturell, professionell, funktionell,
+            effizient, absolut sauber und nachvollziehbar.“</p>
+          <footer>docs/01_GRUNDGESETZE.md, Gesetz 4<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+    <p class="hinweis mt-s">Der englische Satz, mit dem das README des Repositorys
+      dieselbe Regel sagt: <b lang="en">“If a value was never measured, the system says so
+      instead of showing a zero.”</b> Diese Regel gilt auch für diese Website – deshalb gibt
+      es <a href="/de/zahlen/">eine Seite, die sagt, wie die Zahlen vorn auf
+      dieser Website gezählt wurden &#8594;</a></p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Kapitel zwei</p>
+    <h2 id="vertraege">Verträge vor Funktionen</h2>
+    <p class="dach">Eine Funktion baut man einmal. Ein Vertrag baut die nächsten
+      neun.</p>
+    <div class="raster mt-m">
+      <div>
+        <p class="lang">Der App-Vertrag legt fest, was jede Anwendung beantworten muss:
+          Gesundheit, Manifest, Zusammenfassung, Einstellungen, Konto, Tresor, Prüfprotokoll,
+          Aktionen und einen MCP-Werkzeugserver. Wer ihn erfüllt, dessen Anwendung nimmt das
+          Dashboard von selbst auf; der Assistent erreicht sie ohne neue Anbindung.</p>
+        <p class="lang">Zum Vertrag statt zum Wunsch wird er dadurch, dass eine Maschine
+          ihn prüft. Ein Konformitäts-Modul läuft in der Testsammlung von sieben der zehn,
+          sodass eine Anwendung, die abweicht, an ihrem eigenen Bau scheitert. Die
+          Spezifikation ist über die Rangfolge unmissverständlich: Wo Text und Code einander
+          widersprechen, gilt der Code.</p>
+      </div>
+      <div>
+        <figure class="code">
+          <pre><span class="co"># the scaling mechanic, in one line</span>
+write the contract
+  <b>&#8594;</b> the app appears in the dashboard
+  <b>&#8594;</b> the assistant can reach it
+  <b>&#8594;</b> its tests enforce the contract
+  <b>&#8594;</b> appkit upgrades reach it for free</pre>
+          <figcaption>Festgelegt in <code>docs/16</code>, durchgesetzt von
+            <code>appkit/conformance.py</code>.<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/16_APP_VERTRAG_SPEC.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/16_APP_VERTRAG_SPEC.md</span></a></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Kapitel drei</p>
+    <h2 id="recherche">Recherche vor Entscheidungen</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Unabhängige Recherche ist hier keine Verzierung nach Belieben; sie
+          ist Gesetz 3 – gezielt an kritischen Stellen und regelmäßig dazwischen. Die
+          Protokolle werden aufgeschrieben und aufbewahrt: Recherche-Wellen für das Netz,
+          Grundlagenrecherche und Studien zu Kennzahlen für die Trading-Seite, ein Katalog
+          der Strategien, der festhält, was verworfen wurde, und ebenso, was übernommen
+          wurde.</p>
+        <p class="lang">Die verworfenen Möglichkeiten aufzubewahren ist der Teil, der sich
+          später auszahlt. Sechs Monate danach lautet die Frage nie „was habe ich
+          gewählt?“ – sondern „habe ich mir das schon angesehen, und warum habe ich Nein
+          gesagt?“</p>
+        <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot/docs/recherche" rel="noopener">docs/recherche – die Recherche-Protokolle &#8599;</a></p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz 3 · Recherche</span>
+          <p>„Regelmäßige selbstständige Recherche. An kritischen Stellen gezielt, und
+            generell regelmäßig eingestreut, damit ein maximal optimiertes Produkt
+            entsteht.“</p>
+          <footer>docs/01_GRUNDGESETZE.md, Gesetz 3<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz 9 · kein Auseinanderlaufen</span>
+          <p>„Es darf NIE ein Zustand entstehen, in dem Code/Plan und Doku
+            auseinanderlaufen; veraltete Referenzen werden beim Update aktiv entfernt.“</p>
+          <footer>docs/01_GRUNDGESETZE.md, Gesetz 9<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Kapitel vier</p>
+    <h2 id="orchester">Ein Orchester aus Bau-Chats der KI</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Das ist der Teil, der von außen schwer zu sehen ist, deshalb hier
+          ganz schlicht. Ein Mensch führt. Ein verwaltender Chat hält den Gesamtstand und
+          entscheidet, was als Nächstes geschieht; getrennte Bau-Chats erledigen die
+          eigentliche Arbeit, ein Arbeitspaket nach dem anderen. Sie sprechen nicht
+          miteinander. Sie sprechen über <b>geschriebene Übergabe-Dokumente</b> – dieselbe
+          Art von Schriftstück wie die Verträge und die Gesetze.</p>
+        <p class="lang">Dieses Übergabe-Dokument ist die eigentliche Erfindung. Es trägt den
+          Auftrag, die Grenzen, die verbotenen Schritte und die Abnahme-Prüfung, sodass ein
+          frischer Chat ohne Erinnerung an gestern ein Paket aufnehmen und im selben Maß
+          fertigstellen kann. Voneinander unabhängige Arbeitspakete laufen gleichzeitig,
+          jedes in seinem eigenen Arbeitsbaum, sodass zwei Bauten nie um denselben Stand
+          kämpfen.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz 10 · drei Stufen</span>
+          <p>„Modell-Wachsamkeit – DREI Stufen: Assistenz-KI / Bau-KI / Architektur-KI.
+            Arbeitspakete werden dreistufig markiert. Ehrlich bleiben: kein unnötiges
+            Hochstufen – aber auch kein riskantes Runterstufen; im Zweifel eine Stufe
+            höher.“</p>
+          <footer>docs/01_GRUNDGESETZE.md, Gesetz 10 – gekürzt<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+        <ul class="liste">
+          <li><b>Assistenz-Stufe</b> – nur für Pakete, für die es schon ein sauberes
+            Referenz-Muster gibt, grüne Tests es absichern, keine Entscheidung über die
+            Architektur nötig ist und nichts angefasst wird, was für Sicherheit oder Geld
+            kritisch ist.</li>
+          <li><b>Bau-Stufe</b> – der Standard für gewöhnliche Bau-Arbeit.</li>
+          <li><b>Architektur-Stufe</b> – feine Logik von Architektur und Schema, der Kern der
+            KI, große selbstständige Läufe über Nacht, tiefe Prüfungen der Sicherheit,
+            schwierige Fehler.</li>
+        </ul>
+        <p class="dach klein">Die erste Ausführung eines neuen Musters bekommt nie die
+          Assistenz-Stufe. Diese Regel ist aufgeschrieben, nicht aus dem Stegreif.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="weg">
+  <div class="wrap">
+    <p class="kicker">Kapitel fünf</p>
+    <h2>Der Weg, den ein Arbeitspaket nimmt</h2>
+    <p class="dach">Das Kapitel oben nennt die Beteiligten. Hier ist der Weg, auf dem sie
+      laufen: was mit einem einzelnen Arbeitspaket zwischen der ersten geschriebenen Zeile
+      und dem Zusammenführen geschieht. Jeder Halt ist eine Regel mit einem Dokument
+      dahinter.</p>
+    <ol class="bahn reveal mt-l">
+      <li class="a-mag">
+        <h3>Der Auftrag steht vor der Arbeit</h3>
+        <p>Ein Paket beginnt als Datei: das Ziel, der Commit, von dem es ausgeht, die
+          Schritte, die verboten sind, und die Prüfung, die es bestehen muss, bevor es sich
+          fertig nennen darf. Es ist für jemanden ohne Erinnerung an gestern geschrieben,
+          denn genau der nimmt es auf.</p>
+      </li>
+      <li class="a-mag">
+        <h3>Die Spur gehört zur Akte</h3>
+        <p>Unabhängige Pakete laufen gleichzeitig, jedes in seinem eigenen Arbeitsbaum auf
+          seinem eigenen Zweig, sodass zwei Bauten nie denselben Stand bearbeiten. Dieser
+          Teil ist nachprüfbar statt behauptet: Die Verträge im Repository nennen Baum, Zweig
+          und Stufe in ihrem Statuskopf, sodass sich ein Dokument bis zu der Spur
+          zurückverfolgen lässt, die es hervorgebracht hat.</p>
+        <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/64_BANK_SYNC_VERTRAG.md" rel="noopener">Ein Vertrag, der seine Spur im Kopf trägt &#8599;</a></p>
+      </li>
+      <li class="a-vio">
+        <h3>Die Erlaubnis kommt vor der Nacht, nicht während ihrer</h3>
+        <p>Ein Lauf ohne Aufsicht trägt seine Erlaubnisse schriftlich: was neu gestartet
+          werden darf, was grün bleiben muss, was er nicht anfassen darf und was am Morgen
+          auf dem Tisch liegen muss. Die Arbeitsregeln legen die Reihenfolge fest – der Plan
+          wird einmal zurückgelesen, ein Mensch bestätigt, und erst dann arbeitet die
+          Maschine allein durch.</p>
+        <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener">Gesetz 7, die Nachtschicht &#8599;</a></p>
+      </li>
+      <li class="a-vio">
+        <h3>Zweimal hintereinander sauber, sonst ist es nicht fertig</h3>
+        <p>Der Abschluss eines Pakets ist eine Schleife, kein Häkchen: die Prüfungen laufen
+          lassen, durchsehen, was sie berührt haben, reparieren, was sie gefunden haben, und
+          dann alles noch einmal laufen lassen – das Paket gilt erst nach zwei sauberen
+          Durchgängen hintereinander als fertig. Ein einzelner sauberer Durchgang sieht
+          nämlich auch so aus, wenn eine Prüfung das, was sie lesen sollte, nie erreicht
+          hat.</p>
+      </li>
+      <li class="a-cy">
+        <h3>Es endet in einem Dokument, nicht in einem Gespräch</h3>
+        <p>Das Letzte, was ein Paket hervorbringt, ist ein Übergabe-Blatt: was gebaut wurde,
+          was gemessen wurde, was offen blieb. Der nächste Chat beginnt mit dem Blatt. Eine
+          Übergabe, die nur in einem Gespräch lebt, ist weg, wenn das Gespräch weg ist.</p>
+      </li>
+      <li class="a-cy">
+        <h3>Der Überblick bleibt bei dem Menschen, der führt</h3>
+        <p>Nach einem großen Paket verlangen die Regeln eine große Kontrollrunde über alles,
+          und vor dieser Runde eine systematische Ausgabe dessen, was die Systeme jetzt tun –
+          sodass der Überblick an den Teilen abgelesen wird statt aus einer Zusammenfassung
+          über sie.</p>
+        <p class="quellen"><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener">Gesetz 1, die Kontrollrunden &#8599;</a></p>
+      </li>
+    </ol>
+    <p class="dach mt-m">Drei Halte auf diesem Weg verlinkten früher ein ausgearbeitetes
+      Beispiel – ein Arbeitspaket, seinen Abschluss, ein Übergabe-Blatt. Diese Dateien
+      lagen bis zum <b>6. August 2026</b> im öffentlichen Auszug, dann wurde er auf einen
+      kuratierten Satz von Dokumenten zurückgeschnitten. Die Beispiele gehören nicht zu
+      diesem Satz, deshalb sind die Links weg, statt ins Leere zu zeigen:
+      <a href="/de/zahlen/#dateien">was jetzt veröffentlicht ist und was es war
+      &#8594;</a></p>
+    <p class="hinweis mt-l">Diese Website ist auf dieselbe Weise gebaut. Sie ist ein
+      Arbeitspaket wie jedes andere: zuerst aufgeschrieben, in einem eigenen Arbeitsbaum
+      gebaut, an einer Prüfung aus benannten Skripten gemessen – und erst dann fertig
+      genannt, als diese Prüfung zweimal hintereinander sauber durchlief.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Kapitel sechs</p>
+    <h2 id="tore">Ein Mensch vor allem, was sich nicht umkehren lässt</h2>
+    <div class="raster">
+      <div>
+        <p class="lang">Die Assistenten des Netzes beobachten und schlagen vor. Wirkung
+          verlangt einen Menschen, auf der Sicherheitsstufe, die zur Handlung passt. Geld,
+          Veröffentlichen und Löschen sind die drei Stellen, an denen diese Regel nicht
+          verhandelbar ist – und es sind genau die drei Stellen, an denen ein selbstständiges
+          System am verlockendsten und am gefährlichsten ist.</p>
+        <p class="lang">Durchgesetzt wird das durch den Aufbau statt durch Disziplin: Der
+          Endpunkt für den Vorschlag und der Endpunkt für die Freigabe sind verschiedene
+          Endpunkte, die Freigabe verlangt eine frische Anmeldung, und beide Seiten landen
+          in einem Prüfprotokoll, das die vorschlagende Seite nicht ändern kann.</p>
+      </div>
+      <div>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz · ein Mensch vor dem Unumkehrbaren</span>
+          <p>„Nichts Unumkehrbares ohne einen Menschen. Geld, Veröffentlichen und Löschen
+            stehen hinter ausdrücklichen Toren. Die Trading-Flotte schlägt vor; ein Mensch
+            entscheidet.“</p>
+          <footer>README des Repositorys, Abschnitt <em lang="en">Principles</em>, hier
+            übersetzt<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot#principles" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: der Abschnitt <span lang="en">Principles</span> im README des Repositorys</span></a></footer>
+        </blockquote>
+        <blockquote class="gesetz">
+          <span class="lk">Gesetz 11 · Ruhe vor Hast</span>
+          <p>„Im Zweifelsfall lieber eine Sekunde länger prüfen oder noch einmal überdenken,
+            bevor gehandelt wird. ‚Schnell bitte‘ setzt Sorgfalt nie außer Kraft. Die
+            Struktur trägt – nicht die Eile.“</p>
+          <footer>docs/01_GRUNDGESETZE.md, Gesetz 11 – gekürzt<a class="beleg" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/blob/main/snapshot/docs/01_GRUNDGESETZE.md" rel="noopener"><span aria-hidden="true">&#8599;</span><span class="vh">Quelle: docs/01_GRUNDGESETZE.md</span></a></footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Kapitel sieben</p>
+    <h2 id="tempo">Warum es schnell geht</h2>
+    <p class="dach">Das Tempo ist nicht der Punkt, aber es ist die Frage, die alle stellen,
+      also hier die ehrliche Antwort – sechs Teile, keiner davon Zauberei.</p>
+    <div class="karten reveal mt-l">
+      <article class="karte">
+        <h3>Verträge machen Anwendungen zusammensetzbar</h3>
+        <p>Die zehnte Anwendung sollte weniger kosten als die zweite, weil die Schnittstelle
+          einmal entschieden wurde und durch Tests durchgesetzt wird. Das ist das Argument
+          für die Architektur, keine Messung – ich habe es nie gestoppt.</p>
+      </article>
+      <article class="karte">
+        <h3>appkit verhindert das Auseinanderlaufen</h3>
+        <p>Eine gemeinsame Bibliothek statt zehn auseinanderlaufender Kopien. Eine
+          Verbesserung der Sicherheit kommt in jeder Anwendung an, welche die Bibliothek
+          einbindet, mit einem Commit.</p>
+      </article>
+      <article class="karte">
+        <h3>Gesetze verhindern Nacharbeit</h3>
+        <p>Die meiste verlorene Zeit in einem Projekt geht dafür drauf, etwas rückgängig zu
+          machen, das nie hätte begonnen werden sollen. Geschriebene Regeln sind billiger als
+          Umkehr.</p>
+      </article>
+      <article class="karte">
+        <h3>Die KI liefert Menge</h3>
+        <p>Bau-Chats erzeugen Code und Dokumentation in einem Tempo, das ein einzelner Mensch
+          nicht schafft. Das ist der Teil, den alle schon kennen.</p>
+      </article>
+      <article class="karte">
+        <h3>Der Mensch liefert das Urteil</h3>
+        <p>Was gebaut wird, was abgelehnt wird, wann etwas gut genug ist und wann Schluss
+          ist. Diese Entscheidung hat hier kein Modell bekommen.</p>
+      </article>
+      <article class="karte">
+        <h3>Und es ist nachprüfbar</h3>
+        <p>Das Tempo ist keine Behauptung auf einer Website. Es sind datierte Dokumente in
+          einem Repository – der App-Vertrag vom 12. Juni 2026, sieben Verträge vom 3. und
+          4. Juli, der Chronik-Vertrag vom 11. Juli.</p>
+      </article>
+    </div>
+    <div class="knoepfe">
+      <a class="knopf prim" href="/de/chronik/">Zur datierten Chronik <span class="pfeil" aria-hidden="true">&#8594;</span></a>
+      <a class="knopf" href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot/docs" rel="noopener">Die Dokumente lesen <span class="pfeil" aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap">
+    <div class="fuss-oben">
+      <a class="marke" href="/de/">the world of dizzi</a>
+      <nav aria-label="Rechtliches">
+        <ul>
+          <li><a href="https://github.com/Dizz-Network-Dizzik/world-of-dizzi-web/tree/main/snapshot" rel="noopener">Dokumente &#8599;</a></li>
+          <li><a href="/mini-karte/">System-Karte</a></li>
+          <li><a class="nav-lang" href="/method/" lang="en" hreflang="en">English</a></li>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Datenschutz</a></li>
+          <li><a href="#top">Nach oben <span aria-hidden="true">&#8593;</span></a></li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="fuss-sozial" aria-label="Profile">
+      <ul>
+        <li><a href="https://x.com/DavidKrause188" rel="me noopener">X &#8599;</a></li>
+        <li><a href="https://www.instagram.com/dizz_network_dizzik/" rel="me noopener">Instagram &#8599;</a></li>
+      </ul>
+    </nav>
+    <p class="fuss-status"><a href="/de/vision/">Unabhängiges Projekt — Gründung in Vorbereitung.</a></p>
+    <div class="fuss-fein">
+      <p>Dokumente öffentlich, Code privat. Alle Rechte vorbehalten.</p>
+      <p>Gebacken von einem <a href="/de/zahlen/#baecker">1527-Zeilen-Python-Skript</a>. Keine Cookies, keine Tracker, keine externen Aufrufe.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
