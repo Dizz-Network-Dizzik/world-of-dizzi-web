@@ -382,14 +382,16 @@ PAGES: list[dict] = [
         title="404 — not in the registry | the world of dizzi",
         desc="This panel is not in the registry.",
         noindex=True, nomap=True,
-        alt="/de/404.html",
+        # No alt pair (10.10.2026): Netlify's pretty URLs rewrite a link to
+        # /de/404.html into /de/404 on the live site, so the language switch of
+        # both 404 pages leads to the other front door instead - LANGLINK_START,
+        # "Deutsch · Startseite" / "English · home page". Same for /de/404.html.
     ),
     dict(
         src="de-404.html", out="de/404.html", path="/de/404.html", lang="de",
         title="404 — nicht in der Registry | the world of dizzi",
         desc="Dieses Panel steht nicht in der Registry.",
         noindex=True, nomap=True,
-        alt="/404.html",
     ),
 ]
 
@@ -1462,6 +1464,37 @@ def check_merge_marker(tree: dict[str, bytes]) -> list[str]:
     return faults
 
 
+# --------------------------------------------------------------------------
+# no link to one of this site's own .html files
+# --------------------------------------------------------------------------
+# The host rewrites them. Netlify's pretty URLs turn href="/de/404.html" into
+# "/de/404" in the page it serves, so the page in dist/ and the page on the
+# live site differ - found on 10.10.2026, when the byte-for-byte live
+# comparison drifted on exactly the two 404 pages and on nothing else, and no
+# source showed why. The directory form ("/system/") is served unchanged, so
+# that is the only form a link inside this site may take. Absolute addresses
+# (canonical, hreflang, other hosts) are left alone: the host does not rewrite
+# them, and judging other hosts is not this check's business.
+SCHEMA_RE = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//)", re.I)
+
+
+def check_html_links(tree: dict[str, bytes]) -> list[str]:
+    faults = []
+    for rel, data in sorted(tree.items()):
+        if not rel.endswith(".html"):
+            continue
+        for raw in HREF_RE.findall(data.decode("utf-8")):
+            ref = html.unescape(raw).strip()
+            if not ref or ref.startswith("#") or SCHEMA_RE.match(ref):
+                continue
+            pfad = ref.split("#", 1)[0].split("?", 1)[0]
+            if pfad.lower().endswith(".html"):
+                faults.append(f"{rel}: link to {ref} - the host rewrites links to .html "
+                              "files, so the live page would drift from dist/; link the "
+                              "directory form instead")
+    return faults
+
+
 def compare(tree: dict[str, bytes]) -> list[str]:
     faults = []
     on_disk = {
@@ -1497,7 +1530,7 @@ def main(argv: list[str]) -> int:
               + check_mini_karte() + check_webview(tree) + check_merge_marker(tree)
               + check_essenz_sperre(tree))
     if check_only:
-        faults += compare(tree) + check_readme(tree)
+        faults += compare(tree) + check_readme(tree) + check_html_links(tree)
 
     for fault in faults:
         print("FAULT  " + fault, file=sys.stderr)
