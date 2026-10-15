@@ -27,7 +27,7 @@ $root = Split-Path -Parent $PSScriptRoot
 # on their own. The examples that used to stand here were themselves terms
 # from the list - the first run of this rewrite caught them.
 $listenPfad = if ($env:DIZZI_SPERRLISTE) { $env:DIZZI_SPERRLISTE }
-              else { Join-Path (Split-Path -Parent (Split-Path -Parent $root)) "Projektzentrale\pruefung\sperrbegriffe.txt" }
+              else { Join-Path (Split-Path -Parent (Split-Path -Parent $root)) "Projektzentrale\30_WERKZEUG\pruefung\sperrbegriffe.txt" }
 
 # The trace. Until 06.09.2026 this gate left nothing behind: "clean" existed
 # only in the terminal of whoever ran it, and a run that never happened was
