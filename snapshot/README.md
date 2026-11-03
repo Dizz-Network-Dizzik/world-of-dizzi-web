@@ -118,7 +118,7 @@ Three things hold it together:
    applications behave like one.
 4. [`docs/README.md`](docs/README.md) — the index of every network-wide norm and contract.
 
-The interactive system map is on the website: <https://worldofdizzi.netlify.app/karte/>
+The system map is on the website: <https://worldofdizzi.com/system-map/>
 
 *The documentation is written in German.*
 
@@ -177,4 +177,4 @@ Core unverändert vom PC auf einen Server umziehen kann — Windows wie Linux.
 2. [`docs/01_GRUNDGESETZE.md`](docs/01_GRUNDGESETZE.md) — die geschriebenen Gesetze.
 3. [`docs/README.md`](docs/README.md) — der Index aller netzweiten Normen und Verträge.
 
-Die interaktive System-Karte steht auf der Website: <https://worldofdizzi.netlify.app/karte/>
+Die System-Karte steht auf der Website: <https://worldofdizzi.com/mini-karte/>

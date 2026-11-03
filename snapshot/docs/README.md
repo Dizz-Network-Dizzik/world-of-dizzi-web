@@ -3,7 +3,7 @@
 > Alles hier gilt **netzweit** (alle Apps). Je App liegt in diesem Auszug genau eine
 > README (`apps/<id>/README.md`); die app-eigene Doku ist nicht veröffentlicht.
 > Die visuelle Gesamtsicht steht auf der Website:
-> <https://worldofdizzi.netlify.app/karte/>
+> <https://worldofdizzi.com/mini-karte/>
 
 ## Fundament — zuerst lesen
 

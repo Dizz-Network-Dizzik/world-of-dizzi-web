@@ -1,3 +1,7 @@
+# Neu am 03.11.2026 mit dem Impressum-Nachzug nach dem Umzug: Ortsname und
+# Strassenname der Anschrift, gegengelesen am Mietvertrag (Eigenname).
+Gießen
+Schiffenberger
 # Neu am 07.08.2026 mit der Mini-Karte (/mini-karte/): die Seite ist
 # deutsch, also faellt ihr ganzer Wortschatz hier an. Jedes Wort einzeln
 # gegengelesen, bevor es hier steht - die Reihenfolge, auf die der Kopf
