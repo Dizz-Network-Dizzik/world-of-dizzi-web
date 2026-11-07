@@ -2930,3 +2930,8 @@ zählungen
 überstanden
 übliche
 übrigen
+
+# 2026-11-08 — Impressum, Absatz Geltungsbereich (bahn.worldofdizzi.com) (jedes Wort vor der Aufnahme gelesen)
+bahn
+geltungsbereich
+unendliche
