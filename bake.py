@@ -1000,7 +1000,7 @@ DEPLOY_BLOCKERS = {
 # after # is a comment, blank lines are allowed.
 ESSENZ_SPERRE = Path(
     os.environ.get("DIZZI_ESSENZ_SPERRE")
-    or ROOT.parent.parent / "Projektzentrale" / "pruefung" / "essenz_sperre.txt"
+    or ROOT.parent.parent / "Projektzentrale" / "30_WERKZEUG" / "pruefung" / "essenz_sperre.txt"
 )
 
 
